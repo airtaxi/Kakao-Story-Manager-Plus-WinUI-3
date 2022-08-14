@@ -49,9 +49,6 @@ public sealed partial class MainPage : Page
         writeFlyout.Content = writePostControl;
         BtWrite.Flyout = writeFlyout;
         writePostControl.OnPostCompleted += OnPostCompleted;
-
-        var inputControl = writePostControl.GetInputControl();
-        inputControl.OnSubmitShortcutActivated += async () => await writePostControl.WritePostAsync();
     }
 
     private void OnPostCompleted() => InitializeWriteFlyout();

@@ -19,6 +19,7 @@
 	<ItemGroup>
 	  <Content Remove="Assets\Error.png" />
 	  <Content Remove="Assets\Segoe Fluent Icons.ttf" />
+	  <Content Remove="Assets\video.png" />
 	</ItemGroup>
 	<ItemGroup>
 	  <None Remove="Controls\EmotionsListControl.xaml" />
@@ -62,6 +63,9 @@
 	  <ProjectReference Include="..\KakaoStory-API\Kakao Story API\KakaoStory API.csproj" />
 	</ItemGroup>
 	<ItemGroup>
+	  <None Update="Assets\Video.png">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
 	  <None Update="icon.ico">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>
