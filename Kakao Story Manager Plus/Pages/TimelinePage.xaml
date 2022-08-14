@@ -1,0 +1,23 @@
+﻿<Page
+    x:Class="KSMP.Pages.TimelinePage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:KSMP"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
+    Background="#f0f0f0">
+
+    <Grid>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <!--<Frame Grid.Row="0" x:Name="FrProfile" Width="600" Visibility="Collapsed"/>-->
+            <ListView Grid.Row="1" x:Name="LvContent" SelectionMode="None" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"/>
+        </Grid>
+        <muxc:ProgressRing x:Name="PrLoading" Foreground="#E96A49" IsIndeterminate="True" VerticalAlignment="Center" Width="100" Height="100" HorizontalAlignment="Center" Visibility="Collapsed"/>
+    </Grid>
+</Page>

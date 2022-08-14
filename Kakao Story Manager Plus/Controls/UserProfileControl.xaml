@@ -1,0 +1,34 @@
+﻿<UserControl
+    x:Class="KSMP.Controls.UserProfileControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:KSMP.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    d:DesignHeight="300"
+    d:DesignWidth="600">
+
+    <Grid Margin="10" CornerRadius="10">
+        <Image x:Name="ImgProfileBackground" Height="300" Stretch="UniformToFill"/>
+        <Rectangle Fill="Black" Opacity="0.3"/>
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="20">
+            <Grid>
+                <PersonPicture x:Name="PpProfilePicture"/>
+                <Grid x:Name="GdFavorite" Width="30" Height="30" VerticalAlignment="Bottom" HorizontalAlignment="Right" CornerRadius="15" Opacity="1" Tapped="OnFavoriteTapped" PointerEntered="FavoritePointerEntered" PointerExited="FavoritePointerExited">
+                    <Rectangle x:Name="RtFavorite" Fill="Gray"/>
+                    <Viewbox Margin="5">
+                        <FontIcon x:Name="FaFavorite" FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe735;" Foreground="LightGray"/>
+                    </Viewbox>
+                </Grid>
+            </Grid>
+            <StackPanel Margin="10" VerticalAlignment="Center">
+                <TextBlock x:Name="TbName" Text="로딩중..." FontSize="20" FontWeight="Bold" Foreground="White"/>
+                <TextBlock x:Name="TbDescription" Text="로딩중..." FontSize="15" Foreground="White" Margin="0,5,0,0"/>
+            </StackPanel>
+        </StackPanel>
+        <Button x:Name="BtFriend" VerticalAlignment="Bottom" HorizontalAlignment="Right" Background="#e96a49" Margin="20" Click="FriendButtonClicked">
+            <TextBlock x:Name="TbFriendStatus" Foreground="White"/>
+        </Button>
+    </Grid>
+</UserControl>
