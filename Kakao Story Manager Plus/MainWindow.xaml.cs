@@ -32,7 +32,7 @@ public sealed partial class MainWindow : Microsoft.UI.Xaml.Window
     private void SetupAppWindow()
     {
         var appWindow = this.GetAppWindow();
-        appWindow.Title = "카카오 스토리 매니저 PLUS";
+        appWindow.Title = "카카오스토리 매니저 PLUS";
         appWindow.SetIcon("icon.ico");
     }
 
