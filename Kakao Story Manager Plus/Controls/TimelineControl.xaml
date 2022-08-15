@@ -116,7 +116,7 @@
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="8*"/>
                                 <ColumnDefinition Width="50"/>
-                                <ColumnDefinition Width="80"/>
+                                <ColumnDefinition Width="90"/>
                             </Grid.ColumnDefinitions>
                             <Frame x:Name="FrComment" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Stretch" Margin="30,0,5,0"/>
                             <Button x:Name="BtAddMedia" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Stretch" Margin="5,0,5,0" Click="OnAddMediaButtonClicked">
