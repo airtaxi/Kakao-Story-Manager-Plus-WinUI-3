@@ -504,7 +504,7 @@ public sealed partial class TimelineControl : UserControl
 
     private async void OnSharePostTapped(object sender, TappedRoutedEventArgs e)
     {
-        if(_post.@object.actor.relationship != "F")
+        if(_post.@object.actor.relationship != "F" || _post.@object.actor.relationship != "S")
         {
             await this.ShowMessageDialogAsync("해당 사용자와 친구를 맺어야 글을 볼 수 있습니다", "오류");
             return;
