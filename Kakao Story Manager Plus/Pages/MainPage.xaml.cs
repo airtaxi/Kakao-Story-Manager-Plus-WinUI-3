@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Timers;
@@ -37,22 +38,33 @@ public sealed partial class MainPage : Page
         InitializeComponent();
         _ = Refresh();
         _instance = this;
-        InitializeWriteFlyout();
-        notificationTimer.Interval = 2000;
+        InitializeWritePostFlyout();
+        InitializeSettingsFlyout();
+        notificationTimer.Interval = 1000;
         notificationTimer.Elapsed += OnNotificationTimerElapsed;
         notificationTimer.Start();
     }
 
-    private void InitializeWriteFlyout()
+    private void InitializeSettingsFlyout()
     {
-        var writeFlyout = new Flyout();
-        var writePostControl = new Controls.WritePostControl(BtWrite);
-        writeFlyout.Content = writePostControl;
-        BtWrite.Flyout = writeFlyout;
-        writePostControl.OnPostCompleted += OnPostCompleted;
+        var flyout = new Flyout();
+        var control = new SettingsControl();
+        flyout.Content = control;
+        BtSettings.Flyout = flyout;
     }
 
-    private void OnPostCompleted() => InitializeWriteFlyout();
+    private void InitializeWritePostFlyout()
+    {
+        var flyout = new Flyout();
+        var control = new WritePostControl(BtWrite);
+        flyout.Content = control;
+        BtWrite.Flyout = flyout;
+        control.OnPostCompleted += OnPostCompleted;
+    }
+
+    public static MainPage GetInstance() => _instance;
+
+    private void OnPostCompleted() => InitializeWritePostFlyout();
 
     private DateTime? _lastNotificationTimestamp = null;
     private async void OnNotificationTimerElapsed(object sender, ElapsedEventArgs e)
@@ -76,8 +88,8 @@ public sealed partial class MainPage : Page
         string contentMessage = notification.content ?? "내용 없음";
 
         var willShow = true;
-        var disableLike = false;
-        var disableVip = false;
+        var disableLike = !((Utils.Configuration.GetValue("EmotionalNotification") as bool?) ?? true);
+        var disableVip = !((Utils.Configuration.GetValue("FavoriteFriendNotification") as bool?) ?? true);
 
         if (disableLike && notification.emotion != null)
             willShow = false;
@@ -125,9 +137,6 @@ public sealed partial class MainPage : Page
 
             builder.Show();
         }
-
-        //TODO: 자동 새로고침
-        //if(_instance.FrContent is TimelinePage) (_instance.FrContent as TimelinePage)
     }
 
     private static string GetProfileIdFromNotification(ApiHandler.DataType.Notification notification)
@@ -336,4 +345,21 @@ public sealed partial class MainPage : Page
     }
 
     private void SearchFriendQuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args) => SearchFriend(sender);
+
+    private async void OnClearMemoryButtonClicked(object sender, RoutedEventArgs e)
+    {
+        GC.Collect();
+        GC.WaitForPendingFinalizers();
+        var process = Process.GetCurrentProcess();
+        var memorySize = process.PrivateMemorySize64/1024/1024;
+        await this.ShowMessageDialogAsync($"메모리가 정리되었습니다.\n사용중 메모리: {memorySize:N0}MB", "안내");
+    }
+
+    private void OnWritePostButtonClicked(object sender, RoutedEventArgs e)
+    {
+        var button = sender as Button;
+        var flyout = button.Flyout as Flyout;
+        var control = flyout.Content as WritePostControl;
+        control.AdjustDefaultPostWritingPermission();
+    }
 }

@@ -17,10 +17,11 @@
         <Viewbox VerticalAlignment="Top" Width="45" Height="45">
             <PersonPicture x:Name="PpUser" Tapped="UserProfilePictureTapped"/>
         </Viewbox>
-        <Grid Grid.Column="1" Margin="5" VerticalAlignment="Top">
+        <Grid Grid.Column="1" Margin="5,5,0,5" VerticalAlignment="Top">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="50"/>
+                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition x:Name="CdDeleteComment" Width="auto"/>
             </Grid.ColumnDefinitions>
             <StackPanel>
                 <StackPanel Orientation="Horizontal">
@@ -50,6 +51,9 @@
                     <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xeb51;" Foreground="LightGray"/>
                     <FontIcon x:Name="FaHeart" FontFamily="{StaticResource Fluent Icons}" Glyph="&#xeb52;" Foreground="#e57764" Visibility="Collapsed"/>
                 </Grid>
+            </Button>
+            <Button Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Center" Background="Transparent" BorderThickness="0" Click="OnDeleteCommentButtonClicked">
+                <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe74d;" Foreground="LightGray"/>
             </Button>
         </Grid>
     </Grid>

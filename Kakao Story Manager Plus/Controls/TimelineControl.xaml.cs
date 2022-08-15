@@ -224,12 +224,14 @@ public sealed partial class TimelineControl : UserControl
     private async Task RefreshContent(PostData post, bool isFirst = true)
     {
         if (isFirst) GdLoading.Visibility = Visibility.Visible;
-        //if (_isOverlay && isFirst)
         if(!_isShare) post = await ApiHandler.GetPost(post.id);
 
         TbName.Text = post.actor.display_name;
         var timestampString = StoryApi.Utils.GetTimeString(post.created_at);
         TbTime.Text = timestampString;
+        if(post.content_updated_at != DateTime.MinValue)
+            TbTime.Text += " (수정됨)";
+
         PpUser.ProfilePicture = Utils.Common.GenerateImageUrlSource(post.actor.GetValidUserProfileUrl());
 
         RtbEmotions.Visibility = Visibility.Visible;
@@ -251,14 +253,21 @@ public sealed partial class TimelineControl : UserControl
             var lastComment = comments.Last();
             foreach (var comment in comments)
             {
-                var commentControl = new CommentControl(comment, post.id, _isOverlay);
-                commentControl.OnReplyClick += (Comment sender) =>
+                var control = new CommentControl(comment, post.id, _isOverlay);
+                
+                control.OnReplyClick += (Comment sender) =>
                 {
                     var profile = sender.writer;
                     var inputContol = FrComment.Content as InputControl;
                     inputContol.AppendText("{!{{" + "\"id\":\"" + profile.id + "\", \"type\":\"profile\", \"text\":\"" + profile.display_name + "\"}}!} ");
                 };
-                SpComments.Children.Add(commentControl);
+
+                control.OnDeleted += async () => await RefreshContent();
+
+                if (comment.writer.id != MainPage.Me.id && _post.actor.id != MainPage.Me.id)
+                    control.HideDeleteButton();
+
+                SpComments.Children.Add(control);
 
                 if (lastComment != comment)
                 {
@@ -562,4 +571,6 @@ public sealed partial class TimelineControl : UserControl
             e.Handled = true;
         }
     }
+
+    private void OnOverlayCloseButtonClicked(object sender, RoutedEventArgs e) => HideOverlay();
 }

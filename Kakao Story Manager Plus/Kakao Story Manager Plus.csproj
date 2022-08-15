@@ -12,8 +12,6 @@
 		<WindowsPackageType>None</WindowsPackageType>
 		<EnableMsixTooling>true</EnableMsixTooling>
 		<StartupObject>KSMP.Program</StartupObject>
-		<UseWPF>False</UseWPF>
-		<UseWindowsForms>False</UseWindowsForms>
 		<ApplicationIcon>icon.ico</ApplicationIcon>
 	</PropertyGroup>
 	<ItemGroup>
@@ -29,6 +27,7 @@
 	  <None Remove="Controls\Emotions\LikeControl.xaml" />
 	  <None Remove="Controls\Emotions\PleasureControl.xaml" />
 	  <None Remove="Controls\Emotions\SadControl.xaml" />
+	  <None Remove="Controls\SettingsControl.xaml" />
 	  <None Remove="Pages\LoginPage.xaml" />
 	</ItemGroup>
 
@@ -70,6 +69,9 @@
 	  <None Update="Assets\VideoThumbnail.png">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>
+	  <Page Update="Controls\SettingsControl.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
 	  <None Update="icon.ico">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>

@@ -1,4 +1,5 @@
-﻿using KSMP.Controls;
+﻿using H.NotifyIcon;
+using KSMP.Controls;
 using KSMP.Extension;
 using KSMP.Pages;
 using Microsoft.Toolkit.Uwp.Notifications;
@@ -9,12 +10,12 @@ using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
-using Microsoft.UI.Xaml.Shapes;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading.Tasks;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.Foundation;
@@ -30,10 +31,44 @@ namespace KSMP
     /// </summary>
     public partial class App : Application
     {
+        public static readonly string BinaryDirectory = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().GetName().CodeBase).Replace("file:\\", "");
+
         public App()
         {
+            UnhandledException += OnApplicationUnhandledException;
+            AppDomain.CurrentDomain.UnhandledException += OnAppDomainUnhandledException;
+            TaskScheduler.UnobservedTaskException += OnTaskSchedulerUnobservedTaskException;
             InitializeComponent();
             ToastNotificationManagerCompat.OnActivated += OnNotificationActivated;
+        }
+
+        private async void OnTaskSchedulerUnobservedTaskException(object sender, UnobservedTaskExceptionEventArgs e)
+        {
+            e.SetObserved();
+            WriteException(e.Exception);
+            await ShowErrorMessage(e.Exception);
+        }
+
+        private async void OnAppDomainUnhandledException(object sender, System.UnhandledExceptionEventArgs e)
+        {
+            WriteException(e.ExceptionObject as Exception);
+            await ShowErrorMessage(e.ExceptionObject as Exception);
+        }
+
+        private void WriteException(Exception exception)
+        {
+            var path = Path.Combine(BinaryDirectory, "error.log");
+            var text = $"{exception.Message}: {exception.StackTrace}";
+            File.AppendAllText(path, text);
+        }
+
+        private async Task ShowErrorMessage(Exception exception) => await MainPage.GetInstance().ShowMessageDialogAsync($"{exception.Message}/{exception.StackTrace}", "런타임 오류");
+
+        private async void OnApplicationUnhandledException(object sender, Microsoft.UI.Xaml.UnhandledExceptionEventArgs e)
+        {
+            e.Handled = true;
+            WriteException(e.Exception);
+            await ShowErrorMessage(e.Exception);
         }
 
         private async void OnNotificationActivated(ToastNotificationActivatedEventArgsCompat toastArgs)

@@ -34,11 +34,14 @@
                 </AutoSuggestBox>
             </StackPanel>
             <StackPanel VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,10,0" Orientation="Horizontal">
-                <Button x:Name="BtWrite" Width="40" Height="40" CornerRadius="10" ToolTipService.ToolTip="포스트 작성">
+                <Button x:Name="BtWrite" Width="40" Height="40" CornerRadius="10" ToolTipService.ToolTip="포스트 작성" Click="OnWritePostButtonClicked">
                     <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe70f;" FontSize="17" Foreground="#717171"/>
                 </Button>
                 <Button x:Name="BtNotifications" Width="40" Height="40" CornerRadius="10" ToolTipService.ToolTip="최근 알림" Margin="10,0,0,0" Click="OnNotificationsButtonClicked">
                     <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe7e7;" FontSize="17" Foreground="#717171"/>
+                </Button>
+                <Button x:Name="BtMemory" Width="40" Height="40" CornerRadius="10" ToolTipService.ToolTip="메모리 정리" Margin="10,0,0,0" Click="OnClearMemoryButtonClicked">
+                    <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe964;" FontSize="17" Foreground="#717171"/>
                 </Button>
                 <Button x:Name="BtLogout" Width="40" Height="40" CornerRadius="10" ToolTipService.ToolTip="로그아웃" Margin="10,0,0,0" Click="OnLogoutButtonClicked">
                     <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xf3b1;" FontSize="17" Foreground="#717171"/>
@@ -53,6 +56,9 @@
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
             <Grid MinHeight="200">
+                <Button x:Name="BtSettings" Background="Transparent" BorderThickness="0" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,5,0,0" Foreground="Gray">
+                    <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe713;"/>
+                </Button>
                 <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" PointerEntered="ProfilePointerEntered" PointerExited="ProfilePointerExited" Tapped="ProfileTapped">
                     <PersonPicture x:Name="PpMyProfile" Width="80" Height="80" VerticalAlignment="Center"/>
                     <TextBlock x:Name="TbName" Text="로딩중..." HorizontalAlignment="Center" FontSize="20" FontWeight="Bold" Margin="10" VerticalAlignment="Center"/>

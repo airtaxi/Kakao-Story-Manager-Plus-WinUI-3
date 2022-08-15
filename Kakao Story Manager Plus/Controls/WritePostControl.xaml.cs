@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Security;
 using System.Threading.Tasks;
 using KSMP.Pages;
 using Microsoft.UI.Xaml;
@@ -45,6 +46,13 @@ public sealed partial class WritePostControl : UserControl
         _button = button;
         InitializeInputControl();
         LvMedias.ItemsSource = _medias;
+        AdjustDefaultPostWritingPermission();
+    }
+
+    public void AdjustDefaultPostWritingPermission()
+    {
+        string defaultPostWritingPermission = (Utils.Configuration.GetValue("DefaultPostWritingPermission") as string) ?? "F";
+        CbxPermission.SelectedItem = CbxPermission.Items.FirstOrDefault(x => ((x as ComboBoxItem).Tag as string) == defaultPostWritingPermission);
     }
 
     public WritePostControl(CommentData.PostData postToShare)
@@ -65,8 +73,9 @@ public sealed partial class WritePostControl : UserControl
         {
             CbiShareAll.Visibility = Visibility.Collapsed;
             CbiShareFriend.Visibility = Visibility.Collapsed;
-            CbiSharePrivate.Visibility = Visibility.Collapsed;
+            //CbiSharePrivate.Visibility = Visibility.Collapsed;
         }
+        AdjustDefaultPostWritingPermission();
     }
 
     private void InitializeInputControl(bool canAddMedia = true)

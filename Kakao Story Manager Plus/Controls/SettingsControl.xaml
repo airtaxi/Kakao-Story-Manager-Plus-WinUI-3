@@ -1,0 +1,20 @@
+﻿<UserControl
+    x:Class="KSMP.Controls.SettingsControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:KSMP.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <StackPanel Width="300">
+        <ToggleSwitch x:Name="TsFavoriteFriendNotification" OnContent="관심 친구 알림 받음" OffContent="관심 친구 알림 받지 않음"/>
+        <ToggleSwitch x:Name="TsEmotionalNotification" OnContent="느낌 알림 받음" OffContent="느낌 알림 받지 않음" Margin="0,5,0,0"/>
+        <ToggleSwitch x:Name="TsLaunchAtStartup" OnContent="부팅시 자동 시작됨" OffContent="부팅시 자동 시작 해제됨" Margin="0,5,0,0"/>
+        <ComboBox x:Name="CbxDefaultPostWritingPermission" Header="기본 게시글 공개 범위" Margin="0,5,0,0">
+            <ComboBoxItem Content="친구 공개"/>
+            <ComboBoxItem Content="전체 공개"/>
+            <ComboBoxItem Content="나만 보기"/>
+        </ComboBox>
+    </StackPanel>
+</UserControl>

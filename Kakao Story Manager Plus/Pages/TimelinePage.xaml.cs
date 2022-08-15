@@ -19,8 +19,15 @@ public sealed partial class TimelinePage : Page
         InitializeComponent();
     }
 
+    protected override async void OnNavigatedFrom(NavigationEventArgs e)
+    {
+        base.OnNavigatedFrom(e);
+        System.GC.Collect();
+    }
     protected override async void OnNavigatedTo(NavigationEventArgs e)
     {
+        base.OnNavigatedTo(e);
+        System.GC.Collect();
         string id = e.Parameter as string;
         MainPage.SelectFriend(id);
 
@@ -53,8 +60,8 @@ public sealed partial class TimelinePage : Page
     private async Task Refresh(string from = null)
     {
         PrLoading.Visibility = Visibility.Visible;
-        if (from == null)
             LvContent.Items.Clear();
+        //if (from == null)
         if (Id == null)
         {
             var data = await ApiHandler.GetFeed(lastFeed);

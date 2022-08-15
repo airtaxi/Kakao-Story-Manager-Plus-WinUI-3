@@ -4,7 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:KSMP.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:fa5="using:FontAwesome5"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     d:DesignHeight="300"
     d:DesignWidth="400">
@@ -66,25 +66,25 @@
                 <TextBlock x:Name="TbWritePost" Text="글 작성하기" FontSize="15" FontWeight="Bold" Foreground="White"/>
             </Button>
             <ComboBox x:Name="CbxPermission" SelectedIndex="1">
-                <ComboBoxItem x:Name="CbiShareAll">
+                <ComboBoxItem x:Name="CbiShareAll" Tag="A">
                     <StackPanel Orientation="Horizontal">
                         <FontIcon FontFamily="{StaticResource Fluent Icons}" Margin="5" Foreground="#CCCCCC" Width="30" Glyph="&#xe774;"/>
                         <TextBlock Text="전체 공개" Margin="5" FontWeight="Bold"/>
                     </StackPanel>
                 </ComboBoxItem>
-                <ComboBoxItem x:Name="CbiShareFriend">
+                <ComboBoxItem x:Name="CbiShareFriend" Tag="F">
                     <StackPanel Orientation="Horizontal">
                         <FontIcon FontFamily="{StaticResource Fluent Icons}" Margin="5" Foreground="#CCCCCC" Width="30" Glyph="&#xe716;"/>
                         <TextBlock Text="친구 공개" Margin="5" FontWeight="Bold"/>
                     </StackPanel>
                 </ComboBoxItem>
-                <ComboBoxItem x:Name="CbiSharePrivate">
+                <!--<ComboBoxItem x:Name="CbiSharePrivate" Tag="P">
                     <StackPanel Orientation="Horizontal">
                         <FontIcon FontFamily="{StaticResource Fluent Icons}" Margin="5" Foreground="#CCCCCC" Width="30" Glyph="&#xe9d5;"/>
                         <TextBlock Text="편한 친구 공개" Margin="5" FontWeight="Bold"/>
                     </StackPanel>
-                </ComboBoxItem>
-                <ComboBoxItem>
+                </ComboBoxItem>-->
+                <ComboBoxItem Tag="M">
                     <StackPanel Orientation="Horizontal">
                         <FontIcon FontFamily="{StaticResource Fluent Icons}" Margin="5" Foreground="#CCCCCC" Width="30" Glyph="&#xe72e;"/>
                         <TextBlock Text="나만 보기" Margin="5" FontWeight="Bold"/>

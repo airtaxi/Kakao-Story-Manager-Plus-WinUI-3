@@ -9,13 +9,16 @@ using KSMP.Pages;
 using static KSMP.ClassManager;
 using System;
 using Microsoft.UI.Xaml.Media;
+using StoryApi;
 
 namespace KSMP.Controls;
 
 public sealed partial class CommentControl : UserControl
 {
     public delegate void ReplyClick(Comment comment);
+    public delegate void Deleted();
     public ReplyClick OnReplyClick;
+    public Deleted OnDeleted;
     private Comment _comment;
     private readonly string _postId;
     private readonly bool _isOverlay;
@@ -114,5 +117,13 @@ public sealed partial class CommentControl : UserControl
         var flyout = new Flyout();
         flyout.Content = likeList;
         flyout.ShowAt(element);
+    }
+
+    public void HideDeleteButton() => CdDeleteComment.Width = new(0);
+
+    private async void OnDeleteCommentButtonClicked(object sender, RoutedEventArgs e)
+    {
+        await ApiHandler.DeleteComment(_comment.id, _postId);
+        OnDeleted?.Invoke();
     }
 }

@@ -489,9 +489,9 @@ namespace StoryApi
 
             return await GetResponseFromRequest(webRequest) != null;
         }
-        public static async Task<bool> DeleteComment(string commentID, PostData data)
+        public static async Task<bool> DeleteComment(string commentID, string postId)
         {
-            string requestURI = "https://story.kakao.com/a/activities/" + data.id + "/comments/" + commentID;
+            string requestURI = "https://story.kakao.com/a/activities/" + postId + "/comments/" + commentID;
             HttpWebRequest webRequest = GenerateDefaultProfile(requestURI, "DELETE");
             return await GetResponseFromRequest(webRequest) != null;
         }
@@ -558,7 +558,8 @@ namespace StoryApi
                 var readStream = await webRequest.GetResponseAsync();
                 var respReader = readStream.GetResponseStream();
 
-                string respResult = await new StreamReader(respReader).ReadToEndAsync();
+                using var reader = new StreamReader(respReader);
+                string respResult = await reader.ReadToEndAsync();
 
                 respReader.Close();
                 readStream.Close();
@@ -652,7 +653,7 @@ namespace StoryApi
         public static async Task<UploadedImageProp> UploadImage(string filepath)
         {
             string filename = Path.GetFileName(filepath);
-            StreamReader fileStream = new StreamReader(filepath);
+            using StreamReader fileStream = new StreamReader(filepath);
 
             string requestURI = "https://up-api-kage-4story.kakao.com/web/webstory-img/";
 
@@ -688,7 +689,8 @@ namespace StoryApi
             var readStream = await request.GetResponseAsync();
             var respReader = readStream.GetResponseStream();
 
-            string respResult = await (new StreamReader(respReader, Encoding.UTF8)).ReadToEndAsync();
+            using var reader = new StreamReader(respReader, Encoding.UTF8);
+            string respResult = await reader.ReadToEndAsync();
             respReader.Close();
 
             UploadedImageProp result = JsonConvert.DeserializeObject<UploadedImageProp>(respResult);
@@ -696,7 +698,7 @@ namespace StoryApi
         }
         public static async Task<string> UploadVideo(AssetData asset)
         {
-            StreamReader fileStream = new StreamReader(asset.Path);
+            using var fileStream = new StreamReader(asset.Path);
 
             string requestURI = "https://up-api-kage-4story-video.kakao.com/web/webstory-video/";
 
@@ -734,7 +736,8 @@ namespace StoryApi
             var readStream = await request.GetResponseAsync();
             var respReader = readStream.GetResponseStream();
 
-            string respResult = await (new StreamReader(respReader, Encoding.UTF8)).ReadToEndAsync();
+            using var reader = new StreamReader(respReader, Encoding.UTF8);
+            string respResult = await reader.ReadToEndAsync();
             respReader.Close();
 
             var videoData = JsonConvert.DeserializeObject<VideoData.Video>(respResult);
@@ -820,7 +823,8 @@ namespace StoryApi
                 var readStream = await request.GetResponseAsync();
                 //Console.WriteLine("L2");
                 var respReader = readStream.GetResponseStream();
-                var response = await (new StreamReader(respReader, Encoding.UTF8)).ReadToEndAsync();
+                using var reader = new StreamReader(respReader, Encoding.UTF8);
+                var response = await reader.ReadToEndAsync();
                 respReader.Close();
                 retryCount = 0;
             }
@@ -838,7 +842,7 @@ namespace StoryApi
         }
         public static async Task<string> UploadImage(AssetData asset)
         {
-            StreamReader fileStream = new StreamReader(asset.Path);
+            using var fileStream = new StreamReader(asset.Path);
 
             string requestURI = "https://up-api-kage-4story.kakao.com/web/webstory-img/";
 
@@ -873,7 +877,8 @@ namespace StoryApi
                 var readStream = await request.GetResponseAsync();
                 var respReader = readStream.GetResponseStream();
 
-                string respResult = await (new StreamReader(respReader, Encoding.UTF8)).ReadToEndAsync();
+                using var reader = new StreamReader(respReader, Encoding.UTF8);
+                string respResult = await reader.ReadToEndAsync();
                 respReader.Close();
 
                 UploadedImageProp result = JsonConvert.DeserializeObject<UploadedImageProp>(respResult);
@@ -924,7 +929,8 @@ namespace StoryApi
             {
                 var readStream = await request.GetResponseAsync();
                 var respReader = readStream.GetResponseStream();
-                await new StreamReader(respReader, Encoding.UTF8).ReadToEndAsync();
+                using var reader = new StreamReader(respReader, Encoding.UTF8);
+                await reader.ReadToEndAsync();
                 respReader.Close();
                 retryCount = 0;
                 return true;
@@ -971,7 +977,8 @@ namespace StoryApi
             {
                 HttpWebResponse response = (HttpWebResponse)request.GetResponse();
                 var respReader = response.GetResponseStream();
-                string respResult = new StreamReader(respReader).ReadToEnd();
+                using var reader = new StreamReader(respReader);
+                string respResult = reader.ReadToEnd();
                 respReader.Close();
                 response.Close();
                 VideoData.Percent pecrentData = JsonConvert.DeserializeObject<VideoData.Percent>(respResult);

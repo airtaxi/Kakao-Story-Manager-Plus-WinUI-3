@@ -25,7 +25,7 @@
 
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
-                    <ColumnDefinition x:Name="CdComment" Width="400" />
+                    <ColumnDefinition x:Name="CdComment" Width="350" />
                 </Grid.ColumnDefinitions>
 
                 <Grid Grid.Row="0" Margin="10,10,10,-5" Padding="20,10,20,10">
@@ -111,12 +111,11 @@
                         <StackPanel x:Name="SpComments"/>
                     </ScrollViewer>
                     <Grid Height="55" Grid.Row="2" Background="#FCFCFC" Visibility="Visible">
-                        <Border BorderBrush="#F2F2F2" VerticalAlignment="Top" HorizontalAlignment="Stretch" BorderThickness="0.5"/>
                         <Grid>
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="8*"/>
+                                <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="50"/>
-                                <ColumnDefinition Width="90"/>
+                                <ColumnDefinition Width="auto"/>
                             </Grid.ColumnDefinitions>
                             <Frame x:Name="FrComment" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Stretch" Margin="30,0,5,0"/>
                             <Button x:Name="BtAddMedia" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Stretch" Margin="5,0,5,0" Click="OnAddMediaButtonClicked">
@@ -126,6 +125,7 @@
                                 <TextBlock Text="전송" Foreground="White"/>
                             </Button>
                         </Grid>
+                        <Border BorderBrush="#F2F2F2" VerticalAlignment="Top" HorizontalAlignment="Stretch" BorderThickness="0.5"/>
                     </Grid>
                     <Border Grid.Row="0" x:Name="BdComments" BorderBrush="#F2F2F2" VerticalAlignment="Top" HorizontalAlignment="Stretch" BorderThickness="0.5"/>
                     <Border Grid.Row="0" x:Name="BdCommentsHorizontal" Grid.RowSpan="3" BorderBrush="#F2F2F2" VerticalAlignment="Stretch" HorizontalAlignment="Left" Visibility="Collapsed" BorderThickness="0.5"/>
@@ -135,6 +135,9 @@
             <Grid x:Name="GdOverlay" Margin="10" CornerRadius="10" Visibility="Collapsed" PreviewKeyDown="OverlayPreviewKeyDown">
                 <Rectangle Fill="Black" Opacity="0.5"/>
                 <Frame x:Name="FrOverlay" Background="White" Padding="10" CornerRadius="10" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                <Button Background="Transparent" BorderThickness="0" Click="OnOverlayCloseButtonClicked" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="10">
+                    <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe711;" Foreground="White"/>
+                </Button>
             </Grid>
             <Grid x:Name="GdLoading" Margin="10" CornerRadius="10" Visibility="Collapsed">
                 <Rectangle Fill="Black" Opacity="0.5"/>
