@@ -39,14 +39,16 @@ public sealed partial class CommentControl : UserControl
         TbName.Text = comment.writer.display_name;
         TbTime.Text = StoryApi.Utils.GetTimeString(comment.created_at) + (comment.updated_at.Year > 1 ? " (수정됨)" : "");
         PpUser.ProfilePicture = Utility.GenerateImageUrlSource(comment.writer.GetValidUserProfileUrl());
-        if (comment.like_count == 0)
-        {
+
+        if (comment.liked)
+            FaHeart.Visibility = Visibility.Visible;
+        else
             FaHeart.Visibility = Visibility.Collapsed;
+
+        if (comment.like_count == 0)
             SpLike.Visibility = Visibility.Collapsed;
-        }
         else
         {
-            FaHeart.Visibility = Visibility.Visible;
             SpLike.Visibility = Visibility.Visible;
             TbLike.Text = comment.like_count.ToString();
         }

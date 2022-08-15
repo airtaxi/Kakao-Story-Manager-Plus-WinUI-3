@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using System.Timers;
 using ABI.System;
 using H.NotifyIcon;
+using KSMP.Controls;
 using KSMP.Extension;
 using Microsoft.Toolkit.Uwp.Notifications;
 using Microsoft.UI.Windowing;
@@ -58,16 +59,16 @@ public sealed partial class MainPage : Page
     {
         var notifications = await ApiHandler.GetNotifications();
 
-
-        notifications.Reverse();
-        foreach (var notification in notifications)
+        for (int i = 0; i < notifications.Count; i++)
         {
-            if(_lastNotificationTimestamp != null && notification?.created_at > _lastNotificationTimestamp)
+            ApiHandler.DataType.Notification notification = notifications[i];
+            if (_lastNotificationTimestamp != null && notification?.created_at > _lastNotificationTimestamp)
                 ShowNotificationToast(notification);
+            else break;
         }
 
-        var last = notifications.LastOrDefault();
-        _lastNotificationTimestamp = last?.created_at;
+        var first = notifications.FirstOrDefault();
+        _lastNotificationTimestamp = first?.created_at;
     }
 
     private static void ShowNotificationToast(ApiHandler.DataType.Notification notification)
@@ -83,6 +84,15 @@ public sealed partial class MainPage : Page
         if (disableVip && notification.decorators != null && notification.decorators[0] != null && notification.decorators[0].text != null && notification.decorators[0].text.StartsWith("관심친구"))
             willShow = false;
 
+        string profileId = GetProfileIdFromNotification(notification);
+        string activityId = GetActivityIdFromNotification(notification);
+
+        _ = _instance.RunOnMainThreadAsync(async () =>
+        {
+            var timelineControl = _instance.FrOverlay.Content as TimelineControl;
+            if (timelineControl?.PostId == activityId) await timelineControl.RefreshContent();
+        });
+
         if (willShow)
         {
             var commentId = notification.comment_id;
@@ -95,21 +105,13 @@ public sealed partial class MainPage : Page
             openButton.SetContent("열기");
             openButton.AddArgument("Open");
             if (notification.scheme.StartsWith("kakaostory://profiles/"))
-            {
-                string profileId = GetProfileIdFromNotification(notification);
                 openButton.AddArgument($"Profile={profileId}");
-            }
             else if (notification.scheme.StartsWith("kakaostory://activities/"))
-            {
-                string activityId = GetActivityIdFromNotification(notification);
                 openButton.AddArgument($"Activity={activityId}");
-            }
             builder.AddButton(openButton);
 
             if (commentId != null)
             {
-                string activityId = GetActivityIdFromNotification(notification);
-
                 var likeButton = new ToastButton();
                 likeButton.SetContent("좋아요");
                 likeButton.AddArgument("Like");
@@ -128,14 +130,22 @@ public sealed partial class MainPage : Page
         //if(_instance.FrContent is TimelinePage) (_instance.FrContent as TimelinePage)
     }
 
-    private static string GetProfileIdFromNotification(ApiHandler.DataType.Notification notification) => notification.scheme.Replace("kakaostory://profiles/", "");
+    private static string GetProfileIdFromNotification(ApiHandler.DataType.Notification notification)
+    {
+        var scheme = notification.scheme;
+        if (!scheme.StartsWith("kakaostory://profiles/")) return null;
+
+        return scheme.Replace("kakaostory://profiles/", "");
+    }
+
     private static string GetActivityIdFromNotification(ApiHandler.DataType.Notification notification)
     {
-        var activityId = notification.scheme.Replace("kakaostory://activities/", "");
+        var scheme = notification.scheme;
+        if (!scheme.StartsWith("kakaostory://activities/")) return null;
+
+        var activityId = scheme.Replace("kakaostory://activities/", "");
         if (activityId.Contains("?profile_id="))
-        {
             activityId = activityId.Split("?profile_id=")[0];
-        }
 
         return activityId;
     }
@@ -277,6 +287,8 @@ public sealed partial class MainPage : Page
         HideOverlay();
         _instance.FrContent.Navigate(typeof(TimelinePage), id);
     }
+
+    public static TimelinePage GetTimelinePage() => _instance.FrContent.Content as TimelinePage;
 
     private void FriendPointerEntered(object sender, PointerRoutedEventArgs e) => Utility.ChangeCursor(true);
 

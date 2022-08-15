@@ -3,10 +3,14 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
+using KSMP.Pages;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Imaging;
+using StoryApi;
+using Windows.Security.Authentication.OnlineId;
 using Windows.Storage;
 using Windows.Storage.Pickers;
 using Windows.Storage.Streams;
@@ -17,13 +21,19 @@ namespace KSMP.Controls;
 
 public sealed partial class WritePostControl : UserControl
 {
-    private readonly InputControl _inputControl;
+    private InputControl _inputControl;
     private readonly Button _button;
+    private bool _isEdit = false;
     public delegate void PostCompleted();
     public PostCompleted OnPostCompleted;
+    public CommentData.PostData _postToShare = null;
+    public CommentData.PostData _postToEdit = null;
+
     private class Media
     {
         public string Path { get; set; }
+        public string Key { get; set; } = null;
+        public string Type { get; set; }
         public bool IsVideo { get; set; }
         public BitmapImage Thumbnail { get; set; }
     }
@@ -32,17 +42,44 @@ public sealed partial class WritePostControl : UserControl
     public WritePostControl(Button button = null)
     {
         InitializeComponent();
-        _inputControl = new InputControl();
         _button = button;
+        InitializeInputControl();
+        LvMedias.ItemsSource = _medias;
+    }
+
+    public WritePostControl(CommentData.PostData postToShare)
+    {
+        InitializeComponent();
+        _postToShare = postToShare;
+        TbWritePost.Text = "공유";
+        InitializeInputControl(false);
+        BdMedia.Visibility = Visibility.Collapsed;
+        if (postToShare.permission == "F")
+            CbiShareAll.Visibility = Visibility.Collapsed;
+        else if (postToShare.permission == "P")
+        {
+            CbiShareAll.Visibility = Visibility.Collapsed;
+            CbiShareFriend.Visibility = Visibility.Collapsed;
+        }
+        else if (postToShare.permission == "M")
+        {
+            CbiShareAll.Visibility = Visibility.Collapsed;
+            CbiShareFriend.Visibility = Visibility.Collapsed;
+            CbiSharePrivate.Visibility = Visibility.Collapsed;
+        }
+    }
+
+    private void InitializeInputControl(bool canAddMedia = true)
+    {
+        _inputControl = new InputControl();
         FrInputControl.Content = _inputControl;
         _inputControl.SetMinHeight(200);
         _inputControl.SetWidth(Width);
         _inputControl.SetMaxHeight(300);
         _inputControl.AcceptReturn(true);
         _inputControl.WrapText(true);
-        _inputControl.OnImagePasted += OnImagePasted;
+        if (canAddMedia) _inputControl.OnImagePasted += OnImagePasted;
         _inputControl.OnSubmitShortcutActivated += OnSubmitShortcutActivated;
-        LvMedias.ItemsSource = _medias;
     }
 
     private async void OnSubmitShortcutActivated() => await WritePostAsync();
@@ -66,57 +103,73 @@ public sealed partial class WritePostControl : UserControl
     private async Task WritePostAsync()
     {
         BtWritePost.IsEnabled = false;
-        var quoteDatas = StoryApi.Utils.GetQuoteDataFromString(_inputControl.GetTextBox().Text);
         PbMain.Visibility = Visibility.Visible;
-        var mediaData = new MediaData();
-        if (_medias.Count > 0)
+        var quoteDatas = StoryApi.Utils.GetQuoteDataFromString(_inputControl.GetTextBox().Text);
+        if (_postToShare != null)
+            await ApiHandler.SharePost(_postToShare.id, quoteDatas, _permissons[CbxPermission.SelectedIndex], true, null, null);
+        else
         {
-            var medias = new List<MediaData.MediaObject>();
-            foreach (var rawMedia in _medias)
+            var mediaData = new MediaData();
+            if (_medias.Count > 0)
             {
-                var media = new MediaData.MediaObject();
-                var path = rawMedia.Path;
-                if (!rawMedia.IsVideo)
+                var medias = new List<MediaData.MediaObject>();
+                foreach (var rawMedia in _medias)
                 {
-                    var type = path.ToLower().EndsWith(".gif") ? "gif" : "image";
-                    var key = await StoryApi.ApiHandler.UploadImage(new AssetData()
+                    var media = new MediaData.MediaObject();
+                    var path = rawMedia.Path;
+                    if (rawMedia.Key != null)
                     {
-                        Path = path,
-                    });
-                    media.media_path = key;
-                    media.media_type = type;
-                }
-                else
-                {
-                    var key = await StoryApi.ApiHandler.UploadVideo(new()
+                        media.media_path = rawMedia.Key;
+                        media.media_type = rawMedia.Type;
+                    }
+                    else
                     {
-                        Path = path,
-                    });
-                    media.media_path = key;
-                    await StoryApi.ApiHandler.WaitForVideoUploadFinish(key);
-                    media.media_type = "video";
+                        if (!rawMedia.IsVideo)
+                        {
+                            var type = path.ToLower().EndsWith(".gif") ? "gif" : "image";
+                            var key = await ApiHandler.UploadImage(new AssetData()
+                            {
+                                Path = path,
+                            });
+                            media.media_path = key;
+                            media.media_type = type;
+                        }
+                        else
+                        {
+                            var key = await StoryApi.ApiHandler.UploadVideo(new()
+                            {
+                                Path = path,
+                            });
+                            media.media_path = key;
+                            await StoryApi.ApiHandler.WaitForVideoUploadFinish(key);
+                            media.media_type = "video";
+                        }
+                    }
+                    medias.Add(media);
                 }
-                medias.Add(media);
-            }
-            mediaData.media = medias;
+                mediaData.media = medias;
 
-            string mediaType = null;
-            var imageExists = _medias.Any(x => !x.IsVideo);
-            var videoExists = _medias.Any(x => x.IsVideo);
-            if (imageExists && videoExists)
-                mediaType = "mixed";
-            else if (imageExists)
-                mediaType = "image";
-            else if (videoExists)
-                mediaType = "video";
-            mediaData.media_type = mediaType;
+                string mediaType = null;
+                var imageExists = _medias.Any(x => !x.IsVideo);
+                var videoExists = _medias.Any(x => x.IsVideo);
+                if (imageExists && videoExists)
+                    mediaType = "mixed";
+                else if (imageExists)
+                    mediaType = "image";
+                else if (videoExists)
+                    mediaType = "video";
+                mediaData.media_type = mediaType;
+            }
+            else mediaData = null;
+            var oldPaths = _postToEdit?.media?.Select(x => x.media_path).ToList();
+            await ApiHandler.WritePost(quoteDatas, mediaData, _permissons[CbxPermission.SelectedIndex], true, true, null, null, null, _postToEdit != null, oldPaths, _postToEdit?.id);
         }
-        else mediaData = null;
-        await StoryApi.ApiHandler.WritePost(quoteDatas, mediaData, _permissons[CbxPermission.SelectedIndex], true, true, null, null);
         PbMain.Visibility = Visibility.Collapsed;
         BtWritePost.IsEnabled = true;
         _button?.Flyout.Hide();
         OnPostCompleted.Invoke();
+
+        await MainPage.GetTimelinePage()?.Renew();
     }
 
     private async void OnAddMediaButtonClicked(object sender, Microsoft.UI.Xaml.Input.TappedRoutedEventArgs e)
@@ -128,7 +181,47 @@ public sealed partial class WritePostControl : UserControl
         fileOpenPicker.FileTypeFilter.Add(".gif");
         fileOpenPicker.FileTypeFilter.Add(".mp4");
         var files = (await fileOpenPicker.PickMultipleFilesAsync()).ToList();
-        foreach(var file in files) await AddMediaFromFile(file);
+        foreach (var file in files) await AddMediaFromFile(file);
+    }
+
+    public async Task SetEditMedia(CommentData.PostData postToEdit)
+    {
+        _postToEdit = postToEdit;
+        TbWritePost.Text = "글 수정";
+        var text = StoryApi.Utils.GetStringFromQuoteData(postToEdit.content_decorators, true);
+        _inputControl.GetTextBox().Text = text;
+
+        var serverMedias = postToEdit.media ?? new();
+        if (serverMedias.Count > 0) LvMedias.Visibility = Visibility.Visible;
+        foreach (var serverMedia in serverMedias)
+        {
+            var isVideo = serverMedia.url_hq != null;
+            var media = new Media()
+            {
+                IsVideo = isVideo,
+                Key = serverMedia.key,
+                Type = serverMedia.content_type,
+            };
+            if (!isVideo)
+            {
+                var path = Path.GetTempFileName();
+                WebClient client = new();
+                client.DownloadFile(serverMedia.origin_url, path);
+
+                var storageFile = await StorageFile.GetFileFromPathAsync(path);
+                using var stream = await storageFile.OpenAsync(FileAccessMode.Read);
+
+                var image = new BitmapImage();
+                image.SetSource(stream);
+                media.Thumbnail = image;
+            }
+            else
+            {
+                var image = Utility.GenerateImageUrlSource("ms-appx:///Assets/Video.png");
+                media.Thumbnail = image;
+            }
+            _medias.Add(media);
+        }
     }
 
     private async Task AddMediaFromFile(StorageFile file)
@@ -163,7 +256,7 @@ public sealed partial class WritePostControl : UserControl
     {
         var listView = sender as ListView;
         var media = listView.SelectedItem as Media;
-        if(media == null) return;
+        if (media == null) return;
         _medias.Remove(media);
         listView.SelectedItem = null;
         if (_medias.Count == 0) listView.Visibility = Visibility.Collapsed;

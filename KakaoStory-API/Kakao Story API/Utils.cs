@@ -17,6 +17,29 @@ namespace StoryApi
             return Convert.ToInt64((date - epoch).TotalSeconds);
         }
 
+        public static string GetStringFromQuoteData(List<QuoteData> datas, bool preserveQuote)
+        {
+            StringBuilder sb = new StringBuilder();
+            foreach (var data in datas)
+            {
+                if (preserveQuote)
+                {
+                    if (data.type.Equals("profile"))
+                    {
+                        sb.Append("{!{" + JsonConvert.SerializeObject(data, Formatting.None, new JsonSerializerSettings
+                        {
+                            NullValueHandling = NullValueHandling.Ignore
+                        }) + "}!}");
+                    }
+                    else
+                        sb.Append(data.text);
+                }
+                else
+                    sb.Append(data.text);
+            }
+            return sb.ToString();
+        }
+
         /// <summary>
         /// Spaghetti code, should be refactored.
         /// </summary>

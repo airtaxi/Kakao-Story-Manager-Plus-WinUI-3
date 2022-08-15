@@ -16,6 +16,7 @@ using Windows.UI.Popups;
 using Windows.UI.Core;
 using System.Runtime.InteropServices;
 using KSMP.Extension;
+using Microsoft.UI;
 
 namespace KSMP
 {
@@ -49,7 +50,7 @@ namespace KSMP
                     //{
                     //    await Utils.SetTextClipboard(media.url_hq, "링크가 복사되었습니다.");
                     //};
-                    var tempTextBlock = new TextBlock() { Text = "(영상 미지원)", FontSize = 20, FontWeight = FontWeights.Bold, VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Center };
+                    var tempTextBlock = new TextBlock() { Text = "(영상 미지원)", FontSize = 20, FontWeight = FontWeights.Bold, VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Center, Foreground = new SolidColorBrush(Colors.Black) };
                     medias.Add(tempTextBlock);
                 }
                 else

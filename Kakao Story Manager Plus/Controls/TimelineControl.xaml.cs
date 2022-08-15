@@ -18,6 +18,11 @@ using System.IO;
 using Windows.System;
 using StoryApi;
 using Windows.Storage;
+using Windows.ApplicationModel.DataTransfer;
+using Microsoft.UI.Xaml.Media;
+using Microsoft.UI;
+using static StoryApi.ApiHandler.DataType.TimeLineData;
+using System.Diagnostics;
 
 namespace KSMP.Controls;
 
@@ -30,6 +35,8 @@ public sealed partial class TimelineControl : UserControl
 
     private bool isBookmarking = false;
     private ApiHandler.DataType.UploadedImageProp _commentMedia = null;
+
+    public string PostId => _post?.id;
 
     public TimelineControl(PostData post, bool isShare = false, bool isOverlay = false)
     {
@@ -136,7 +143,7 @@ public sealed partial class TimelineControl : UserControl
             FiEmotions.Glyph = "\ueb52";
         }
     }
-    public async Task RefreshPost() => _post = await StoryApi.ApiHandler.GetPost(_post.id);
+    public async Task RefreshPost() => _post = await ApiHandler.GetPost(_post.id);
     private void RefreshUpButton()
     {
         if (_post.sympathized)
@@ -161,7 +168,7 @@ public sealed partial class TimelineControl : UserControl
         {
             if (_post.liked)
             {
-                await StoryApi.ApiHandler.LikePost(_post.id, null);
+                await ApiHandler.LikePost(_post.id, null);
                 await RefreshPost();
                 await RefreshContent();
                 HideEmotionsButtonFlyout();
@@ -170,9 +177,47 @@ public sealed partial class TimelineControl : UserControl
         BtEmotions.Flyout.Placement = FlyoutPlacementMode.TopEdgeAlignedLeft;
 
         var shareFlyout = new MenuFlyout();
-        shareFlyout.Items.Add(new MenuFlyoutItem() { Text = "스토리로 공유" });
-        shareFlyout.Items.Add(new MenuFlyoutItem() { Text = $"URL 복사하기" });
+        var sharePostMenuFlyoutItem = new MenuFlyoutItem() { Text = "스토리로 공유" };
+        var sharePostCommand = new XamlUICommand();
+        sharePostCommand.ExecuteRequested += SharePost;
+        sharePostMenuFlyoutItem.Command = sharePostCommand;
+        shareFlyout.Items.Add(sharePostMenuFlyoutItem);
+
+        if (!_post.sharable || _post.@object != null) 
+            sharePostMenuFlyoutItem.Visibility = Visibility.Collapsed;
+
+        var copyUrlPostMenuFlyoutItem = new MenuFlyoutItem() { Text = $"URL 복사하기" };
+        var copyUrlCommand = new XamlUICommand();
+        copyUrlCommand.ExecuteRequested += CopyPostUrl;
+        copyUrlPostMenuFlyoutItem.Command = copyUrlCommand;
+        shareFlyout.Items.Add(copyUrlPostMenuFlyoutItem);
         BtShare.Flyout = shareFlyout;
+
+    }
+
+    private void SharePost(XamlUICommand sender, ExecuteRequestedEventArgs args)
+    {
+        GdOverlay.Visibility = Visibility.Visible;
+        var control = new WritePostControl(_post);
+        FrOverlay.Content = control;
+        control.OnPostCompleted += HideOverlay;
+    }
+
+    private void HideOverlay()
+    {
+        GdOverlay.Visibility = Visibility.Collapsed;
+        FrOverlay.Content = null;
+    }
+
+    private async void CopyPostUrl(XamlUICommand sender, ExecuteRequestedEventArgs args)
+    {
+        string userId = _post.actor.id;
+        string postId = _post.id.Split(new string[] { "." }, StringSplitOptions.None)[1];
+        string postUrl = "https://story.kakao.com/" + userId + "/" + postId;
+        var dataPackage = new DataPackage();
+        dataPackage.SetText(postUrl);
+        Clipboard.SetContent(dataPackage);
+        await this.ShowMessageDialogAsync("포스트의 URL이 클립보드에 복사되었습니다", "안내");
     }
 
     public async Task RefreshContent() => await RefreshContent(_post, false);
@@ -180,7 +225,7 @@ public sealed partial class TimelineControl : UserControl
     {
         if (isFirst) GdLoading.Visibility = Visibility.Visible;
         //if (_isOverlay && isFirst)
-        post = await ApiHandler.GetPost(post.id);
+        if(!_isShare) post = await ApiHandler.GetPost(post.id);
 
         TbName.Text = post.actor.display_name;
         var timestampString = StoryApi.Utils.GetTimeString(post.created_at);
@@ -237,14 +282,14 @@ public sealed partial class TimelineControl : UserControl
             BdComments.Visibility = Visibility.Collapsed;
         }
 
-        if(post.like_count > 0) RnEmotions.Text = post.like_count.ToString();
+        if (post.like_count > 0) RnEmotions.Text = post.like_count.ToString();
         else RtbEmotions.Visibility = Visibility.Collapsed;
 
         var shareCount = post.share_count - post.sympathy_count;
-        if(shareCount > 0) RnShares.Text = shareCount.ToString();
+        if (shareCount > 0) RnShares.Text = shareCount.ToString();
         else RtbShares.Visibility = Visibility.Collapsed;
 
-        if(post.sympathy_count > 0) RnUps.Text = post.sympathy_count.ToString();
+        if (post.sympathy_count > 0) RnUps.Text = post.sympathy_count.ToString();
         else RtbUps.Visibility = Visibility.Collapsed;
 
         if (_isShare || (RtbComments.Visibility == Visibility.Collapsed && RtbEmotions.Visibility == Visibility.Collapsed
@@ -264,7 +309,7 @@ public sealed partial class TimelineControl : UserControl
         RefreshBookmarkButton();
         RefreshEmotionsButton();
 
-        if(isFirst) GdLoading.Visibility = Visibility.Collapsed;
+        if (isFirst) GdLoading.Visibility = Visibility.Collapsed;
     }
 
     private void OnDotMenuTapped(object sender, TappedRoutedEventArgs e)
@@ -278,25 +323,52 @@ public sealed partial class TimelineControl : UserControl
         };
         flyout.Items.Add(menuAddFavorite);
         flyout.Items.Add(new MenuFlyoutSeparator());
-        var menuHidePost = new MenuFlyoutItem() { Text = "이 글 숨기기" };
-        menuHidePost.Click += async (o, e2) =>
+        if(_post.actor.id != MainPage.Me.id)
         {
-            await StoryApi.ApiHandler.HidePost(_post.id);
-            //Pages.TimelinePage.HidePostFromTimeline(this);
-            MainPage.HideOverlay();
-        };
-        flyout.Items.Add(menuHidePost);
+            var menuHidePost = new MenuFlyoutItem() { Text = "이 글 숨기기" };
+            menuHidePost.Click += async (o, e2) =>
+            {
+                await ApiHandler.HidePost(_post.id);
+                MainPage.HideOverlay();
+                await MainPage.GetTimelinePage()?.RemovePost(_post.id);
+            };
+            flyout.Items.Add(menuHidePost);
+        }
+        else
+        {
+            var menuDeletePost = new MenuFlyoutItem() { Text = "글 삭제하기" };
+            menuDeletePost.Click += async (o, e2) =>
+            {
+                await ApiHandler.DeletePost(_post.id);
+                MainPage.HideOverlay();
+                await MainPage.GetTimelinePage()?.RemovePost(_post.id);
+            };
+            flyout.Items.Add(menuDeletePost);
+
+            var menuEditPost = new MenuFlyoutItem() { Text = "글 수정하기" };
+            menuEditPost.Click += async (o, e2) =>
+            {
+                GdLoading.Visibility = Visibility.Visible;
+                GdOverlay.Visibility = Visibility.Visible;
+                var control = new WritePostControl();
+                await control.SetEditMedia(_post);
+                FrOverlay.Content = control;
+                control.OnPostCompleted += HideOverlay;
+                GdLoading.Visibility = Visibility.Collapsed;
+            };
+            flyout.Items.Add(menuEditPost);
+        }
         var menuBlockProfile = new MenuFlyoutItem() { Text = _post.actor.is_feed_blocked ? $"'{_post.actor.display_name}' 글 받기" : $"'{_post.actor.display_name}' 글 안받기" };
         menuBlockProfile.Click += async (o, e2) =>
         {
-            await StoryApi.ApiHandler.BlockProfile(_post.actor.id, _post.actor.is_feed_blocked);
+            await ApiHandler.BlockProfile(_post.actor.id, _post.actor.is_feed_blocked);
             await RefreshPost();
         };
         flyout.Items.Add(menuBlockProfile);
         var menuMutePost = new MenuFlyoutItem() { Text = _post.push_mute ? "이 글 알림 받기" : "이 글 알림 받지 않기" };
         menuMutePost.Click += async (o, e2) =>
         {
-            await StoryApi.ApiHandler.MutePost(_post.id, !_post.push_mute);
+            await ApiHandler.MutePost(_post.id, !_post.push_mute);
             await RefreshPost();
         };
         flyout.Items.Add(menuMutePost);
@@ -320,7 +392,7 @@ public sealed partial class TimelineControl : UserControl
     {
         var isUp = _post.sympathized;
         BtUp.IsEnabled = false;
-        await StoryApi.ApiHandler.UpPost(_post.id, isUp);
+        await ApiHandler.UpPost(_post.id, isUp);
         BtUp.IsEnabled = true;
         await RefreshPost();
         RefreshUpButton();
@@ -332,6 +404,12 @@ public sealed partial class TimelineControl : UserControl
         UIElement item = (FvMedia.ItemsSource as List<UIElement>)[index];
         if (item is Image)
         {
+            var image = item as Image;
+            if (image.Tag is string)
+            {
+                Process.Start(new ProcessStartInfo(image.Tag as string) { UseShellExecute = true });
+                return;
+            }
             var images = _post.media.Where(x => x.content_type != "video/mp4").ToList();
             var control = new ImageViewerControl(images, index);
             MainPage.ShowOverlay(control, _isOverlay);
@@ -374,10 +452,10 @@ public sealed partial class TimelineControl : UserControl
         flyout.Content = progressRing;
         flyout.ShowAt(RtbShares);
 
-        var shares = await StoryApi.ApiHandler.GetShares(isUp, _post, null);
+        var shares = await ApiHandler.GetShares(isUp, _post, null);
         var control = new FriendListControl();
         List<FriendProfile> friendProfiles = new();
-        foreach(var share in shares)
+        foreach (var share in shares)
         {
             var friendProfile = new FriendProfile();
             friendProfile.ProfileUrl = share.actor.GetValidUserProfileUrl();
@@ -403,7 +481,7 @@ public sealed partial class TimelineControl : UserControl
         var contriol = profile.Metadata.Control as FriendListControl;
 
         contriol.ShowLoading();
-        var post = await StoryApi.ApiHandler.GetPost(postId);
+        var post = await ApiHandler.GetPost(postId);
         contriol.HideLoading();
 
         if (profile.Metadata.IsUp) MainPage.ShowProfile(profile.Id);
@@ -415,8 +493,13 @@ public sealed partial class TimelineControl : UserControl
         }
     }
 
-    private void FrShare_Tapped(object sender, TappedRoutedEventArgs e)
+    private async void OnSharePostTapped(object sender, TappedRoutedEventArgs e)
     {
+        if(_post.@object.actor.relationship != "F")
+        {
+            await this.ShowMessageDialogAsync("해당 사용자와 친구를 맺어야 글을 볼 수 있습니다", "오류");
+            return;
+        }
         e.Handled = true;
         var control = new TimelineControl(_post.@object, false, true);
         MainPage.ShowOverlay(control);
@@ -445,7 +528,7 @@ public sealed partial class TimelineControl : UserControl
 
     private async void OnAddMediaButtonClicked(object sender, RoutedEventArgs e)
     {
-        if(_commentMedia == null)
+        if (_commentMedia == null)
         {
             var fileOpenPicker = new FileOpenPicker();
             InitializeWithWindow.Initialize(fileOpenPicker, WindowNative.GetWindowHandle(MainWindow.Instance));
@@ -469,5 +552,14 @@ public sealed partial class TimelineControl : UserControl
         _commentMedia = await ApiHandler.UploadImage(file.Path);
         FiAddMedia.Glyph = "\ue74d";
         BtAddMedia.IsEnabled = true;
+    }
+
+    private void OverlayPreviewKeyDown(object sender, KeyRoutedEventArgs e)
+    {
+        if (e.Key == VirtualKey.Escape)
+        {
+            HideOverlay();
+            e.Handled = true;
+        }
     }
 }

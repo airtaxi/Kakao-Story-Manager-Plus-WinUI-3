@@ -1,5 +1,6 @@
 ﻿using StoryApi;
 using System.Threading.Tasks;
+using System.Linq;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
@@ -11,10 +12,13 @@ public sealed partial class TimelinePage : Page
 {
     public string Id = null;
     private static TimelinePage _instance;
+    public bool IsMyTimeline => Id == MainPage.Me.id;
+
     public TimelinePage()
     {
         InitializeComponent();
     }
+
     protected override async void OnNavigatedTo(NavigationEventArgs e)
     {
         string id = e.Parameter as string;
@@ -33,6 +37,19 @@ public sealed partial class TimelinePage : Page
 
     string lastFeed = null;
     public static async Task Refresh() => await _instance.Refresh();
+    public async Task RemovePost(string postId)
+    {
+        foreach (FrameworkElement item in LvContent.Items)
+        {
+            var timelineControl = item as Controls.TimelineControl;
+            if (timelineControl?.PostId == postId) LvContent.Items.Remove(item);
+        }
+    }
+    public async Task Renew()
+    {
+        lastFeed = null;
+        await Refresh();
+    }
     private async Task Refresh(string from = null)
     {
         PrLoading.Visibility = Visibility.Visible;

@@ -20,6 +20,7 @@
 	  <Content Remove="Assets\Error.png" />
 	  <Content Remove="Assets\Segoe Fluent Icons.ttf" />
 	  <Content Remove="Assets\video.png" />
+	  <Content Remove="Assets\VideoThumbnail.png" />
 	</ItemGroup>
 	<ItemGroup>
 	  <None Remove="Controls\EmotionsListControl.xaml" />
@@ -64,6 +65,9 @@
 	</ItemGroup>
 	<ItemGroup>
 	  <None Update="Assets\Video.png">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
+	  <None Update="Assets\VideoThumbnail.png">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>
 	  <None Update="icon.ico">

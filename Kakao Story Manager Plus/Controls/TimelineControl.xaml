@@ -14,7 +14,6 @@
     </UserControl.Resources>
     <Frame>
         <Grid>
-            
             <Grid x:Name="GdMain" Margin="10" Background="White" CornerRadius="10">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="auto"/>
@@ -23,12 +22,12 @@
                     <RowDefinition Height="auto"/>
                     <RowDefinition Height="auto"/>
                 </Grid.RowDefinitions>
-            
+
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition x:Name="CdComment" Width="400" />
                 </Grid.ColumnDefinitions>
-            
+
                 <Grid Grid.Row="0" Margin="10,10,10,-5" Padding="20,10,20,10">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="auto"/>
@@ -52,7 +51,7 @@
                             <Rectangle Stroke="LightGray"/>
                             <FlipView x:Name="FvMedia" Visibility="Collapsed" HorizontalAlignment="Center" VerticalAlignment="Center" Width="auto" Height="400" Margin="1" Tapped="OnMediaTapped" />
                         </Grid>
-                        <Frame x:Name="FrShare" Tapped="FrShare_Tapped"/>
+                        <Frame x:Name="FrShare" Tapped="OnSharePostTapped"/>
                         <Frame x:Name="FrLink"/>
                     </StackPanel>
                 </ScrollViewer>
@@ -84,14 +83,14 @@
                                     <Run x:Name="RnEmotions" Text="0" FontWeight="Bold"/>
                                 </Paragraph>
                             </RichTextBlock>
-                            
+
                             <RichTextBlock x:Name="RtbShares" Margin="10,0,0,0" Tag="Share" Tapped="ShareCountTextBlockTapped" IsTextSelectionEnabled="False">
                                 <Paragraph>
                                     <Run Text="공유"/>
                                     <Run x:Name="RnShares" Text="0" FontWeight="Bold"/>
                                 </Paragraph>
                             </RichTextBlock>
-                            
+
                             <RichTextBlock x:Name="RtbUps" Margin="10,0,0,0" Tag="Up" Tapped="ShareCountTextBlockTapped" IsTextSelectionEnabled="False">
                                 <Paragraph>
                                     <Run Text="UP"/>
@@ -117,7 +116,7 @@
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="8*"/>
                                 <ColumnDefinition Width="50"/>
-                                <ColumnDefinition Width="100"/>
+                                <ColumnDefinition Width="80"/>
                             </Grid.ColumnDefinitions>
                             <Frame x:Name="FrComment" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Stretch" Margin="30,0,5,0"/>
                             <Button x:Name="BtAddMedia" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Stretch" Margin="5,0,5,0" Click="OnAddMediaButtonClicked">
@@ -133,11 +132,14 @@
                 </Grid>
                 <Border x:Name="BdShare" CornerRadius="10" BorderBrush="LightGray" Grid.RowSpan="4" BorderThickness="1" Visibility="Collapsed"/>
             </Grid>
-            <Grid x:Name="GdLoading" Visibility="Collapsed">
+            <Grid x:Name="GdOverlay" Margin="10" CornerRadius="10" Visibility="Collapsed" PreviewKeyDown="OverlayPreviewKeyDown">
+                <Rectangle Fill="Black" Opacity="0.5"/>
+                <Frame x:Name="FrOverlay" Background="White" Padding="10" CornerRadius="10" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            </Grid>
+            <Grid x:Name="GdLoading" Margin="10" CornerRadius="10" Visibility="Collapsed">
                 <Rectangle Fill="Black" Opacity="0.5"/>
                 <ProgressRing IsIndeterminate="True" IsActive="True"/>
             </Grid>
         </Grid>
-
     </Frame>
 </UserControl>

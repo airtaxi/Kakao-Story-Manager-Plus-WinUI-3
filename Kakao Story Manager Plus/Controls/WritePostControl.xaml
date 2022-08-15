@@ -17,7 +17,7 @@
             <RowDefinition Height="auto"/>
         </Grid.RowDefinitions>
         <Frame x:Name="FrInputControl" Margin="5"/>
-        <Border Grid.Row="1" BorderThickness="0" BorderBrush="LightGray" CornerRadius="10" Margin="5,5,5,0">
+        <Border x:Name="BdMedia" Grid.Row="1" BorderThickness="0" BorderBrush="LightGray" CornerRadius="10" Margin="5,5,5,0">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
@@ -63,22 +63,22 @@
         </Grid>
         <Grid Grid.Row="3" Margin="5">
             <Button x:Name="BtWritePost" HorizontalAlignment="Right" Height="40" Background="#E96A49" Padding="20,0,20,0" Click="OnWriteButtonClicked">
-                <TextBlock Text="글 작성하기" FontSize="15" FontWeight="Bold" Foreground="White"/>
+                <TextBlock x:Name="TbWritePost" Text="글 작성하기" FontSize="15" FontWeight="Bold" Foreground="White"/>
             </Button>
             <ComboBox x:Name="CbxPermission" SelectedIndex="1">
-                <ComboBoxItem>
+                <ComboBoxItem x:Name="CbiShareAll">
                     <StackPanel Orientation="Horizontal">
                         <FontIcon FontFamily="{StaticResource Fluent Icons}" Margin="5" Foreground="#CCCCCC" Width="30" Glyph="&#xe774;"/>
                         <TextBlock Text="전체 공개" Margin="5" FontWeight="Bold"/>
                     </StackPanel>
                 </ComboBoxItem>
-                <ComboBoxItem>
+                <ComboBoxItem x:Name="CbiShareFriend">
                     <StackPanel Orientation="Horizontal">
                         <FontIcon FontFamily="{StaticResource Fluent Icons}" Margin="5" Foreground="#CCCCCC" Width="30" Glyph="&#xe716;"/>
                         <TextBlock Text="친구 공개" Margin="5" FontWeight="Bold"/>
                     </StackPanel>
                 </ComboBoxItem>
-                <ComboBoxItem>
+                <ComboBoxItem x:Name="CbiSharePrivate">
                     <StackPanel Orientation="Horizontal">
                         <FontIcon FontFamily="{StaticResource Fluent Icons}" Margin="5" Foreground="#CCCCCC" Width="30" Glyph="&#xe9d5;"/>
                         <TextBlock Text="편한 친구 공개" Margin="5" FontWeight="Bold"/>

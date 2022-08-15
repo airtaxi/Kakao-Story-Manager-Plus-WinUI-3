@@ -1,4 +1,5 @@
-﻿using KSMP.Extension;
+﻿using ABI.System;
+using KSMP.Extension;
 using Microsoft.UI.Text;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -7,8 +8,10 @@ using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using static StoryApi.ApiHandler.DataType;
 using static StoryApi.ApiHandler.DataType.CommentData;
+using Uri = System.Uri;
 
 namespace KSMP.Utils
 {
@@ -70,6 +73,21 @@ namespace KSMP.Utils
                     //    await pageContext.SetTextClipboard(media.url_hq, "링크가 복사되었습니다.");
                     //};
                     //medias.Add(videoMedia);
+
+                    var videoThumbnail = new Image
+                    {
+                        Stretch = Stretch.Uniform,
+                        HorizontalAlignment = HorizontalAlignment.Center,
+                        VerticalAlignment = VerticalAlignment.Center
+                    };
+                    var bitmapImage = new BitmapImage
+                    {
+                        UriSource = new Uri("ms-appx:///Assets/VideoThumbnail.png")
+                    };
+                    videoThumbnail.Source = bitmapImage;
+                    videoThumbnail.Tag = media.url_hq;
+                    videoThumbnail.Tapped += (s, e) => Process.Start(new ProcessStartInfo(media.url_hq) { UseShellExecute = true });
+                    medias.Add(videoThumbnail);
                 }
                 else
                 {

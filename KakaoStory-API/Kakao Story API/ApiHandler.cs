@@ -233,7 +233,7 @@ namespace StoryApi
             HttpWebRequest webRequest = GenerateDefaultProfile(requestURI, method);
             return await GetResponseFromRequest(webRequest) != null;
         }
-        public static async Task<bool> SharePost(string postId, string text, List<QuoteData> quoteDatas, string permission, bool commentable, List<string> with_ids, List<string> trust_ids)
+        public static async Task<bool> SharePost(string postId, List<QuoteData> quoteDatas, string permission, bool commentable, List<string> with_ids, List<string> trust_ids)
         {
             string requestURI = "https://story.kakao.com/a/activities/" + postId + "/share";
             HttpWebRequest webRequest = GenerateDefaultProfile(requestURI, "POST");
@@ -243,9 +243,9 @@ namespace StoryApi
                 + "&permission=" + permission + "&comment_all_writable=" + (commentable ? "true" : "false")
                 + "&is_must_read=false&enable_share=true";
 
-            if (with_ids.Count > 0)
+            if ((with_ids?.Count ?? 0) > 0)
                 postData += "&with_tags=" + Uri.EscapeDataString(JsonConvert.SerializeObject(with_ids));
-            if (trust_ids.Count > 0)
+            if ((trust_ids?.Count ?? 0) > 0)
                 postData += "&allowed_profile_ids=" + Uri.EscapeDataString(JsonConvert.SerializeObject(trust_ids));
 
             byte[] byteArray = Encoding.UTF8.GetBytes(postData);
@@ -762,7 +762,7 @@ namespace StoryApi
                 postDataBuilder.Append("&allowed_profile_ids=" + Uri.EscapeDataString(JsonConvert.SerializeObject(trust_ids)));
 
             string mediaText = JsonConvert.SerializeObject(mediaData);
-            if (mediaText != null)
+            if (mediaText != null && mediaData != null)
             {
                 postDataBuilder.Append("&" + Uri.EscapeDataString("media") + "=" + Uri.EscapeDataString(mediaText));
             }
@@ -820,7 +820,7 @@ namespace StoryApi
                 var readStream = await request.GetResponseAsync();
                 //Console.WriteLine("L2");
                 var respReader = readStream.GetResponseStream();
-                await (new StreamReader(respReader, Encoding.UTF8)).ReadToEndAsync();
+                var response = await (new StreamReader(respReader, Encoding.UTF8)).ReadToEndAsync();
                 respReader.Close();
                 retryCount = 0;
             }
