@@ -110,7 +110,7 @@ public sealed partial class TimelineControl : UserControl
             {
                 BtEmotions.Background = Utils.Common.GetColorFromHexa("#FFE25434");
                 FiEmotions.Foreground = Utils.Common.GetColorFromHexa("#FFFFFFFF");
-                FiEmotions.Glyph = "\xeb52;";
+                FiEmotions.Glyph = "\xeb52";
             }
             else if (emotion == "good")
             {
@@ -525,7 +525,8 @@ public sealed partial class TimelineControl : UserControl
             return;
         }
         e.Handled = true;
-        var control = new TimelineControl(_post.@object, false, true);
+        var newPost = await ApiHandler.GetPost(_post.@object.id);
+        var control = new TimelineControl(newPost, false, true);
         MainPage.ShowOverlay(control);
     }
 
