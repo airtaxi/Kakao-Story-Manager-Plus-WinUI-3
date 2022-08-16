@@ -12,6 +12,7 @@ using System.Diagnostics;
 using System.IO;
 using Microsoft.UI.Windowing;
 using Version = System.Version;
+using System.Drawing.Text;
 
 namespace KSMP.Pages;
 
@@ -33,10 +34,13 @@ public sealed partial class LoginPage : Page
 
     private async void Initialize()
     {
+        await Task.Delay(100);
         SetLoading(true, "의존성 패키지 검사중");
         await CheckWebView2Runtime();
         SetLoading(true, "버전 확인중");
         await CheckVersion();
+        SetLoading(true, "폰트 확인중");
+        await CheckFont();
         SetLoading(false);
         var hasRememberedCreditionals = Utils.Configuration.GetValue("willRememberCredentials") as bool? ?? false;
         if (hasRememberedCreditionals)
@@ -52,6 +56,34 @@ public sealed partial class LoginPage : Page
         BtLogin.IsEnabled = false;
 
         MainWindow.DisableLoginRequiredMenuFlyoutItems();
+    }
+
+    private async Task CheckFont()
+    {
+        var fontsCollection = new InstalledFontCollection();
+        var segoeFluentIconsExist = fontsCollection.Families.Any(x => x.Name == "Segoe Fluent Icons");
+        if(!segoeFluentIconsExist)
+        {
+            await this.ShowMessageDialogAsync("프로그램 아이콘 표시에 필요한 폰트 파일이 설치되어있지 않습니다.\n확인을 누르면 폰트 파일을 다운로드 받습니다.\n이후 폰트를 설치하고 프로그램을 다시 실행해주세요.", "오류");
+            
+            var client = new WebClient();
+            SetLoading(true, "폰트 다운로드 초기화중");
+
+            var tempFile = Path.Combine(Path.GetTempPath(), $"Segoe Fluent Icons.ttf");
+
+            client.DownloadFileCompleted += (_, _) =>
+            {
+                Process.Start(new ProcessStartInfo(tempFile) { UseShellExecute = true });
+                Environment.Exit(0);
+            };
+
+            client.DownloadProgressChanged += (_, e) =>
+            {
+                SetLoading(true, $"폰트 다운로드중 ({e.ProgressPercentage}%)");
+            };
+
+            await client.DownloadFileTaskAsync(new Uri("https://kagamine-rin.com/KSMP/font.ttf"), tempFile);
+        }
     }
 
     public void SetLoading(bool isLoading, string message = null)
@@ -78,7 +110,6 @@ public sealed partial class LoginPage : Page
 
         if(result > 0)
         {
-            await Task.Delay(100);
             await this.ShowMessageDialogAsync("프로그램 업데이트가 필요합니다.\n확인을 누르시면 업데이트를 진행합니다.", "안내");
             SetLoading(true, "업데이터 다운로드 초기화중");
 
@@ -112,7 +143,6 @@ public sealed partial class LoginPage : Page
 
         if (string.IsNullOrEmpty(version))
         {
-            await Task.Delay(100);
             TaskCompletionSource taskCompletionSource = new();
             await this.ShowMessageDialogAsync("프로그램 구동을 위해 WebView2 런타임이 필요합니다.\n확인 버튼을 누르면 설치합니다.", "안내");
             SetLoading(true, "런타임 다운로더 초기화중");
