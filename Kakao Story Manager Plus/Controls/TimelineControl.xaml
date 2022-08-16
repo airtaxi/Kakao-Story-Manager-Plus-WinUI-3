@@ -150,7 +150,7 @@
                 <Rectangle Fill="Black" Opacity="0.85"/>
                 <Frame x:Name="FrOverlay" Background="White" Padding="10" CornerRadius="10" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                 <Button Background="Transparent" BorderThickness="0" Click="OnOverlayCloseButtonClicked" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="10">
-                    <Viewbox>
+                    <Viewbox Width="20" Height="20">
                         <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe711;" Foreground="White"/>
                     </Viewbox>
                 </Button>
