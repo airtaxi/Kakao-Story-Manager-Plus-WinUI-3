@@ -326,13 +326,6 @@ public sealed partial class TimelineControl : UserControl
     {
         var icon = sender as FontIcon;
         var flyout = new MenuFlyout();
-        var menuAddFavorite = new MenuFlyoutItem() { Text = _post.bookmarked ? "관심글 삭제하기" : "관심글로 저장하기" };
-        menuAddFavorite.Click += (o, e2) =>
-        {
-            OnAddBookmarkTapped(null, null);
-        };
-        flyout.Items.Add(menuAddFavorite);
-        flyout.Items.Add(new MenuFlyoutSeparator());
         if(_post.actor.id != MainPage.Me.id)
         {
             var menuHidePost = new MenuFlyoutItem() { Text = "이 글 숨기기" };
