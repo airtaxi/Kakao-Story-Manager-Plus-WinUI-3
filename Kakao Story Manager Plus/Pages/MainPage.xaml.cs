@@ -175,7 +175,7 @@ public sealed partial class MainPage : Page
         if (presenter.State == OverlappedPresenterState.Minimized)
             presenter.Restore();
         presenter.IsAlwaysOnTop = true;
-        await Task.Delay(1000);
+        await Task.Delay(2000);
         presenter.IsAlwaysOnTop = false;
     }
 
