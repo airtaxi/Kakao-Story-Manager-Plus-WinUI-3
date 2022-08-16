@@ -4,7 +4,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Timers;
-using ABI.System;
 using H.NotifyIcon;
 using KSMP.Controls;
 using KSMP.Extension;
@@ -31,7 +30,7 @@ public sealed partial class MainPage : Page
     private static MainPage _instance;
     public static ApiHandler.DataType.UserProfile.ProfileData Me;
     public static Friends Friends = null;
-    private Timer notificationTimer = new();
+    private Timer _notificationTimer = new();
 
     public MainPage()
     {
@@ -40,9 +39,9 @@ public sealed partial class MainPage : Page
         _instance = this;
         InitializeWritePostFlyout();
         InitializeSettingsFlyout();
-        notificationTimer.Interval = 1000;
-        notificationTimer.Elapsed += OnNotificationTimerElapsed;
-        notificationTimer.Start();
+        _notificationTimer.Interval = 1000;
+        _notificationTimer.Elapsed += OnNotificationTimerElapsed;
+        _notificationTimer.Start();
     }
 
     private void InitializeSettingsFlyout()
@@ -69,18 +68,27 @@ public sealed partial class MainPage : Page
     private DateTime? _lastNotificationTimestamp = null;
     private async void OnNotificationTimerElapsed(object sender, ElapsedEventArgs e)
     {
-        var notifications = await ApiHandler.GetNotifications();
-
-        for (int i = 0; i < notifications.Count; i++)
+        try
         {
-            ApiHandler.DataType.Notification notification = notifications[i];
-            if (_lastNotificationTimestamp != null && notification?.created_at > _lastNotificationTimestamp)
-                ShowNotificationToast(notification);
-            else break;
-        }
+            _notificationTimer.Stop();
+            var notifications = await ApiHandler.GetNotifications();
 
-        var first = notifications.FirstOrDefault();
-        _lastNotificationTimestamp = first?.created_at;
+            for (int i = 0; i < notifications.Count; i++)
+            {
+                ApiHandler.DataType.Notification notification = notifications[i];
+                if (_lastNotificationTimestamp != null && notification?.created_at > _lastNotificationTimestamp)
+                    ShowNotificationToast(notification);
+                else break;
+            }
+
+            var first = notifications.FirstOrDefault();
+            _lastNotificationTimestamp = first?.created_at;
+        }
+        catch (Exception)
+        {
+            //Ignore
+        }
+        finally { _notificationTimer.Start(); }
     }
 
     private static void ShowNotificationToast(ApiHandler.DataType.Notification notification)
@@ -280,8 +288,8 @@ public sealed partial class MainPage : Page
 
     private async void OnLogoutButtonClicked(object sender, RoutedEventArgs e)
     {
-        notificationTimer.Stop();
-        notificationTimer.Dispose();
+        _notificationTimer.Stop();
+        _notificationTimer.Dispose();
         Utils.Configuration.SetValue("willRememberCredentials", false);
         await this.ShowMessageDialogAsync("로그아웃되었습니다.\n프로그램을 재실행해주세요.", "안내");
         Environment.Exit(0);
