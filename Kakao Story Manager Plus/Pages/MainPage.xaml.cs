@@ -165,11 +165,12 @@ public sealed partial class MainPage : Page
         MainWindow.Instance.Activate();
         MainWindow.Instance.Show();
         var appWindow = MainWindow.Instance.GetAppWindow();
-        appWindow.Show();
         var presenter = appWindow.Presenter as OverlappedPresenter;
-        if (presenter.State == OverlappedPresenterState.Minimized) presenter.Restore();
+        appWindow.Show();
+        if (presenter.State == OverlappedPresenterState.Minimized)
+            presenter.Restore();
         presenter.IsAlwaysOnTop = true;
-        await Task.Delay(100);
+        await Task.Delay(1000);
         presenter.IsAlwaysOnTop = false;
     }
 

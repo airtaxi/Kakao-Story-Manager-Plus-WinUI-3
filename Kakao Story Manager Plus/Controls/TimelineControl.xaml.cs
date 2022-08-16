@@ -76,7 +76,7 @@ public sealed partial class TimelineControl : UserControl
             SvContent.Padding = new Thickness(20, 0, 20, 20);
             GdMain.Margin = new Thickness(0);
         }
-        if (post.@object != null)
+        if (post.@object != null && post.@object.id != null)
             FrShare.Content = new TimelineControl(post.@object, true);
         if (post.scrap != null)
             FrLink.Content = new LinkControl(post.scrap);

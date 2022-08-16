@@ -16,6 +16,7 @@ using Windows.Storage;
 using Windows.Storage.Pickers;
 using Windows.Storage.Streams;
 using WinRT.Interop;
+using static KSMP.ClassManager;
 using static StoryApi.ApiHandler.DataType;
 
 namespace KSMP.Controls;
@@ -103,8 +104,8 @@ public sealed partial class WritePostControl : UserControl
     {
         "A",
         "F",
-        "P",
-        "M"
+        "M",
+        "P"
     };
 
     private async void OnWriteButtonClicked(object sender, RoutedEventArgs e) => await WritePostAsync();
@@ -128,8 +129,8 @@ public sealed partial class WritePostControl : UserControl
                     var path = rawMedia.Path;
                     if (rawMedia.Key != null)
                     {
-                        media.media_path = rawMedia.Key;
-                        media.media_type = rawMedia.Type;
+                        media.media_path = rawMedia.Path;
+                        media.media_type = rawMedia.Type.Split('/')[0];
                     }
                     else
                     {
@@ -154,6 +155,7 @@ public sealed partial class WritePostControl : UserControl
                             media.media_type = "video";
                         }
                     }
+                    media.caption = new();
                     medias.Add(media);
                 }
                 mediaData.media = medias;
@@ -195,6 +197,13 @@ public sealed partial class WritePostControl : UserControl
 
     public async Task SetEditMedia(CommentData.PostData postToEdit)
     {
+        var permissionIndex = 0;
+        if (postToEdit.permission == "A")
+            permissionIndex = 1;
+        else if (postToEdit.permission == "M")
+            permissionIndex = 2;
+
+        CbxPermission.SelectedIndex = permissionIndex;
         _postToEdit = postToEdit;
         TbWritePost.Text = "글 수정";
         var text = StoryApi.Utils.GetStringFromQuoteData(postToEdit.content_decorators, true);
@@ -209,7 +218,8 @@ public sealed partial class WritePostControl : UserControl
             {
                 IsVideo = isVideo,
                 Key = serverMedia.key,
-                Type = serverMedia.content_type,
+                Path = serverMedia.media_path,
+                Type = serverMedia.content_type
             };
             if (!isVideo)
             {

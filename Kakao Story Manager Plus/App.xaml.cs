@@ -59,7 +59,7 @@ namespace KSMP
         {
             var path = Path.Combine(BinaryDirectory, "error.log");
             var text = $"{exception.Message}: {exception.StackTrace}";
-            File.AppendAllText(path, text);
+            File.AppendAllText(path, text + Environment.NewLine + Environment.NewLine + Environment.NewLine);
         }
 
         private async Task ShowErrorMessage(Exception exception) => await MainPage.GetInstance().ShowMessageDialogAsync($"{exception.Message}/{exception.StackTrace}", "런타임 오류");
@@ -76,6 +76,7 @@ namespace KSMP
             if (!LoginPage.IsLoggedIn) return;
             ToastArguments args = ToastArguments.Parse(toastArgs.Argument);
             var keys = args.Select(x => x.Key).ToList();
+            if (keys.Count == 0) return;
             var action = keys[0];
 
             var activityId = keys.Where(x => x.StartsWith("Activity=")).SingleOrDefault();

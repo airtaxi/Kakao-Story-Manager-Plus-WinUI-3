@@ -6,6 +6,13 @@ namespace KSMP
 {
     public class ClassManager
     {
+        public enum PostWritingPermission
+        {
+            F,
+            A,
+            M
+        };
+
         public class PostInformationMetadata
         {
             public object Tag { get; set; }

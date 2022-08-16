@@ -13,6 +13,7 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using static KSMP.ClassManager;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -23,13 +24,6 @@ namespace KSMP.Controls
     {
         private static readonly string AppName = "KakaoStoryManagerPlus";
         private static readonly string AppPath = System.Reflection.Assembly.GetExecutingAssembly().Location[..^4] + ".exe";
-
-        private enum PostWritingPermission
-        {
-            F,
-            A,
-            M
-        };
 
         public SettingsControl()
         {
