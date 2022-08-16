@@ -133,15 +133,15 @@
                 <Border x:Name="BdShare" CornerRadius="10" BorderBrush="LightGray" Grid.RowSpan="4" BorderThickness="1" Visibility="Collapsed"/>
             </Grid>
             <Grid x:Name="GdOverlay" Margin="10" CornerRadius="10" Visibility="Collapsed" PreviewKeyDown="OverlayPreviewKeyDown">
-                <Rectangle Fill="Black" Opacity="0.5"/>
+                <Rectangle Fill="Black" Opacity="0.85"/>
                 <Frame x:Name="FrOverlay" Background="White" Padding="10" CornerRadius="10" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                 <Button Background="Transparent" BorderThickness="0" Click="OnOverlayCloseButtonClicked" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="10">
                     <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe711;" Foreground="White"/>
                 </Button>
             </Grid>
             <Grid x:Name="GdLoading" Margin="10" CornerRadius="10" Visibility="Collapsed">
-                <Rectangle Fill="Black" Opacity="0.5"/>
-                <ProgressRing IsIndeterminate="True" IsActive="True"/>
+                <Rectangle Fill="Black" Opacity="0.85"/>
+                <ProgressRing IsIndeterminate="True" IsActive="True" Width="150" Height="150"/>
             </Grid>
         </Grid>
     </Frame>

@@ -2,6 +2,7 @@
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
 using System;
+using Windows.ApplicationModel;
 using Windows.UI;
 
 namespace KSMP.Utils
@@ -28,6 +29,14 @@ namespace KSMP.Utils
                     Convert.ToByte(hexaColor.Substring(7, 2), 16)
                 )
             );
+        }
+
+        public static string GetVersionString()
+        {
+            Package package = Package.Current;
+            PackageId packageId = package.Id;
+            PackageVersion version = packageId.Version;
+            return string.Format("{0}.{1}.{2}.{3}", version.Major, version.Minor, version.Build, version.Revision);
         }
     }
 }

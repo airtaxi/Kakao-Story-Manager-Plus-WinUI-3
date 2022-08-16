@@ -8,6 +8,8 @@ using KSMP.Extension;
 using Microsoft.Web.WebView2.Core;
 using System.Threading.Tasks;
 using System.Net;
+using System.Diagnostics;
+using System.IO;
 
 namespace KSMP.Pages;
 
@@ -24,6 +26,12 @@ public sealed partial class LoginPage : Page
     {
         IsLoggedIn = false;
         InitializeComponent();
+        Initialize();
+    }
+
+    private async void Initialize()
+    {
+        await CheckWebView2Runtime();
         var hasRememberedCreditionals = Utils.Configuration.GetValue("willRememberCredentials") as bool? ?? false;
         if (hasRememberedCreditionals)
         {
@@ -38,6 +46,52 @@ public sealed partial class LoginPage : Page
         BtLogin.IsEnabled = false;
 
         MainWindow.DisableLoginRequiredMenuFlyoutItems();
+    }
+
+    public void SetLoading(bool isLoading, string message = null)
+    {
+        if (GdLoading == null) return;
+        GdLoading.Visibility = isLoading ? Visibility.Visible : Visibility.Collapsed;
+        if (isLoading && message != null)
+        {
+            IsEnabled = false;
+            TbLoading.Text = message;
+        }
+        else
+            IsEnabled = true;
+    }
+
+    private async Task CheckWebView2Runtime()
+    {
+        string version = null;
+
+        try { version = CoreWebView2Environment.GetAvailableBrowserVersionString(); }
+        catch (Exception)
+        {
+            // ignored
+        }
+
+        if (string.IsNullOrEmpty(version))
+        {
+            await Task.Delay(100);
+            TaskCompletionSource taskCompletionSource = new();
+            await this.ShowMessageDialogAsync("프로그램 구동을 위해 WebView2 런타임이 필요합니다.\n확인 버튼을 누르면 설치합니다.", "안내");
+            SetLoading(true, "런타임 다운로더 초기화중");
+            var tempFile = Path.Combine(Path.GetTempPath(), "webview2runtime.exe");
+            var client = new WebClient();
+            client.DownloadFileCompleted += async (_, _) =>
+            {
+                await this.ShowMessageDialogAsync("런타임 다운로드가 완료되었습니다. 확인을 누르면 실행되는 설치 프로그램을 통하여 설치를 완료하신 뒤 프로그램을 재실행헤주세요", "안내");
+                Process.Start(tempFile);
+                Environment.Exit(0);
+            };
+            client.DownloadProgressChanged += async (_, e) =>
+            {
+                SetLoading(true, $"런타임 다운로드중 ({e.ProgressPercentage}%)");
+            };
+            await client.DownloadFileTaskAsync(new Uri("https://go.microsoft.com/fwlink/p/?LinkId=2124703"), tempFile);
+            await taskCompletionSource.Task;
+        }
     }
 
     private async void OnNavigationCompleted(WebView2 sender, CoreWebView2NavigationCompletedEventArgs args)

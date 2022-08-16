@@ -159,7 +159,7 @@ public sealed partial class MainPage : Page
         return activityId;
     }
 
-    public static void ShowWindow()
+    public static async void ShowWindow()
     {
         if (!LoginPage.IsLoggedIn) return;
         MainWindow.Instance.Activate();
@@ -169,6 +169,7 @@ public sealed partial class MainPage : Page
         var presenter = appWindow.Presenter as OverlappedPresenter;
         if (presenter.State == OverlappedPresenterState.Minimized) presenter.Restore();
         presenter.IsAlwaysOnTop = true;
+        await Task.Delay(100);
         presenter.IsAlwaysOnTop = false;
     }
 
@@ -276,15 +277,13 @@ public sealed partial class MainPage : Page
 
     private void ProfilePointerExited(object sender, PointerRoutedEventArgs e) => Utility.ChangeCursor(false);
 
-    private void OnLogoutButtonClicked(object sender, RoutedEventArgs e)
+    private async void OnLogoutButtonClicked(object sender, RoutedEventArgs e)
     {
         notificationTimer.Stop();
         notificationTimer.Dispose();
-        //if(Windows.Storage.ApplicationData.Current.LocalSettings.Values.ContainsKey("Password"))
-        //   Windows.Storage.ApplicationData.Current.LocalSettings.Values.Remove("Password");
-        //if(Windows.Storage.ApplicationData.Current.LocalSettings.Values.ContainsKey("Email"))
-        //   Windows.Storage.ApplicationData.Current.LocalSettings.Values.Remove("Email");
-        Frame.Navigate(typeof(LoginPage));
+        Utils.Configuration.SetValue("willRememberCredentials", false);
+        await this.ShowMessageDialogAsync("로그아웃되었습니다.\n프로그램을 재실행해주세요.", "안내");
+        Environment.Exit(0);
     }
 
     public static void ShowProfile(string id)

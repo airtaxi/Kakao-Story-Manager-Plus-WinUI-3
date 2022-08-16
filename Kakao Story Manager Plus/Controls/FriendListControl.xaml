@@ -21,7 +21,7 @@
             </ListView.ItemTemplate>
         </ListView>
         <Grid x:Name="GdLoading" Visibility="Collapsed">
-            <Rectangle Fill="Black" Opacity="0.5"/>
+            <Rectangle Fill="Black" Opacity="0.85"/>
             <ProgressRing IsIndeterminate="True" IsActive="True"/>
         </Grid>
     </Grid>
