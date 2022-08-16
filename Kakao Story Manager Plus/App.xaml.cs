@@ -58,11 +58,19 @@ namespace KSMP
         private void WriteException(Exception exception)
         {
             var path = Path.Combine(BinaryDirectory, "error.log");
-            var text = $"{exception.Message}: {exception.StackTrace}";
-            File.AppendAllText(path, text + Environment.NewLine + Environment.NewLine + Environment.NewLine);
+            var text = $"\n{exception.Message}: {exception.StackTrace}\n\n";
+            File.AppendAllText(path, text);
         }
 
-        private async Task ShowErrorMessage(Exception exception) => await MainPage.GetInstance().ShowMessageDialogAsync($"{exception.Message}/{exception.StackTrace}", "런타임 오류");
+        private async Task ShowErrorMessage(Exception exception)
+        {
+            try
+            {
+                await MainPage.GetInstance().ShowMessageDialogAsync($"{exception.Message}/{exception.StackTrace}", "런타임 오류");
+            }
+            catch (Exception) { } //Ignore
+
+        }
 
         private async void OnApplicationUnhandledException(object sender, Microsoft.UI.Xaml.UnhandledExceptionEventArgs e)
         {

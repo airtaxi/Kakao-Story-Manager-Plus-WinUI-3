@@ -84,10 +84,7 @@ public sealed partial class MainPage : Page
             var first = notifications.FirstOrDefault();
             _lastNotificationTimestamp = first?.created_at;
         }
-        catch (Exception)
-        {
-            //Ignore
-        }
+        catch (Exception) { } //Ignore
         finally { _notificationTimer.Start(); }
     }
 
