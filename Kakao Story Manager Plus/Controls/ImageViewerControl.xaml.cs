@@ -1,8 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Net;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
+using Windows.Storage.Pickers;
+using Windows.Storage.Pickers.Provider;
+using WinRT.Interop;
 using static StoryApi.ApiHandler.DataType.CommentData;
 
 namespace KSMP.Controls;
@@ -46,11 +51,29 @@ public sealed partial class ImageViewerControl : UserControl
         await Utility.SetImageClipboardFromUrl(this, medium.origin_url);
     }
 
-    private void CloseButtonPointerEntered(object sender, PointerRoutedEventArgs e) => Utility.ChangeCursor(true);
+    private void OnButtonPointerEntered(object sender, PointerRoutedEventArgs e) => Utility.ChangeCursor(true);
 
-    private void CloseButtonPointerExited(object sender, PointerRoutedEventArgs e) => Utility.ChangeCursor(false);
+    private void OnButtonPointerExited(object sender, PointerRoutedEventArgs e) => Utility.ChangeCursor(false);
 
     private void CloseButtonTapped(object sender, TappedRoutedEventArgs e) => Pages.MainPage.HideOverlay();
+    private async void DownloadButtonTapped(object sender, TappedRoutedEventArgs e)
+    {
+        var medium = FvImages.SelectedItem as Medium;
+        var url = medium.origin_url;
+
+        var fileSavePicker = new FileSavePicker();
+        InitializeWithWindow.Initialize(fileSavePicker, WindowNative.GetWindowHandle(MainWindow.Instance));
+        var extension = Path.GetExtension(url).Split("?")[0];
+        fileSavePicker.SuggestedStartLocation = PickerLocationId.PicturesLibrary;
+        fileSavePicker.FileTypeChoices.Add("Image File", new List<string>() { extension });
+        fileSavePicker.SuggestedFileName = "Image";
+        var file = await fileSavePicker.PickSaveFileAsync();
+        if (file == null) return;
+        GdLoading.Visibility = Visibility.Visible;
+        var path = file.Path;
+        await new WebClient().DownloadFileTaskAsync(url, path);
+        GdLoading.Visibility = Visibility.Collapsed;
+    }
 
     private void FvImages_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
