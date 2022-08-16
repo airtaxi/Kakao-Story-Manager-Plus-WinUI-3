@@ -10,6 +10,8 @@ using System.Threading.Tasks;
 using System.Net;
 using System.Diagnostics;
 using System.IO;
+using Microsoft.UI.Windowing;
+using Version = System.Version;
 
 namespace KSMP.Pages;
 
@@ -31,7 +33,11 @@ public sealed partial class LoginPage : Page
 
     private async void Initialize()
     {
+        SetLoading(true, "의존성 패키지 검사중");
         await CheckWebView2Runtime();
+        SetLoading(true, "버전 확인중");
+        await CheckVersion();
+        SetLoading(false);
         var hasRememberedCreditionals = Utils.Configuration.GetValue("willRememberCredentials") as bool? ?? false;
         if (hasRememberedCreditionals)
         {
@@ -61,6 +67,39 @@ public sealed partial class LoginPage : Page
             IsEnabled = true;
     }
 
+    private async Task CheckVersion()
+    {
+        var client = new WebClient();
+        var remoteVersionString = await client.DownloadStringTaskAsync(new Uri("https://kagamine-rin.com/KSMP/version"));
+        var localVersionString = Utils.Common.GetVersionString();
+        var remoteVersion = new Version(remoteVersionString);
+        var localVersion = new Version(localVersionString);
+        var result = remoteVersion.CompareTo(localVersion);
+
+        if(result > 0)
+        {
+            await Task.Delay(100);
+            await this.ShowMessageDialogAsync("프로그램 업데이드가 필요합니다.\n확인을 누르시면 업데이드를 진행합니다.", "안내");
+            SetLoading(true, "업데이터 다운로드 초기화중");
+
+            var tempFile = Path.Combine(Path.GetTempPath(), $"KSMP_{remoteVersionString}.msi");
+
+            client.DownloadFileCompleted += (_, _) =>
+            {
+                Process.Start(new ProcessStartInfo(tempFile) { UseShellExecute = true });
+                Environment.Exit(0);
+            };
+
+            client.DownloadProgressChanged += (_, e) =>
+            {
+                SetLoading(true, $"업데이터 다운로드중 ({e.ProgressPercentage}%)");
+            };
+
+            await client.DownloadFileTaskAsync(new Uri("https://kagamine-rin.com/KSMP/Installer.msi"), tempFile);
+        }
+
+    }
+
     private async Task CheckWebView2Runtime()
     {
         string version = null;
@@ -81,7 +120,7 @@ public sealed partial class LoginPage : Page
             var client = new WebClient();
             client.DownloadFileCompleted += async (_, _) =>
             {
-                await this.ShowMessageDialogAsync("런타임 다운로드가 완료되었습니다. 확인을 누르면 실행되는 설치 프로그램을 통하여 설치를 완료하신 뒤 프로그램을 재실행헤주세요", "안내");
+                await this.ShowMessageDialogAsync("런타임 다운로드가 완료되었습니다. 확인을 누르면 실행되는 설치 프로그램을 통하여 설치를 완료하신 뒤 프로그램을 재실행 해주세요", "안내");
                 Process.Start(tempFile);
                 Environment.Exit(0);
             };
