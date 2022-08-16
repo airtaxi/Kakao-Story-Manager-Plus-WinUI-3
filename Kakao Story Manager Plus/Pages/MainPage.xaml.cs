@@ -234,6 +234,7 @@ public sealed partial class MainPage : Page
         var frame = isSecond ? _instance.FrOverlay2 : _instance.FrOverlay;
         overlay.Visibility = Visibility.Visible;
         frame.Content = element;
+        _instance.GdRoot.Focus(FocusState.Keyboard);
     }
     public static void HideOverlay(bool willDispose = true)
     {
