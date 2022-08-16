@@ -65,7 +65,7 @@
             </Grid.RowDefinitions>
             <Grid MinHeight="200">
                 <Button x:Name="BtSettings" Background="Transparent" BorderThickness="0" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,5,0,0" Foreground="Gray">
-                    <Viewbox>
+                    <Viewbox Width="20" Height="20">
                         <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe713;"/>
                     </Viewbox>
                 </Button>
