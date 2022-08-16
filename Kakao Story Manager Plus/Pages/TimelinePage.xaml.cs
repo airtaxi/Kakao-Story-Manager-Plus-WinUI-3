@@ -60,8 +60,8 @@ public sealed partial class TimelinePage : Page
     private async Task Refresh(string from = null)
     {
         PrLoading.Visibility = Visibility.Visible;
+        if (from == null)
             LvContent.Items.Clear();
-        //if (from == null)
         if (Id == null)
         {
             var data = await ApiHandler.GetFeed(lastFeed);

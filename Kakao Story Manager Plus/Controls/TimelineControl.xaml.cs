@@ -487,7 +487,10 @@ public sealed partial class TimelineControl : UserControl
     {
         if(profile.Relationship != "F")
         {
-            await this.ShowMessageDialogAsync("해당 사용자와 친구를 맺어야 글을 볼 수 있습니다.", "오류");
+            var dialog = this.GenerateMessageDialog("해당 사용자와 친구를 맺어야 글을 볼 수 있습니다.", "오류");
+            dialog.SecondaryButtonText = "프로필 보기";
+            dialog.SecondaryButtonClick += (s, e) => MainPage.ShowProfile(profile.Id);
+            await dialog.ShowAsync();
             return;
         }
         profile.Metadata?.Flyout?.Hide();
@@ -512,7 +515,10 @@ public sealed partial class TimelineControl : UserControl
     {
         if(!(_post.@object.actor.relationship == "F" || _post.@object.actor.relationship == "S"))
         {
-            await this.ShowMessageDialogAsync("해당 사용자와 친구를 맺어야 글을 볼 수 있습니다.", "오류");
+            var dialog = this.GenerateMessageDialog("해당 사용자와 친구를 맺어야 글을 볼 수 있습니다.", "오류");
+            dialog.SecondaryButtonText = "프로필 보기";
+            dialog.SecondaryButtonClick += (s, e) => MainPage.ShowProfile(_post.@object.actor.id);
+            await dialog.ShowAsync();
             return;
         }
         e.Handled = true;
