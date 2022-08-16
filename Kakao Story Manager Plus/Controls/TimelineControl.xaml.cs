@@ -573,6 +573,7 @@ public sealed partial class TimelineControl : UserControl
     {
         if (BtAddMedia.IsEnabled == false) return;
         BtAddMedia.IsEnabled = false;
+        FiAddMedia.Glyph = "\ue895";
         _commentMedia = await ApiHandler.UploadImage(file.Path);
         FiAddMedia.Glyph = "\ue74d";
         BtAddMedia.IsEnabled = true;

@@ -17,31 +17,41 @@
             <StackPanel Orientation="Horizontal">
                 <Button Background="#E25434" Width="50" Height="50" CornerRadius="15" Margin="0,0,5,0" Click="OnEmotionButtonClick" Tag="like">
                     <StackPanel>
-                        <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xeb52;" Width="auto" Height="auto" Foreground="White"/>
+                        <Viewbox>
+                            <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xeb52;" Width="auto" Height="auto" Foreground="White"/>
+                        </Viewbox>
                         <TextBlock Text="좋아요" FontSize="8" Margin="0,2,0,0" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center"/>
                     </StackPanel>
                 </Button>
                 <Button Background="#BCCB3C" Width="50" Height="50" CornerRadius="15" Margin="0,0,5,0" Click="OnEmotionButtonClick" Tag="good">
                     <StackPanel>
-                        <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe735;" Width="auto" Height="auto" Foreground="White"/>
+                        <Viewbox>
+                            <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe735;" Width="auto" Height="auto" Foreground="White"/>
+                        </Viewbox>
                         <TextBlock Text="멋져요" FontSize="8" Margin="0,2,0,0" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center"/>
                     </StackPanel>
                 </Button>
                 <Button Background="#EFBD30" Width="50" Height="50" CornerRadius="15" Margin="0,0,5,0" Click="OnEmotionButtonClick" Tag="pleasure">
                     <StackPanel>
-                        <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xed54;" Width="auto" Height="auto" Foreground="White"/>
+                        <Viewbox>
+                            <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xed54;" Width="auto" Height="auto" Foreground="White"/>
+                        </Viewbox>
                         <TextBlock Text="기뻐요" FontSize="8" Margin="0,2,0,0" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center"/>
                     </StackPanel>
                 </Button>
                 <Button Background="#359FB0" Width="50" Height="50" CornerRadius="15" Margin="0,0,5,0" Click="OnEmotionButtonClick" Tag="sad">
                     <StackPanel>
-                        <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xeb42;" Width="auto" Height="auto" Foreground="White"/>
+                        <Viewbox>
+                            <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xeb42;" Width="auto" Height="auto" Foreground="White"/>
+                        </Viewbox>
                         <TextBlock Text="슬퍼요" FontSize="8" Margin="0,2,0,0" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center"/>
                     </StackPanel>
                 </Button>
                 <Button Background="#9C62AE" Width="50" Height="50" CornerRadius="15" Margin="0,0,0,0" Click="OnEmotionButtonClick" Tag="cheerup">
                     <StackPanel>
-                        <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe945;" Width="auto" Height="auto" Foreground="White"/>
+                        <Viewbox>
+                            <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe945;" Width="auto" Height="auto" Foreground="White"/>
+                        </Viewbox>
                         <TextBlock Text="힘내요" FontSize="8" Margin="0,2,0,0" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center"/>
                     </StackPanel>
                 </Button>

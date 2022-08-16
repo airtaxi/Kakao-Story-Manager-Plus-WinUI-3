@@ -19,6 +19,8 @@
                 </DataTemplate>
             </FlipView.ItemTemplate>
         </FlipView>
-        <FontIcon FontSize="25" FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe711;" Opacity="0.25" Margin="40" HorizontalAlignment="Right" VerticalAlignment="Top" PointerEntered="CloseButtonPointerEntered" PointerExited="CloseButtonPointerExited" Tapped="CloseButtonTapped"/>
+        <Viewbox>
+            <FontIcon FontSize="25" FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe711;" Opacity="0.25" Margin="40" HorizontalAlignment="Right" VerticalAlignment="Top" PointerEntered="CloseButtonPointerEntered" PointerExited="CloseButtonPointerExited" Tapped="CloseButtonTapped"/>
+        </Viewbox>
     </Grid>
 </UserControl>

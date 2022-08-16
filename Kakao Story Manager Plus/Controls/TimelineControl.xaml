@@ -39,9 +39,15 @@
                         <TextBlock x:Name="TbTime" Text="" Foreground="#ADB0B8" Tapped="TimeTapped" PointerEntered="PointerEnteredShowHand" PointerExited="PointerExitedShowHand" HorizontalAlignment="Left"/>
                     </StackPanel>
                     <StackPanel x:Name="SpMenu" Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Top" Orientation="Horizontal">
-                        <FontIcon x:Name="FiFavorite" FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe735;" Foreground="#ACACAC" FontSize="20" Tapped="OnAddBookmarkTapped" Margin="5,0,10,0" PointerEntered="PointerEnteredShowHand" PointerExited="PointerExitedShowHand"/>
-                        <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe712;" Foreground="#ACACAC" FontSize="20" Tapped="OnDotMenuTapped" Margin="5,0,0,0" PointerEntered="PointerEnteredShowHand" PointerExited="PointerExitedShowHand"/>
-                        <FontIcon x:Name="FaClose" FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe711;" Foreground="#ACACAC" FontSize="20" Tapped="CloseButtonClicked" Margin="15,0,0,0" Visibility="Collapsed" PointerEntered="PointerEnteredShowHand" PointerExited="PointerExitedShowHand"/>
+                        <Viewbox>
+                            <FontIcon x:Name="FiFavorite" FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe735;" Foreground="#ACACAC" FontSize="20" Tapped="OnAddBookmarkTapped" Margin="5,0,10,0" PointerEntered="PointerEnteredShowHand" PointerExited="PointerExitedShowHand"/>
+                        </Viewbox>
+                        <Viewbox>
+                            <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe712;" Foreground="#ACACAC" FontSize="20" Tapped="OnDotMenuTapped" Margin="5,0,0,0" PointerEntered="PointerEnteredShowHand" PointerExited="PointerExitedShowHand"/>
+                        </Viewbox>
+                        <Viewbox>
+                            <FontIcon x:Name="FaClose" FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe711;" Foreground="#ACACAC" FontSize="20" Tapped="CloseButtonClicked" Margin="15,0,0,0" Visibility="Collapsed" PointerEntered="PointerEnteredShowHand" PointerExited="PointerExitedShowHand"/>
+                        </Viewbox>
                     </StackPanel>
                 </Grid>
                 <ScrollViewer x:Name="SvContent" Grid.Row="1" Margin="5,0,5,0" Padding="20,0,20,0" MaxHeight="600">
@@ -57,13 +63,19 @@
                 </ScrollViewer>
                 <StackPanel x:Name="SpEmotions" Orientation="Horizontal" Grid.Row="2" Margin="5,5,5,0" Padding="20,0,20,0" Visibility="Visible">
                     <Button x:Name="BtEmotions" Background="Transparent" Width="40" Height="40" CornerRadius="25" Margin="5">
-                        <FontIcon x:Name="FiEmotions" FontFamily="{StaticResource Fluent Icons}"  FontSize="15" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="#888D94" Glyph="&#xeb52;"/>
+                        <Viewbox>
+                            <FontIcon x:Name="FiEmotions" FontFamily="{StaticResource Fluent Icons}"  FontSize="15" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="#888D94" Glyph="&#xeb52;"/>
+                        </Viewbox>
                     </Button>
                     <Button x:Name="BtShare" Background="Transparent" Width="40" Height="40" CornerRadius="25" Margin="5">
-                        <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe72d;" FontSize="15" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="#888D94"/>
+                        <Viewbox>
+                            <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe72d;" FontSize="15" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="#888D94"/>
+                        </Viewbox>
                     </Button>
                     <Button x:Name="BtUp" Background="Transparent" Width="40" Height="40" CornerRadius="25" Margin="5,5,5,0" Click="OnUpButtonClicked">
-                        <FontIcon x:Name="FaUp" FontFamily="{StaticResource Fluent Icons}" Glyph="&#xedd7;" FontSize="15" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="#888D94"/>
+                        <Viewbox>
+                            <FontIcon x:Name="FaUp" FontFamily="{StaticResource Fluent Icons}" Glyph="&#xedd7;" FontSize="15" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="#888D94"/>
+                        </Viewbox>
                     </Button>
                 </StackPanel>
                 <Grid Grid.Row="3">
@@ -119,7 +131,9 @@
                             </Grid.ColumnDefinitions>
                             <Frame x:Name="FrComment" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Stretch" Margin="30,0,5,0"/>
                             <Button x:Name="BtAddMedia" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Stretch" Margin="5,0,5,0" Click="OnAddMediaButtonClicked">
-                                <FontIcon x:Name="FiAddMedia" FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe7c5;"/>
+                                <Viewbox>
+                                    <FontIcon x:Name="FiAddMedia" FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe7c5;"/>
+                                </Viewbox>
                             </Button>
                             <Button x:Name="BtSendComment" Grid.Column="2" Margin="5,0,30,0" HorizontalAlignment="Stretch" VerticalAlignment="Center" Background="#E96A49" Click="OnSendCommentButtonClicked">
                                 <TextBlock Text="전송" Foreground="White"/>
@@ -136,7 +150,9 @@
                 <Rectangle Fill="Black" Opacity="0.85"/>
                 <Frame x:Name="FrOverlay" Background="White" Padding="10" CornerRadius="10" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                 <Button Background="Transparent" BorderThickness="0" Click="OnOverlayCloseButtonClicked" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="10">
-                    <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe711;" Foreground="White"/>
+                    <Viewbox>
+                        <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe711;" Foreground="White"/>
+                    </Viewbox>
                 </Button>
             </Grid>
             <Grid x:Name="GdLoading" Margin="10" CornerRadius="10" Visibility="Collapsed">

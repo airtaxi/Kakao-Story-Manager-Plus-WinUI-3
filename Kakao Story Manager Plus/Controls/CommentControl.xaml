@@ -48,12 +48,18 @@
             </StackPanel>
             <Button Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center" Background="Transparent" BorderThickness="0" Click="OnLikeButtonClick">
                 <Grid>
-                    <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xeb51;" Foreground="LightGray"/>
-                    <FontIcon x:Name="FaHeart" FontFamily="{StaticResource Fluent Icons}" Glyph="&#xeb52;" Foreground="#e57764" Visibility="Collapsed"/>
+                    <Viewbox>
+                        <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xeb51;" Foreground="LightGray"/>
+                    </Viewbox>
+                    <Viewbox>
+                        <FontIcon x:Name="FaHeart" FontFamily="{StaticResource Fluent Icons}" Glyph="&#xeb52;" Foreground="#e57764" Visibility="Collapsed"/>
+                    </Viewbox>
                 </Grid>
             </Button>
             <Button Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Center" Background="Transparent" BorderThickness="0" Click="OnDeleteCommentButtonClicked">
-                <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe74d;" Foreground="LightGray"/>
+                <Viewbox>
+                    <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe74d;" Foreground="LightGray"/>
+                </Viewbox>
             </Button>
         </Grid>
     </Grid>
