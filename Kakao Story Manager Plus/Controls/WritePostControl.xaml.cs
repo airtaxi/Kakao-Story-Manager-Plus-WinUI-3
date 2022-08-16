@@ -193,6 +193,7 @@ public sealed partial class WritePostControl : UserControl
         fileOpenPicker.FileTypeFilter.Add(".mp4");
         var files = (await fileOpenPicker.PickMultipleFilesAsync()).ToList();
         foreach (var file in files) await AddMediaFromFile(file);
+        _button?.Flyout?.ShowAt(_button);
     }
 
     public async Task SetEditMedia(CommentData.PostData postToEdit)
