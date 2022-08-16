@@ -488,7 +488,7 @@ public sealed partial class TimelineControl : UserControl
 
     private async void OnSharedFriendSelected(FriendProfile profile)
     {
-        if(profile.Relationship != "F")
+        if(!(profile.Relationship == "F" || profile.Relationship == "S"))
         {
             var dialog = this.GenerateMessageDialog("해당 사용자와 친구를 맺어야 글을 볼 수 있습니다.", "오류");
             dialog.SecondaryButtonText = "프로필 보기";
