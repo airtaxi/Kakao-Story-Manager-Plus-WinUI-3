@@ -59,7 +59,7 @@ public static class PageExtension
         await taskCompletionSource.Task;
     }
 
-    public static async Task ShowMessageDialogAsync(this UIElement page, string description, string title, bool showCancel = false)
+    public static async Task<ContentDialogResult> ShowMessageDialogAsync(this UIElement page, string description, string title, bool showCancel = false)
     {
         var dialog = GenerateMessageDialog(page, description, title, showCancel);
         await dialog.ShowAsync();

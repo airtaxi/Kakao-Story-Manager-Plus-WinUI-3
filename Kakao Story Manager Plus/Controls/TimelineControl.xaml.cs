@@ -23,6 +23,7 @@ using Microsoft.UI.Xaml.Media;
 using Microsoft.UI;
 using static StoryApi.ApiHandler.DataType.TimeLineData;
 using System.Diagnostics;
+using Windows.Security.Authentication.OnlineId;
 
 namespace KSMP.Controls;
 
@@ -348,6 +349,8 @@ public sealed partial class TimelineControl : UserControl
             var menuDeletePost = new MenuFlyoutItem() { Text = "글 삭제하기" };
             menuDeletePost.Click += async (o, e2) =>
             {
+                var result = await this.ShowMessageDialogAsync("정말로 글을 삭제하실건가요?", "경고", true);
+                if (result != ContentDialogResult.Primary) return;
                 await ApiHandler.DeletePost(_post.id);
                 MainPage.HideOverlay();
                 await MainPage.GetTimelinePage()?.RemovePost(_post.id);
