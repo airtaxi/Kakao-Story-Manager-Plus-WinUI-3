@@ -470,6 +470,7 @@ public sealed partial class TimelineControl : UserControl
             friendProfile.ProfileUrl = share.actor.GetValidUserProfileUrl();
             friendProfile.Name = share.actor.display_name;
             friendProfile.Id = share.actor.id;
+            friendProfile.Relationship = share.actor.relationship;
             friendProfile.Metadata.Tag = share.activity_id;
             friendProfile.Metadata.Control = control;
             friendProfile.Metadata.Flyout = flyout;
@@ -484,14 +485,19 @@ public sealed partial class TimelineControl : UserControl
 
     private async void OnSharedFriendSelected(FriendProfile profile)
     {
+        if(profile.Relationship != "F")
+        {
+            await this.ShowMessageDialogAsync("해당 사용자와 친구를 맺어야 글을 볼 수 있습니다.", "오류");
+            return;
+        }
         profile.Metadata?.Flyout?.Hide();
 
         var postId = profile.Metadata.Tag as string;
-        var contriol = profile.Metadata.Control as FriendListControl;
+        var control = profile.Metadata.Control as FriendListControl;
 
-        contriol.ShowLoading();
+        control.ShowLoading();
         var post = await ApiHandler.GetPost(postId);
-        contriol.HideLoading();
+        control.HideLoading();
 
         if (profile.Metadata.IsUp) MainPage.ShowProfile(profile.Id);
         else
@@ -506,7 +512,7 @@ public sealed partial class TimelineControl : UserControl
     {
         if(!(_post.@object.actor.relationship == "F" || _post.@object.actor.relationship == "S"))
         {
-            await this.ShowMessageDialogAsync("해당 사용자와 친구를 맺어야 글을 볼 수 있습니다", "오류");
+            await this.ShowMessageDialogAsync("해당 사용자와 친구를 맺어야 글을 볼 수 있습니다.", "오류");
             return;
         }
         e.Handled = true;

@@ -16,6 +16,7 @@ namespace KSMP
         public class FriendProfile
         {
             public string Id { get; set; }
+            public string Relationship { get; set; }
             public string ProfileUrl { get; set; }
             public string Name { get; set; }
             public PostInformationMetadata Metadata { get; set; } = new();
