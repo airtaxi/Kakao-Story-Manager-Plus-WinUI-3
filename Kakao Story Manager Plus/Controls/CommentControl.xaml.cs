@@ -123,7 +123,11 @@ public sealed partial class CommentControl : UserControl
 
     private async void OnDeleteCommentButtonClicked(object sender, RoutedEventArgs e)
     {
-        await ApiHandler.DeleteComment(_comment.id, _postId);
-        OnDeleted?.Invoke();
+        var result = await this.ShowMessageDialogAsync("정말로 댓글을 지우시겠습니까?", "경고", true);
+        if(result == ContentDialogResult.Primary)
+        {
+            await ApiHandler.DeleteComment(_comment.id, _postId);
+            OnDeleted?.Invoke();
+        }
     }
 }
