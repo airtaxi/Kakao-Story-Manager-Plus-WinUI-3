@@ -12,6 +12,7 @@ using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -31,7 +32,7 @@ namespace KSMP
     /// </summary>
     public partial class App : Application
     {
-        public static readonly string BinaryDirectory = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+        public static readonly string BinaryDirectory = Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName);
 
         public App()
         {
