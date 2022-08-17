@@ -31,7 +31,7 @@ namespace KSMP
     /// </summary>
     public partial class App : Application
     {
-        public static readonly string BinaryDirectory = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().GetName().CodeBase).Replace("file:\\", "");
+        public static readonly string BinaryDirectory = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
 
         public App()
         {
