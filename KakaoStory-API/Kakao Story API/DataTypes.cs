@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace StoryApi
 {
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "<Pending>")]
-    public static partial class ApiHandler
+    public partial class ApiHandler
     {
         public static class DataType
         {

@@ -5,17 +5,21 @@ using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
+using StoryApi;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Reflection.Metadata.Ecma335;
+using System.Threading.Tasks;
 using Windows.Devices.PointOfService.Provider;
+using static StoryApi.ApiHandler;
 
 namespace KSMP;
 
 public sealed partial class MainWindow : Microsoft.UI.Xaml.Window
 {
     public static MainWindow Instance { get; private set; }
+    public static TaskCompletionSource ReloginTaskCompletionSource = null;
     private static List<MenuFlyoutItem> LoginRequiredMenuFlyoutItems = new();
     public MainWindow()
     {
@@ -24,6 +28,14 @@ public sealed partial class MainWindow : Microsoft.UI.Xaml.Window
         SetupAppWindow();
         SetupTrayIcon();
         FrMain.Navigate(typeof(LoginPage));
+        ApiHandler.OnReloginRequired += OnReloginRequiredHandler;
+    }
+
+    private async Task OnReloginRequiredHandler()
+    {
+        ReloginTaskCompletionSource = new();
+        Navigate(typeof(LoginPage));
+        await ReloginTaskCompletionSource.Task;
     }
 
     public static void Navigate(Type type) => Instance.FrMain.Navigate(type);

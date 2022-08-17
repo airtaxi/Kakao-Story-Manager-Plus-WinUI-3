@@ -10,9 +10,11 @@ using static StoryApi.ApiHandler.DataType.CommentData;
 
 namespace StoryApi
 {
-    public static partial class ApiHandler
+    public partial class ApiHandler
     {
         private static CookieContainer _cookieContainer { get; set; } = null;
+        public delegate Task ReloginRequired();
+        public static ReloginRequired OnReloginRequired;
         public static int MaxRetryCount { get; set; } = 10;
 
         public static void Init(CookieContainer cookieContainer)
@@ -569,7 +571,8 @@ namespace StoryApi
             {
                 if ((int)(e.Response as HttpWebResponse).StatusCode == 401)
                 {
-                    throw new InvalidOperationException("Invalid Cookie");
+                    await OnReloginRequired?.Invoke();
+                    return await GetResponseFromRequest(webRequest, ++count);
                 }
                 else
                 {

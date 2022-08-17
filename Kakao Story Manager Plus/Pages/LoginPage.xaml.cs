@@ -198,6 +198,7 @@ public sealed partial class LoginPage : Page
                 SaveCredentials(TbxLogin.Text, PbxLogin.Password, CbxRememberCredentials.IsChecked == true);
                 StoryApi.ApiHandler.Init(cookieContainer);
                 IsLoggedIn = true;
+                MainWindow.ReloginTaskCompletionSource?.SetResult();
                 MainWindow.Navigate(typeof(MainPage));
                 MainWindow.EnableLoginRequiredMenuFlyoutItems();
             }
