@@ -19,15 +19,9 @@ public sealed partial class TimelinePage : Page
         InitializeComponent();
     }
 
-    protected override async void OnNavigatedFrom(NavigationEventArgs e)
-    {
-        base.OnNavigatedFrom(e);
-        System.GC.Collect();
-    }
     protected override async void OnNavigatedTo(NavigationEventArgs e)
     {
         base.OnNavigatedTo(e);
-        System.GC.Collect();
         string id = e.Parameter as string;
         MainPage.SelectFriend(id);
 

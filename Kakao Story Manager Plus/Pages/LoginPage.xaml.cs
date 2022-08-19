@@ -24,6 +24,7 @@ public sealed partial class LoginPage : Page
     private bool isNavigated = false;
 
     public static bool IsLoggedIn;
+    private DispatcherTimer _loginCheckTimer = null;
 
     public LoginPage()
     {
@@ -198,6 +199,8 @@ public sealed partial class LoginPage : Page
                 SaveCredentials(TbxLogin.Text, PbxLogin.Password, CbxRememberCredentials.IsChecked == true);
                 StoryApi.ApiHandler.Init(cookieContainer);
                 IsLoggedIn = true;
+                _loginCheckTimer?.Stop();
+                WvLogin.Close();
                 MainWindow.ReloginTaskCompletionSource?.SetResult();
                 MainWindow.Navigate(typeof(MainPage));
                 MainWindow.EnableLoginRequiredMenuFlyoutItems();
@@ -220,13 +223,13 @@ public sealed partial class LoginPage : Page
 
         WvLogin.Source = new Uri("https://accounts.kakao.com/login?continue=https://story.kakao.com/");
 
-        var timer = new DispatcherTimer
+        _loginCheckTimer = new DispatcherTimer
         {
             Interval = TimeSpan.FromSeconds(5)
         };
-        timer.Tick += async (s2, e2) =>
+        _loginCheckTimer.Tick += async (s2, e2) =>
         {
-            timer.Stop();
+            _loginCheckTimer.Stop();
             await this.RunOnMainThreadAsync(async () =>
             {
                 var cookieContainer = await GetCookieCookieContainerAsync();
@@ -239,14 +242,15 @@ public sealed partial class LoginPage : Page
                 }
             });
         };
-        timer.Start();
+        _loginCheckTimer.Start();
 
         PbLogin.Visibility = Visibility.Visible;
     }
 
     private async Task<CookieContainer> GetCookieCookieContainerAsync(string url = MainUrl)
     {
-        var cookies = await WvLogin.CoreWebView2.CookieManager.GetCookiesAsync(url);
+        var cookies = await WvLogin?.CoreWebView2?.CookieManager?.GetCookiesAsync(url);
+        if (cookies == null) return new();
         CookieContainer cookieContainer = new();
 
         foreach (var cookie in cookies)

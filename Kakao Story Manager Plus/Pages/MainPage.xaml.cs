@@ -39,7 +39,7 @@ public sealed partial class MainPage : Page
         _instance = this;
         InitializeWritePostFlyout();
         InitializeSettingsFlyout();
-        _notificationTimer.Interval = 1000;
+        _notificationTimer.Interval = 2000;
         _notificationTimer.Elapsed += OnNotificationTimerElapsed;
         _notificationTimer.Start();
     }

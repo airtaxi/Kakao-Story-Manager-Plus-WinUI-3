@@ -32,10 +32,16 @@ namespace KSMP
     /// </summary>
     public partial class App : Application
     {
-        public static readonly string BinaryDirectory = Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName);
+        public static string BinaryDirectory = "";
 
         public App()
         {
+            try
+            {
+                BinaryDirectory = Path.GetDirectoryName(Process.GetCurrentProcess()?.MainModule?.FileName ?? "") ?? BinaryDirectory;
+            }
+            catch (Exception) { } //Ignore
+
             UnhandledException += OnApplicationUnhandledException;
             AppDomain.CurrentDomain.UnhandledException += OnAppDomainUnhandledException;
             TaskScheduler.UnobservedTaskException += OnTaskSchedulerUnobservedTaskException;

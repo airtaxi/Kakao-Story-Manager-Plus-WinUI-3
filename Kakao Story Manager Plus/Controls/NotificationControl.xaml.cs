@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using KSMP.Extension;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
@@ -38,7 +39,7 @@ public sealed partial class NotificationControl : UserControl
             {
                 Title = notification.message,
                 Description = contentMessage,
-                ProfilePictureUrl = notification.actor?.profile_video_url_square_small ?? notification.actor?.profile_thumbnail_url,
+                ProfilePictureUrl = notification.actor?.GetValidUserProfileUrl(),
                 Time = StoryApi.Utils.GetTimeString(notification.created_at),
                 UnreadBarVisiblity = notification.is_new ? Visibility.Visible : Visibility.Collapsed,
                 Scheme = notification.scheme,

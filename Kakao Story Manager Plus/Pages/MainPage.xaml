@@ -44,11 +44,6 @@
                         <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe7e7;" FontSize="17" Foreground="#717171"/>
                     </Viewbox>
                 </Button>
-                <Button x:Name="BtMemory" Width="40" Height="40" CornerRadius="10" ToolTipService.ToolTip="메모리 정리" Margin="10,0,0,0" Click="OnClearMemoryButtonClicked">
-                    <Viewbox>
-                        <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe964;" FontSize="17" Foreground="#717171"/>
-                    </Viewbox>
-                </Button>
                 <Button x:Name="BtLogout" Width="40" Height="40" CornerRadius="10" ToolTipService.ToolTip="로그아웃" Margin="10,0,0,0" Click="OnLogoutButtonClicked">
                     <Viewbox>
                         <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xf3b1;" FontSize="17" Foreground="#717171"/>
