@@ -179,12 +179,20 @@ public sealed partial class MainPage : Page
         presenter.IsAlwaysOnTop = false;
     }
 
+    public static async void NavigateTimeline(string args = null)
+    {
+        _instance.FrContent.Content = null;
+        GC.Collect();
+        await Task.Delay(100);
+        _instance.FrContent.Content = new TimelinePage(args);
+    }
+
     public static void ShowTimeline()
     {
         if (!LoginPage.IsLoggedIn) return;
         ShowWindow();
         HideOverlay();
-        _instance.FrContent.Navigate(typeof(TimelinePage));
+        NavigateTimeline();
     }
 
     public static void ShowMyProfile()
@@ -192,7 +200,7 @@ public sealed partial class MainPage : Page
         if (_instance == null) return;
         ShowWindow();
         HideOverlay();
-        _instance.FrContent.Navigate(typeof(TimelinePage), Me.id);
+        NavigateTimeline(Me.id);
     }
 
     public static void ShowNotifications()
@@ -269,7 +277,7 @@ public sealed partial class MainPage : Page
         var profileUrl = Me.GetValidUserProfileUrl();
         if (!string.IsNullOrEmpty(profileUrl))
             PpMyProfile.ProfilePicture = Utility.GenerateImageUrlSource(profileUrl);
-        FrContent.Navigate(typeof(TimelinePage), null);
+        NavigateTimeline();
     }
 
     private void OnFriendListSelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -277,7 +285,7 @@ public sealed partial class MainPage : Page
         var listView = sender as ListView;
         var data = listView.SelectedItem as FriendProfile;
         if (data == null) return;
-        FrContent.Navigate(typeof(TimelinePage), data.Id);
+        NavigateTimeline(data.Id);
     }
 
     private void ProfilePointerEntered(object sender, PointerRoutedEventArgs e) => Utility.ChangeCursor(true);
@@ -300,7 +308,7 @@ public sealed partial class MainPage : Page
         _instance.LvFriends.SelectedItem = item;
 
         HideOverlay();
-        _instance.FrContent.Navigate(typeof(TimelinePage), id);
+        NavigateTimeline(id);
     }
 
     public static TimelinePage GetTimelinePage() => _instance.FrContent.Content as TimelinePage;
@@ -309,12 +317,12 @@ public sealed partial class MainPage : Page
 
     private void FriendPointerExited(object sender, PointerRoutedEventArgs e) => Utility.ChangeCursor(false);
 
-    private void ProfileTapped(object sender, TappedRoutedEventArgs e) => FrContent.Navigate(typeof(TimelinePage), Me.id);
+    private void ProfileTapped(object sender, TappedRoutedEventArgs e) => NavigateTimeline(Me.id);
 
     private void TitleTapped(object sender, TappedRoutedEventArgs e)
     {
         HideOverlay();
-        FrContent.Navigate(typeof(TimelinePage));
+        NavigateTimeline();
     }
 
     private void OnNotificationsButtonClicked(object sender, RoutedEventArgs e)
@@ -345,7 +353,7 @@ public sealed partial class MainPage : Page
     {
         var friend = args.SelectedItem as FriendProfile;
         var id = friend.Id;
-        FrContent.Navigate(typeof(TimelinePage), id);
+        NavigateTimeline(id);
         sender.Text = "";
         sender.ItemsSource = null;
     }

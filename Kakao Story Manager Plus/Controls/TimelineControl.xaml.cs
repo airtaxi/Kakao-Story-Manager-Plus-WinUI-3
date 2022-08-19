@@ -333,7 +333,7 @@ public sealed partial class TimelineControl : UserControl
             {
                 await ApiHandler.HidePost(_post.id);
                 MainPage.HideOverlay();
-                await MainPage.GetTimelinePage()?.RemovePost(_post.id);
+                MainPage.GetTimelinePage()?.RemovePost(_post.id);
             };
             flyout.Items.Add(menuHidePost);
         }
@@ -346,7 +346,7 @@ public sealed partial class TimelineControl : UserControl
                 if (result != ContentDialogResult.Primary) return;
                 await ApiHandler.DeletePost(_post.id);
                 MainPage.HideOverlay();
-                await MainPage.GetTimelinePage()?.RemovePost(_post.id);
+                MainPage.GetTimelinePage()?.RemovePost(_post.id);
             };
             flyout.Items.Add(menuDeletePost);
 

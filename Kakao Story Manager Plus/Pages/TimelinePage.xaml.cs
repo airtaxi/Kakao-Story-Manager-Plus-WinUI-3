@@ -14,31 +14,44 @@ public sealed partial class TimelinePage : Page
     private static TimelinePage _instance;
     public bool IsMyTimeline => Id == MainPage.Me.id;
 
-    public TimelinePage()
+    public TimelinePage(string id)
     {
         InitializeComponent();
+        _ = LoadId(id);
+    }
+
+    protected override void OnNavigatedFrom(NavigationEventArgs e)
+    {
+        LvContent.Items.Clear();
+        LvContent.ItemsSource = null;
+        LvContent = null;
     }
 
     protected override async void OnNavigatedTo(NavigationEventArgs e)
     {
         base.OnNavigatedTo(e);
         string id = e.Parameter as string;
+        await LoadId(id);
+    }
+
+    private async Task LoadId(string id)
+    {
         MainPage.SelectFriend(id);
 
         Id = id;
         _instance = this;
         await Refresh();
         Border border = VisualTreeHelper.GetChild(LvContent, 0) as Border;
+        if (border == null) return;
         ScrollViewer scrollViewer = VisualTreeHelper.GetChild(border, 0) as ScrollViewer;
         scrollViewer.ViewChanged += OnScrollViewerViewChanged;
     }
-
 
     public static void HidePostFromTimeline(Controls.TimelineControl control) => _instance.LvContent.Items.Remove(control);
 
     string lastFeed = null;
     public static async Task Refresh() => await _instance.Refresh();
-    public async Task RemovePost(string postId)
+    public void RemovePost(string postId)
     {
         foreach (FrameworkElement item in LvContent.Items)
         {
