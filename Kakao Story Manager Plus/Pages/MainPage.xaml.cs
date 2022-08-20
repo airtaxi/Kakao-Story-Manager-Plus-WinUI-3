@@ -39,7 +39,7 @@ public sealed partial class MainPage : Page
         _instance = this;
         InitializeWritePostFlyout();
         InitializeSettingsFlyout();
-        _notificationTimer.Interval = 2000;
+        _notificationTimer.Interval = 3000;
         _notificationTimer.Elapsed += OnNotificationTimerElapsed;
         _notificationTimer.Start();
     }
@@ -179,12 +179,11 @@ public sealed partial class MainPage : Page
         presenter.IsAlwaysOnTop = false;
     }
 
-    public static async void NavigateTimeline(string args = null)
+    public static void NavigateTimeline(string args = null)
     {
-        _instance.FrContent.Content = null;
-        GC.Collect();
-        await Task.Delay(100);
-        _instance.FrContent.Content = new TimelinePage(args);
+        Utility.FlushBitmapImages();
+        if(args != null) _instance.FrContent.Navigate(typeof(TimelinePage), args);
+        else _instance.FrContent.Navigate(typeof(TimelinePage));
     }
 
     public static void ShowTimeline()
@@ -275,8 +274,7 @@ public sealed partial class MainPage : Page
         Me = await ApiHandler.GetProfileData();
         TbName.Text = Me.display_name;
         var profileUrl = Me.GetValidUserProfileUrl();
-        if (!string.IsNullOrEmpty(profileUrl))
-            PpMyProfile.ProfilePicture = Utility.GenerateImageUrlSource(profileUrl);
+        if (!string.IsNullOrEmpty(profileUrl)) PpMyProfile.ProfilePicture = Utility.GenerateImageUrlSource(profileUrl, true);
         NavigateTimeline();
     }
 

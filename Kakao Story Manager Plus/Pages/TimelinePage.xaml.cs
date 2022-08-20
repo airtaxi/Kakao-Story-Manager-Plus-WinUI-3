@@ -5,6 +5,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
+using System;
 
 namespace KSMP.Pages;
 
@@ -14,21 +15,16 @@ public sealed partial class TimelinePage : Page
     private static TimelinePage _instance;
     public bool IsMyTimeline => Id == MainPage.Me.id;
 
+    public TimelinePage() => InitializeComponent();
     public TimelinePage(string id)
     {
         InitializeComponent();
         _ = LoadId(id);
     }
 
-    protected override void OnNavigatedFrom(NavigationEventArgs e)
-    {
-        LvContent.Items.Clear();
-        LvContent.ItemsSource = null;
-        LvContent = null;
-    }
-
     protected override async void OnNavigatedTo(NavigationEventArgs e)
     {
+        Utility.FlushBitmapImages();
         base.OnNavigatedTo(e);
         string id = e.Parameter as string;
         await LoadId(id);
@@ -66,6 +62,7 @@ public sealed partial class TimelinePage : Page
     }
     private async Task Refresh(string from = null)
     {
+        GC.Collect();
         PrLoading.Visibility = Visibility.Visible;
         if (from == null)
             LvContent.Items.Clear();
@@ -125,6 +122,7 @@ public sealed partial class TimelinePage : Page
             if (maxVerticalOffset < 0 || verticalOffset == maxVerticalOffset)
             {
                 isRefreshing = true;
+                LvContent.Items.Clear();
                 await Refresh(lastFeed);
                 isRefreshing = false;
             }

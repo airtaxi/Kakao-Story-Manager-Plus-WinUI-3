@@ -11,16 +11,6 @@ namespace KSMP.Utils
 {
     public static class Common
     {
-        public static BitmapImage GenerateImageUrlSource(string url)
-        {
-            var imageUrl = new Uri(url);
-            var bitmap = new BitmapImage
-            {
-                UriSource = imageUrl
-            };
-            return bitmap;
-        }
-
         public static SolidColorBrush GetColorFromHexa(string hexaColor)
         {
             return new SolidColorBrush(

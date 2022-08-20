@@ -55,7 +55,13 @@
                         <RichTextBlock x:Name="RTbContent" TextWrapping="Wrap" Margin="5,0,0,0" IsTextSelectionEnabled="True"/>
                         <Grid Margin="5,10,5,0">
                             <Rectangle Stroke="LightGray"/>
-                            <FlipView x:Name="FvMedia" Visibility="Collapsed" HorizontalAlignment="Center" VerticalAlignment="Center" Width="auto" Height="400" Margin="1" Tapped="OnMediaTapped" />
+                            <FlipView x:Name="FvMedia" Visibility="Collapsed" HorizontalAlignment="Center" VerticalAlignment="Center" Width="auto" Height="400" Margin="1" Tapped="OnMediaTapped">
+                                <FlipView.ItemTemplate>
+                                    <DataTemplate>
+                                        <Image Source="{Binding origin_url}" Stretch="Uniform"/>
+                                    </DataTemplate>
+                                </FlipView.ItemTemplate>
+                            </FlipView>
                         </Grid>
                         <Frame x:Name="FrShare" Tapped="OnSharePostTapped"/>
                         <Frame x:Name="FrLink"/>
