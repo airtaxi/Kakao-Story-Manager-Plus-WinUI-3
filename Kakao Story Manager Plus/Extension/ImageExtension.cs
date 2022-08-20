@@ -15,7 +15,7 @@ namespace KSMP.Extension
             var bitmapSource = image.Source as BitmapImage;
             if (bitmapSource == null) return;
             bitmapSource.UriSource = null;
-            bitmapSource.DisposeSource();
+            //bitmapSource.DisposeSource();
             image.Source = null;
         }
         public static void DisposeImage(this PersonPicture image)
@@ -23,8 +23,7 @@ namespace KSMP.Extension
             var bitmapSource = image.ProfilePicture as BitmapImage;
             if (bitmapSource == null) return;
             bitmapSource.UriSource = null;
-            bitmapSource.UriSource = null;
-            bitmapSource.DisposeSource();
+            //bitmapSource.DisposeSource();
             image.ProfilePicture = null;
         }
     }

@@ -18,6 +18,7 @@ using System.Runtime.InteropServices;
 using KSMP.Extension;
 using Microsoft.UI;
 using System.IO;
+using Windows.Services.Maps;
 
 namespace KSMP
 {
@@ -33,7 +34,23 @@ namespace KSMP
             });
             _generatedImages.Clear();
         }
-        public static BitmapImage GenerateImageUrlSource(string url, bool shouldNotBeFlushed =false)
+        
+        public static List<Image> GenerateMedias(IEnumerable<string> urls)
+        {
+            if (urls == null) return null;
+            var images = new List<Image>();
+            foreach(var url in urls)
+            {
+                var image = new Image();
+                var finalUrl = url;
+                if (url.Contains(".mp4")) finalUrl = "ms-appx:///Assets/VideoThumbnail.png";
+                image.Source = GenerateImageUrlSource(finalUrl);
+                image.Tag = url;
+                images.Add(image);
+            }
+            return images;
+        }
+        public static BitmapImage GenerateImageUrlSource(string url, bool shouldNotBeFlushed = false)
         {
             if (string.IsNullOrEmpty(url)) url = "ms-appx:///Assets/Error.png";
             var imageUrl = new Uri(url);
@@ -41,7 +58,7 @@ namespace KSMP
             {
                 UriSource = imageUrl
             };
-            if(!shouldNotBeFlushed) _generatedImages.Add(bitmap);
+            if (!shouldNotBeFlushed) _generatedImages.Add(bitmap);
             return bitmap;
         }
 

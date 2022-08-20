@@ -30,7 +30,7 @@ using Windows.Media.Import;
 namespace KSMP.Controls;
 
 
-public sealed partial class TimelineControl : UserControl
+public sealed partial class TimelineControl : UserControl, IDisposable
 {
     private PostData _post;
     private readonly bool _isOverlay;
@@ -95,8 +95,26 @@ public sealed partial class TimelineControl : UserControl
         PpUser.Loaded += (s, e) => PpUser.ProfilePicture = Utility.GenerateImageUrlSource(post.actor?.GetValidUserProfileUrl());
         PpUser.Unloaded += (s, e) => PpUser.DisposeImage();
 
-        Loaded += (s,e)=> FvMedia.ItemsSource = post.media;
-        Unloaded += (s, e) => FvMedia.ItemsSource = null;
+        Loaded += (s, e) => FvMedia.ItemsSource = Utility.GenerateMedias(post?.media?.Select(x => x.origin_url));
+        Unloaded += (s, e) => UnloadFlipViewImages();
+    }
+
+    private void UnloadFlipViewImages()
+    {
+        var images = FvMedia.ItemsSource as List<Image>;
+        images?.ForEach(x => x.DisposeImage());
+        FvMedia.ItemsSource = null;
+    }
+
+    public void Dispose()
+    {
+        UnloadFlipViewImages();
+        var inputControl = FrComment.Content as InputControl;
+        inputControl.OnSubmitShortcutActivated -= OnSubmitShortcutActivated;
+        inputControl.OnImagePasted -= OnImagePasted;
+        BtShare.Flyout = null;
+        FrOverlay.Content = null;
+        GdOverlay.Children.Clear();
     }
 
     private async void OnImagePasted(string temporaryImageFilePath)
@@ -411,14 +429,15 @@ public sealed partial class TimelineControl : UserControl
 
     private void OnMediaTapped(object sender, TappedRoutedEventArgs e)
     {
-        var medias = FvMedia.ItemsSource as List<ApiHandler.DataType.CommentData.Medium>;
-        if (medias == null)
+        var media = FvMedia.SelectedItem as Image;
+        var url = media.Tag as string;
+        if (url.Contains(".mp4"))
         {
-            var media = FvMedia.SelectedItem as ApiHandler.DataType.CommentData.Medium;
-            Process.Start(new ProcessStartInfo(media.origin_url) { UseShellExecute = true });
+            Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
             return;
         }
 
+        var medias = _post.media;
         var index = FvMedia.SelectedIndex;
         var control = new ImageViewerControl(medias, index);
         MainPage.ShowOverlay(control, _isOverlay);
@@ -512,7 +531,7 @@ public sealed partial class TimelineControl : UserControl
 
     private async void OnSharePostTapped(object sender, TappedRoutedEventArgs e)
     {
-        if(!(_post.@object.actor.relationship == "F" || _post.@object.actor.relationship == "S"))
+        if(!(_post.@object.actor.relationship == "F" || _post.@object.actor.relationship == "S" || _post.@object.permission == "A"))
         {
             var dialog = this.GenerateMessageDialog("해당 사용자와 친구를 맺어야 글을 볼 수 있습니다.", "오류");
             dialog.SecondaryButtonText = "프로필 보기";
