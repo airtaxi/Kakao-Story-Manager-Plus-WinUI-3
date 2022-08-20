@@ -14,12 +14,18 @@ namespace KSMP.Controls;
 
 public sealed partial class ImageViewerControl : UserControl
 {
+    private readonly List<Medium> _urlList;
     public ImageViewerControl(List<Medium> urlList, int index)
     {
         InitializeComponent();
-        FvImages.ItemsSource = urlList;
+        _urlList = urlList;
+        Loaded += (s,e) => LoadImage();
+        Unloaded += (s, e) => UnloadImage();
         FvImages.SelectedIndex = index;
     }
+
+    private void LoadImage() => FvImages.ItemsSource = _urlList;
+    private void UnloadImage() => FvImages.ItemsSource = null;
 
     private void OnScrollViewerTapped(object sender, TappedRoutedEventArgs e) => ResetImageSize((sender as ScrollViewer).Content as Image, sender as ScrollViewer);
 
@@ -75,7 +81,7 @@ public sealed partial class ImageViewerControl : UserControl
         GdLoading.Visibility = Visibility.Collapsed;
     }
 
-    private void FvImages_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    private void OnImageSelectionChanged(object sender, SelectionChangedEventArgs e)
     {
         var flipView = (FlipView)sender;
         var item = flipView.ContainerFromItem(flipView.SelectedItem) as FlipViewItem;

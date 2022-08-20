@@ -10,7 +10,7 @@
     d:DesignWidth="400">
 
     <Grid>
-        <FlipView x:Name="FvImages" Height="auto" Width="auto" Margin="30" SelectionChanged="FvImages_SelectionChanged">
+        <FlipView x:Name="FvImages" Height="auto" Width="auto" Margin="30" SelectionChanged="OnImageSelectionChanged">
             <FlipView.ItemTemplate>
                 <DataTemplate>
                     <ScrollViewer ZoomMode="Enabled" Tapped="OnScrollViewerTapped" RightTapped="OnScrollViewerRightTapped" Margin="0,40,0,0">

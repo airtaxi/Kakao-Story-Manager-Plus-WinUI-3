@@ -2,6 +2,7 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
+using Microsoft.UI.Xaml.Media.Imaging;
 using static StoryApi.ApiHandler.DataType;
 
 namespace KSMP.Controls;
@@ -13,7 +14,16 @@ public sealed partial class LinkControl : UserControl
     {
         InitializeComponent();
         if ((data.image?.Count ?? 0) > 0)
+        {
+            ImgLink.Loaded += (s, e) => ImgLink.Source = Utility.GenerateImageUrlSource(data.image[0]);
+            ImgLink.Unloaded += (s, e) =>
+            {
+                var bitmapImage = ImgLink.Source as BitmapImage;
+                if (bitmapImage != null) bitmapImage.UriSource = null;
+                ImgLink.Source = null;
+            };
             ImgLink.Source = Utility.GenerateImageUrlSource(data.image[0]);
+        }
         TbLinkTitle.Text = data.title ?? "";
         TbLinkDesc.Text = data.description ?? "";
         TbLinkUrl.Text = data.host ?? "";

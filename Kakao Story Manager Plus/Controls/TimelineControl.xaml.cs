@@ -24,6 +24,8 @@ using Microsoft.UI;
 using static StoryApi.ApiHandler.DataType.TimeLineData;
 using System.Diagnostics;
 using Windows.Security.Authentication.OnlineId;
+using Microsoft.UI.Xaml.Media.Imaging;
+using Windows.Media.Import;
 
 namespace KSMP.Controls;
 
@@ -89,6 +91,12 @@ public sealed partial class TimelineControl : UserControl
         inputControl.OnImagePasted += OnImagePasted;
         FrComment.Content = inputControl;
         _ = RefreshContent(post);
+
+        PpUser.Loaded += (s, e) => PpUser.ProfilePicture = Utility.GenerateImageUrlSource(post.actor?.GetValidUserProfileUrl());
+        PpUser.Unloaded += (s, e) => PpUser.DisposeImage();
+
+        Loaded += (s,e)=> FvMedia.ItemsSource = post.media;
+        Unloaded += (s, e) => FvMedia.ItemsSource = null;
     }
 
     private async void OnImagePasted(string temporaryImageFilePath)
@@ -233,8 +241,6 @@ public sealed partial class TimelineControl : UserControl
         if(post.content_updated_at != DateTime.MinValue)
             TbTime.Text += " (수정됨)";
 
-        PpUser.ProfilePicture = Utils.Common.GenerateImageUrlSource(post.actor.GetValidUserProfileUrl());
-
         RtbEmotions.Visibility = Visibility.Visible;
         RtbShares.Visibility = Visibility.Visible;
         RtbUps.Visibility = Visibility.Visible;
@@ -310,8 +316,8 @@ public sealed partial class TimelineControl : UserControl
         if (_isOverlay)
             SpPostInformation.Padding = new Thickness(0, 5, 0, 5);
 
-        if ((post.media?.Count ?? 0) > 0)
-            Utils.Post.SetMediaContent(this, post.media, FvMedia);
+        if ((post.media?.Count ?? 0) > 0) FvMedia.Visibility = Visibility.Visible;
+        else FvMedia.Visibility = Visibility.Collapsed;
 
         Utils.Post.SetTextContent(post.content_decorators, RTbContent);
 
@@ -405,20 +411,17 @@ public sealed partial class TimelineControl : UserControl
 
     private void OnMediaTapped(object sender, TappedRoutedEventArgs e)
     {
-        var index = FvMedia.SelectedIndex;
-        UIElement item = (FvMedia.ItemsSource as List<UIElement>)[index];
-        if (item is Image)
+        var medias = FvMedia.ItemsSource as List<ApiHandler.DataType.CommentData.Medium>;
+        if (medias == null)
         {
-            var image = item as Image;
-            if (image.Tag is string)
-            {
-                Process.Start(new ProcessStartInfo(image.Tag as string) { UseShellExecute = true });
-                return;
-            }
-            var images = _post.media.Where(x => x.content_type != "video/mp4").ToList();
-            var control = new ImageViewerControl(images, index);
-            MainPage.ShowOverlay(control, _isOverlay);
+            var media = FvMedia.SelectedItem as ApiHandler.DataType.CommentData.Medium;
+            Process.Start(new ProcessStartInfo(media.origin_url) { UseShellExecute = true });
+            return;
         }
+
+        var index = FvMedia.SelectedIndex;
+        var control = new ImageViewerControl(medias, index);
+        MainPage.ShowOverlay(control, _isOverlay);
     }
 
     private void TimeTapped(object sender, TappedRoutedEventArgs e)

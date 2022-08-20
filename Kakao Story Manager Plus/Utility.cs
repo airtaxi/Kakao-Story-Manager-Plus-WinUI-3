@@ -17,12 +17,23 @@ using Windows.UI.Core;
 using System.Runtime.InteropServices;
 using KSMP.Extension;
 using Microsoft.UI;
+using System.IO;
 
 namespace KSMP
 {
     public static class Utility
     {
-        public static BitmapImage GenerateImageUrlSource(string url)
+        public static List<BitmapImage> _generatedImages = new();
+        public static void FlushBitmapImages()
+        {
+            _generatedImages.ForEach(x =>
+            {
+                x.UriSource = null;
+                x.DisposeSource();
+            });
+            _generatedImages.Clear();
+        }
+        public static BitmapImage GenerateImageUrlSource(string url, bool shouldNotBeFlushed =false)
         {
             if (string.IsNullOrEmpty(url)) url = "ms-appx:///Assets/Error.png";
             var imageUrl = new Uri(url);
@@ -30,51 +41,8 @@ namespace KSMP
             {
                 UriSource = imageUrl
             };
+            if(!shouldNotBeFlushed) _generatedImages.Add(bitmap);
             return bitmap;
-        }
-
-        public static void SetMediaContent(UIElement element, List<Medium> mediums, FlipView flipView)
-        {
-            var medias = new List<UIElement>();
-            foreach (var media in mediums)
-            {
-                var isVideo = media.content_type == "video/mp4";
-                if (isVideo)
-                {
-                    //var videoMedia = new MediaElement();
-                    //videoMedia.Source = new Uri(media.url_hq);
-                    //videoMedia.AreTransportControlsEnabled = true;
-                    //videoMedia.IsMuted = true;
-                    //videoMedia.AutoPlay = false;
-                    //videoMedia.RightTapped += async (s, e) =>
-                    //{
-                    //    await Utils.SetTextClipboard(media.url_hq, "링크가 복사되었습니다.");
-                    //};
-                    var tempTextBlock = new TextBlock() { Text = "(영상 미지원)", FontSize = 20, FontWeight = FontWeights.Bold, VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Center, Foreground = new SolidColorBrush(Colors.Black) };
-                    medias.Add(tempTextBlock);
-                }
-                else
-                {
-                    var imageMedia = new Image
-                    {
-                        Stretch = Stretch.UniformToFill,
-                        HorizontalAlignment = HorizontalAlignment.Center,
-                        VerticalAlignment = VerticalAlignment.Center
-                    };
-                    var bitmapImage = new BitmapImage
-                    {
-                        UriSource = new Uri(media.origin_url)
-                    };
-                    imageMedia.Source = bitmapImage;
-                    imageMedia.RightTapped += async (s, e) =>
-                    {
-                        await SetImageClipboardFromUrl(element, media.origin_url);
-                    };
-                    medias.Add(imageMedia);
-                }
-            }
-            flipView.Visibility = Visibility.Visible;
-            flipView.ItemsSource = medias;
         }
 
         public static void SetTextContent(List<QuoteData> contentDecorators, RichTextBlock richTextBlock)
