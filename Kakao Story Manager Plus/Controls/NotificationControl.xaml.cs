@@ -62,6 +62,7 @@ public sealed partial class NotificationControl : UserControl
     {
         var listView = sender as ListView;
         var notificationData = listView.SelectedItem as NotificationData;
+        if (notificationData == null) return;
         var scheme = notificationData.Scheme;
         if (scheme.Contains("?profile_id="))
         {
