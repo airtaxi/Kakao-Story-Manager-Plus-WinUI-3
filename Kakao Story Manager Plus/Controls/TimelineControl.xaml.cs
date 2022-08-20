@@ -95,7 +95,7 @@ public sealed partial class TimelineControl : UserControl, IDisposable
         PpUser.Loaded += (s, e) => PpUser.ProfilePicture = Utility.GenerateImageUrlSource(post.actor?.GetValidUserProfileUrl());
         PpUser.Unloaded += (s, e) => PpUser.DisposeImage();
 
-        Loaded += (s, e) => FvMedia.ItemsSource = Utility.GenerateMedias(post?.media?.Select(x => x.origin_url));
+        Loaded += (s, e) => FvMedia.ItemsSource = Utility.GenerateMedias(post?.media?.Select(x => x.origin_url ?? x.url_hq));
         Unloaded += (s, e) => UnloadFlipViewImages();
     }
 

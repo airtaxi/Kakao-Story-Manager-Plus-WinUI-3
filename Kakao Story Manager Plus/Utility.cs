@@ -46,6 +46,7 @@ namespace KSMP
                 if (url.Contains(".mp4")) finalUrl = "ms-appx:///Assets/VideoThumbnail.png";
                 image.Source = GenerateImageUrlSource(finalUrl);
                 image.Tag = url;
+                image.Stretch = Stretch.Uniform;
                 images.Add(image);
             }
             return images;

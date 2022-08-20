@@ -58,7 +58,7 @@
                             <FlipView x:Name="FvMedia" Visibility="Collapsed" HorizontalAlignment="Center" VerticalAlignment="Center" Width="auto" Height="400" Margin="1" Tapped="OnMediaTapped">
                                 <FlipView.ItemTemplate>
                                     <DataTemplate>
-                                        <Image Source="{Binding}" Stretch="Uniform"/>
+                                        <Frame Content="{Binding}"/>
                                     </DataTemplate>
                                 </FlipView.ItemTemplate>
                             </FlipView>
