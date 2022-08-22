@@ -31,6 +31,7 @@ public sealed partial class MainPage : Page
     public static ApiHandler.DataType.UserProfile.ProfileData Me;
     public static Friends Friends = null;
     private Timer _notificationTimer = new();
+    private Timer _memoryUsageUpdateTimer = new();
 
     public MainPage()
     {
@@ -39,9 +40,14 @@ public sealed partial class MainPage : Page
         _instance = this;
         InitializeWritePostFlyout();
         InitializeSettingsFlyout();
+
         _notificationTimer.Interval = 3000;
         _notificationTimer.Elapsed += OnNotificationTimerElapsed;
         _notificationTimer.Start();
+
+        _memoryUsageUpdateTimer.Interval = 200;
+        _memoryUsageUpdateTimer.Elapsed += OnMemoryUsageUpdateTimerElapsed;
+        _memoryUsageUpdateTimer.Start();
     }
 
     private void InitializeSettingsFlyout()
@@ -86,6 +92,21 @@ public sealed partial class MainPage : Page
         }
         catch (Exception) { } //Ignore
         finally { _notificationTimer.Start(); }
+    }
+
+    private async void OnMemoryUsageUpdateTimerElapsed(object sender, ElapsedEventArgs e)
+    {
+        _memoryUsageUpdateTimer.Stop();
+        var process = Process.GetCurrentProcess();
+        var memorySize = process.PrivateMemorySize64 / 1024 / 1024;
+        var source = new TaskCompletionSource();
+        DispatcherQueue.TryEnqueue(() =>
+        {
+            TbMemory.Text = $"메모리 사용량: {memorySize:N0}MB";
+            source.SetResult();
+        });
+        await source.Task;
+        _memoryUsageUpdateTimer.Start();
     }
 
     private static void ShowNotificationToast(ApiHandler.DataType.Notification notification)
@@ -357,15 +378,6 @@ public sealed partial class MainPage : Page
     }
 
     private void SearchFriendQuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args) => SearchFriend(sender);
-
-    private async void OnClearMemoryButtonClicked(object sender, RoutedEventArgs e)
-    {
-        GC.Collect();
-        GC.WaitForPendingFinalizers();
-        var process = Process.GetCurrentProcess();
-        var memorySize = process.PrivateMemorySize64/1024/1024;
-        await this.ShowMessageDialogAsync($"메모리가 정리되었습니다.\n사용중 메모리: {memorySize:N0}MB", "안내");
-    }
 
     private void OnWritePostButtonClicked(object sender, RoutedEventArgs e)
     {
