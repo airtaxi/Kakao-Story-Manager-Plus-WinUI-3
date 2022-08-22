@@ -182,7 +182,7 @@ public sealed partial class MainPage : Page
     public static void NavigateTimeline(string args = null)
     {
         Utility.FlushBitmapImages();
-        if(args != null) _instance.FrContent.Navigate(typeof(TimelinePage), args);
+        if (args != null) _instance.FrContent.Navigate(typeof(TimelinePage), args);
         else _instance.FrContent.Navigate(typeof(TimelinePage));
     }
 
