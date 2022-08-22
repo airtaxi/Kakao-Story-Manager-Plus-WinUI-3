@@ -386,4 +386,6 @@ public sealed partial class MainPage : Page
         var control = flyout.Content as WritePostControl;
         control.AdjustDefaultPostWritingPermission();
     }
+
+    private void OnMemoryUsageTextBlockTapped(object sender, TappedRoutedEventArgs e) => GC.Collect(4);
 }

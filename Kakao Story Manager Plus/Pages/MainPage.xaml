@@ -49,7 +49,7 @@
                         <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xf3b1;" FontSize="17" Foreground="#717171"/>
                     </Viewbox>
                 </Button>
-                <TextBlock x:Name="TbMemory" Margin="10,0,0,0" VerticalAlignment="Center"/>
+                <TextBlock x:Name="TbMemory" Margin="10,0,0,0" VerticalAlignment="Center" Tapped="OnMemoryUsageTextBlockTapped"/>
                 <TeachingTip
                     Target="{x:Bind TbMemory}"
                     Title="왜 이 메뉴가 표시되나요?"
