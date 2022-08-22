@@ -306,6 +306,7 @@ public sealed partial class TimelineControl : UserControl, IDisposable
                     SpComments.Children.Add(border);
                 }
             }
+            await Task.Delay(100);
             SvComments.UpdateLayout();
             SvComments.ChangeView(0.0, double.MaxValue, 1.0f, true);
         }
