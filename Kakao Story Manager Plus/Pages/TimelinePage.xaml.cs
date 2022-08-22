@@ -24,7 +24,6 @@ public sealed partial class TimelinePage : Page
 
     private void OnUnloaded(object sender, RoutedEventArgs e)
     {
-        Utility.FlushBitmapImages();
         foreach (var rawItem in LvContent.Items)
         {
             var item = rawItem as TimelineControl;
