@@ -36,6 +36,7 @@ namespace KSMP
 
         public App()
         {
+            if (CheckForExistingProcess()) return;
             try
             {
                 BinaryDirectory = Path.GetDirectoryName(Process.GetCurrentProcess()?.MainModule?.FileName ?? "") ?? BinaryDirectory;
@@ -54,6 +55,13 @@ namespace KSMP
             e.SetObserved();
             WriteException(e.Exception);
             await ShowErrorMessage(e.Exception);
+        }
+
+        private static bool CheckForExistingProcess()
+        {
+            var processName = Process.GetCurrentProcess().ProcessName;
+            var processes = Process.GetProcesses();
+            return processes.Any(x => x.ProcessName == processName);
         }
 
         private async void OnAppDomainUnhandledException(object sender, System.UnhandledExceptionEventArgs e)
