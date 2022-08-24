@@ -571,7 +571,8 @@ namespace StoryApi
             }
             catch (WebException e)
             {
-                if ((int)(e.Response as HttpWebResponse).StatusCode == 401)
+                if ((int)(e.Response as HttpWebResponse).StatusCode == 404) return null;
+                else if ((int)(e.Response as HttpWebResponse).StatusCode == 401)
                 {
                     await OnReloginRequired?.Invoke();
                     return await GetResponseFromRequest(webRequest, ++count);
