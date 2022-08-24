@@ -15,7 +15,7 @@ namespace StoryApi
         private static CookieContainer _cookieContainer { get; set; } = null;
         public delegate Task ReloginRequired();
         public static ReloginRequired OnReloginRequired;
-        public static int MaxRetryCount { get; set; } = 10;
+        public static int MaxRetryCount { get; set; } = 15;
 
         public static void Init(CookieContainer cookieContainer)
         {
@@ -557,8 +557,10 @@ namespace StoryApi
         {
             try
             {
-                var readStream = await webRequest.GetResponseAsync();
-                var respReader = readStream.GetResponseStream();
+                var readStream = await webRequest?.GetResponseAsync();
+                var respReader = readStream?.GetResponseStream();
+                if (respReader == null)
+                    throw new Exception("Network Error!");
 
                 using var reader = new StreamReader(respReader);
                 string respResult = await reader.ReadToEndAsync();
