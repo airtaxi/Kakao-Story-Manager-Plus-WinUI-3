@@ -65,7 +65,7 @@ namespace KSMP
         private void WriteException(Exception exception)
         {
             var path = Path.Combine(BinaryDirectory, "error.log");
-            var text = $"\n{exception.Message}: {exception.StackTrace}\n\n";
+            var text = $"\n{exception?.Message ?? "ERRMSG"}: {exception?.StackTrace ?? "ERRST"}\n\n";
             File.AppendAllText(path, text);
         }
 
