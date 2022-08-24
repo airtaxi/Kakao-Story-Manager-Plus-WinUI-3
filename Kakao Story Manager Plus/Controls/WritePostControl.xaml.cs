@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Security;
 using System.Threading.Tasks;
+using KSMP.Extension;
 using KSMP.Pages;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -15,9 +17,11 @@ using Windows.Security.Authentication.OnlineId;
 using Windows.Storage;
 using Windows.Storage.Pickers;
 using Windows.Storage.Streams;
+using Windows.UI.Text.Core;
 using WinRT.Interop;
 using static KSMP.ClassManager;
 using static StoryApi.ApiHandler.DataType;
+using static StoryApi.ApiHandler.DataType.TimeLineData;
 
 namespace KSMP.Controls;
 
@@ -96,6 +100,8 @@ public sealed partial class WritePostControl : UserControl
 
     private async void OnImagePasted(string temporaryImageFilePath)
     {
+        GdLink.Visibility = Visibility.Collapsed;
+        ResetLinkControl();
         var file = await StorageFile.GetFileFromPathAsync(temporaryImageFilePath);
         await AddMediaFromFile(file);
     }
@@ -173,7 +179,8 @@ public sealed partial class WritePostControl : UserControl
             }
             else mediaData = null;
             var oldPaths = _postToEdit?.media?.Select(x => x.media_path).ToList();
-            await ApiHandler.WritePost(quoteDatas, mediaData, _permissons[CbxPermission.SelectedIndex], true, true, null, null, null, _postToEdit != null, oldPaths, _postToEdit?.id);
+            var url = FiLink.Tag as string;
+            await ApiHandler.WritePost(quoteDatas, mediaData, _permissons[CbxPermission.SelectedIndex], true, true, null, null, url, _postToEdit != null, oldPaths, _postToEdit?.id);
         }
         PbMain.Visibility = Visibility.Collapsed;
         BtWritePost.IsEnabled = true;
@@ -181,19 +188,6 @@ public sealed partial class WritePostControl : UserControl
         OnPostCompleted.Invoke();
 
         await MainPage.GetTimelinePage()?.Renew();
-    }
-
-    private async void OnAddMediaButtonClicked(object sender, Microsoft.UI.Xaml.Input.TappedRoutedEventArgs e)
-    {
-        var fileOpenPicker = new FileOpenPicker();
-        InitializeWithWindow.Initialize(fileOpenPicker, WindowNative.GetWindowHandle(MainWindow.Instance));
-        fileOpenPicker.FileTypeFilter.Add(".jpg");
-        fileOpenPicker.FileTypeFilter.Add(".png");
-        fileOpenPicker.FileTypeFilter.Add(".gif");
-        fileOpenPicker.FileTypeFilter.Add(".mp4");
-        var files = (await fileOpenPicker.PickMultipleFilesAsync()).ToList();
-        foreach (var file in files) await AddMediaFromFile(file);
-        _button?.Flyout?.ShowAt(_button);
     }
 
     public async Task SetEditMedia(CommentData.PostData postToEdit)
@@ -280,5 +274,79 @@ public sealed partial class WritePostControl : UserControl
         _medias.Remove(media);
         listView.SelectedItem = null;
         if (_medias.Count == 0) listView.Visibility = Visibility.Collapsed;
+    }
+
+    private async void OnAddMediaButtonClicked(object sender, RoutedEventArgs e)
+    {
+        ResetLinkControl();
+        GdLink.Visibility = Visibility.Collapsed;
+
+        var fileOpenPicker = new FileOpenPicker();
+        InitializeWithWindow.Initialize(fileOpenPicker, WindowNative.GetWindowHandle(MainWindow.Instance));
+        fileOpenPicker.FileTypeFilter.Add(".jpg");
+        fileOpenPicker.FileTypeFilter.Add(".png");
+        fileOpenPicker.FileTypeFilter.Add(".gif");
+        fileOpenPicker.FileTypeFilter.Add(".mp4");
+        var files = (await fileOpenPicker.PickMultipleFilesAsync()).ToList();
+        foreach (var file in files) await AddMediaFromFile(file);
+        _button?.Flyout?.ShowAt(_button);
+    }
+
+    private void OnAddLinkButtonClicked(object sender, RoutedEventArgs e)
+    {
+        if (GdLink.Visibility == Visibility.Visible)
+        {
+            GdLink.Visibility = Visibility.Collapsed;
+            return;
+        }
+        LvMedias.Visibility = Visibility.Collapsed;
+        GdLink.Visibility = Visibility.Visible;
+        ResetLinkControl();
+        _medias.Clear();
+    }
+
+    private void ResetLinkControl()
+    {
+        TbxLink.Text = "";
+        TbxLink.IsEnabled = true;
+        FiLink.Glyph = "\uf6fa";
+        FiLink.Tag = null;
+    }
+
+    private async void OnGetScrapDataButtonClicked(object sender, RoutedEventArgs e) => await PrepareScrap();
+
+    private async Task PrepareScrap()
+    {
+        var tag = FiLink.Tag as string;
+        if (string.IsNullOrEmpty(tag))
+        {
+            IsEnabled = false;
+            try
+            {
+                FiLink.Glyph = "\ue895";
+                var url = TbxLink.Text;
+                var scrap = await ApiHandler.GetScrapData(url);
+                if (scrap == null)
+                {
+                    FiLink.Glyph = "\uf6fa";
+                    await this.ShowMessageDialogAsync("오류가 발생했습니다.\n다시 시도해보세요.", "오류");
+                    _button?.Flyout?.ShowAt(_button);
+                    return;
+                }
+                FiLink.Glyph = "\ue74d";
+                FiLink.Tag = scrap;
+                TbxLink.IsEnabled = false;
+            }
+            finally
+            {
+                IsEnabled = true;
+            }
+        }
+        else ResetLinkControl();
+    }
+
+    private async void OnLinkTextBoxKeyDown(object sender, Microsoft.UI.Xaml.Input.KeyRoutedEventArgs e)
+    {
+        if (e.Key == Windows.System.VirtualKey.Enter) await PrepareScrap();
     }
 }
