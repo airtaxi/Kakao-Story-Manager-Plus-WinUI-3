@@ -21,6 +21,7 @@ using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Security.Isolation;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -36,7 +37,7 @@ namespace KSMP
 
         public App()
         {
-            if (CheckForExistingProcess()) return;
+            if (CheckForExistingProcess()) Environment.Exit(0);
             try
             {
                 BinaryDirectory = Path.GetDirectoryName(Process.GetCurrentProcess()?.MainModule?.FileName ?? "") ?? BinaryDirectory;
@@ -59,9 +60,9 @@ namespace KSMP
 
         private static bool CheckForExistingProcess()
         {
-            var processName = Process.GetCurrentProcess().ProcessName;
+            var process = Process.GetCurrentProcess();
             var processes = Process.GetProcesses();
-            return processes.Any(x => x.ProcessName == processName);
+            return processes.Any(x => x.ProcessName == process.ProcessName && x.Id != process.Id);
         }
 
         private async void OnAppDomainUnhandledException(object sender, System.UnhandledExceptionEventArgs e)
