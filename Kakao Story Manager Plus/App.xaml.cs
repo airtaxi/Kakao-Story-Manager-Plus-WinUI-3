@@ -94,25 +94,24 @@ public partial class App : Application
         var dispatcherQueue = _window?.DispatcherQueue ?? DispatcherQueue;
         dispatcherQueue.TryEnqueue(async () =>
         {
-            var wasToastActivated = ToastNotificationManagerCompat.WasCurrentProcessToastActivated() && _toastActivateFlag;
-            _toastActivateFlag = false;
-            if (!LoginPage.IsLoggedIn && !wasToastActivated) return;
-            ToastArguments args = ToastArguments.Parse(toastArgs.Argument);
-            var keys = args.Select(x => x.Key).ToList();
-            if (keys.Count == 0) return;
-            var action = keys[0];
-
-            var activityId = keys.Where(x => x.StartsWith("Activity=")).SingleOrDefault();
-            activityId = activityId?.Replace("Activity=", "");
-
-            var profileId = keys.Where(x => x.StartsWith("Profile=")).SingleOrDefault();
-            profileId = profileId?.Replace("Profile=", "");
-
-            var commentId = keys.Where(x => x.StartsWith("Comment=")).SingleOrDefault();
-            commentId = commentId?.Replace("Comment=", "");
-
             try
             {
+                var wasToastActivated = ToastNotificationManagerCompat.WasCurrentProcessToastActivated() && _toastActivateFlag;
+                _toastActivateFlag = false;
+                if (!LoginPage.IsLoggedIn && !wasToastActivated) return;
+                ToastArguments args = ToastArguments.Parse(toastArgs.Argument);
+                var keys = args.Select(x => x.Key).ToList();
+                if (keys.Count == 0) return;
+                var action = keys[0];
+
+                var activityId = keys.Where(x => x.StartsWith("Activity=")).SingleOrDefault();
+                activityId = activityId?.Replace("Activity=", "");
+
+                var profileId = keys.Where(x => x.StartsWith("Profile=")).SingleOrDefault();
+                profileId = profileId?.Replace("Profile=", "");
+
+                var commentId = keys.Where(x => x.StartsWith("Comment=")).SingleOrDefault();
+                commentId = commentId?.Replace("Comment=", "");
                 if (action == "Open")
                 {
                     if (profileId != null)
@@ -138,11 +137,10 @@ public partial class App : Application
 
     protected override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
     {
+        DispatcherQueue = DispatcherQueue.GetForCurrentThread();
         UnhandledException += OnApplicationUnhandledException;
         AppDomain.CurrentDomain.UnhandledException += OnAppDomainUnhandledException;
         TaskScheduler.UnobservedTaskException += OnTaskSchedulerUnobservedTaskException;
-
-        DispatcherQueue = DispatcherQueue.GetForCurrentThread();
         ToastNotificationManagerCompat.OnActivated += OnToastNotificationActivated;
 
         if (!ToastNotificationManagerCompat.WasCurrentProcessToastActivated())
