@@ -33,20 +33,15 @@ namespace KSMP
     /// </summary>
     public partial class App : Application
     {
-        public static string BinaryDirectory = "";
+        public static string BinaryDirectory = Path.GetDirectoryName(Process.GetCurrentProcess()?.MainModule?.FileName ?? "");
 
         public App()
         {
-            if (CheckForExistingProcess()) Environment.Exit(0);
-            try
-            {
-                BinaryDirectory = Path.GetDirectoryName(Process.GetCurrentProcess()?.MainModule?.FileName ?? "") ?? BinaryDirectory;
-            }
-            catch (Exception) { } //Ignore
-
             UnhandledException += OnApplicationUnhandledException;
             AppDomain.CurrentDomain.UnhandledException += OnAppDomainUnhandledException;
             TaskScheduler.UnobservedTaskException += OnTaskSchedulerUnobservedTaskException;
+
+            if (CheckForExistingProcess()) Environment.Exit(0);
             InitializeComponent();
             ToastNotificationManagerCompat.OnActivated += OnNotificationActivated;
         }
