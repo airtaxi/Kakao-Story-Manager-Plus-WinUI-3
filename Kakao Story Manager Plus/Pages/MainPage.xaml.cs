@@ -7,6 +7,7 @@ using System.Timers;
 using H.NotifyIcon;
 using KSMP.Controls;
 using KSMP.Extension;
+using KSMP.Utils;
 using Microsoft.Toolkit.Uwp.Notifications;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
@@ -185,19 +186,10 @@ public sealed partial class MainPage : Page
         return activityId;
     }
 
-    public static async void ShowWindow()
+    public static void ShowWindow()
     {
         if (!LoginPage.IsLoggedIn) return;
-        MainWindow.Instance.Activate();
-        MainWindow.Instance.Show();
-        var appWindow = MainWindow.Instance.GetAppWindow();
-        var presenter = appWindow.Presenter as OverlappedPresenter;
-        appWindow.Show();
-        if (presenter.State == OverlappedPresenterState.Minimized)
-            presenter.Restore();
-        presenter.IsAlwaysOnTop = true;
-        await Task.Delay(2000);
-        presenter.IsAlwaysOnTop = false;
+        WindowHelper.ShowWindow(MainWindow.Instance);
     }
 
     public static void NavigateTimeline(string args = null)
