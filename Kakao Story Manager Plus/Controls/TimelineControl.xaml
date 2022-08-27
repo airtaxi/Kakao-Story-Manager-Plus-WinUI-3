@@ -43,9 +43,6 @@
                             <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe72c;" Foreground="#ACACAC" FontSize="20" Tapped="OnRefreshTapped" Margin="5,0,10,0" PointerEntered="PointerEnteredShowHand" PointerExited="PointerExitedShowHand"/>
                         </Viewbox>
                         <Viewbox>
-                            <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe735;" Foreground="#ACACAC" FontSize="20" Tapped="OnAddBookmarkTapped" Margin="5,0,10,0" PointerEntered="PointerEnteredShowHand" PointerExited="PointerExitedShowHand"/>
-                        </Viewbox>
-                        <Viewbox>
                             <FontIcon x:Name="FiFavorite" FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe735;" Foreground="#ACACAC" FontSize="20" Tapped="OnAddBookmarkTapped" Margin="5,0,10,0" PointerEntered="PointerEnteredShowHand" PointerExited="PointerExitedShowHand"/>
                         </Viewbox>
                         <Viewbox>
