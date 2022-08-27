@@ -21,6 +21,7 @@ using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Media.Audio;
 using Windows.Security.Isolation;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -129,13 +130,16 @@ namespace KSMP
             {
                 LoginPage.OnLoginSuccess += () => OnNotificationActivated(toastArgs);
             }
+            finally
+            {
+                if (wasToastActivated)
+                {
+                    m_window = new MainWindow();
+                    m_window.Activate();
+                }
+            }
         }
 
-        /// <summary>
-        /// Invoked when the application is launched normally by the end user.  Other entry points
-        /// will be used such as when the application is launched to open a specific file.
-        /// </summary>
-        /// <param name="args">Details about the launch request and process.</param>
         protected override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
         {
             m_window = new MainWindow();
