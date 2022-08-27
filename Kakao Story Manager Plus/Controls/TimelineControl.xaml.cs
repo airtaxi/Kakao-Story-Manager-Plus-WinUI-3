@@ -247,10 +247,10 @@ public sealed partial class TimelineControl : UserControl, IDisposable
         await this.ShowMessageDialogAsync("포스트의 URL이 클립보드에 복사되었습니다", "안내");
     }
 
-    public async Task RefreshContent() => await RefreshContent(_post, false);
-    private async Task RefreshContent(PostData post, bool isFirst = true)
+    public async Task RefreshContent(bool showLoading = false) => await RefreshContent(_post, showLoading);
+    private async Task RefreshContent(PostData post, bool showLoading = true)
     {
-        if (isFirst) GdLoading.Visibility = Visibility.Visible;
+        if (showLoading) GdLoading.Visibility = Visibility.Visible;
         SpPostInformation.Visibility = Visibility.Collapsed;
         if (!_isShare) post = await ApiHandler.GetPost(post.id);
 
@@ -345,7 +345,7 @@ public sealed partial class TimelineControl : UserControl, IDisposable
         RefreshBookmarkButton();
         RefreshEmotionsButton();
 
-        if (isFirst) GdLoading.Visibility = Visibility.Collapsed;
+        if (showLoading) GdLoading.Visibility = Visibility.Collapsed;
     }
 
     private void OnDotMenuTapped(object sender, TappedRoutedEventArgs e)
