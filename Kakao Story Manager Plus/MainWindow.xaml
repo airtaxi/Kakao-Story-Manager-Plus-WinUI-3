@@ -8,7 +8,7 @@
     mc:Ignorable="d"
     Closed="WindowClosed">
 
-    <Grid>
+    <Grid PreviewKeyDown="OnPreviewKeyDown">
         <notifyicon:TaskbarIcon x:Name="TiMain"
             TrayMouseDoubleClick="TaskbarIconTrayMouseDoubleClicked"/>
         <Grid>

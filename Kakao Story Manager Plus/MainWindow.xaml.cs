@@ -109,4 +109,14 @@ public sealed partial class MainWindow : Microsoft.UI.Xaml.Window
         presenter.IsAlwaysOnTop = true;
         presenter.IsAlwaysOnTop = false;
     }
+
+    private async void OnPreviewKeyDown(object sender, KeyRoutedEventArgs e)
+    {
+        var isControlDown = Utils.Common.IsModifierDown();
+
+        if (e.Key == Windows.System.VirtualKey.Escape)
+            MainPage.HideOverlay();
+        else if (isControlDown && e.Key == Windows.System.VirtualKey.R)
+            await (MainPage.GetOverlayTimeLineControl()?.RefreshContent(true) ?? Task.CompletedTask);
+    }
 }
