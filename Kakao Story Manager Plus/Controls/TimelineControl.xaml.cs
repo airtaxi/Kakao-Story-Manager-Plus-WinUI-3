@@ -251,7 +251,8 @@ public sealed partial class TimelineControl : UserControl, IDisposable
     private async Task RefreshContent(PostData post, bool isFirst = true)
     {
         if (isFirst) GdLoading.Visibility = Visibility.Visible;
-        if(!_isShare) post = await ApiHandler.GetPost(post.id);
+        SpPostInformation.Visibility = Visibility.Collapsed;
+        if (!_isShare) post = await ApiHandler.GetPost(post.id);
 
         TbName.Text = post.actor.display_name;
         var timestampString = StoryApi.Utils.GetTimeString(post.created_at);
@@ -405,6 +406,7 @@ public sealed partial class TimelineControl : UserControl, IDisposable
         flyout.ShowAt(icon);
     }
 
+    private async void OnRefreshTapped(object sender, TappedRoutedEventArgs e) => await RefreshContent();
     private async void OnAddBookmarkTapped(object sender, TappedRoutedEventArgs e)
     {
         if (!isBookmarking)
