@@ -4,6 +4,7 @@ using KSMP.Extension;
 using KSMP.Pages;
 using KSMP.Utils;
 using Microsoft.Toolkit.Uwp.Notifications;
+using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
@@ -28,72 +29,73 @@ using Windows.Security.Isolation;
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 
-namespace KSMP
+namespace KSMP;
+
+public partial class App : Application
 {
-    /// <summary>
-    /// Provides application-specific behavior to supplement the default Application class.
-    /// </summary>
-    public partial class App : Application
+    public static DispatcherQueue DispatcherQueue { get; private set; }
+    public static string BinaryDirectory = Path.GetDirectoryName(Process.GetCurrentProcess()?.MainModule?.FileName ?? "");
+
+    public App()
     {
-        public static string BinaryDirectory = Path.GetDirectoryName(Process.GetCurrentProcess()?.MainModule?.FileName ?? "");
+        UnhandledException += OnApplicationUnhandledException;
+        AppDomain.CurrentDomain.UnhandledException += OnAppDomainUnhandledException;
+        TaskScheduler.UnobservedTaskException += OnTaskSchedulerUnobservedTaskException;
 
-        public App()
+        if (CheckForExistingProcess()) Environment.Exit(0);
+        InitializeComponent();
+        ToastNotificationManagerCompat.OnActivated += OnToastNotificationActivated;
+    }
+
+    private static bool CheckForExistingProcess()
+    {
+        var process = Process.GetCurrentProcess();
+        var processes = Process.GetProcesses();
+        return processes.Any(x => x.ProcessName == process.ProcessName && x.Id != process.Id);
+    }
+
+    private async void OnTaskSchedulerUnobservedTaskException(object sender, UnobservedTaskExceptionEventArgs e)
+    {
+        WriteException(e.Exception);
+        e.SetObserved();
+        await ShowErrorMessage(e.Exception);
+    }
+
+    private async void OnApplicationUnhandledException(object sender, Microsoft.UI.Xaml.UnhandledExceptionEventArgs e)
+    {
+        WriteException(e.Exception);
+        e.Handled = true;
+        await ShowErrorMessage(e.Exception);
+    }
+
+    private async void OnAppDomainUnhandledException(object sender, System.UnhandledExceptionEventArgs e)
+    {
+        WriteException(e.ExceptionObject as Exception);
+        await ShowErrorMessage(e.ExceptionObject as Exception);
+    }
+
+    private void WriteException(Exception exception)
+    {
+        var path = Path.Combine(BinaryDirectory, "error.log");
+        var text = $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss.fff}] {exception?.Message ?? "ERRMSG"}: {exception?.StackTrace ?? "ERRST"}\n\n";
+        File.AppendAllText(path, text);
+    }
+
+    private async Task ShowErrorMessage(Exception exception)
+    {
+        try
         {
-            UnhandledException += OnApplicationUnhandledException;
-            AppDomain.CurrentDomain.UnhandledException += OnAppDomainUnhandledException;
-            TaskScheduler.UnobservedTaskException += OnTaskSchedulerUnobservedTaskException;
-
-            if (CheckForExistingProcess()) Environment.Exit(0);
-            InitializeComponent();
-            ToastNotificationManagerCompat.OnActivated += OnNotificationActivated;
+            await MainPage.GetInstance().ShowMessageDialogAsync($"{exception.Message}/{exception.StackTrace}", "런타임 오류");
         }
+        catch (Exception) { } //Ignore
 
-        private static bool CheckForExistingProcess()
-        {
-            var process = Process.GetCurrentProcess();
-            var processes = Process.GetProcesses();
-            return processes.Any(x => x.ProcessName == process.ProcessName && x.Id != process.Id);
-        }
+    }
 
-        private async void OnTaskSchedulerUnobservedTaskException(object sender, UnobservedTaskExceptionEventArgs e)
-        {
-            WriteException(e.Exception);
-            e.SetObserved();
-            await ShowErrorMessage(e.Exception);
-        }
-
-        private async void OnApplicationUnhandledException(object sender, Microsoft.UI.Xaml.UnhandledExceptionEventArgs e)
-        {
-            WriteException(e.Exception);
-            e.Handled = true;
-            await ShowErrorMessage(e.Exception);
-        }
-
-        private async void OnAppDomainUnhandledException(object sender, System.UnhandledExceptionEventArgs e)
-        {
-            WriteException(e.ExceptionObject as Exception);
-            await ShowErrorMessage(e.ExceptionObject as Exception);
-        }
-
-        private void WriteException(Exception exception)
-        {
-            var path = Path.Combine(BinaryDirectory, "error.log");
-            var text = $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss.fff}] {exception?.Message ?? "ERRMSG"}: {exception?.StackTrace ?? "ERRST"}\n\n";
-            File.AppendAllText(path, text);
-        }
-
-        private async Task ShowErrorMessage(Exception exception)
-        {
-            try
-            {
-                await MainPage.GetInstance().ShowMessageDialogAsync($"{exception.Message}/{exception.StackTrace}", "런타임 오류");
-            }
-            catch (Exception) { } //Ignore
-
-        }
-
-        private bool _toastActivateFlag = true;
-        private async void OnNotificationActivated(ToastNotificationActivatedEventArgsCompat toastArgs)
+    private bool _toastActivateFlag = true;
+    private void OnToastNotificationActivated(ToastNotificationActivatedEventArgsCompat toastArgs)
+    {
+        var dispatcherQueue = m_window?.DispatcherQueue ?? DispatcherQueue;
+        dispatcherQueue.TryEnqueue(async () =>
         {
             var wasToastActivated = ToastNotificationManagerCompat.WasCurrentProcessToastActivated() && _toastActivateFlag;
             _toastActivateFlag = false;
@@ -116,38 +118,59 @@ namespace KSMP
             {
                 if (action == "Open")
                 {
-                    MainWindow.Instance.DispatcherQueue.TryEnqueue(() => MainPage.ShowWindow());
                     if (profileId != null)
-                        MainWindow.Instance.DispatcherQueue.TryEnqueue(() => MainPage.ShowProfile(profileId));
+                        MainPage.ShowProfile(profileId);
                     else if (activityId != null)
                     {
                         var post = await StoryApi.ApiHandler.GetPost(activityId);
-                        MainWindow.Instance.DispatcherQueue.TryEnqueue(() => MainPage.ShowOverlay(new TimelineControl(post, false, true)));
+                        MainPage.ShowOverlay(new TimelineControl(post, false, true));
                     }
                 }
                 else if (action == "Like") await StoryApi.ApiHandler.LikeComment(activityId, commentId, false);
             }
             catch (Exception)
             {
-                LoginPage.OnLoginSuccess += () => OnNotificationActivated(toastArgs);
+                LoginPage.OnLoginSuccess += () => OnToastNotificationActivated(toastArgs);
             }
             finally
             {
-                if (wasToastActivated)
-                {
-                    m_window = new MainWindow();
-                    m_window.Activate();
-                    WindowHelper.ShowWindow(m_window);
-                }
+                LaunchAndBringToForegroundIfNeeded();
             }
-        }
+        });
+    }
 
-        protected override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
+    protected override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
+    {
+        // Get the app-level dispatcher
+        DispatcherQueue = DispatcherQueue.GetForCurrentThread();
+
+        // Register for toast activation. Requires Microsoft.Toolkit.Uwp.Notifications NuGet package version 7.0 or greater
+        ToastNotificationManagerCompat.OnActivated += OnToastNotificationActivated; ;
+
+        // If we weren't launched by a toast, launch our window like normal.
+        // Otherwise if launched by a toast, our OnActivated callback will be triggered
+        if (!ToastNotificationManagerCompat.WasCurrentProcessToastActivated())
+        {
+            LaunchAndBringToForegroundIfNeeded();
+        }
+    }
+
+    private void LaunchAndBringToForegroundIfNeeded()
+    {
+        if (m_window == null)
         {
             m_window = new MainWindow();
             m_window.Activate();
-        }
 
-        private Microsoft.UI.Xaml.Window m_window;
+            // Additionally we show using our helper, since if activated via a toast, it doesn't
+            // activate the window correctly
+            WindowHelper.ShowWindow(m_window);
+        }
+        else
+        {
+            WindowHelper.ShowWindow(m_window);
+        }
     }
+
+    private Window m_window;
 }
