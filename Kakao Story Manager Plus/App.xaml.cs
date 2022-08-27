@@ -2,6 +2,7 @@
 using KSMP.Controls;
 using KSMP.Extension;
 using KSMP.Pages;
+using KSMP.Utils;
 using Microsoft.Toolkit.Uwp.Notifications;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -136,6 +137,7 @@ namespace KSMP
                 {
                     m_window = new MainWindow();
                     m_window.Activate();
+                    WindowHelper.ShowWindow(m_window);
                 }
             }
         }
