@@ -226,12 +226,6 @@ public sealed partial class MainPage : Page
         flyout.ShowAt(_instance);
     }
 
-    private void OnKeyDown(object sender, KeyRoutedEventArgs e)
-    {
-        if (e.Key == Windows.System.VirtualKey.Escape)
-            HideOverlay();
-    }
-
 
     public static void SelectFriend(string id)
     {
@@ -248,6 +242,7 @@ public sealed partial class MainPage : Page
         Friends = await ApiHandler.GetFriends();
     }
 
+    public static TimelineControl GetOverlayTimeLineControl() => _instance?.FrOverlay?.Content as TimelineControl;
     public static void ShowOverlay(UIElement element, bool isSecond = false)
     {
         var overlay = isSecond ? _instance.GdOverlay2 : _instance.GdOverlay;
@@ -258,6 +253,7 @@ public sealed partial class MainPage : Page
     }
     public static void HideOverlay(bool willDispose = true)
     {
+        if (_instance == null) return;
         var isSecond = _instance.GdOverlay2.Visibility == Visibility.Visible;
         var overlay = isSecond ? _instance.GdOverlay2 : _instance.GdOverlay;
         overlay.Visibility = Visibility.Collapsed;
