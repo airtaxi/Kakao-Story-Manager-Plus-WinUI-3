@@ -46,18 +46,25 @@ namespace KSMP
             ToastNotificationManagerCompat.OnActivated += OnNotificationActivated;
         }
 
-        private async void OnTaskSchedulerUnobservedTaskException(object sender, UnobservedTaskExceptionEventArgs e)
-        {
-            e.SetObserved();
-            WriteException(e.Exception);
-            await ShowErrorMessage(e.Exception);
-        }
-
         private static bool CheckForExistingProcess()
         {
             var process = Process.GetCurrentProcess();
             var processes = Process.GetProcesses();
             return processes.Any(x => x.ProcessName == process.ProcessName && x.Id != process.Id);
+        }
+
+        private async void OnTaskSchedulerUnobservedTaskException(object sender, UnobservedTaskExceptionEventArgs e)
+        {
+            WriteException(e.Exception);
+            e.SetObserved();
+            await ShowErrorMessage(e.Exception);
+        }
+
+        private async void OnApplicationUnhandledException(object sender, Microsoft.UI.Xaml.UnhandledExceptionEventArgs e)
+        {
+            WriteException(e.Exception);
+            e.Handled = true;
+            await ShowErrorMessage(e.Exception);
         }
 
         private async void OnAppDomainUnhandledException(object sender, System.UnhandledExceptionEventArgs e)
@@ -83,16 +90,12 @@ namespace KSMP
 
         }
 
-        private async void OnApplicationUnhandledException(object sender, Microsoft.UI.Xaml.UnhandledExceptionEventArgs e)
-        {
-            e.Handled = true;
-            WriteException(e.Exception);
-            await ShowErrorMessage(e.Exception);
-        }
-
+        private bool _toastActivateFlag = true;
         private async void OnNotificationActivated(ToastNotificationActivatedEventArgsCompat toastArgs)
         {
-            if (!LoginPage.IsLoggedIn) return;
+            var wasToastActivated = ToastNotificationManagerCompat.WasCurrentProcessToastActivated() && _toastActivateFlag;
+            _toastActivateFlag = false;
+            if (!LoginPage.IsLoggedIn && !wasToastActivated) return;
             ToastArguments args = ToastArguments.Parse(toastArgs.Argument);
             var keys = args.Select(x => x.Key).ToList();
             if (keys.Count == 0) return;
