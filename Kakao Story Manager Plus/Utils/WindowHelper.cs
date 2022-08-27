@@ -1,4 +1,6 @@
-﻿using Microsoft.UI.Xaml;
+﻿using KSMP.Extension;
+using Microsoft.UI.Windowing;
+using Microsoft.UI.Xaml;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,14 +21,15 @@ namespace KSMP.Utils
 
         public static void ShowWindow(Window window)
         {
-            // Bring the window to the foreground... first get the window handle...
+            var appWindow = window.GetAppWindow();
+            var presenter = appWindow.Presenter as OverlappedPresenter;
+            var previousState = presenter.State;
+
             var hwnd = WinRT.Interop.WindowNative.GetWindowHandle(window);
-
-            // Restore window if minimized... requires DLL import above
             ShowWindow(hwnd, 0x00000009);
-
-            // And call SetForegroundWindow... requires DLL import above
             SetForegroundWindow(hwnd);
+
+            if (previousState == OverlappedPresenterState.Maximized) presenter.Maximize();
         }
 
     }
