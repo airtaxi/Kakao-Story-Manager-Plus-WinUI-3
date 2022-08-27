@@ -35,13 +35,10 @@ public partial class App : Application
 {
     public static DispatcherQueue DispatcherQueue { get; private set; }
     public static string BinaryDirectory = Path.GetDirectoryName(Process.GetCurrentProcess()?.MainModule?.FileName ?? "");
+    private static Window _window;
 
     public App()
     {
-        UnhandledException += OnApplicationUnhandledException;
-        AppDomain.CurrentDomain.UnhandledException += OnAppDomainUnhandledException;
-        TaskScheduler.UnobservedTaskException += OnTaskSchedulerUnobservedTaskException;
-
         if (CheckForExistingProcess()) Environment.Exit(0);
         InitializeComponent();
         ToastNotificationManagerCompat.OnActivated += OnToastNotificationActivated;
@@ -94,7 +91,7 @@ public partial class App : Application
     private bool _toastActivateFlag = true;
     private void OnToastNotificationActivated(ToastNotificationActivatedEventArgsCompat toastArgs)
     {
-        var dispatcherQueue = m_window?.DispatcherQueue ?? DispatcherQueue;
+        var dispatcherQueue = _window?.DispatcherQueue ?? DispatcherQueue;
         dispatcherQueue.TryEnqueue(async () =>
         {
             var wasToastActivated = ToastNotificationManagerCompat.WasCurrentProcessToastActivated() && _toastActivateFlag;
@@ -141,36 +138,25 @@ public partial class App : Application
 
     protected override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
     {
-        // Get the app-level dispatcher
+        UnhandledException += OnApplicationUnhandledException;
+        AppDomain.CurrentDomain.UnhandledException += OnAppDomainUnhandledException;
+        TaskScheduler.UnobservedTaskException += OnTaskSchedulerUnobservedTaskException;
+
         DispatcherQueue = DispatcherQueue.GetForCurrentThread();
+        ToastNotificationManagerCompat.OnActivated += OnToastNotificationActivated;
 
-        // Register for toast activation. Requires Microsoft.Toolkit.Uwp.Notifications NuGet package version 7.0 or greater
-        ToastNotificationManagerCompat.OnActivated += OnToastNotificationActivated; ;
-
-        // If we weren't launched by a toast, launch our window like normal.
-        // Otherwise if launched by a toast, our OnActivated callback will be triggered
         if (!ToastNotificationManagerCompat.WasCurrentProcessToastActivated())
-        {
             LaunchAndBringToForegroundIfNeeded();
-        }
     }
 
     private void LaunchAndBringToForegroundIfNeeded()
     {
-        if (m_window == null)
+        if (_window == null)
         {
-            m_window = new MainWindow();
-            m_window.Activate();
-
-            // Additionally we show using our helper, since if activated via a toast, it doesn't
-            // activate the window correctly
-            WindowHelper.ShowWindow(m_window);
+            _window = new MainWindow();
+            _window.Activate();
+            WindowHelper.ShowWindow(_window);
         }
-        else
-        {
-            WindowHelper.ShowWindow(m_window);
-        }
+        else WindowHelper.ShowWindow(_window);
     }
-
-    private Window m_window;
 }
