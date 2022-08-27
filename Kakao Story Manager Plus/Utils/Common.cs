@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Reflection;
 using Windows.ApplicationModel;
 using Windows.UI;
+using Windows.UI.Core;
 
 namespace KSMP.Utils
 {
@@ -28,6 +29,14 @@ namespace KSMP.Utils
             Assembly assembly = Assembly.GetExecutingAssembly();
             FileVersionInfo fileVersionInfo = FileVersionInfo.GetVersionInfo(assembly.Location);
             return fileVersionInfo.ProductVersion;
+        }
+
+        public static bool IsModifierDown(Windows.System.VirtualKey virtualKey = Windows.System.VirtualKey.Control)
+        {
+            var state = Microsoft.UI.Input.InputKeyboardSource.GetKeyStateForCurrentThread(virtualKey);
+            var isDown = state == (CoreVirtualKeyStates.Down | CoreVirtualKeyStates.Locked);
+            isDown = isDown || state == CoreVirtualKeyStates.Down;
+            return isDown;
         }
     }
 }

@@ -92,18 +92,10 @@ public sealed partial class InputControl : UserControl
         TbxMain.Text += append;
     }
 
-    private bool IsModifierDown(Windows.System.VirtualKey virtualKey = Windows.System.VirtualKey.Control)
-    {
-        var state = Microsoft.UI.Input.InputKeyboardSource.GetKeyStateForCurrentThread(virtualKey);
-        var isDown = state == (CoreVirtualKeyStates.Down | CoreVirtualKeyStates.Locked);
-        isDown = isDown || state == CoreVirtualKeyStates.Down;
-        return isDown;
-    }
-
     private async void OnTextBoxPreviewKeyDown(object sender, Microsoft.UI.Xaml.Input.KeyRoutedEventArgs e)
     {
         var textBox = sender as TextBox;
-        var isControlDown = IsModifierDown();
+        var isControlDown = Utils.Common.IsModifierDown();
         if (isControlDown && e.Key == Windows.System.VirtualKey.Enter)
         {
             e.Handled = true;
