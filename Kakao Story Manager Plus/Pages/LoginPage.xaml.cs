@@ -25,6 +25,8 @@ public sealed partial class LoginPage : Page
 
     public static bool IsLoggedIn;
     private DispatcherTimer _loginCheckTimer = null;
+    public delegate void LoginSuccess();
+    public static LoginSuccess OnLoginSuccess;
 
     public LoginPage()
     {
@@ -204,6 +206,7 @@ public sealed partial class LoginPage : Page
                 MainWindow.ReloginTaskCompletionSource?.SetResult();
                 MainWindow.Navigate(typeof(MainPage));
                 MainWindow.EnableLoginRequiredMenuFlyoutItems();
+                OnLoginSuccess?.Invoke();
             }
             else if (!wasFirst)
             {

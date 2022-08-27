@@ -112,18 +112,25 @@ namespace KSMP
             var commentId = keys.Where(x => x.StartsWith("Comment=")).SingleOrDefault();
             commentId = commentId?.Replace("Comment=", "");
 
-            if (action == "Open")
+            try
             {
-                MainWindow.Instance.DispatcherQueue.TryEnqueue(() => MainPage.ShowWindow());
-                if (profileId != null)
-                    MainWindow.Instance.DispatcherQueue.TryEnqueue(() => MainPage.ShowProfile(profileId));
-                else if (activityId != null)
+                if (action == "Open")
                 {
-                    var post = await StoryApi.ApiHandler.GetPost(activityId);
-                    MainWindow.Instance.DispatcherQueue.TryEnqueue(() => MainPage.ShowOverlay(new TimelineControl(post, false, true)));
+                    MainWindow.Instance.DispatcherQueue.TryEnqueue(() => MainPage.ShowWindow());
+                    if (profileId != null)
+                        MainWindow.Instance.DispatcherQueue.TryEnqueue(() => MainPage.ShowProfile(profileId));
+                    else if (activityId != null)
+                    {
+                        var post = await StoryApi.ApiHandler.GetPost(activityId);
+                        MainWindow.Instance.DispatcherQueue.TryEnqueue(() => MainPage.ShowOverlay(new TimelineControl(post, false, true)));
+                    }
                 }
+                else if (action == "Like") await StoryApi.ApiHandler.LikeComment(activityId, commentId, false);
             }
-            else if(action == "Like") await StoryApi.ApiHandler.LikeComment(activityId, commentId, false);
+            catch (Exception)
+            {
+                LoginPage.OnLoginSuccess += () => OnNotificationActivated(toastArgs);
+            }
         }
 
         /// <summary>
