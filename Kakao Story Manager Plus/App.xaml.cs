@@ -53,8 +53,8 @@ public partial class App : Application
 
     private async void OnTaskSchedulerUnobservedTaskException(object sender, UnobservedTaskExceptionEventArgs e)
     {
+        if(!e.Observed) e.SetObserved();
         WriteException(e.Exception);
-        e.SetObserved();
         await ShowErrorMessage(e.Exception);
     }
 
