@@ -138,15 +138,27 @@ public sealed partial class MainPage : Page
 
             var builder = new ToastContentBuilder()
             .AddText(notification.message)
-            .AddText(contentMessage);
+            .AddText(contentMessage)
+            .AddArgument("Open");
 
             var openButton = new ToastButton();
             openButton.SetContent("열기");
             openButton.AddArgument("Open");
+
             if (notification.scheme.StartsWith("kakaostory://profiles/"))
-                openButton.AddArgument($"Profile={profileId}");
+            {
+                var argument = $"Profile={profileId}";
+                openButton.AddArgument(argument);
+                builder.AddArgument(argument);
+            }
+
             else if (notification.scheme.StartsWith("kakaostory://activities/"))
-                openButton.AddArgument($"Activity={activityId}");
+            {
+                var argument = $"Activity={activityId}";
+                openButton.AddArgument(argument);
+                builder.AddArgument(argument);
+            }
+
             builder.AddButton(openButton);
 
             if (commentId != null)
