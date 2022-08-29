@@ -115,8 +115,8 @@ public sealed partial class MainPage : Page
         string contentMessage = notification.content ?? "내용 없음";
 
         var willShow = true;
-        var disableLike = !((Utils.Configuration.GetValue("EmotionalNotification") as bool?) ?? true);
-        var disableVip = !((Utils.Configuration.GetValue("FavoriteFriendNotification") as bool?) ?? true);
+        var disableLike = !((Configuration.GetValue("EmotionalNotification") as bool?) ?? true);
+        var disableVip = !((Configuration.GetValue("FavoriteFriendNotification") as bool?) ?? true);
 
         if (disableLike && notification.emotion != null)
             willShow = false;
@@ -303,7 +303,7 @@ public sealed partial class MainPage : Page
     {
         _notificationTimer.Stop();
         _notificationTimer.Dispose();
-        Utils.Configuration.SetValue("willRememberCredentials", false);
+        Configuration.SetValue("willRememberCredentials", false);
         await this.ShowMessageDialogAsync("로그아웃되었습니다.\n프로그램을 재실행해주세요.", "안내");
         Environment.Exit(0);
     }
