@@ -29,7 +29,6 @@ public sealed partial class WritePostControl : UserControl
 {
     private InputControl _inputControl;
     private readonly Button _button;
-    private bool _isEdit = false;
     public delegate void PostCompleted();
     public PostCompleted OnPostCompleted;
     public CommentData.PostData _postToShare = null;

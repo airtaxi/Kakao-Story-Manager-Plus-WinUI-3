@@ -157,7 +157,7 @@ public sealed partial class LoginPage : Page
                 Process.Start(tempFile);
                 Environment.Exit(0);
             };
-            client.DownloadProgressChanged += async (_, e) =>
+            client.DownloadProgressChanged += (_, e) =>
             {
                 SetLoading(true, $"런타임 다운로드중 ({e.ProgressPercentage}%)");
             };
