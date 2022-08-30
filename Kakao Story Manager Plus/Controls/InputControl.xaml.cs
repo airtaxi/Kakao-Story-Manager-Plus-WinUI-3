@@ -89,7 +89,9 @@ public sealed partial class InputControl : UserControl
 
     internal void AppendText(string append)
     {
+        TbxMain.Focus(FocusState.Keyboard);
         TbxMain.Text += append;
+        TbxMain.Select(TbxMain.Text.Length, 0);
     }
 
     private async void OnTextBoxPreviewKeyDown(object sender, Microsoft.UI.Xaml.Input.KeyRoutedEventArgs e)

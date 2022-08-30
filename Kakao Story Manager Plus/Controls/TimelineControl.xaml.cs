@@ -86,7 +86,8 @@ public sealed partial class TimelineControl : UserControl, IDisposable
         Initialize();
         var inputControl = new InputControl("댓글을 입력하세요.");
         inputControl.AcceptReturn(true);
-        inputControl.SetMaxHeight(50);
+        inputControl.SetMaxHeight(120);
+        inputControl.WrapText(true);
         inputControl.OnSubmitShortcutActivated += OnSubmitShortcutActivated;
         inputControl.OnImagePasted += OnImagePasted;
         FrComment.Content = inputControl;
