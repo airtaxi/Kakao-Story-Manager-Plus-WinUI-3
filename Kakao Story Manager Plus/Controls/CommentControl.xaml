@@ -21,7 +21,6 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="auto"/>
-                <ColumnDefinition x:Name="CdDeleteComment" Width="auto"/>
             </Grid.ColumnDefinitions>
             <StackPanel>
                 <StackPanel Orientation="Horizontal">
@@ -46,20 +45,38 @@
                     <Image x:Name="ImgMain" Visibility="Collapsed" Margin="10"/>
                 </Grid>
             </StackPanel>
-            <Button Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center" Background="Transparent" BorderThickness="0" Click="OnLikeButtonClick">
-                <Grid>
-                    <Viewbox>
-                        <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xeb51;" Foreground="LightGray"/>
-                    </Viewbox>
-                    <Viewbox>
-                        <FontIcon x:Name="FaHeart" FontFamily="{StaticResource Fluent Icons}" Glyph="&#xeb52;" Foreground="#e57764" Visibility="Collapsed"/>
-                    </Viewbox>
-                </Grid>
-            </Button>
-            <Button Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Center" Background="Transparent" BorderThickness="0" Click="OnDeleteCommentButtonClicked">
+            <Frame x:Name="FrCommentMenu" Grid.Column="1"/>
+
+            <Button x:Name="BtCommentMenu" Grid.Column="1" BorderThickness="0" Padding="5" Margin="5,0,0,0">
                 <Viewbox>
-                    <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe74d;" Foreground="LightGray"/>
+                    <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe712;" Foreground="LightGray"/>
                 </Viewbox>
+                <Button.Flyout>
+                    <Flyout x:Name="FlComment">
+                        <StackPanel x:Name="SpCommentMenu">
+                            <Button x:Name="BtLike" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center" Background="Transparent" BorderThickness="0" Click="OnLikeButtonClick">
+                                <Grid>
+                                    <Viewbox>
+                                        <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xeb51;" Foreground="LightGray"/>
+                                    </Viewbox>
+                                    <Viewbox>
+                                        <FontIcon x:Name="FaHeart" FontFamily="{StaticResource Fluent Icons}" Glyph="&#xeb52;" Foreground="#e57764" Visibility="Collapsed"/>
+                                    </Viewbox>
+                                </Grid>
+                            </Button>
+                            <Button x:Name="BtEditComment" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Center" Background="Transparent" BorderThickness="0" Click="OnEditCommentButtonClicked" Margin="0,10,0,0">
+                                <Viewbox>
+                                    <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe70f;" Foreground="LightGray"/>
+                                </Viewbox>
+                            </Button>
+                            <Button x:Name="BtDeleteComment" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Center" Background="Transparent" BorderThickness="0" Click="OnDeleteCommentButtonClicked" Margin="0,10,0,0">
+                                <Viewbox>
+                                    <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe74d;" Foreground="LightGray"/>
+                                </Viewbox>
+                            </Button>
+                        </StackPanel>
+                    </Flyout>
+                </Button.Flyout>
             </Button>
         </Grid>
     </Grid>

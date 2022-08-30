@@ -123,8 +123,27 @@ public sealed partial class CommentControl : UserControl
         flyout.ShowAt(element);
     }
 
-    public void HideDeleteButton() => CdDeleteComment.Width = new(0);
+    public void HideUnaccessableButton(bool isMyComment, bool isMyPost)
+    {
+        if (!isMyComment)
+            BtEditComment.Visibility = Visibility.Collapsed;
 
+        if (!isMyComment && !isMyPost)
+            BtDeleteComment.Visibility = Visibility.Collapsed;
+        
+        if(BtEditComment.Visibility == Visibility.Collapsed && BtDeleteComment.Visibility == Visibility.Collapsed)
+        {
+            SpCommentMenu.Children.Remove(BtLike);
+            FrCommentMenu.Content = BtLike;
+            BtCommentMenu.Visibility = Visibility.Collapsed;
+        }
+
+    }
+
+    private async void OnEditCommentButtonClicked(object sender, RoutedEventArgs e)
+    {
+        await this.ShowMessageDialogAsync("구현중입니다.", "안내");
+    }
     private async void OnDeleteCommentButtonClicked(object sender, RoutedEventArgs e)
     {
         var result = await this.ShowMessageDialogAsync("정말로 댓글을 지우시겠습니까?", "경고", true);

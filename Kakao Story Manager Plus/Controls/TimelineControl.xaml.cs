@@ -74,15 +74,20 @@ public sealed partial class TimelineControl : UserControl, IDisposable
             GdComment.Visibility = Visibility.Collapsed;
             SpEmotions.Visibility = Visibility.Collapsed;
             SpMenu.Visibility = Visibility.Collapsed;
+            SpShare.Visibility = Visibility.Visible;
             FrShareMargin.Visibility = Visibility.Visible;
             BdShare.Visibility = Visibility.Visible;
             SvContent.Padding = new Thickness(20, 0, 20, 20);
             GdMain.Margin = new Thickness(0);
+
+            TbShareCount.Text = post.share_count.ToString();
         }
+
         if (post.@object != null && post.@object.id != null)
             FrShare.Content = new TimelineControl(post.@object, true);
         if (post.scrap != null)
             FrLink.Content = new LinkControl(post.scrap);
+
         Initialize();
         var inputControl = new InputControl("댓글을 입력하세요.");
         inputControl.AcceptReturn(true);
@@ -291,8 +296,10 @@ public sealed partial class TimelineControl : UserControl, IDisposable
 
                 control.OnDeleted += async () => await RefreshContent();
 
-                if (comment.writer.id != MainPage.Me.id && _post.actor.id != MainPage.Me.id)
-                    control.HideDeleteButton();
+
+                bool isMyComment = comment.writer.id == MainPage.Me.id;
+                bool isMyPost = _post.actor.id == MainPage.Me.id;
+                control.HideUnaccessableButton(isMyComment, isMyPost);
 
                 SpComments.Children.Add(control);
 
