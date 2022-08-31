@@ -459,6 +459,7 @@ public sealed partial class TimelineControl : UserControl, IDisposable
 
     private void OnMediaTapped(object sender, TappedRoutedEventArgs e)
     {
+        e.Handled = true;
         var media = FvMedia.SelectedItem as Image;
         var url = media.Tag as string;
         if (url.Contains(".mp4"))
