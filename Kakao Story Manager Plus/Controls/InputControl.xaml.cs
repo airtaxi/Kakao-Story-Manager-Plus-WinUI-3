@@ -87,11 +87,16 @@ public sealed partial class InputControl : UserControl
         else PuDropdown.IsOpen = false;
     }
 
-    internal void AppendText(string append)
+    public void FocusTextBox()
     {
         TbxMain.Focus(FocusState.Keyboard);
-        TbxMain.Text += append;
         TbxMain.Select(TbxMain.Text.Length, 0);
+    }
+
+    public void AppendText(string append)
+    {
+        TbxMain.Text += append;
+        FocusTextBox();
     }
 
     private async void OnTextBoxPreviewKeyDown(object sender, Microsoft.UI.Xaml.Input.KeyRoutedEventArgs e)

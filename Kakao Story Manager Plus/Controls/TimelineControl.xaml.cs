@@ -426,6 +426,8 @@ public sealed partial class TimelineControl : UserControl, IDisposable
         await control.SetEditMedia(_post);
         FrOverlay.Content = control;
         control.OnPostCompleted += HideOverlay;
+        await Task.Delay(10);
+        control.FocusTextbox();
         GdLoading.Visibility = Visibility.Collapsed;
     }
 
