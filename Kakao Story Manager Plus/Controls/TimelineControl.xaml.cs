@@ -237,9 +237,16 @@ public sealed partial class TimelineControl : UserControl, IDisposable
         GdOverlay.Visibility = Visibility.Visible;
         var control = new WritePostControl(_post);
         FrOverlay.Content = control;
-        control.OnPostCompleted += HideOverlay;
+        control.OnPostCompleted += OnPostCompleted;
         await Task.Delay(10); // Bugfix
         control.FocusTextbox();
+    }
+
+    private async void OnPostCompleted()
+    {
+        HideOverlay();
+        await RefreshPost();
+        await RefreshContent();
     }
 
     private void HideOverlay()
@@ -425,7 +432,7 @@ public sealed partial class TimelineControl : UserControl, IDisposable
         var control = new WritePostControl();
         await control.SetEditMedia(_post);
         FrOverlay.Content = control;
-        control.OnPostCompleted += HideOverlay;
+        control.OnPostCompleted += OnPostCompleted;
         await Task.Delay(10);
         control.FocusTextbox();
         GdLoading.Visibility = Visibility.Collapsed;
