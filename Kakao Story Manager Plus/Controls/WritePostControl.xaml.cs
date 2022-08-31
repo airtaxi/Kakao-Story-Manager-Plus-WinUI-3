@@ -194,7 +194,7 @@ public sealed partial class WritePostControl : UserControl
     public async Task SetEditMedia(CommentData.PostData postToEdit)
     {
         var permissionIndex = 0;
-        if (postToEdit.permission == "A")
+        if (postToEdit.permission == "F")
             permissionIndex = 1;
         else if (postToEdit.permission == "M")
             permissionIndex = 2;
