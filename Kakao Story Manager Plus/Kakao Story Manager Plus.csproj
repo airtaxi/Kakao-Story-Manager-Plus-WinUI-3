@@ -16,9 +16,9 @@
 		<UseWindowsForms>False</UseWindowsForms>
 		<Nullable>disable</Nullable>
 		<PlatformTarget>AnyCPU</PlatformTarget>
-		<FileVersion>0.1.0.61</FileVersion>
-		<AssemblyVersion>0.1.0.61</AssemblyVersion>
-		<Version>0.1.0.61</Version>
+		<FileVersion>0.1.0.62</FileVersion>
+		<AssemblyVersion>0.1.0.62</AssemblyVersion>
+		<Version>0.1.0.62</Version>
 		<SupportedOSPlatformVersion>10.0.19041.0</SupportedOSPlatformVersion>
 	</PropertyGroup>
 	<ItemGroup>
