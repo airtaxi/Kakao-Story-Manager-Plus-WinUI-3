@@ -82,6 +82,8 @@ public sealed partial class WritePostControl : UserControl
         AdjustDefaultPostWritingPermission();
     }
 
+    public void FocusTextbox() => _inputControl.GetTextBox().Focus(FocusState.Keyboard); // Share
+
     private void InitializeInputControl(bool canAddMedia = true)
     {
         _inputControl = new InputControl();

@@ -228,12 +228,14 @@ public sealed partial class TimelineControl : UserControl, IDisposable
 
     }
 
-    private void SharePost(XamlUICommand sender, ExecuteRequestedEventArgs args)
+    private async void SharePost(XamlUICommand sender, ExecuteRequestedEventArgs args)
     {
         GdOverlay.Visibility = Visibility.Visible;
         var control = new WritePostControl(_post);
         FrOverlay.Content = control;
         control.OnPostCompleted += HideOverlay;
+        await Task.Delay(10); // Bugfix
+        control.FocusTextbox();
     }
 
     private void HideOverlay()
