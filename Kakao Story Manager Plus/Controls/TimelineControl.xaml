@@ -159,7 +159,7 @@
                 </Grid>
                 <Border x:Name="BdShare" CornerRadius="10" BorderBrush="LightGray" Grid.RowSpan="4" BorderThickness="1" Visibility="Collapsed"/>
             </Grid>
-            <Grid x:Name="GdOverlay" Margin="10" CornerRadius="10" Visibility="Collapsed" PreviewKeyDown="OverlayPreviewKeyDown">
+            <Grid x:Name="GdOverlay" Margin="10" CornerRadius="10" Visibility="Collapsed">
                 <Rectangle Fill="Black" Opacity="0.85"/>
                 <Frame x:Name="FrOverlay" Background="White" Padding="10" CornerRadius="10" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                 <Button Background="Transparent" BorderThickness="0" Click="OnOverlayCloseButtonClicked" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="10">

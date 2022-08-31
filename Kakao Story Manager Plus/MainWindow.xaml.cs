@@ -118,5 +118,7 @@ public sealed partial class MainWindow : Microsoft.UI.Xaml.Window
             MainPage.HideOverlay();
         else if (isControlDown && e.Key == Windows.System.VirtualKey.R)
             await (MainPage.GetOverlayTimeLineControl()?.RefreshContent(true) ?? Task.CompletedTask);
+        else if (isControlDown && e.Key == Windows.System.VirtualKey.S)
+            await (MainPage.GetOverlayTimeLineControl()?.SharePost() ?? Task.CompletedTask);
     }
 }

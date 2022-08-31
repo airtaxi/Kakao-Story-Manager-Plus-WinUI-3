@@ -212,7 +212,7 @@ public sealed partial class TimelineControl : UserControl, IDisposable
         var shareFlyout = new MenuFlyout();
         var sharePostMenuFlyoutItem = new MenuFlyoutItem() { Text = "스토리로 공유" };
         var sharePostCommand = new XamlUICommand();
-        sharePostCommand.ExecuteRequested += SharePost;
+        sharePostCommand.ExecuteRequested += OnSharePost;
         sharePostMenuFlyoutItem.Command = sharePostCommand;
         shareFlyout.Items.Add(sharePostMenuFlyoutItem);
 
@@ -228,7 +228,9 @@ public sealed partial class TimelineControl : UserControl, IDisposable
 
     }
 
-    private async void SharePost(XamlUICommand sender, ExecuteRequestedEventArgs args)
+    private async void OnSharePost(XamlUICommand sender, ExecuteRequestedEventArgs args) => await SharePost();
+
+    public async Task SharePost()
     {
         GdOverlay.Visibility = Visibility.Visible;
         var control = new WritePostControl(_post);
@@ -606,15 +608,6 @@ public sealed partial class TimelineControl : UserControl, IDisposable
         _commentMedia = await ApiHandler.UploadImage(file.Path);
         FiAddMedia.Glyph = "\ue74d";
         BtAddMedia.IsEnabled = true;
-    }
-
-    private void OverlayPreviewKeyDown(object sender, KeyRoutedEventArgs e)
-    {
-        if (e.Key == VirtualKey.Escape)
-        {
-            HideOverlay();
-            e.Handled = true;
-        }
     }
 
     private void OnOverlayCloseButtonClicked(object sender, RoutedEventArgs e) => HideOverlay();
