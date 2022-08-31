@@ -114,6 +114,7 @@ public partial class App : Application
                 commentId = commentId?.Replace("Comment=", "");
                 if (action == "Open")
                 {
+                    MainPage.HideOverlay();
                     if (profileId != null)
                         MainPage.ShowProfile(profileId);
                     else if (activityId != null)
