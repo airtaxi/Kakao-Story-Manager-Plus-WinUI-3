@@ -380,27 +380,11 @@ public sealed partial class TimelineControl : UserControl, IDisposable
         else
         {
             var menuDeletePost = new MenuFlyoutItem() { Text = "글 삭제하기" };
-            menuDeletePost.Click += async (o, e2) =>
-            {
-                var result = await this.ShowMessageDialogAsync("정말로 글을 삭제하실건가요?", "경고", true);
-                if (result != ContentDialogResult.Primary) return;
-                await ApiHandler.DeletePost(_post.id);
-                MainPage.HideOverlay();
-                MainPage.GetTimelinePage()?.RemovePost(_post.id);
-            };
+            menuDeletePost.Click += OnDeletePost;
             flyout.Items.Add(menuDeletePost);
 
             var menuEditPost = new MenuFlyoutItem() { Text = "글 수정하기" };
-            menuEditPost.Click += async (o, e2) =>
-            {
-                GdLoading.Visibility = Visibility.Visible;
-                GdOverlay.Visibility = Visibility.Visible;
-                var control = new WritePostControl();
-                await control.SetEditMedia(_post);
-                FrOverlay.Content = control;
-                control.OnPostCompleted += HideOverlay;
-                GdLoading.Visibility = Visibility.Collapsed;
-            };
+            menuEditPost.Click += OnEditPost;
             flyout.Items.Add(menuEditPost);
         }
         var menuBlockProfile = new MenuFlyoutItem() { Text = _post.actor.is_feed_blocked ? $"'{_post.actor.display_name}' 글 받기" : $"'{_post.actor.display_name}' 글 안받기" };
@@ -418,6 +402,31 @@ public sealed partial class TimelineControl : UserControl, IDisposable
         };
         flyout.Items.Add(menuMutePost);
         flyout.ShowAt(icon);
+    }
+
+    private async void OnDeletePost(object sender, RoutedEventArgs e) => await DeletePost();
+    private async void OnEditPost(object sender, RoutedEventArgs e) => await EditPost();
+
+    public async Task DeletePost()
+    {
+        if (_post.actor.id != MainPage.Me.id) return;
+        var result = await this.ShowMessageDialogAsync("정말로 글을 삭제하실건가요?", "경고", true);
+        if (result != ContentDialogResult.Primary) return;
+        await ApiHandler.DeletePost(_post.id);
+        MainPage.HideOverlay();
+        MainPage.GetTimelinePage()?.RemovePost(_post.id);
+    }
+
+    public async Task EditPost()
+    {
+        if (_post.actor.id != MainPage.Me.id) return;
+        GdLoading.Visibility = Visibility.Visible;
+        GdOverlay.Visibility = Visibility.Visible;
+        var control = new WritePostControl();
+        await control.SetEditMedia(_post);
+        FrOverlay.Content = control;
+        control.OnPostCompleted += HideOverlay;
+        GdLoading.Visibility = Visibility.Collapsed;
     }
 
     private async void OnRefreshTapped(object sender, TappedRoutedEventArgs e) => await RefreshContent();
