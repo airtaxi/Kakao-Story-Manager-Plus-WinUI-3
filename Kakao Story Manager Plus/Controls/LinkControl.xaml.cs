@@ -45,5 +45,9 @@ public sealed partial class LinkControl : UserControl
 
     private void OnPointerExited(object sender, PointerRoutedEventArgs e) => Utility.ChangeCursor(false);
 
-    private async void OnTapped(object sender, TappedRoutedEventArgs e) => await Windows.System.Launcher.LaunchUriAsync(new Uri(_url, UriKind.Absolute));
+    private async void OnTapped(object sender, TappedRoutedEventArgs e)
+    {
+        e.Handled = true;
+        await Windows.System.Launcher.LaunchUriAsync(new Uri(_url, UriKind.Absolute));
+    }
 }
