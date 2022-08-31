@@ -96,7 +96,7 @@ public sealed partial class TimelineControl : UserControl, IDisposable
         inputControl.OnSubmitShortcutActivated += OnSubmitShortcutActivated;
         inputControl.OnImagePasted += OnImagePasted;
         FrComment.Content = inputControl;
-        _ = RefreshContent(post);
+        _ = RefreshContent();
 
         PpUser.Loaded += (s, e) => PpUser.ProfilePicture = Utility.GenerateImageUrlSource(post.actor?.GetValidUserProfileUrl());
         PpUser.Unloaded += (s, e) => PpUser.DisposeImage();
@@ -176,7 +176,6 @@ public sealed partial class TimelineControl : UserControl, IDisposable
             FiEmotions.Glyph = "\ueb52";
         }
     }
-    public async Task RefreshPost() => _post = await ApiHandler.GetPost(_post.id);
     private void RefreshUpButton()
     {
         if (_post.sympathized)
@@ -202,7 +201,6 @@ public sealed partial class TimelineControl : UserControl, IDisposable
             if (_post.liked)
             {
                 await ApiHandler.LikePost(_post.id, null);
-                await RefreshPost();
                 await RefreshContent();
                 HideEmotionsButtonFlyout();
             }
@@ -245,7 +243,6 @@ public sealed partial class TimelineControl : UserControl, IDisposable
     private async void OnPostCompleted()
     {
         HideOverlay();
-        await RefreshPost();
         await RefreshContent();
     }
 
@@ -266,39 +263,38 @@ public sealed partial class TimelineControl : UserControl, IDisposable
         await this.ShowMessageDialogAsync("포스트의 URL이 클립보드에 복사되었습니다", "안내");
     }
 
-    public async Task RefreshContent(bool showLoading = false) => await RefreshContent(_post, showLoading);
-    private async Task RefreshContent(PostData post, bool showLoading = true)
+    public async Task RefreshContent(bool showLoading = true)
     {
         if (showLoading) GdLoading.Visibility = Visibility.Visible;
         SpPostInformation.Visibility = Visibility.Collapsed;
-        if (!_isShare) post = await ApiHandler.GetPost(post.id);
+        if (!_isShare) _post = await ApiHandler.GetPost(_post.id);
 
-        TbName.Text = post.actor.display_name;
-        var timestampString = StoryApi.Utils.GetTimeString(post.created_at);
+        TbName.Text = _post.actor.display_name;
+        var timestampString = StoryApi.Utils.GetTimeString(_post.created_at);
         TbTime.Text = timestampString;
-        if(post.content_updated_at != DateTime.MinValue)
+        if(_post.content_updated_at != DateTime.MinValue)
             TbTime.Text += " (수정됨)";
 
         RtbEmotions.Visibility = Visibility.Visible;
         RtbShares.Visibility = Visibility.Visible;
         RtbUps.Visibility = Visibility.Visible;
 
-        int commentCount = post.comments?.Count ?? 0;
+        int commentCount = _post.comments?.Count ?? 0;
         if (commentCount > 0)
         {
             RtbComments.Visibility = Visibility.Visible;
             SvComments.Visibility = Visibility.Visible;
             BdComments.Visibility = Visibility.Visible;
-            RnComments.Text = post.comment_count.ToString();
+            RnComments.Text = _post.comment_count.ToString();
 
             SpComments.Children.Clear();
-            var comments = await ApiHandler.GetComments(post.id, null);
+            var comments = await ApiHandler.GetComments(_post.id, null);
             SvComments.Visibility = Visibility.Visible;
             BdComments.Visibility = Visibility.Visible;
             var lastComment = comments.Last();
             foreach (var comment in comments)
             {
-                var control = new CommentControl(comment, post.id, _isOverlay);
+                var control = new CommentControl(comment, _post.id, _isOverlay);
                 
                 control.OnReplyClick += (Comment sender) =>
                 {
@@ -339,14 +335,14 @@ public sealed partial class TimelineControl : UserControl, IDisposable
             BdComments.Visibility = Visibility.Collapsed;
         }
 
-        if (post.like_count > 0) RnEmotions.Text = post.like_count.ToString();
+        if (_post.like_count > 0) RnEmotions.Text = _post.like_count.ToString();
         else RtbEmotions.Visibility = Visibility.Collapsed;
 
-        var shareCount = post.share_count - post.sympathy_count;
+        var shareCount = _post.share_count - _post.sympathy_count;
         if (shareCount > 0) RnShares.Text = shareCount.ToString();
         else RtbShares.Visibility = Visibility.Collapsed;
 
-        if (post.sympathy_count > 0) RnUps.Text = post.sympathy_count.ToString();
+        if (_post.sympathy_count > 0) RnUps.Text = _post.sympathy_count.ToString();
         else RtbUps.Visibility = Visibility.Collapsed;
 
         if (_isShare || (RtbComments.Visibility == Visibility.Collapsed && RtbEmotions.Visibility == Visibility.Collapsed
@@ -357,10 +353,10 @@ public sealed partial class TimelineControl : UserControl, IDisposable
         if (_isOverlay)
             SpPostInformation.Padding = new Thickness(0, 5, 0, 5);
 
-        if ((post.media?.Count ?? 0) > 0) FvMedia.Visibility = Visibility.Visible;
+        if ((_post.media?.Count ?? 0) > 0) FvMedia.Visibility = Visibility.Visible;
         else FvMedia.Visibility = Visibility.Collapsed;
 
-        Utils.Post.SetTextContent(post.content_decorators, RTbContent);
+        Utils.Post.SetTextContent(_post.content_decorators, RTbContent);
 
         RefreshUpButton();
         RefreshBookmarkButton();
@@ -398,14 +394,14 @@ public sealed partial class TimelineControl : UserControl, IDisposable
         menuBlockProfile.Click += async (o, e2) =>
         {
             await ApiHandler.BlockProfile(_post.actor.id, _post.actor.is_feed_blocked);
-            await RefreshPost();
+            await RefreshContent();
         };
         flyout.Items.Add(menuBlockProfile);
         var menuMutePost = new MenuFlyoutItem() { Text = _post.push_mute ? "이 글 알림 받기" : "이 글 알림 받지 않기" };
         menuMutePost.Click += async (o, e2) =>
         {
             await ApiHandler.MutePost(_post.id, !_post.push_mute);
-            await RefreshPost();
+            await RefreshContent();
         };
         flyout.Items.Add(menuMutePost);
         flyout.ShowAt(icon);
@@ -447,7 +443,7 @@ public sealed partial class TimelineControl : UserControl, IDisposable
             var isBookmarked = _post.bookmarked;
             await ApiHandler.PinPost(_post.id, isBookmarked);
             isBookmarking = false;
-            await RefreshPost();
+            await RefreshContent();
             RefreshBookmarkButton();
         }
     }
@@ -458,8 +454,7 @@ public sealed partial class TimelineControl : UserControl, IDisposable
         BtUp.IsEnabled = false;
         await ApiHandler.UpPost(_post.id, isUp);
         BtUp.IsEnabled = true;
-        await RefreshPost();
-        RefreshUpButton();
+        await RefreshContent();
     }
 
     private void OnMediaTapped(object sender, TappedRoutedEventArgs e)

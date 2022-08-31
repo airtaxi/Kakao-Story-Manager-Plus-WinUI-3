@@ -19,7 +19,6 @@ public sealed partial class EmotionsControl : UserControl
     {
         var emotion = (sender as Button).Tag as string;
         await StoryApi.ApiHandler.LikePost(_post.id, emotion);
-        await _timeline.RefreshPost();
         await _timeline.RefreshContent();
         _timeline.HideEmotionsButtonFlyout();
     }
