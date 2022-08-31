@@ -232,6 +232,8 @@ public sealed partial class TimelineControl : UserControl, IDisposable
 
     public async Task SharePost()
     {
+        if (!_post.sharable || _post.@object != null) return;
+
         GdOverlay.Visibility = Visibility.Visible;
         var control = new WritePostControl(_post);
         FrOverlay.Content = control;
