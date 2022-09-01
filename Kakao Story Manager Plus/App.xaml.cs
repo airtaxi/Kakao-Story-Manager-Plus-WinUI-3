@@ -94,38 +94,39 @@ public partial class App : Application
         var dispatcherQueue = _window?.DispatcherQueue ?? DispatcherQueue;
         dispatcherQueue.TryEnqueue(async () =>
         {
-        try
-        {
-            var wasToastActivated = ToastNotificationManagerCompat.WasCurrentProcessToastActivated() && _toastActivateFlag;
-            _toastActivateFlag = false;
-            if (!LoginPage.IsLoggedIn && !wasToastActivated) return;
-            ToastArguments args = ToastArguments.Parse(toastArgs.Argument);
-            var keys = args.Select(x => x.Key).ToList();
-            if (keys.Count == 0) return;
-            var action = keys[0];
-
-            var activityId = keys.Where(x => x.StartsWith("Activity=")).SingleOrDefault();
-            activityId = activityId?.Replace("Activity=", "");
-
-            var profileId = keys.Where(x => x.StartsWith("Profile=")).SingleOrDefault();
-            profileId = profileId?.Replace("Profile=", "");
-
-            var commentId = keys.Where(x => x.StartsWith("Comment=")).SingleOrDefault();
-            commentId = commentId?.Replace("Comment=", "");
-            if (action == "Open")
+            try
             {
-                MainPage.HideOverlay();
-                if (profileId != null)
-                    MainPage.ShowProfile(profileId);
-                else if (activityId != null)
-                {
-                    var instance = MainPage.GetInstance();
+                var wasToastActivated = ToastNotificationManagerCompat.WasCurrentProcessToastActivated() && _toastActivateFlag;
+                _toastActivateFlag = false;
+                if (!LoginPage.IsLoggedIn && !wasToastActivated) return;
+                ToastArguments args = ToastArguments.Parse(toastArgs.Argument);
+                var keys = args.Select(x => x.Key).ToList();
+                if (keys.Count == 0) return;
+                var action = keys[0];
 
-                    var post = await StoryApi.ApiHandler.GetPost(activityId);
-                    if (post != null) MainPage.ShowOverlay(new TimelineControl(post, false, true));
-                    else await instance.ShowMessageDialogAsync("해당 글을 볼 권한이 없습니다.", "오류");
+                var activityId = keys.Where(x => x.StartsWith("Activity=")).SingleOrDefault();
+                activityId = activityId?.Replace("Activity=", "");
+
+                var profileId = keys.Where(x => x.StartsWith("Profile=")).SingleOrDefault();
+                profileId = profileId?.Replace("Profile=", "");
+
+                var commentId = keys.Where(x => x.StartsWith("Comment=")).SingleOrDefault();
+                commentId = commentId?.Replace("Comment=", "");
+                if (action == "Open")
+                {
+                    MainPage.HideOverlay();
+                    if (profileId != null)
+                        MainPage.ShowProfile(profileId);
+                    else if (activityId != null)
+                    {
+                        var instance = MainPage.GetInstance();
+
+                        var post = await StoryApi.ApiHandler.GetPost(activityId);
+                        if (post != null) MainPage.ShowOverlay(new TimelineControl(post, false, true));
+                        else await instance.ShowMessageDialogAsync("해당 글을 볼 권한이 없습니다.", "오류");
+                    }
+                    else if (action == "Like") await StoryApi.ApiHandler.LikeComment(activityId, commentId, false);
                 }
-                else if (action == "Like") await StoryApi.ApiHandler.LikeComment(activityId, commentId, false);
             }
             catch (Exception)
             {
