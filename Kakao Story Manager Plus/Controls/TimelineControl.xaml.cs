@@ -560,7 +560,7 @@ public sealed partial class TimelineControl : UserControl, IDisposable
                 var overlay = new TimelineControl(post, false, true);
                 MainPage.ShowOverlay(overlay);
             }
-            else await this.ShowMessageDialogAsync("해당 글을 볼 권한이 없습니다.", "오류");
+            else await this.ShowMessageDialogAsync("글을 볼 수 없거나 나만 보기로 설정된 글입니다.", "오류");
         }
     }
 
