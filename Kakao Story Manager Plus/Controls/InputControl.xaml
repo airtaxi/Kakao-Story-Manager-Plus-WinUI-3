@@ -10,7 +10,7 @@
     d:DesignWidth="400">
 
     <StackPanel>
-        <TextBox x:Name="TbxMain" TextChanged="TbxMain_TextChanged" MaxHeight="400" PreviewKeyDown="OnTextBoxPreviewKeyDown"/>
+        <TextBox x:Name="TbxMain" TextChanged="TextboxTextChanged" MaxHeight="400" PreviewKeyDown="OnTextBoxPreviewKeyDown"/>
         <Popup x:Name="PuDropdown" HorizontalAlignment="Left"/>
     </StackPanel>
 </UserControl>

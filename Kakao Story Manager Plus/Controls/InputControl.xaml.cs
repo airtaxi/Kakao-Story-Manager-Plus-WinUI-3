@@ -76,7 +76,7 @@ public sealed partial class InputControl : UserControl
             PuDropdown.IsOpen = true;
     }
 
-    private void TbxMain_TextChanged(object sender, RoutedEventArgs e)
+    private void TextboxTextChanged(object sender, RoutedEventArgs e)
     {
         var text = TbxMain.Text;
         if (text.Contains('@'))

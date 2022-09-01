@@ -155,7 +155,7 @@ namespace StoryApi
             var response = await GetResponseFromRequest(webRequest);
             return JsonConvert.DeserializeObject<List<CommentLikes>>(response);
         }
-        public static async Task<bool> LikeComment(string postId, string commentID, bool isDelete)
+        public static async Task<Comment> LikeComment(string postId, string commentID, bool isDelete)
         {
             string requestURI = "https://story.kakao.com/a/activities/" + postId + "/comments/" + commentID + "/likes";
             string method;
@@ -164,7 +164,8 @@ namespace StoryApi
             else
                 method = "POST";
             HttpWebRequest webRequest = GenerateDefaultProfile(requestURI, method);
-            return await GetResponseFromRequest(webRequest) != null;
+            var response = await GetResponseFromRequest(webRequest);
+            return JsonConvert.DeserializeObject<Comment>(response);
         }
         public static async Task<bool> RequestFriend(string id, bool isDelete)
         {
@@ -497,9 +498,9 @@ namespace StoryApi
             HttpWebRequest webRequest = GenerateDefaultProfile(requestURI, "DELETE");
             return await GetResponseFromRequest(webRequest) != null;
         }
-        public static async Task EditComment(Comment comment, PostData data, List<QuoteData> quoteDatas, string text)
+        public static async Task<Comment> EditComment(Comment comment, string postId, List<QuoteData> quoteDatas, string text)
         {
-            string requestURI = "https://story.kakao.com/a/activities/" + data.id + "/comments/" + comment.id + "/content";
+            string requestURI = "https://story.kakao.com/a/activities/" + postId + "/comments/" + comment.id + "/content";
 
             string textContent = Uri.EscapeDataString(JsonConvert.SerializeObject(quoteDatas).Replace("\"id\":null,", ""));
             string imageData2 = "";
@@ -528,7 +529,8 @@ namespace StoryApi
             writeStream.Write(byteArray, 0, byteArray.Length);
             writeStream.Close();
 
-            await GetResponseFromRequest(webRequest);
+            var response = await GetResponseFromRequest(webRequest);
+            return JsonConvert.DeserializeObject<Comment>(response);
         }
         public static async Task<List<ShareData.Share>> GetShares(bool isUP, PostData data, string from)
         {

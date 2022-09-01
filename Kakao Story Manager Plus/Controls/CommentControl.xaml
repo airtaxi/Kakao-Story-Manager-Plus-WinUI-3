@@ -9,75 +9,71 @@
     d:DesignHeight="300"
     d:DesignWidth="400">
 
-    <Grid Margin="5">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="45"/>
-            <ColumnDefinition Width="*"/>
-        </Grid.ColumnDefinitions>
-        <Viewbox VerticalAlignment="Top" Width="45" Height="45">
-            <PersonPicture x:Name="PpUser" Tapped="UserProfilePictureTapped"/>
-        </Viewbox>
-        <Grid Grid.Column="1" Margin="5,5,0,5" VerticalAlignment="Top">
+    <Grid>
+        <Grid Margin="5">
             <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="45"/>
                 <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="auto"/>
             </Grid.ColumnDefinitions>
-            <StackPanel>
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock x:Name="TbName" Text="로딩중..." FontSize="15" FontWeight="Bold" TextWrapping="Wrap"/>
-                    <TextBlock x:Name="TbTime" Text="방금 전 (수정됨)" Foreground="#adb0b8" Margin="5,0,0,0" FontSize="12.5" FontWeight="Bold" TextWrapping="Wrap" VerticalAlignment="Bottom"/>
-                    <StackPanel x:Name="SpLike"  Orientation="Horizontal" Margin="5,0,0,0" Tapped="LikeListTapped">
-                        <Viewbox Width="10" Height="10">
-                            <FontIcon Foreground="#e57764" FontFamily="{StaticResource Fluent Icons}" Glyph="&#xeb52;"/>
-                        </Viewbox>
-                        <TextBlock x:Name="TbLike" Text="0" Margin="2,0,0,0" Padding="0,0,0,1.5" FontWeight="Bold" Foreground="#e57764" FontSize="10" VerticalAlignment="Center"/>
-                    </StackPanel>
-                    <Viewbox Width="10" Height="10" Margin="5,0,0,0" Tapped="OnReplyTapped" PointerEntered="OnPointerEntered" PointerExited="OnPointerExited">
-                        <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe97a;" Foreground="#adb0b8"/>
-                    </Viewbox>
-                </StackPanel>
-                <RichTextBlock x:Name="RtbContent" FontSize="15" Margin="0,1,0,0"/>
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="0.6*"/>
-                        <ColumnDefinition Width="0.4*"/>
-                    </Grid.ColumnDefinitions>
-                    <Image x:Name="ImgMain" Visibility="Collapsed" Margin="10"/>
-                </Grid>
-            </StackPanel>
-            <Frame x:Name="FrCommentMenu" Grid.Column="1"/>
-
-            <Button x:Name="BtCommentMenu" Grid.Column="1" BorderThickness="0" Padding="5" Margin="5,0,0,0">
-                <Viewbox>
-                    <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe712;" Foreground="LightGray"/>
-                </Viewbox>
-                <Button.Flyout>
-                    <Flyout x:Name="FlComment">
-                        <StackPanel x:Name="SpCommentMenu">
-                            <Button x:Name="BtLike" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center" Background="Transparent" BorderThickness="0" Click="OnLikeButtonClick">
-                                <Grid>
-                                    <Viewbox>
-                                        <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xeb51;" Foreground="LightGray"/>
-                                    </Viewbox>
-                                    <Viewbox>
-                                        <FontIcon x:Name="FaHeart" FontFamily="{StaticResource Fluent Icons}" Glyph="&#xeb52;" Foreground="#e57764" Visibility="Collapsed"/>
-                                    </Viewbox>
-                                </Grid>
-                            </Button>
-                            <Button x:Name="BtEditComment" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Center" Background="Transparent" BorderThickness="0" Click="OnEditCommentButtonClicked" Margin="0,10,0,0">
-                                <Viewbox>
-                                    <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe70f;" Foreground="LightGray"/>
-                                </Viewbox>
-                            </Button>
-                            <Button x:Name="BtDeleteComment" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Center" Background="Transparent" BorderThickness="0" Click="OnDeleteCommentButtonClicked" Margin="0,10,0,0">
-                                <Viewbox>
-                                    <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe74d;" Foreground="LightGray"/>
-                                </Viewbox>
-                            </Button>
+            <Viewbox VerticalAlignment="Top" Width="45" Height="45">
+                <PersonPicture x:Name="PpUser" Tapped="UserProfilePictureTapped"/>
+            </Viewbox>
+            <Grid Grid.Column="1" Margin="5,5,0,5" VerticalAlignment="Top">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="auto"/>
+                </Grid.ColumnDefinitions>
+                <StackPanel HorizontalAlignment="Stretch">
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch" Tapped="OnReplyTapped">
+                        <TextBlock x:Name="TbName" Text="로딩중..." FontSize="15" FontWeight="Bold" TextWrapping="Wrap"/>
+                        <TextBlock x:Name="TbTime" Text="방금 전 (수정됨)" Foreground="#adb0b8" Margin="5,0,0,0" FontSize="12.5" FontWeight="Bold" TextWrapping="Wrap" VerticalAlignment="Bottom"/>
+                        <StackPanel x:Name="SpLike"  Orientation="Horizontal" Margin="5,0,0,0" Tapped="LikeListTapped">
+                            <Viewbox Width="10" Height="10">
+                                <FontIcon Foreground="#e57764" FontFamily="{StaticResource Fluent Icons}" Glyph="&#xeb52;"/>
+                            </Viewbox>
+                            <TextBlock x:Name="TbLike" Text="0" Margin="2,0,0,0" Padding="0,0,0,1.5" FontWeight="Bold" Foreground="#e57764" FontSize="10" VerticalAlignment="Center"/>
                         </StackPanel>
-                    </Flyout>
-                </Button.Flyout>
-            </Button>
+                        <Viewbox Width="10" Height="10" Margin="5,0,0,0">
+                            <FontIcon Foreground="#adb0b8" FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe97a;"/>
+                        </Viewbox>
+                    </StackPanel>
+                    <RichTextBlock x:Name="RtbContent" FontSize="15" Margin="0,1,0,0" IsTapEnabled="False"/>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="0.6*"/>
+                            <ColumnDefinition Width="0.4*"/>
+                        </Grid.ColumnDefinitions>
+                        <Image x:Name="ImgMain" Visibility="Collapsed" Margin="10"/>
+                    </Grid>
+                </StackPanel>
+                <Button x:Name="BtCommentMenu" Grid.Column="1" BorderThickness="0" Padding="5" Margin="5,0,0,0" Tapped="CommentMenuTapped">
+                    <Viewbox>
+                        <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe712;" Foreground="LightGray"/>
+                    </Viewbox>
+                    <Button.Flyout>
+                        <MenuFlyout>
+                            <MenuFlyoutItem x:Name="MfiLike" Text="좋아요" Click="OnLikeButtonClick"/>
+                            <MenuFlyoutItem x:Name="MfiEdit" Text="수정" Click="OnEditCommentButtonClicked"/>
+                            <MenuFlyoutItem x:Name="MfiDelete" Text="삭제" Click="OnDeleteCommentButtonClicked"/>
+                        </MenuFlyout>
+                    </Button.Flyout>
+                </Button>
+            </Grid>
+
+            <Frame x:Name="FrEditCommentParent" Visibility="Collapsed" Grid.Column="0" Grid.ColumnSpan="2" CornerRadius="5">
+                <Grid>
+                    <Rectangle Fill="Black" Opacity="0.4"/>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="auto"/>
+                        </Grid.ColumnDefinitions>
+                        <Frame x:Name="FrEditComment" Grid.Column="0" VerticalAlignment="Center" Margin="5"/>
+                        <Button Content="수정" Background="#E96A49" Foreground="White" Padding="10,5,10,5" VerticalAlignment="Bottom" Grid.Column="1" Margin="5" Click="OnPublishEditCommentButtonClicked"/>
+                    </Grid>
+                    <ProgressRing x:Name="PrrEditComment" IsActive="True" IsIndeterminate="True" Visibility="Collapsed"/>
+                </Grid>
+            </Frame>
         </Grid>
     </Grid>
 </UserControl>

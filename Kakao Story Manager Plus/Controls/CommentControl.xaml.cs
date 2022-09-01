@@ -11,6 +11,9 @@ using System;
 using Microsoft.UI.Xaml.Media;
 using StoryApi;
 using Microsoft.UI.Xaml.Media.Imaging;
+using System.Linq.Expressions;
+using Windows.Storage;
+using System.Threading.Tasks;
 
 namespace KSMP.Controls;
 
@@ -45,10 +48,8 @@ public sealed partial class CommentControl : UserControl
         PpUser.Loaded += (s, e) => PpUser.ProfilePicture = Utility.GenerateImageUrlSource(comment.writer.GetValidUserProfileUrl());
         PpUser.Unloaded += (s, e) => PpUser.DisposeImage();
 
-        if (comment.liked)
-            FaHeart.Visibility = Visibility.Visible;
-        else
-            FaHeart.Visibility = Visibility.Collapsed;
+        if (comment.liked) MfiLike.Text = "좋아요 취소";
+        else MfiLike.Text = "좋아요";
 
         if (comment.like_count == 0)
             SpLike.Visibility = Visibility.Collapsed;
@@ -67,12 +68,13 @@ public sealed partial class CommentControl : UserControl
 
             ImgMain.Tapped += (s, e) =>
             {
+                e.Handled = true;
                 var medium = new Medium
                 {
                     origin_url = commentMedia?.media?.origin_url
                 };
                 var control = new ImageViewerControl(new List<Medium> { medium }, 0);
-                Pages.MainPage.ShowOverlay(control, _isOverlay);
+                MainPage.ShowOverlay(control, _isOverlay);
             };
         }
         else
@@ -81,27 +83,35 @@ public sealed partial class CommentControl : UserControl
 
     private async void OnLikeButtonClick(object sender, RoutedEventArgs e)
     {
-        var isSuccess = await StoryApi.ApiHandler.LikeComment(_postId, _comment.id, _comment.liked);
-        if (isSuccess)
+        var comment = await ApiHandler.LikeComment(_postId, _comment.id, _comment.liked);
+        if (comment != null)
         {
-            _comment = (await StoryApi.ApiHandler.GetPost(_postId)).comments.FirstOrDefault(x => x.id == _comment.id);
+            comment.decorators = _comment.decorators;
+            _comment = comment;
             Refresh(_comment);
         }
     }
 
-    private void OnReplyTapped(object sender, TappedRoutedEventArgs e) => OnReplyClick.Invoke(_comment);
-    private void OnPointerEntered(object sender, PointerRoutedEventArgs e) => Utility.ChangeCursor(true);
-    private void OnPointerExited(object sender, PointerRoutedEventArgs e) => Utility.ChangeCursor(false);
+    private void OnReplyTapped(object sender, TappedRoutedEventArgs e)
+    {
+        e.Handled = true;
+        OnReplyClick.Invoke(_comment);
+    }
 
-    private void UserProfilePictureTapped(object sender, TappedRoutedEventArgs e) => MainPage.ShowProfile(_comment.writer.id);
+    private void UserProfilePictureTapped(object sender, TappedRoutedEventArgs e)
+    {
+        e.Handled = true;
+        MainPage.ShowProfile(_comment.writer.id);
+    }
 
     private async void LikeListTapped(object sender, TappedRoutedEventArgs e)
     {
+        e.Handled = true;
         var element = sender as FrameworkElement;
         var likeList = new FriendListControl();
 
         var friendProfiles = new List<FriendProfile>();
-        var likes = await StoryApi.ApiHandler.GetCommentLikes(_postId, _comment.id);
+        var likes = await ApiHandler.GetCommentLikes(_postId, _comment.id);
 
         foreach(var like in likes)
         {
@@ -126,23 +136,42 @@ public sealed partial class CommentControl : UserControl
     public void HideUnaccessableButton(bool isMyComment, bool isMyPost)
     {
         if (!isMyComment)
-            BtEditComment.Visibility = Visibility.Collapsed;
+            MfiEdit.Visibility = Visibility.Collapsed;
 
         if (!isMyComment && !isMyPost)
-            BtDeleteComment.Visibility = Visibility.Collapsed;
-        
-        if(BtEditComment.Visibility == Visibility.Collapsed && BtDeleteComment.Visibility == Visibility.Collapsed)
-        {
-            SpCommentMenu.Children.Remove(BtLike);
-            FrCommentMenu.Content = BtLike;
-            BtCommentMenu.Visibility = Visibility.Collapsed;
-        }
+            MfiDelete.Visibility = Visibility.Collapsed;
+    }
 
+    private async void OnPublishEditCommentButtonClicked(object sender, RoutedEventArgs e) => await PublishEditedComment();
+
+    private async Task PublishEditedComment()
+    {
+        FrEditCommentParent.IsEnabled = false;
+        PrrEditComment.Visibility = Visibility.Visible;
+        var inputControl = FrEditComment.Content as InputControl;
+        var quotas = inputControl.GetQuoteDatas();
+        var text = string.Join(' ', quotas.Select(x => x.text));
+        var comment = await ApiHandler.EditComment(_comment, _postId, quotas, text);
+        _comment = comment;
+        Refresh(_comment);
+        PrrEditComment.Visibility = Visibility.Collapsed;
+        FrEditCommentParent.Visibility = Visibility.Collapsed;
+        FrEditCommentParent.IsEnabled = true;
     }
 
     private async void OnEditCommentButtonClicked(object sender, RoutedEventArgs e)
     {
-        await this.ShowMessageDialogAsync("구현중입니다.", "안내");
+        FrEditCommentParent.Visibility = Visibility.Visible;
+        var inputControl = new InputControl("댓글 수정...");
+        inputControl.AcceptReturn(true);
+        inputControl.WrapText(true);
+        inputControl.SetMaxHeight(100);
+        FrEditComment.Content = inputControl;
+        var text = StoryApi.Utils.GetStringFromQuoteData(_comment.decorators, true);
+        inputControl.GetTextBox().Text = text;
+        await Task.Delay(10);
+        inputControl.FocusTextBox();
+        inputControl.OnSubmitShortcutActivated += async () => await PublishEditedComment();
     }
     private async void OnDeleteCommentButtonClicked(object sender, RoutedEventArgs e)
     {
@@ -152,5 +181,10 @@ public sealed partial class CommentControl : UserControl
             await ApiHandler.DeleteComment(_comment.id, _postId);
             OnDeleted?.Invoke();
         }
+    }
+
+    private void CommentMenuTapped(object sender, TappedRoutedEventArgs e)
+    {
+        e.Handled = true;
     }
 }
