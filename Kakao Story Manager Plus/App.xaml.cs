@@ -120,7 +120,8 @@ public partial class App : Application
                     else if (activityId != null)
                     {
                         var post = await StoryApi.ApiHandler.GetPost(activityId);
-                        MainPage.ShowOverlay(new TimelineControl(post, false, true));
+                        if (post != null) MainPage.ShowOverlay(new TimelineControl(post, false, true));
+                        else await MainPage.GetInstance().ShowMessageDialogAsync("해당 글을 볼 권한이 없습니다.", "오류");
                     }
                 }
                 else if (action == "Like") await StoryApi.ApiHandler.LikeComment(activityId, commentId, false);
