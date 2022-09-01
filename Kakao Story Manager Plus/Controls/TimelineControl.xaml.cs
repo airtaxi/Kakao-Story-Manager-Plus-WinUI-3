@@ -554,9 +554,13 @@ public sealed partial class TimelineControl : UserControl, IDisposable
         if (profile.Metadata.IsUp) MainPage.ShowProfile(profile.Id);
         else
         {
-            MainPage.HideOverlay();
-            var overlay = new TimelineControl(post, false, true);
-            MainPage.ShowOverlay(overlay);
+            if (post != null)
+            {
+                MainPage.HideOverlay();
+                var overlay = new TimelineControl(post, false, true);
+                MainPage.ShowOverlay(overlay);
+            }
+            else await this.ShowMessageDialogAsync("해당 글을 볼 권한이 없습니다.", "오류");
         }
     }
 
