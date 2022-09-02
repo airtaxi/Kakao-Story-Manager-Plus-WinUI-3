@@ -13,20 +13,27 @@ using System.IO;
 using Microsoft.UI.Windowing;
 using Version = System.Version;
 using System.Drawing.Text;
+using OpenQA.Selenium.Chromium;
+using OpenQA.Selenium.Edge;
+using WebDriverManager;
+using WebDriverManager.DriverConfigs.Impl;
+using Microsoft.Win32;
+using OpenQA.Selenium;
+using OpenQA.Selenium.Chrome;
+using OpenQA.Selenium.Support;
+using static StoryApi.ApiHandler.DataType.CommentData;
+using System.Threading;
+using OpenQA.Selenium.Support.UI;
+using System.Linq.Expressions;
 
 namespace KSMP.Pages;
 
 public sealed partial class LoginPage : Page
 {
-    private const string MainUrl = "https://story.kakao.com/";
-
-    private bool isFirst = true;
-    private bool isNavigated = false;
-
     public static bool IsLoggedIn;
-    private DispatcherTimer _loginCheckTimer = null;
     public delegate void LoginSuccess();
     public static LoginSuccess OnLoginSuccess;
+    public static EdgeDriver SeleniumDriver = null;
 
     public LoginPage()
     {
@@ -38,8 +45,8 @@ public sealed partial class LoginPage : Page
     private async void Initialize()
     {
         await Task.Delay(100);
-        SetLoading(true, "의존성 패키지 검사중");
-        await CheckWebView2Runtime();
+        SetLoading(true, "의존성 검사중");
+        await CheckEdgeBrowserInstalled();
         SetLoading(true, "버전 확인중");
         await CheckVersion();
         SetLoading(true, "폰트 확인중");
@@ -52,11 +59,6 @@ public sealed partial class LoginPage : Page
             PbxLogin.Password = Utils.Configuration.GetValue("password") as string ?? string.Empty;
             CbxRememberCredentials.IsChecked = hasRememberedCreditionals;
         }
-
-        WvLogin.NavigationCompleted += OnNavigationCompleted;
-        WvLogin.Source = new Uri("https://story.kakao.com/s/logout");
-        BtLogin.Content = "로그아웃중...";
-        BtLogin.IsEnabled = false;
 
         MainWindow.DisableLoginRequiredMenuFlyoutItems();
     }
@@ -134,136 +136,23 @@ public sealed partial class LoginPage : Page
 
     }
 
-    private async Task CheckWebView2Runtime()
+    private async Task CheckEdgeBrowserInstalled()
     {
-        string version = null;
-
-        try { version = CoreWebView2Environment.GetAvailableBrowserVersionString(); }
-        catch (Exception)
+        bool isAvailable = false;
+        try
         {
-            // ignored
+            var key = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Edge\BLBeacon", true);
+            string version = key.GetValue("version") as string;
+            if (!string.IsNullOrEmpty(version)) isAvailable = true;
         }
-
-        if (string.IsNullOrEmpty(version))
+        catch (Exception) { } // Ignore
+        if (!isAvailable)
         {
-            TaskCompletionSource taskCompletionSource = new();
-            await this.ShowMessageDialogAsync("프로그램 구동을 위해 WebView2 런타임이 필요합니다.\n확인 버튼을 누르면 설치합니다.", "안내");
-            SetLoading(true, "런타임 다운로더 초기화중");
-            var tempFile = Path.Combine(Path.GetTempPath(), "webview2runtime.exe");
-            var client = new WebClient();
-            client.DownloadFileCompleted += async (_, _) =>
-            {
-                await this.ShowMessageDialogAsync("런타임 다운로드가 완료되었습니다. 확인을 누르면 실행되는 설치 프로그램을 통하여 설치를 완료하신 뒤 프로그램을 재실행 해주세요", "안내");
-                Process.Start(tempFile);
-                Environment.Exit(0);
-            };
-            client.DownloadProgressChanged += (_, e) =>
-            {
-                SetLoading(true, $"런타임 다운로드중 ({e.ProgressPercentage}%)");
-            };
-            await client.DownloadFileTaskAsync(new Uri("https://go.microsoft.com/fwlink/p/?LinkId=2124703"), tempFile);
-            await taskCompletionSource.Task;
+            await this.ShowMessageDialogAsync("본 프로그램을 이용하기 위해서는 Edge 브라우저가 설치되어있어야 합니다.", "오류");
+            Environment.Exit(0);
         }
     }
-
-    private async void OnNavigationCompleted(WebView2 sender, CoreWebView2NavigationCompletedEventArgs args)
-    {
-        await this.RunOnMainThreadAsync(async () =>
-        {
-            var isLogin = sender.Source.AbsoluteUri.Contains("continue=https://story.kakao.com/");
-            isLogin = isLogin || sender.Source.AbsoluteUri == "https://story.kakao.com/";
-            if (sender.Source.AbsoluteUri == "https://accounts.kakao.com/login") isLogin = false;
-            if (!isLogin && BtLogin.IsEnabled == false)
-            {
-                if (PbLogin.Visibility != Visibility.Collapsed) return;
-                BtLogin.Content = "로그인";
-                BtLogin.IsEnabled = true;
-                if (CbxRememberCredentials.IsChecked == true) OnLoginButtonClicked(BtLogin, null);
-                return;
-            }
-
-            bool wasFirst = isFirst;
-            if (isFirst)
-            {
-                isFirst = false;
-                await WvLogin.ExecuteScriptAsync($"document.getElementById(\"id_email_2\").value = \"{TbxLogin.Text}\";");
-                await WvLogin.ExecuteScriptAsync($"document.getElementById(\"id_password_3\").value = \"{PbxLogin.Password}\";");
-                await WvLogin.ExecuteScriptAsync("document.getElementsByClassName(\"ico_account ico_check\")[0].click();");
-                await WvLogin.ExecuteScriptAsync("document.getElementsByClassName(\"btn_g btn_confirm submit\")[0].click();");
-            }
-            var cookieContainer = await GetCookieCookieContainerAsync();
-            var cookies = GetCookieCollection(cookieContainer);
-            var isLoggedIn = cookies.Any(x => x.Name == "_karmt");
-            if (isLoggedIn)
-            {
-                if (isNavigated) return;
-                isNavigated = true;
-                SaveCredentials(TbxLogin.Text, PbxLogin.Password, CbxRememberCredentials.IsChecked == true);
-                StoryApi.ApiHandler.Init(cookieContainer);
-                IsLoggedIn = true;
-                _loginCheckTimer?.Stop();
-                WvLogin.Close();
-                MainWindow.ReloginTaskCompletionSource?.SetResult();
-                MainWindow.Navigate(typeof(MainPage));
-                MainWindow.EnableLoginRequiredMenuFlyoutItems();
-                OnLoginSuccess?.Invoke();
-            }
-            else if (!wasFirst)
-            {
-                await this.ShowMessageDialogAsync("로그인에 실패하였습니다.", "오류");
-                PbLogin.Visibility = Visibility.Collapsed;
-                BtLogin.IsEnabled = true;
-            }
-        });
-    }
-
-    private void OnLoginButtonClicked(object sender, RoutedEventArgs e)
-    {
-        isFirst = true;
-        BtLogin.IsEnabled = false;
-        var email = TbxLogin.Text;
-        var password = PbxLogin.Password;
-
-        WvLogin.Source = new Uri("https://accounts.kakao.com/login?continue=https://story.kakao.com/");
-
-        _loginCheckTimer = new DispatcherTimer
-        {
-            Interval = TimeSpan.FromSeconds(5)
-        };
-        _loginCheckTimer.Tick += async (s2, e2) =>
-        {
-            _loginCheckTimer.Stop();
-            await this.RunOnMainThreadAsync(async () =>
-            {
-                var cookieContainer = await GetCookieCookieContainerAsync();
-                var cookies = GetCookieCollection(cookieContainer);
-                var isLoggedIn = cookies.Any(x => x.Name == "_karmt");
-                if (BtLogin.IsEnabled == false && !isLoggedIn)
-                {
-                    await this.ShowMessageDialogAsync("로그인이 지연되고 있습니다.\n수동으로 로그인을 시도합니다.", "오류");
-                    WvLogin.Visibility = Visibility.Visible;
-                }
-            });
-        };
-        _loginCheckTimer.Start();
-
-        PbLogin.Visibility = Visibility.Visible;
-    }
-
-    private async Task<CookieContainer> GetCookieCookieContainerAsync(string url = MainUrl)
-    {
-        var cookies = await WvLogin?.CoreWebView2?.CookieManager?.GetCookiesAsync(url);
-        if (cookies == null) return new();
-        CookieContainer cookieContainer = new();
-
-        foreach (var cookie in cookies)
-            cookieContainer.Add(new Cookie() { Name = cookie.Name, Value = cookie.Value, Domain = cookie.Domain });
-
-        return cookieContainer;
-    }
-
-    private static CookieCollection GetCookieCollection(CookieContainer cookieContainer) => cookieContainer.GetCookies(new Uri(MainUrl));
-
+    
     private static void SaveCredentials(string email, string password, bool willRememberCredentials)
     {
         if (willRememberCredentials)
@@ -287,6 +176,77 @@ public sealed partial class LoginPage : Page
 
     private void OnLoginPasswordBoxKeyDown(object sender, KeyRoutedEventArgs e)
     {
-        if (e.Key == Windows.System.VirtualKey.Enter && BtLogin.IsEnabled) OnLoginButtonClicked(BtLogin, null);
+        if (e.Key == Windows.System.VirtualKey.Enter && BtLogin.IsEnabled) Login();
     }
+
+    private async void Login()
+    {
+        IsEnabled = false;
+        PbLogin.Visibility = Visibility.Visible;
+
+        var email = TbxLogin.Text;
+        var password = PbxLogin.Password;
+        bool loginSuccess = false;
+        await Task.Run(() => loginSuccess = LoginWithSelenium(email, password));
+        PbLogin.Visibility = Visibility.Collapsed;
+        IsEnabled = true;
+
+        if (!loginSuccess) await this.ShowMessageDialogAsync("로그인에 실패하였습니다.", "오류");
+        else
+        {
+            SaveCredentials(email, password, CbxRememberCredentials.IsChecked == true);
+            Frame.Navigate(typeof(MainPage));
+        }
+    }
+
+    private static bool LoginWithSelenium(string email, string password)
+    {
+        var key = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Edge\BLBeacon", true);
+        string version = key.GetValue("version") as string;
+        var driverPath = new DriverManager().SetUpDriver(new EdgeConfig(), version);
+        driverPath = Path.GetDirectoryName(driverPath);
+
+        var service = EdgeDriverService.CreateDefaultService(driverPath);
+        service.HideCommandPromptWindow = true;
+        service.UseVerboseLogging = true;
+
+        var options = new EdgeOptions();
+        options.AddArgument("headless");
+
+        SeleniumDriver = new EdgeDriver(service, options);
+        SeleniumDriver.Navigate().GoToUrl("https://accounts.kakao.com/login/?continue=https://story.kakao.com/");
+
+        var emailBox = SeleniumDriver.FindElement(By.XPath("//*[@id=\"input-loginKey\"]"));
+        emailBox.SendKeys(email);
+
+        var passwordBox = SeleniumDriver.FindElement(By.XPath("//*[@id=\"input-password\"]"));
+        passwordBox.SendKeys(password);
+
+        var loginButton = SeleniumDriver.FindElement(By.XPath("//*[@id=\"mainContent\"]/div/div/form/div[4]/button[1]"));
+        loginButton.Click();
+
+        var wait = new WebDriverWait(SeleniumDriver, TimeSpan.FromSeconds(10));
+        wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementExists(By.XPath("//*[@id=\"kakaoHead\"]/h1/a/img")));
+
+        var rawCookies = SeleniumDriver.Manage().Cookies.AllCookies;
+        bool isSuccess = rawCookies.Any(x => x.Name == "_karmt");
+        if (!isSuccess) return false;
+
+        var cookieContainer = new CookieContainer();
+        foreach(var rawCookie in rawCookies)
+        {
+            cookieContainer.Add(new System.Net.Cookie()
+            {
+                Name = rawCookie.Name,
+                Domain = rawCookie.Domain,
+                Value = rawCookie.Value
+            });
+        }
+
+        StoryApi.ApiHandler.Init(cookieContainer);
+
+        return true;
+    }
+
+    private void OnLoginButtonClicked(object sender, RoutedEventArgs e) => Login();
 }

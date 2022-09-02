@@ -16,9 +16,9 @@
 		<UseWindowsForms>False</UseWindowsForms>
 		<Nullable>disable</Nullable>
 		<PlatformTarget>AnyCPU</PlatformTarget>
-		<FileVersion>0.1.0.74</FileVersion>
-		<AssemblyVersion>0.1.0.74</AssemblyVersion>
-		<Version>0.1.0.74</Version>
+		<FileVersion>0.1.0.78</FileVersion>
+		<AssemblyVersion>0.1.0.78</AssemblyVersion>
+		<Version>0.1.0.78</Version>
 		<SupportedOSPlatformVersion>10.0.19041.0</SupportedOSPlatformVersion>
 	</PropertyGroup>
 	<ItemGroup>
@@ -50,6 +50,10 @@
 		<PackageReference Include="Microsoft.Toolkit.Uwp.Notifications" Version="7.1.2" />
 		<PackageReference Include="Microsoft.WindowsAppSDK" Version="1.1.4" />
 		<PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.1" />
+		<PackageReference Include="Selenium.Support" Version="4.4.0" />
+		<PackageReference Include="Selenium.WebDriver" Version="4.4.0" />
+		<PackageReference Include="SeleniumExtras.WaitHelpers" Version="1.0.2" />
+		<PackageReference Include="WebDriverManager" Version="2.15.0" />
 		<Manifest Include="$(ApplicationManifest)" />
 	</ItemGroup>
 

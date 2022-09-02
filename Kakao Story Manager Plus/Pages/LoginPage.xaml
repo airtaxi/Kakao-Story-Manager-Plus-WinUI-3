@@ -17,7 +17,6 @@
                 <Button x:Name="BtLogin" Content="로그인" Margin="0,5,0,0" HorizontalAlignment="Stretch" Click="OnLoginButtonClicked"/>
             </StackPanel>
         </StackPanel>
-        <WebView2 x:Name="WvLogin" Visibility="Collapsed"/>
 
         <Grid x:Name="GdLoading" Visibility="Collapsed">
             <Rectangle Fill="Black" Opacity="0.85"/>
