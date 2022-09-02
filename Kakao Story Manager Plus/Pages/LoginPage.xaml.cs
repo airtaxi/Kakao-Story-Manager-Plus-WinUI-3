@@ -283,6 +283,7 @@ public sealed partial class LoginPage : Page
         finally
         {
             SeleniumDriver?.Close();
+            SeleniumDriver?.Dispose();
         }
     }
 
