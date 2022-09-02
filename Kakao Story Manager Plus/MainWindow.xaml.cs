@@ -29,6 +29,7 @@ public sealed partial class MainWindow : Microsoft.UI.Xaml.Window
         SetupTrayIcon();
         FrMain.Navigate(typeof(LoginPage));
         ApiHandler.OnReloginRequired += OnReloginRequiredHandler;
+        Closed += (s, e) => LoginPage.SeleniumDriver?.Close();
     }
 
     private async Task OnReloginRequiredHandler()
