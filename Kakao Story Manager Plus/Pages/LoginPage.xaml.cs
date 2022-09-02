@@ -58,6 +58,7 @@ public sealed partial class LoginPage : Page
             TbxLogin.Text = Utils.Configuration.GetValue("email") as string ?? string.Empty;
             PbxLogin.Password = Utils.Configuration.GetValue("password") as string ?? string.Empty;
             CbxRememberCredentials.IsChecked = hasRememberedCreditionals;
+            BeginLogin();
         }
 
         MainWindow.DisableLoginRequiredMenuFlyoutItems();
@@ -176,10 +177,10 @@ public sealed partial class LoginPage : Page
 
     private void OnLoginPasswordBoxKeyDown(object sender, KeyRoutedEventArgs e)
     {
-        if (e.Key == Windows.System.VirtualKey.Enter && BtLogin.IsEnabled) Login();
+        if (e.Key == Windows.System.VirtualKey.Enter && BtLogin.IsEnabled) BeginLogin();
     }
 
-    private async void Login()
+    private async void BeginLogin()
     {
         IsEnabled = false;
         PbLogin.Visibility = Visibility.Visible;
@@ -199,6 +200,20 @@ public sealed partial class LoginPage : Page
         }
     }
 
+    private static bool CheckIfElementExists(WebDriver driver, By by)
+    {
+        try
+        {
+            driver.FindElement(by);
+            return true;
+        }
+        catch (NoSuchElementException)
+        {
+            return false;
+        }
+    }
+
+
     private static bool LoginWithSelenium(string email, string password)
     {
         var key = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Edge\BLBeacon", true);
@@ -216,39 +231,60 @@ public sealed partial class LoginPage : Page
         SeleniumDriver = new EdgeDriver(service, options);
         SeleniumDriver.Navigate().GoToUrl("https://accounts.kakao.com/login/?continue=https://story.kakao.com/");
 
-        var emailBox = SeleniumDriver.FindElement(By.XPath("//*[@id=\"input-loginKey\"]"));
-        emailBox.SendKeys(email);
-
-        var passwordBox = SeleniumDriver.FindElement(By.XPath("//*[@id=\"input-password\"]"));
-        passwordBox.SendKeys(password);
-
-        var loginButton = SeleniumDriver.FindElement(By.XPath("//*[@id=\"mainContent\"]/div/div/form/div[4]/button[1]"));
-        loginButton.Click();
-
-        var wait = new WebDriverWait(SeleniumDriver, TimeSpan.FromSeconds(10));
-        wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementExists(By.XPath("//*[@id=\"kakaoHead\"]/h1/a/img")));
-
-        var rawCookies = SeleniumDriver.Manage().Cookies.AllCookies;
-        SeleniumDriver.Close();
-
-        bool isSuccess = rawCookies.Any(x => x.Name == "_karmt");
-        if (!isSuccess) return false;
-
-        var cookieContainer = new CookieContainer();
-        foreach(var rawCookie in rawCookies)
+        try
         {
-            cookieContainer.Add(new System.Net.Cookie()
+            var isNewLogin = CheckIfElementExists(SeleniumDriver, By.XPath("//*[@id=\"input-loginKey\"]"));
+
+            if (isNewLogin)
             {
-                Name = rawCookie.Name,
-                Domain = rawCookie.Domain,
-                Value = rawCookie.Value
-            });
+                var emailBox = SeleniumDriver.FindElement(By.XPath("//*[@id=\"input-loginKey\"]"));
+                emailBox.SendKeys(email);
+
+                var passwordBox = SeleniumDriver.FindElement(By.XPath("//*[@id=\"input-password\"]"));
+                passwordBox.SendKeys(password);
+
+                var loginButton = SeleniumDriver.FindElement(By.XPath("//*[@id=\"mainContent\"]/div/div/form/div[4]/button[1]"));
+                loginButton.Click();
+            }
+            else
+            {
+                var emailBox = SeleniumDriver.FindElement(By.XPath("//*[@id=\"id_email_2\"]"));
+                emailBox.SendKeys(email);
+
+                var passwordBox = SeleniumDriver.FindElement(By.XPath("//*[@id=\"id_password_3\"]"));
+                passwordBox.SendKeys(password);
+
+                var loginButton = SeleniumDriver.FindElement(By.XPath("//*[@id=\"login-form\"]/fieldset/div[8]/button[1]"));
+                loginButton.Click();
+            }
+
+            var wait = new WebDriverWait(SeleniumDriver, TimeSpan.FromSeconds(10));
+            wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.UrlToBe("https://story.kakao.com/"));
+            var rawCookies = SeleniumDriver.Manage().Cookies.AllCookies;
+
+            bool isSuccess = rawCookies.Any(x => x.Name == "_karmt");
+            if (!isSuccess) return false;
+
+            var cookieContainer = new CookieContainer();
+            foreach (var rawCookie in rawCookies)
+            {
+                cookieContainer.Add(new System.Net.Cookie()
+                {
+                    Name = rawCookie.Name,
+                    Domain = rawCookie.Domain,
+                    Value = rawCookie.Value
+                });
+            }
+
+            StoryApi.ApiHandler.Init(cookieContainer);
+            return true;
         }
-
-        StoryApi.ApiHandler.Init(cookieContainer);
-
-        return true;
+        catch (Exception) { return false; }
+        finally
+        {
+            SeleniumDriver?.Close();
+        }
     }
 
-    private void OnLoginButtonClicked(object sender, RoutedEventArgs e) => Login();
+    private void OnLoginButtonClicked(object sender, RoutedEventArgs e) => BeginLogin();
 }
