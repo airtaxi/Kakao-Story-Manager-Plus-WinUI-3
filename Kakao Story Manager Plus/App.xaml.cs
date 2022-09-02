@@ -39,6 +39,11 @@ public partial class App : Application
 
     public App()
     {
+        UnhandledException += OnApplicationUnhandledException;
+        AppDomain.CurrentDomain.UnhandledException += OnAppDomainUnhandledException;
+        TaskScheduler.UnobservedTaskException += OnTaskSchedulerUnobservedTaskException;
+        Current.UnhandledException += OnApplicationUnhandledException;
+
         if (CheckForExistingProcess()) Environment.Exit(0);
         InitializeComponent();
         ToastNotificationManagerCompat.OnActivated += OnToastNotificationActivated;
@@ -71,14 +76,14 @@ public partial class App : Application
         await ShowErrorMessage(e.ExceptionObject as Exception);
     }
 
-    private void WriteException(Exception exception)
+    private static void WriteException(Exception exception)
     {
         var path = Path.Combine(BinaryDirectory, "error.log");
         var text = $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss.fff}] {exception?.Message ?? "ERRMSG"}: {exception?.StackTrace ?? "ERRST"}\n\n";
         File.AppendAllText(path, text);
     }
 
-    private async Task ShowErrorMessage(Exception exception)
+    private static async Task ShowErrorMessage(Exception exception)
     {
         try
         {
@@ -88,8 +93,8 @@ public partial class App : Application
 
     }
 
-    private bool _toastActivateFlag = true;
-    private void OnToastNotificationActivated(ToastNotificationActivatedEventArgsCompat toastArgs)
+    private static bool _toastActivateFlag = true;
+    private static void OnToastNotificationActivated(ToastNotificationActivatedEventArgsCompat toastArgs)
     {
         var dispatcherQueue = _window?.DispatcherQueue ?? DispatcherQueue;
         dispatcherQueue.TryEnqueue(async () =>
@@ -142,16 +147,13 @@ public partial class App : Application
     protected override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
     {
         DispatcherQueue = DispatcherQueue.GetForCurrentThread();
-        UnhandledException += OnApplicationUnhandledException;
-        AppDomain.CurrentDomain.UnhandledException += OnAppDomainUnhandledException;
-        TaskScheduler.UnobservedTaskException += OnTaskSchedulerUnobservedTaskException;
         ToastNotificationManagerCompat.OnActivated += OnToastNotificationActivated;
 
         if (!ToastNotificationManagerCompat.WasCurrentProcessToastActivated())
             LaunchAndBringToForegroundIfNeeded();
     }
 
-    private void LaunchAndBringToForegroundIfNeeded()
+    private static void LaunchAndBringToForegroundIfNeeded()
     {
         if (_window == null)
         {
