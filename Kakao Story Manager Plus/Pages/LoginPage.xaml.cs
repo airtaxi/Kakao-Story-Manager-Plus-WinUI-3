@@ -229,6 +229,8 @@ public sealed partial class LoginPage : Page
         wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementExists(By.XPath("//*[@id=\"kakaoHead\"]/h1/a/img")));
 
         var rawCookies = SeleniumDriver.Manage().Cookies.AllCookies;
+        SeleniumDriver.Close();
+
         bool isSuccess = rawCookies.Any(x => x.Name == "_karmt");
         if (!isSuccess) return false;
 
