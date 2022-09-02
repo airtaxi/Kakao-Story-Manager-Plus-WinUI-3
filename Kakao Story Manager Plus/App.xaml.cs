@@ -58,15 +58,14 @@ public partial class App : Application
 
     private async void OnTaskSchedulerUnobservedTaskException(object sender, UnobservedTaskExceptionEventArgs e)
     {
-        if(!e.Observed) e.SetObserved();
         WriteException(e.Exception);
         await ShowErrorMessage(e.Exception);
     }
 
     private async void OnApplicationUnhandledException(object sender, Microsoft.UI.Xaml.UnhandledExceptionEventArgs e)
     {
-        WriteException(e.Exception);
         e.Handled = true;
+        WriteException(e.Exception);
         await ShowErrorMessage(e.Exception);
     }
 
@@ -76,11 +75,16 @@ public partial class App : Application
         await ShowErrorMessage(e.ExceptionObject as Exception);
     }
 
+    private static bool ExceptionWritten = false;
     private static void WriteException(Exception exception)
     {
-        var path = Path.Combine(BinaryDirectory, "error.log");
-        var text = $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss.fff}] {exception?.Message ?? "ERRMSG"}: {exception?.StackTrace ?? "ERRST"}\n\n";
-        File.AppendAllText(path, text);
+        if (!ExceptionWritten)
+        {
+            ExceptionWritten = true;
+            var path = Path.Combine(BinaryDirectory, "error.log");
+            var text = $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss.fff}] {exception?.Message ?? "ERRMSG"}: {exception?.StackTrace ?? "ERRST"}\n\n";
+            File.AppendAllText(path, text);
+        }
     }
 
     private static async Task ShowErrorMessage(Exception exception)
