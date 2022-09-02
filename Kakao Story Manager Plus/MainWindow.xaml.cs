@@ -33,6 +33,7 @@ public sealed partial class MainWindow : Microsoft.UI.Xaml.Window
         {
             LoginPage.SeleniumDriver?.Close();
             LoginPage.SeleniumDriver?.Dispose();
+            LoginPage.SeleniumDriver = null;
         };
     }
 

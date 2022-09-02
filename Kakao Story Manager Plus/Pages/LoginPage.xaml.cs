@@ -284,6 +284,7 @@ public sealed partial class LoginPage : Page
         {
             SeleniumDriver?.Close();
             SeleniumDriver?.Dispose();
+            SeleniumDriver = null;
         }
     }
 
