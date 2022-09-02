@@ -45,6 +45,7 @@ public sealed partial class MainWindow : Microsoft.UI.Xaml.Window
     }
 
     public static void Navigate(Type type) => Instance.FrMain.Navigate(type);
+    public static void Navigate(Type type, object args) => Instance.FrMain.Navigate(type, args);
 
     public static void EnableLoginRequiredMenuFlyoutItems() => LoginRequiredMenuFlyoutItems.ForEach(x => x.IsEnabled = true);
     public static void DisableLoginRequiredMenuFlyoutItems() => LoginRequiredMenuFlyoutItems.ForEach(x => x.IsEnabled = false);

@@ -11,11 +11,6 @@
     <Grid PreviewKeyDown="OnPreviewKeyDown">
         <notifyicon:TaskbarIcon x:Name="TiMain"
             TrayMouseDoubleClick="TaskbarIconTrayMouseDoubleClicked"/>
-        <Grid>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="*"/>
-            </Grid.RowDefinitions>
-            <Frame x:Name="FrMain"/>
-        </Grid>
+        <Frame x:Name="FrMain"/>
     </Grid>
 </Window>
