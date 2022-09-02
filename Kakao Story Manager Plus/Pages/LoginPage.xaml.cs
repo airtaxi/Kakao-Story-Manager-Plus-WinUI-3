@@ -195,8 +195,9 @@ public sealed partial class LoginPage : Page
         if (!loginSuccess) await this.ShowMessageDialogAsync("로그인에 실패하였습니다.", "오류");
         else
         {
+            IsLoggedIn = true;
             SaveCredentials(email, password, CbxRememberCredentials.IsChecked == true);
-            Frame.Navigate(typeof(MainPage));
+            MainWindow.Navigate(typeof(MainPage));
         }
     }
 
