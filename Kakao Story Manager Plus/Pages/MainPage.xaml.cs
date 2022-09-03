@@ -14,6 +14,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Input;
+using OpenQA.Selenium.DevTools.V102.DOM;
 using StoryApi;
 using Windows.Media.Devices.Core;
 using Windows.Media.MediaProperties;
@@ -33,6 +34,7 @@ public sealed partial class MainPage : Page
     public static Friends Friends = null;
     private Timer _notificationTimer = new();
     private Timer _memoryUsageUpdateTimer = new();
+    private bool _isWritePostFlyoutOpened = false;
 
     public MainPage()
     {
@@ -61,12 +63,26 @@ public sealed partial class MainPage : Page
 
     private void InitializeWritePostFlyout()
     {
+        var previousFlyout = BtWrite.Flyout as Flyout;
+        if (previousFlyout != null)
+        {
+            previousFlyout.Opened -= OnWritePostFlyoutOpened;
+            previousFlyout.Closed -= OnWritePostFlyoutClosed;
+            var previousControl = previousFlyout.Content as WritePostControl;
+            if(previousControl != null) previousControl.OnPostCompleted -= OnPostCompleted;
+        }
+
         var flyout = new Flyout();
+        flyout.Opened += OnWritePostFlyoutOpened;
+        flyout.Closed += OnWritePostFlyoutClosed;
         var control = new WritePostControl(BtWrite);
         flyout.Content = control;
         BtWrite.Flyout = flyout;
         control.OnPostCompleted += OnPostCompleted;
     }
+
+    private void OnWritePostFlyoutOpened(object sender, object e) => _isWritePostFlyoutOpened = true;
+    private void OnWritePostFlyoutClosed(object sender, object e) => _isWritePostFlyoutOpened = false;
 
     public static MainPage GetInstance() => _instance;
 
@@ -388,4 +404,14 @@ public sealed partial class MainPage : Page
     }
 
     private void OnMemoryUsageTextBlockTapped(object sender, TappedRoutedEventArgs e) => GC.Collect(4);
+
+    private async void OnPageSizeChanged(object sender, SizeChangedEventArgs e)
+    {
+        if (_isWritePostFlyoutOpened)
+        {
+            await Task.Delay(500);
+            var flyout = BtWrite?.Flyout as Flyout;
+            flyout?.ShowAt(BtWrite);
+        }
+    }
 }
