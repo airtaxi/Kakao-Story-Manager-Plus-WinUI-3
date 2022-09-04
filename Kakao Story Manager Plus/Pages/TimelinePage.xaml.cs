@@ -12,6 +12,7 @@ namespace KSMP.Pages;
 
 public sealed partial class TimelinePage : Page
 {
+    private const int TimelineControlWidth = 600;
     public string Id = null;
     private static TimelinePage _instance;
     public bool IsMyTimeline => Id == MainPage.Me.id;
@@ -52,7 +53,7 @@ public sealed partial class TimelinePage : Page
         scrollViewer.ViewChanged += OnScrollViewerViewChanged;
     }
 
-    public static void HidePostFromTimeline(Controls.TimelineControl control) => _instance.LvContent.Items.Remove(control);
+    public static void HidePostFromTimeline(TimelineControl control) => _instance.LvContent.Items.Remove(control);
 
     string lastFeed = null;
     public static async Task Refresh() => await _instance.Refresh();
@@ -60,7 +61,7 @@ public sealed partial class TimelinePage : Page
     {
         foreach (FrameworkElement item in LvContent.Items)
         {
-            var timelineControl = item as Controls.TimelineControl;
+            var timelineControl = item as TimelineControl;
             if (timelineControl?.PostId == postId) LvContent.Items.Remove(item);
         }
     }
@@ -82,8 +83,8 @@ public sealed partial class TimelinePage : Page
             {
                 if (IsValidFeed(feed))
                 {
-                    var control = new Controls.TimelineControl(feed);
-                    control.Width = 600;
+                    var control = new TimelineControl(feed);
+                    control.Width = TimelineControlWidth;
                     LvContent.Items.Add(control);
                 }
                 lastFeed = feed.id;
@@ -98,7 +99,7 @@ public sealed partial class TimelinePage : Page
                     Content = new Controls.UserProfileControl(Id),
                     Visibility = Visibility.Visible
                 };
-                profileFrame.Width = 600;
+                profileFrame.Width = TimelineControlWidth;
                 LvContent.Items.Add(profileFrame);
             }
 
@@ -107,8 +108,8 @@ public sealed partial class TimelinePage : Page
             {
                 if (IsValidFeed(feed))
                 {
-                    var control = new Controls.TimelineControl(feed);
-                    control.Width = 600;
+                    var control = new TimelineControl(feed);
+                    control.Width = TimelineControlWidth;
                     LvContent.Items.Add(control);
                 }
                 lastFeed = feed.id;

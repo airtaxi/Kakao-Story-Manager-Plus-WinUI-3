@@ -15,7 +15,6 @@
                 <RowDefinition Height="auto"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
-            <!--<Frame Grid.Row="0" x:Name="FrProfile" Width="600" Visibility="Collapsed"/>-->
             <ListView Grid.Row="1" x:Name="LvContent" SelectionMode="None" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"/>
         </Grid>
         <muxc:ProgressRing x:Name="PrLoading" Foreground="#E96A49" IsIndeterminate="True" VerticalAlignment="Center" Width="100" Height="100" HorizontalAlignment="Center" Visibility="Collapsed"/>
