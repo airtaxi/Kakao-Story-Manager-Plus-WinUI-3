@@ -38,10 +38,13 @@
                         <TextBlock x:Name="TbName" Text="" FontWeight="Bold"/>
                         <TextBlock x:Name="TbTime" Text="" Foreground="#ADB0B8" Tapped="TimeTapped" PointerEntered="PointerEnteredShowHand" PointerExited="PointerExitedShowHand" HorizontalAlignment="Left"/>
                     </StackPanel>
-                    <StackPanel x:Name="SpShare" Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Top" Orientation="Horizontal" Visibility="Collapsed">
-                        <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe8eb;" Foreground="#ACACAC" FontSize="15"/>
-                        <TextBlock x:Name="TbShareCount" Foreground="#ACACAC" Margin="5,0,0,0" FontSize="15"/>
-                    </StackPanel>
+                    <Grid Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Top">
+                        <StackPanel x:Name="SpShare" Orientation="Horizontal" Visibility="Collapsed">
+                            <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe8eb;" Foreground="#ACACAC" FontSize="15"/>
+                            <TextBlock x:Name="TbShareCount" Foreground="#ACACAC" Margin="5,0,0,0" FontSize="15"/>
+                        </StackPanel>
+                    </Grid>
+                    <Rectangle Fill="Transparent" Grid.Column="1" IsHitTestVisible="True" HorizontalAlignment="Right" VerticalAlignment="Top" Tapped="OnSharedPostShareCountTapped" Width="50" Height="50" Margin="-10"/>
                     <StackPanel x:Name="SpMenu" Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Top" Orientation="Horizontal">
                         <Viewbox>
                             <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe72c;" Foreground="#ACACAC" FontSize="20" Tapped="OnRefreshTapped" Margin="5,0,10,0" PointerEntered="PointerEnteredShowHand" PointerExited="PointerExitedShowHand"/>

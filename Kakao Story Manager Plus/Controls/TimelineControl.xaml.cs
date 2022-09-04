@@ -631,4 +631,47 @@ public sealed partial class TimelineControl : UserControl, IDisposable
     }
 
     private void OnOverlayCloseButtonClicked(object sender, RoutedEventArgs e) => HideOverlay();
+
+    private async void OnSharedPostShareCountTapped(object sender, TappedRoutedEventArgs e)
+    {
+        if (SpShare.Visibility == Visibility.Collapsed) return;
+        var relationship = _post.actor.relationship;
+        if (!(relationship == "F" || relationship == "S"))
+        {
+            await this.ShowMessageDialogAsync("해당 사용자와 친구를 맺어야 공유 리스트를 볼 수 있습니다.", "오류");
+            return;
+        }
+
+        e.Handled = true;
+        var senderControl = sender as FrameworkElement;
+        var flyout = new Flyout();
+        var progressRing = new ProgressRing()
+        {
+            IsIndeterminate = true,
+            IsActive = true
+        };
+        flyout.Content = progressRing;
+        flyout.ShowAt(senderControl);
+
+        var shares = await ApiHandler.GetShares(false, _post, null);
+        var control = new FriendListControl();
+        List<FriendProfile> friendProfiles = new();
+        foreach (var share in shares)
+        {
+            var friendProfile = new FriendProfile();
+            friendProfile.ProfileUrl = share.actor.GetValidUserProfileUrl();
+            friendProfile.Name = share.actor.display_name;
+            friendProfile.Id = share.actor.id;
+            friendProfile.Relationship = share.actor.relationship;
+            friendProfile.Metadata.Tag = share.activity_id;
+            friendProfile.Metadata.Control = control;
+            friendProfile.Metadata.Flyout = flyout;
+            friendProfile.Metadata.IsUp = false;
+            friendProfiles.Add(friendProfile);
+        }
+        control.MaxItems = int.MaxValue;
+        control.SetSource(friendProfiles);
+        control.OnFriendSelected += OnSharedFriendSelected;
+        flyout.Content = control;
+    }
 }
