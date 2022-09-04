@@ -46,7 +46,6 @@ public partial class App : Application
 
         if (CheckForExistingProcess()) Environment.Exit(0);
         InitializeComponent();
-        ToastNotificationManagerCompat.OnActivated += OnToastNotificationActivated;
     }
 
     private static bool CheckForExistingProcess()
@@ -151,8 +150,8 @@ public partial class App : Application
     protected override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
     {
         DispatcherQueue = DispatcherQueue.GetForCurrentThread();
-        ToastNotificationManagerCompat.OnActivated += OnToastNotificationActivated;
 
+        ToastNotificationManagerCompat.OnActivated += OnToastNotificationActivated;
         if (!ToastNotificationManagerCompat.WasCurrentProcessToastActivated())
             LaunchAndBringToForegroundIfNeeded();
     }
