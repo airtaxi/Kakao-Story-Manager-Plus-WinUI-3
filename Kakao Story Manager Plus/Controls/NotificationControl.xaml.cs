@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Threading.Tasks;
+using CommunityToolkit.Mvvm.ComponentModel;
 using KSMP.Extension;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -10,15 +12,17 @@ namespace KSMP.Controls;
 
 public sealed partial class NotificationControl : UserControl
 {
-    private class NotificationData
+    private partial class NotificationData : ObservableObject
     {
+        [ObservableProperty]
+        private Visibility unreadBarVisiblity = Visibility.Collapsed;
+
         public string ProfilePictureUrl { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }
         public string Time { get; set; }
         public string Scheme { get; set; }
         public string ActorId { get; set; }
-        public Visibility UnreadBarVisiblity { get; set; }
     }
     public NotificationControl()
     {
@@ -32,7 +36,8 @@ public sealed partial class NotificationControl : UserControl
         var notifications = await StoryApi.ApiHandler.GetNotifications();
         foreach(var notification in notifications)
         {
-            string contentMessage = notification.content ?? "내용 없음";
+            string contentMessage = notification.content;
+            if (string.IsNullOrEmpty(contentMessage)) contentMessage = "내용 없음";
             if (contentMessage.Contains('\n'))
                 contentMessage = contentMessage.Split(new string[] { "\n" }, StringSplitOptions.None)[0];
             var notificationData = new NotificationData
@@ -51,7 +56,7 @@ public sealed partial class NotificationControl : UserControl
         Unloaded += (s, e) => (Content as ListView).ItemsSource = null;
     }
 
-    private void PpProfileImage_Tapped(object sender, TappedRoutedEventArgs e)
+    private void ProfileImageTapped(object sender, TappedRoutedEventArgs e)
     {
         var id = (sender as PersonPicture).Tag as string;
         Pages.MainPage.ShowProfile(id);
@@ -63,6 +68,7 @@ public sealed partial class NotificationControl : UserControl
         var listView = sender as ListView;
         var notificationData = listView.SelectedItem as NotificationData;
         if (notificationData == null) return;
+        notificationData.UnreadBarVisiblity = Visibility.Collapsed;
         var scheme = notificationData.Scheme;
         if (scheme.Contains("?profile_id="))
         {

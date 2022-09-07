@@ -17,13 +17,13 @@
                         <ColumnDefinition Width="50"/>
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
-                    <PersonPicture x:Name="PpProfileImage" Width="50" ProfilePicture="{Binding ProfilePictureUrl}" Tag="{Binding ActorId}" Tapped="PpProfileImage_Tapped"/>
+                    <PersonPicture x:Name="PpProfileImage" Width="50" ProfilePicture="{Binding ProfilePictureUrl}" Tag="{Binding ActorId}" Tapped="ProfileImageTapped"/>
                     <StackPanel Margin="10" Grid.Column="1" VerticalAlignment="Center">
                         <TextBlock x:Name="TbTitle" Text="{Binding Title}" FontWeight="Bold" TextTrimming="CharacterEllipsis" MaxLines="1"/>
                         <TextBlock x:Name="TbDescription" Text="{Binding Description}" TextTrimming="WordEllipsis" MaxLines="1"/>
                         <TextBlock x:Name="TbTime" FontSize="10" Text="{Binding Time}" Foreground="Gray" TextTrimming="WordEllipsis" MaxLines="1"/>
                     </StackPanel>
-                    <Rectangle x:Name="RtUnread" Width="5" Height="auto" Margin="0,5,0,5" VerticalAlignment="Center" HorizontalAlignment="Right" Fill="LightBlue" Visibility="{Binding UnreadBarVisiblity}"/>
+                    <Rectangle x:Name="RtUnread" Grid.Column="1" Width="5" Height="auto" Margin="0,5,0,5" VerticalAlignment="Stretch" HorizontalAlignment="Right" Fill="LightBlue" Visibility="{Binding UnreadBarVisiblity}"/>
                 </Grid>
             </DataTemplate>
         </ListView.ItemTemplate>
