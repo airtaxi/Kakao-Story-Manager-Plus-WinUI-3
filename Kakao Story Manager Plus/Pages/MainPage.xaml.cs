@@ -99,7 +99,7 @@ public sealed partial class MainPage : Page
             for (int i = 0; i < notifications.Count; i++)
             {
                 ApiHandler.DataType.Notification notification = notifications[i];
-                if (_lastNotificationTimestamp != null && notification?.created_at > _lastNotificationTimestamp)
+                if (_lastNotificationTimestamp != null && notification?.created_at > _lastNotificationTimestamp && notification.is_new)
                     ShowNotificationToast(notification);
                 else break;
             }
