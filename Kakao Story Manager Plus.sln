@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kakao Story Manager Plus", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KakaoStory API", "KakaoStory-API\Kakao Story API\KakaoStory API.csproj", "{E6FDEAAA-B495-469E-910E-A92CD64ED98E}"
 EndProject
-Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "Installer", "Installer\Installer.vdproj", "{474EDB34-65DF-4761-B475-9E82CB0E0518}"
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "Kakao Story Manager Plus Installer", "Installer\Installer.vdproj", "{474EDB34-65DF-4761-B475-9E82CB0E0518}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
