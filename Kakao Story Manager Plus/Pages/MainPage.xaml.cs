@@ -32,7 +32,7 @@ public sealed partial class MainPage : Page
     private static MainPage _instance;
     public static ApiHandler.DataType.UserProfile.ProfileData Me;
     public static Friends Friends = null;
-    private Timer _notificationTimer = new();
+    private static Timer NotificationTimer = null;
     private Timer _memoryUsageUpdateTimer = new();
     private bool _isWritePostFlyoutOpened = false;
 
@@ -44,9 +44,13 @@ public sealed partial class MainPage : Page
         InitializeWritePostFlyout();
         InitializeSettingsFlyout();
 
-        _notificationTimer.Interval = 1000;
-        _notificationTimer.Elapsed += OnNotificationTimerElapsed;
-        _notificationTimer.Start();
+        if (NotificationTimer == null)
+        {
+            NotificationTimer = new();
+            NotificationTimer.Interval = 1000;
+            NotificationTimer.Elapsed += OnNotificationTimerElapsed;
+            NotificationTimer.Start();
+        }
 
         _memoryUsageUpdateTimer.Interval = 200;
         _memoryUsageUpdateTimer.Elapsed += OnMemoryUsageUpdateTimerElapsed;
@@ -93,7 +97,7 @@ public sealed partial class MainPage : Page
     {
         try
         {
-            _notificationTimer.Stop();
+            NotificationTimer.Stop();
             var notifications = await ApiHandler.GetNotifications();
 
             for (int i = 0; i < notifications.Count; i++)
@@ -108,7 +112,7 @@ public sealed partial class MainPage : Page
             _lastNotificationTimestamp = first?.created_at;
         }
         catch (Exception) { } //Ignore
-        finally { _notificationTimer.Start(); }
+        finally { NotificationTimer.Start(); }
     }
 
     private async void OnMemoryUsageUpdateTimerElapsed(object sender, ElapsedEventArgs e)
@@ -329,8 +333,6 @@ public sealed partial class MainPage : Page
 
     private async void OnLogoutButtonClicked(object sender, RoutedEventArgs e)
     {
-        _notificationTimer.Stop();
-        _notificationTimer.Dispose();
         Configuration.SetValue("willRememberCredentials", false);
         await this.ShowMessageDialogAsync("로그아웃되었습니다.\n프로그램을 재실행해주세요.", "안내");
         Environment.Exit(0);
