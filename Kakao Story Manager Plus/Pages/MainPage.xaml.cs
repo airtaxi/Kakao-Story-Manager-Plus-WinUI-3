@@ -79,13 +79,18 @@ public sealed partial class MainPage : Page
         var flyout = new Flyout();
         flyout.Opened += OnWritePostFlyoutOpened;
         flyout.Closed += OnWritePostFlyoutClosed;
+        BtWrite.Flyout = flyout;
         var control = new WritePostControl(BtWrite);
         flyout.Content = control;
-        BtWrite.Flyout = flyout;
         control.OnPostCompleted += OnPostCompleted;
     }
 
-    private void OnWritePostFlyoutOpened(object sender, object e) => _isWritePostFlyoutOpened = true;
+    private void OnWritePostFlyoutOpened(object sender, object e)
+    {
+        ((BtWrite.Flyout as Flyout).Content as WritePostControl).PreventClose = true;
+        _isWritePostFlyoutOpened = true;
+    }
+
     private void OnWritePostFlyoutClosed(object sender, object e) => _isWritePostFlyoutOpened = false;
 
     public static MainPage GetInstance() => _instance;
@@ -411,7 +416,7 @@ public sealed partial class MainPage : Page
     {
         if (_isWritePostFlyoutOpened)
         {
-            await Task.Delay(500);
+            await Task.Delay(250);
             var flyout = BtWrite?.Flyout as Flyout;
             flyout?.ShowAt(BtWrite);
         }

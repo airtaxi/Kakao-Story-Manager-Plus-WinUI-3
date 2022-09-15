@@ -11,7 +11,9 @@ using KSMP.Extension;
 using KSMP.Pages;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Media.Imaging;
+using OpenQA.Selenium.DevTools.V102.DOM;
 using StoryApi;
 using Windows.Security.Authentication.OnlineId;
 using Windows.Storage;
@@ -33,6 +35,7 @@ public sealed partial class WritePostControl : UserControl
     public PostCompleted OnPostCompleted;
     public CommentData.PostData _postToShare = null;
     public CommentData.PostData _postToEdit = null;
+    public bool PreventClose = false;
 
     private class Media
     {
@@ -51,7 +54,15 @@ public sealed partial class WritePostControl : UserControl
         InitializeInputControl();
         LvMedias.ItemsSource = _medias;
         AdjustDefaultPostWritingPermission();
+        BtWriteClose.Visibility = Visibility.Visible;
+        if(_button?.Flyout != null)
+        {
+            PreventClose = true;
+            _button.Flyout.Closing += OnFlyoutClosing;
+        }
     }
+
+    private void OnFlyoutClosing(FlyoutBase sender, FlyoutBaseClosingEventArgs args) => args.Cancel = PreventClose;
 
     public void AdjustDefaultPostWritingPermission()
     {
@@ -80,6 +91,7 @@ public sealed partial class WritePostControl : UserControl
             //CbiSharePrivate.Visibility = Visibility.Collapsed;
         }
         AdjustDefaultPostWritingPermission();
+        BtWriteClose.Visibility = Visibility.Collapsed;
     }
 
     public void FocusTextbox() => _inputControl.FocusTextBox();
@@ -193,6 +205,7 @@ public sealed partial class WritePostControl : UserControl
 
     public async Task SetEditMedia(CommentData.PostData postToEdit)
     {
+        BtWriteClose.Visibility = Visibility.Collapsed;
         var permissionIndex = 0;
         if (postToEdit.permission == "F")
             permissionIndex = 1;
@@ -349,5 +362,11 @@ public sealed partial class WritePostControl : UserControl
     private async void OnLinkTextBoxKeyDown(object sender, Microsoft.UI.Xaml.Input.KeyRoutedEventArgs e)
     {
         if (e.Key == Windows.System.VirtualKey.Enter) await PrepareScrap();
+    }
+
+    private void OnCloseButtonClicked(object sender, RoutedEventArgs e)
+    {
+        PreventClose = false;
+        _button.Flyout.Hide();
     }
 }
