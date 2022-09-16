@@ -67,6 +67,7 @@ public sealed partial class MainPage : Page
 
     private void InitializeWritePostFlyout()
     {
+        _isWritePostFlyoutOpened = false;
         var previousFlyout = BtWrite.Flyout as Flyout;
         if (previousFlyout != null)
         {
