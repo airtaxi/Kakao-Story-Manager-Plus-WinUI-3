@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Net;
 using System.Text;
@@ -752,8 +753,7 @@ namespace StoryApi
             var videoData = JsonConvert.DeserializeObject<VideoData.Video>(respResult);
             return videoData.access_key;
         }
-        public static int retryCount = 0;
-        public static async Task<bool> WritePost(List<QuoteData> quoteDatas, MediaData mediaData, string permission, bool isCommentable, bool isSharable, List<string> with_ids, List<string> trust_ids, string scrapDataString = null, bool isEdit = false, List<string> editOldMediaPaths = null, string editPostId = null)
+        public static async Task<bool> WritePost(List<QuoteData> quoteDatas, MediaData mediaData, string permission, bool isCommentable, bool isSharable, List<string> with_ids, List<string> trust_ids, string scrapDataString = null, bool isEdit = false, List<string> editOldMediaPaths = null, string editPostId = null, int retryCount = 0)
         {
             if (editOldMediaPaths is null)
                 editOldMediaPaths = new List<string>();
@@ -822,34 +822,35 @@ namespace StoryApi
             request.UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.106 Safari/537.36";
             request.Accept = "application/json";
 
-            //Console.WriteLine("L4");
             try
             {
                 Stream writeStream = await request.GetRequestStreamAsync();
                 writeStream.Write(byteArray, 0, byteArray.Length);
 
-                //Console.WriteLine("L3");
                 var readStream = await request.GetResponseAsync();
-                //Console.WriteLine("L2");
                 var respReader = readStream.GetResponseStream();
                 using var reader = new StreamReader(respReader, Encoding.UTF8);
                 var response = await reader.ReadToEndAsync();
                 respReader.Close();
-                retryCount = 0;
             }
-            catch (WebException ex)
+            catch (WebException e)
             {
-                retryCount++;
-                await Task.Delay(500);
-                if ((int)(ex.Response as HttpWebResponse).StatusCode == 401 && retryCount <= 10)
-                    return await WritePost(quoteDatas, mediaData, permission, isCommentable, isSharable, with_ids, trust_ids, scrapDataString, isEdit, editOldMediaPaths, editPostId);
+                if ((int)(e.Response as HttpWebResponse).StatusCode == 403) return false;
+                else if ((int)(e.Response as HttpWebResponse).StatusCode == 404) return false;
+                else if ((int)(e.Response as HttpWebResponse).StatusCode == 401)
+                {
+                    await OnReloginRequired?.Invoke();
+                    return await WritePost(quoteDatas, mediaData, permission, isCommentable, isSharable, with_ids, trust_ids, scrapDataString, isEdit, editOldMediaPaths, editPostId, ++retryCount);
+                }
                 else
-                    return false;
+                {
+                    if (retryCount < MaxRetryCount)
+                        return await WritePost(quoteDatas, mediaData, permission, isCommentable, isSharable, with_ids, trust_ids, scrapDataString, isEdit, editOldMediaPaths, editPostId, ++retryCount);
+                }
             }
-            retryCount = 0;
             return true;
         }
-        public static async Task<string> UploadImage(AssetData asset)
+        public static async Task<string> UploadImage(AssetData asset, int retryCount = 0)
         {
             using var fileStream = new StreamReader(asset.Path);
 
@@ -891,21 +892,27 @@ namespace StoryApi
                 respReader.Close();
 
                 UploadedImageProp result = JsonConvert.DeserializeObject<UploadedImageProp>(respResult);
-                retryCount = 0;
                 return result.access_key + "/" + result.info.original.filename + "?width=" + result.info.original.width + "&height=" + result.info.original.height + "&avg=" + result.info.original.avg;
             }
-            catch (WebException ex)
+            catch (WebException e)
             {
-                retryCount++;
-                await Task.Delay(500);
-                if ((int)(ex.Response as HttpWebResponse).StatusCode == 401 && retryCount <= 10)
-                    return await UploadImage(asset);
+                if ((int)(e.Response as HttpWebResponse).StatusCode == 403) return null;
+                else if ((int)(e.Response as HttpWebResponse).StatusCode == 404) return null;
+                else if ((int)(e.Response as HttpWebResponse).StatusCode == 401)
+                {
+                    await OnReloginRequired?.Invoke();
+                    return await UploadImage(asset, ++retryCount);
+                }
+                else
+                {
+                    if (retryCount < MaxRetryCount)
+                        return await UploadImage(asset, ++retryCount);
+                }
             }
-            retryCount = 0;
             return null;
         }
 
-        private static async Task<bool> WaitForMetaVideoFinish(string access_key)
+        private static async Task<bool> WaitForMetaVideoFinish(string access_key, int retryCount = 0)
         {
             string requestURI = "https://story.kakao.com/a/kage/video/dn/" + access_key + "/meta.json";
             HttpWebRequest request = WebRequest.CreateHttp(requestURI);
@@ -941,20 +948,26 @@ namespace StoryApi
                 using var reader = new StreamReader(respReader, Encoding.UTF8);
                 await reader.ReadToEndAsync();
                 respReader.Close();
-                retryCount = 0;
                 return true;
             }
-            catch (WebException ex)
+            catch (WebException e)
             {
-                retryCount++;
-                await Task.Delay(500);
-                if ((int)(ex.Response as HttpWebResponse).StatusCode == 401 && retryCount <= 10)
-                    return await WaitForMetaVideoFinish(access_key);
+                if ((int)(e.Response as HttpWebResponse).StatusCode == 403) return false;
+                else if ((int)(e.Response as HttpWebResponse).StatusCode == 404) return false;
+                else if ((int)(e.Response as HttpWebResponse).StatusCode == 401)
+                {
+                    await OnReloginRequired?.Invoke();
+                    return await WaitForMetaVideoFinish(access_key, ++retryCount);
+                }
+                else
+                {
+                    if (retryCount < MaxRetryCount)
+                        return await WaitForMetaVideoFinish(access_key, ++retryCount);
+                }
             }
-            retryCount = 0;
             return false;
         }
-        public static async Task<bool> WaitForVideoUploadFinish(string access_key)
+        public static async Task<bool> WaitForVideoUploadFinish(string access_key, int retryCount = 0)
         {
             string requestURI = "https://story.kakao.com/a/kage/video/wcheck/" + access_key + "/?_t=0";
             HttpWebRequest request = WebRequest.CreateHttp(requestURI);
@@ -995,17 +1008,23 @@ namespace StoryApi
                     return await WaitForMetaVideoFinish(access_key);
                 else
                     await Task.Delay(500);
-                retryCount = 0;
                 return await WaitForVideoUploadFinish(access_key);
             }
-            catch (WebException ex)
+            catch (WebException e)
             {
-                retryCount++;
-                await Task.Delay(500);
-                if ((int)(ex.Response as HttpWebResponse).StatusCode == 401 && retryCount <= 10)
-                    return await WaitForVideoUploadFinish(access_key);
+                if ((int)(e.Response as HttpWebResponse).StatusCode == 403) return false;
+                else if ((int)(e.Response as HttpWebResponse).StatusCode == 404) return false;
+                else if ((int)(e.Response as HttpWebResponse).StatusCode == 401)
+                {
+                    await OnReloginRequired?.Invoke();
+                    return await WaitForVideoUploadFinish(access_key, ++retryCount);
+                }
+                else
+                {
+                    if (retryCount < MaxRetryCount)
+                        return await WaitForVideoUploadFinish(access_key, ++retryCount);
+                }
             }
-            retryCount = 0;
             return false;
         }
 

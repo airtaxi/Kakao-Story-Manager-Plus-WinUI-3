@@ -197,6 +197,7 @@ public sealed partial class WritePostControl : UserControl
         }
         PbMain.Visibility = Visibility.Collapsed;
         BtWritePost.IsEnabled = true;
+        PreventClose = false;
         _button?.Flyout.Hide();
         OnPostCompleted.Invoke();
 
