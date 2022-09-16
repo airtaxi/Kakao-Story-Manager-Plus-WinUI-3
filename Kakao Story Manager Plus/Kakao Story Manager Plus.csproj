@@ -10,15 +10,16 @@
 		<PublishProfile>win10-$(Platform).pubxml</PublishProfile>
 		<UseWinUI>true</UseWinUI>
 		<WindowsPackageType>None</WindowsPackageType>
+		<WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
 		<EnableMsixTooling>true</EnableMsixTooling>
 		<StartupObject>KSMP.Program</StartupObject>
 		<ApplicationIcon>icon.ico</ApplicationIcon>
 		<UseWindowsForms>False</UseWindowsForms>
 		<Nullable>disable</Nullable>
 		<PlatformTarget>AnyCPU</PlatformTarget>
-		<FileVersion>0.1.0.93</FileVersion>
-		<AssemblyVersion>0.1.0.93</AssemblyVersion>
-		<Version>0.1.0.93</Version>
+		<FileVersion>0.1.0.94</FileVersion>
+		<AssemblyVersion>0.1.0.94</AssemblyVersion>
+		<Version>0.1.0.94</Version>
 		<SupportedOSPlatformVersion>10.0.19041.0</SupportedOSPlatformVersion>
 	</PropertyGroup>
 	<ItemGroup>
