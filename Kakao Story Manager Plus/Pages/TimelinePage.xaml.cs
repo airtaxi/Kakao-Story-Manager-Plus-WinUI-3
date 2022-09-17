@@ -74,8 +74,7 @@ public sealed partial class TimelinePage : Page
     {
         GC.Collect();
         PrLoading.Visibility = Visibility.Visible;
-        if (from == null)
-            LvContent.Items.Clear();
+
         if (Id == null)
         {
             var data = await ApiHandler.GetFeed(lastFeed);
