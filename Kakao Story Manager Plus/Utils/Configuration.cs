@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.IO;
 
@@ -6,9 +7,9 @@ namespace KSMP.Utils
 {
     public class Configuration
     {
-        private readonly static string BasePath = Path.GetTempPath();
+        private readonly static string BasePath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
 
-        private const string ConfigurationDirectoryName = "KSMPlus";
+        private const string ConfigurationDirectoryName = "KSMP";
         private const string ConfigurationFileName = "settings.json";
 
         private readonly static string ConfigurationDirectoryPath= Path.Combine(BasePath, ConfigurationDirectoryName);
@@ -19,7 +20,10 @@ namespace KSMP.Utils
             if (!Directory.Exists(ConfigurationDirectoryPath))
                 Directory.CreateDirectory(ConfigurationDirectoryPath);
             if (!File.Exists(ConfigurationFilePath))
-                File.Create(ConfigurationFilePath);
+            {
+                using var stream = File.Create(ConfigurationFilePath);
+                stream.Close();
+            }
         }
 
         private static string GetConfigurationFileContentString()
