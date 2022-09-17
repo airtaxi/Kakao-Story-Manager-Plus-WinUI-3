@@ -74,7 +74,8 @@ public sealed partial class TimelinePage : Page
     {
         GC.Collect();
         PrLoading.Visibility = Visibility.Visible;
-
+        if (from == null)
+            LvContent.Items.Clear();
         if (Id == null)
         {
             var data = await ApiHandler.GetFeed(lastFeed);
@@ -131,7 +132,7 @@ public sealed partial class TimelinePage : Page
             if (maxVerticalOffset < 0 || verticalOffset == maxVerticalOffset)
             {
                 isRefreshing = true;
-                LvContent.Items.Clear();
+                //LvContent.Items.Clear();
                 await Refresh(lastFeed);
                 isRefreshing = false;
             }
