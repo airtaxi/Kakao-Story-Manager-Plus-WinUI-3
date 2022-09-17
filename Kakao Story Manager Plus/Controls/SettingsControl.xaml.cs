@@ -74,7 +74,7 @@ namespace KSMP.Controls
 
             var key = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Run", true);
             if (isOn)
-                key.SetValue(AppName, $"\"{AppPath}\"");
+                key.SetValue(AppName, $"{AppPath}");
             else
                 key.DeleteValue(AppName);
 
