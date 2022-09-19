@@ -481,7 +481,7 @@ public sealed partial class TimelineControl : UserControl, IDisposable
         var medias = _post.media;
         var index = FvMedia.SelectedIndex;
         var control = new ImageViewerControl(medias, index);
-        MainPage.ShowOverlay(control, _isOverlay);
+        MainPage.ShowOverlay(control, true);
     }
 
     private async void OnTimeTapped(object sender, TappedRoutedEventArgs e)
