@@ -92,7 +92,7 @@ public sealed partial class LoginPage : Page
         }
     }
 
-    public void SetLoading(bool isLoading, string message = null)
+    public void SetLoading(bool isLoading, string message = null, int progress = -1)
     {
         if (GdLoading == null) return;
         GdLoading.Visibility = isLoading ? Visibility.Visible : Visibility.Collapsed;
@@ -100,6 +100,9 @@ public sealed partial class LoginPage : Page
         {
             IsEnabled = false;
             TbLoading.Text = message;
+            var showProgress = progress > 0;
+            PrLoading.IsIndeterminate = showProgress;
+            if (showProgress) PrLoading.Value = progress;
         }
         else
             IsEnabled = true;
@@ -128,9 +131,7 @@ public sealed partial class LoginPage : Page
             };
 
             client.DownloadProgressChanged += (_, e) =>
-            {
-                SetLoading(true, $"업데이터 다운로드중 ({e.ProgressPercentage}%)");
-            };
+                SetLoading(true, $"업데이터 다운로드중 ({e.ProgressPercentage}%)", e.ProgressPercentage);
 
             await client.DownloadFileTaskAsync(new Uri("https://kagamine-rin.com/KSMP/Installer.msi"), tempFile);
         }
