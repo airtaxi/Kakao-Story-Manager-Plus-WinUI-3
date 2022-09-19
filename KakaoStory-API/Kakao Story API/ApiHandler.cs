@@ -490,7 +490,8 @@ namespace StoryApi
         }
         public static async Task<NotificationStatus> GetNotificationStatus()
         {
-            string requestURI = "https://story.kakao.com/a/notifications";
+            var milliseconds = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+            string requestURI = $"https://story.kakao.com/a/notifications/new_count?notice_since=&_={milliseconds}000";
             HttpWebRequest webRequest = GenerateDefaultProfile(requestURI);
             string response = await GetResponseFromRequest(webRequest);
             return JsonConvert.DeserializeObject<NotificationStatus>(response);
