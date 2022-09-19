@@ -104,6 +104,8 @@ public sealed partial class MainPage : Page
         try
         {
             NotificationTimer.Stop();
+            var status = await ApiHandler.GetNotificationStatus();
+            if (!status.HasNewNotification) return;
             var notifications = await ApiHandler.GetNotifications();
 
             for (int i = 0; i < notifications.Count; i++)
