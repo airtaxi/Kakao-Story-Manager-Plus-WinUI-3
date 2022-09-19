@@ -490,10 +490,7 @@ public sealed partial class TimelineControl : UserControl, IDisposable
 
         if (!(_post.actor.relationship == "F" || _post.actor.relationship == "S" || _post.permission == "A"))
         {
-            var dialog = this.GenerateMessageDialog("해당 사용자와 친구를 맺어야 글을 볼 수 있습니다.", "오류");
-            dialog.SecondaryButtonText = "프로필 보기";
-            dialog.SecondaryButtonClick += (s, e) => MainPage.ShowProfile(_post.actor.id);
-            await dialog.ShowAsync();
+            await Utils.Dialog.ShowPermissionRequiredMessageDialog(this, _post.actor.id);
             return;
         }
 
@@ -562,10 +559,7 @@ public sealed partial class TimelineControl : UserControl, IDisposable
     {
         if (!(profile.Relationship == "F" || profile.Relationship == "S" || _post.permission == "A"))
         {
-            var dialog = this.GenerateMessageDialog("해당 사용자와 친구를 맺어야 글을 볼 수 있습니다.", "오류");
-            dialog.SecondaryButtonText = "프로필 보기";
-            dialog.SecondaryButtonClick += (s, e) => MainPage.ShowProfile(profile.Id);
-            await dialog.ShowAsync();
+            await Utils.Dialog.ShowPermissionRequiredMessageDialog(this, profile.Id);
             return;
         }
         profile.Metadata?.Flyout?.Hide();
@@ -596,10 +590,7 @@ public sealed partial class TimelineControl : UserControl, IDisposable
 
         if (!(_post.@object.actor.relationship == "F" || _post.@object.actor.relationship == "S" || _post.@object.permission == "A"))
         {
-            var dialog = this.GenerateMessageDialog("해당 사용자와 친구를 맺어야 글을 볼 수 있습니다.", "오류");
-            dialog.SecondaryButtonText = "프로필 보기";
-            dialog.SecondaryButtonClick += (s, e) => MainPage.ShowProfile(_post.@object.actor.id);
-            await dialog.ShowAsync();
+            await Utils.Dialog.ShowPermissionRequiredMessageDialog(this, _post.@object.actor.id);
             return;
         }
         e.Handled = true;
@@ -668,10 +659,7 @@ public sealed partial class TimelineControl : UserControl, IDisposable
         var relationship = _post.@object.actor.relationship;
         if (!(relationship == "F" || relationship == "S" || _post.permission == "A"))
         {
-            var dialog = this.GenerateMessageDialog("해당 사용자와 친구를 맺어야 글을 볼 수 있습니다.", "오류");
-            dialog.SecondaryButtonText = "프로필 보기";
-            dialog.SecondaryButtonClick += (s, e) => MainPage.ShowProfile(_post.@object.actor.id);
-            await dialog.ShowAsync();
+            await Utils.Dialog.ShowPermissionRequiredMessageDialog(this, _post.@object.actor.id, "해당 사용자와 친구를 맺어야 공유 리스트를 확인할 수 있습니다.");
             return;
         }
 
