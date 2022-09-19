@@ -10,7 +10,7 @@
 
     <Grid PreviewKeyDown="OnPreviewKeyDown">
         <notifyicon:TaskbarIcon x:Name="TiMain"
-            TrayMouseDoubleClick="TaskbarIconTrayMouseDoubleClicked"/>
+            TrayMouseDoubleClick="TaskbarIconTrayMouseDoubleTapped"/>
         <Frame x:Name="FrMain"/>
     </Grid>
 </Window>

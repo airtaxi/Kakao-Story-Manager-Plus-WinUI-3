@@ -91,7 +91,7 @@ public sealed partial class MainWindow : Microsoft.UI.Xaml.Window
         TiMain.MenuActivation = H.NotifyIcon.Core.PopupActivationMode.LeftOrRightClick;
         var icon = new Icon("icon.ico");
         TiMain.Icon = icon;
-        TiMain.ContextMenuMode = ContextMenuMode.PopupMenu;
+        TiMain.ContextMenuMode = ContextMenuMode.SecondWindow;
     }
 
     public static TaskbarIcon TaskbarIcon() => Instance.TiMain;
@@ -103,7 +103,7 @@ public sealed partial class MainWindow : Microsoft.UI.Xaml.Window
         appWindow.Hide();
     }
 
-    private void TaskbarIconTrayMouseDoubleClicked(object sender, RoutedEventArgs e)
+    private void TaskbarIconTrayMouseDoubleTapped(object sender, RoutedEventArgs e)
     {
         Activate();
         this.Show();

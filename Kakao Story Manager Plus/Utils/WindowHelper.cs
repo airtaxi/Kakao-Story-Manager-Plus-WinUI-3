@@ -1,4 +1,5 @@
-﻿using KSMP.Extension;
+﻿using H.NotifyIcon;
+using KSMP.Extension;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using System;
@@ -28,6 +29,12 @@ namespace KSMP.Utils
             var hwnd = WinRT.Interop.WindowNative.GetWindowHandle(window);
             ShowWindow(hwnd, 0x00000009);
             SetForegroundWindow(hwnd);
+
+            MainWindow.Instance.Show();
+            appWindow.Show();
+            if (presenter.State == OverlappedPresenterState.Minimized) presenter.Restore();
+            presenter.IsAlwaysOnTop = true;
+            presenter.IsAlwaysOnTop = false;
 
             if (previousState == OverlappedPresenterState.Maximized) presenter.Maximize();
         }
