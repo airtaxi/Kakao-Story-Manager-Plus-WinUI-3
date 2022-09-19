@@ -91,7 +91,7 @@ public sealed partial class MainWindow : Microsoft.UI.Xaml.Window
         TiMain.MenuActivation = H.NotifyIcon.Core.PopupActivationMode.LeftOrRightClick;
         var icon = new Icon("icon.ico");
         TiMain.Icon = icon;
-        TiMain.ContextMenuMode = ContextMenuMode.SecondWindow;
+        TiMain.ContextMenuMode = ContextMenuMode.PopupMenu;
     }
 
     public static TaskbarIcon TaskbarIcon() => Instance.TiMain;
