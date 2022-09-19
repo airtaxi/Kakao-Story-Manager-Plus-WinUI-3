@@ -486,10 +486,17 @@ public sealed partial class TimelineControl : UserControl, IDisposable
 
     private async void OnTimeTapped(object sender, TappedRoutedEventArgs e)
     {
-        if (!(_post.actor.relationship == "F" || _post.actor.relationship == "S" || _post.permission == "A"))
-            await this.ShowMessageDialogAsync("해당 사용자와 친구를 맺어야 글을 볼 수 있습니다.", "오류");
-
         e.Handled = true;
+
+        if (!(_post.actor.relationship == "F" || _post.actor.relationship == "S" || _post.permission == "A"))
+        {
+            var dialog = this.GenerateMessageDialog("해당 사용자와 친구를 맺어야 글을 볼 수 있습니다.", "오류");
+            dialog.SecondaryButtonText = "프로필 보기";
+            dialog.SecondaryButtonClick += (s, e) => MainPage.ShowProfile(_post.actor.id);
+            await dialog.ShowAsync();
+            return;
+        }
+
         if (!_isOverlay)
             MainPage.ShowOverlay(new TimelineControl(_post, false, true));
     }
@@ -655,15 +662,19 @@ public sealed partial class TimelineControl : UserControl, IDisposable
 
     private async void OnSharedPostShareCountTapped(object sender, TappedRoutedEventArgs e)
     {
+        e.Handled = true;
+
         if (SpShare.Visibility == Visibility.Collapsed) return;
-        var relationship = _post.actor.relationship;
+        var relationship = _post.@object.actor.relationship;
         if (!(relationship == "F" || relationship == "S" || _post.permission == "A"))
         {
-            await this.ShowMessageDialogAsync("해당 사용자와 친구를 맺어야 공유 리스트를 볼 수 있습니다.", "오류");
+            var dialog = this.GenerateMessageDialog("해당 사용자와 친구를 맺어야 글을 볼 수 있습니다.", "오류");
+            dialog.SecondaryButtonText = "프로필 보기";
+            dialog.SecondaryButtonClick += (s, e) => MainPage.ShowProfile(_post.@object.actor.id);
+            await dialog.ShowAsync();
             return;
         }
 
-        e.Handled = true;
         var senderControl = sender as FrameworkElement;
         var flyout = new Flyout();
         var progressRing = new ProgressRing()
