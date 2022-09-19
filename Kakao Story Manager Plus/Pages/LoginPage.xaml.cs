@@ -101,8 +101,8 @@ public sealed partial class LoginPage : Page
         {
             IsEnabled = false;
             TbLoading.Text = message;
-            var showProgress = progress < 0;
-            PrLoading.IsIndeterminate = showProgress;
+            var showProgress = progress > 0;
+            PrLoading.IsIndeterminate = !showProgress;
             if (showProgress) PrLoading.Value = progress;
         }
         else
