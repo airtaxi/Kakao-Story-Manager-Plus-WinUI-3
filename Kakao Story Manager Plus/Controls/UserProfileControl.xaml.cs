@@ -156,6 +156,7 @@ public sealed partial class UserProfileControl : UserControl
         {
             profileRelationship = await StoryApi.ApiHandler.GetProfileRelationship(_id);
             RefreshFriendStatus(profileRelationship.relationship);
+            MainPage.ShowProfile(_id);
         }
 
         button.IsEnabled = true;
