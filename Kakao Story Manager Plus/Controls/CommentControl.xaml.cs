@@ -142,8 +142,6 @@ public sealed partial class CommentControl : UserControl
             MfiDelete.Visibility = Visibility.Collapsed;
     }
 
-    private async void OnPublishEditCommentButtonClicked(object sender, RoutedEventArgs e) => await PublishEditedComment();
-
     private async Task PublishEditedComment()
     {
         FrEditCommentParent.IsEnabled = false;
@@ -158,7 +156,8 @@ public sealed partial class CommentControl : UserControl
         FrEditCommentParent.Visibility = Visibility.Collapsed;
         FrEditCommentParent.IsEnabled = true;
     }
-
+    
+    private async void OnPublishEditCommentButtonClicked(object sender, RoutedEventArgs e) => await PublishEditedComment();
     private async void OnEditCommentButtonClicked(object sender, RoutedEventArgs e)
     {
         FrEditCommentParent.Visibility = Visibility.Visible;
@@ -182,9 +181,7 @@ public sealed partial class CommentControl : UserControl
             OnDeleted?.Invoke();
         }
     }
+    private void OnReplyUserCommentButtonClicked(object sender, RoutedEventArgs e) => OnReplyClick.Invoke(_comment);
 
-    private void CommentMenuTapped(object sender, TappedRoutedEventArgs e)
-    {
-        e.Handled = true;
-    }
+    private void OnCommentMenuTapped(object sender, TappedRoutedEventArgs e) => e.Handled = true;
 }

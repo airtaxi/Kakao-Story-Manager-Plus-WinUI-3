@@ -367,6 +367,8 @@ public sealed partial class TimelineControl : UserControl, IDisposable
 
     private void OnDotMenuTapped(object sender, TappedRoutedEventArgs e)
     {
+        e.Handled = true;
+
         var icon = sender as FontIcon;
         var flyout = new MenuFlyout();
         if(_post.actor.id != MainPage.Me.id)
@@ -434,9 +436,16 @@ public sealed partial class TimelineControl : UserControl, IDisposable
         GdLoading.Visibility = Visibility.Collapsed;
     }
 
-    private async void OnRefreshTapped(object sender, TappedRoutedEventArgs e) => await RefreshContent();
+    private async void OnRefreshTapped(object sender, TappedRoutedEventArgs e)
+    {
+        e.Handled = true;
+        await RefreshContent();
+    }
+
     private async void OnAddBookmarkTapped(object sender, TappedRoutedEventArgs e)
     {
+        e.Handled = true;
+
         if (!isBookmarking)
         {
             isBookmarking = true;
@@ -460,6 +469,7 @@ public sealed partial class TimelineControl : UserControl, IDisposable
     private void OnMediaTapped(object sender, TappedRoutedEventArgs e)
     {
         e.Handled = true;
+
         var media = FvMedia.SelectedItem as Image;
         var url = media.Tag as string;
         if (url.Contains(".mp4"))
@@ -474,8 +484,11 @@ public sealed partial class TimelineControl : UserControl, IDisposable
         MainPage.ShowOverlay(control, _isOverlay);
     }
 
-    private void TimeTapped(object sender, TappedRoutedEventArgs e)
+    private async void OnTimeTapped(object sender, TappedRoutedEventArgs e)
     {
+        if (!(_post.actor.relationship == "F" || _post.actor.relationship == "S" || _post.permission == "A"))
+            await this.ShowMessageDialogAsync("해당 사용자와 친구를 맺어야 글을 볼 수 있습니다.", "오류");
+
         e.Handled = true;
         if (!_isOverlay)
             MainPage.ShowOverlay(new TimelineControl(_post, false, true));
@@ -487,19 +500,25 @@ public sealed partial class TimelineControl : UserControl, IDisposable
 
     private void CloseButtonClicked(object sender, TappedRoutedEventArgs e) => MainPage.HideOverlay();
 
-    private void OnUserProfilePictureTapped(object sender, TappedRoutedEventArgs e) => MainPage.ShowProfile(_post.actor.id);
-
-    private void EmotionsTextBlockTapped(object sender, TappedRoutedEventArgs e)
+    private void OnUserProfilePictureTapped(object sender, TappedRoutedEventArgs e)
     {
-        var flyout = new Flyout();
+        e.Handled = true;
+        MainPage.ShowProfile(_post.actor.id);
+    }
+
+    private void OnEmotionsTextBlockTapped(object sender, TappedRoutedEventArgs e)
+    {
+        e.Handled = true;
 
         var control = new EmotionsListControl(_post.likes);
-
+        var flyout = new Flyout();
         flyout.Content = control;
         flyout.ShowAt(RtbShares);
     }
-    private async void ShareCountTextBlockTapped(object sender, TappedRoutedEventArgs e)
+    private async void OnShareCountTextBlockTapped(object sender, TappedRoutedEventArgs e)
     {
+        e.Handled = true;
+
         var isUp = (sender as RichTextBlock).Tag as string == "Up";
         var flyout = new Flyout();
         var progressRing = new ProgressRing()
@@ -534,7 +553,7 @@ public sealed partial class TimelineControl : UserControl, IDisposable
 
     private async void OnSharedFriendSelected(FriendProfile profile)
     {
-        if(!(profile.Relationship == "F" || profile.Relationship == "S"))
+        if (!(profile.Relationship == "F" || profile.Relationship == "S" || _post.permission == "A"))
         {
             var dialog = this.GenerateMessageDialog("해당 사용자와 친구를 맺어야 글을 볼 수 있습니다.", "오류");
             dialog.SecondaryButtonText = "프로필 보기";
@@ -566,7 +585,9 @@ public sealed partial class TimelineControl : UserControl, IDisposable
 
     private async void OnSharePostTapped(object sender, TappedRoutedEventArgs e)
     {
-        if(!(_post.@object.actor.relationship == "F" || _post.@object.actor.relationship == "S" || _post.@object.permission == "A"))
+        e.Handled = true;
+
+        if (!(_post.@object.actor.relationship == "F" || _post.@object.actor.relationship == "S" || _post.@object.permission == "A"))
         {
             var dialog = this.GenerateMessageDialog("해당 사용자와 친구를 맺어야 글을 볼 수 있습니다.", "오류");
             dialog.SecondaryButtonText = "프로필 보기";
@@ -636,7 +657,7 @@ public sealed partial class TimelineControl : UserControl, IDisposable
     {
         if (SpShare.Visibility == Visibility.Collapsed) return;
         var relationship = _post.actor.relationship;
-        if (!(relationship == "F" || relationship == "S"))
+        if (!(relationship == "F" || relationship == "S" || _post.permission == "A"))
         {
             await this.ShowMessageDialogAsync("해당 사용자와 친구를 맺어야 공유 리스트를 볼 수 있습니다.", "오류");
             return;

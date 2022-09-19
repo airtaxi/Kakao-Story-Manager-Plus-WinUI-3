@@ -46,7 +46,7 @@
                         <Image x:Name="ImgMain" Visibility="Collapsed" Margin="10"/>
                     </Grid>
                 </StackPanel>
-                <Button x:Name="BtCommentMenu" Grid.Column="1" BorderThickness="0" Padding="5" Margin="5,0,0,0" Tapped="CommentMenuTapped">
+                <Button x:Name="BtCommentMenu" Grid.Column="1" BorderThickness="0" Padding="5" Margin="5,0,0,0" Tapped="OnCommentMenuTapped">
                     <Viewbox>
                         <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe712;" Foreground="LightGray"/>
                     </Viewbox>
@@ -55,6 +55,7 @@
                             <MenuFlyoutItem x:Name="MfiLike" Text="좋아요" Click="OnLikeButtonClick"/>
                             <MenuFlyoutItem x:Name="MfiEdit" Text="수정" Click="OnEditCommentButtonClicked"/>
                             <MenuFlyoutItem x:Name="MfiDelete" Text="삭제" Click="OnDeleteCommentButtonClicked"/>
+                            <MenuFlyoutItem Text="답장" Click="OnReplyUserCommentButtonClicked"/>
                         </MenuFlyout>
                     </Button.Flyout>
                 </Button>
