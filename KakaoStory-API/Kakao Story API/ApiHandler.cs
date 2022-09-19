@@ -488,6 +488,13 @@ namespace StoryApi
 
             return await GetResponseFromRequest(webRequest) != null;
         }
+        public static async Task<NotificationStatus> GetNotificationStatus()
+        {
+            string requestURI = "https://story.kakao.com/a/notifications";
+            HttpWebRequest webRequest = GenerateDefaultProfile(requestURI);
+            string response = await GetResponseFromRequest(webRequest);
+            return JsonConvert.DeserializeObject<NotificationStatus>(response);
+        }
         public static async Task<List<Notification>> GetNotifications()
         {
             string requestURI = "https://story.kakao.com/a/notifications";

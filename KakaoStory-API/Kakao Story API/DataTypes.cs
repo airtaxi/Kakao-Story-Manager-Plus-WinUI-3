@@ -17,6 +17,11 @@ namespace StoryApi
                 public string Caption;
             }
 
+            public class NotificationStatus
+            {
+                [JsonProperty("has_new_notification")]
+                public bool HasNewNotification { get; set; }
+            }
             public class EmoticonAuth
             {
                 [JsonProperty("credential")]
