@@ -14,7 +14,7 @@
         <Rectangle Fill="Black" Opacity="0.3"/>
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="20">
             <Grid>
-                <PersonPicture x:Name="PpProfilePicture"/>
+                <PersonPicture x:Name="PpProfilePicture" Tapped="OnProfilePictureTapped"/>
                 <Grid x:Name="GdFavorite" Width="30" Height="30" VerticalAlignment="Bottom" HorizontalAlignment="Right" CornerRadius="15" Opacity="1" Tapped="OnFavoriteTapped" PointerEntered="FavoritePointerEntered" PointerExited="FavoritePointerExited">
                     <Rectangle x:Name="RtFavorite" Fill="Gray"/>
                     <Viewbox Margin="5">

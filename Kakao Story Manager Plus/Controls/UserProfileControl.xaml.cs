@@ -161,4 +161,6 @@ public sealed partial class UserProfileControl : UserControl
 
         button.IsEnabled = true;
     }
+
+    private void OnProfilePictureTapped(object sender, TappedRoutedEventArgs e) => MainPage.ShowProfile(_id);
 }
