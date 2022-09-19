@@ -58,7 +58,7 @@ public sealed partial class CommentControl : UserControl
             SpLike.Visibility = Visibility.Visible;
             TbLike.Text = comment.like_count.ToString();
         }
-        Utility.SetTextContent(comment.decorators, RtbContent);
+        Utils.Post.SetTextContent(comment.decorators, RtbContent);
         var commentMedia = comment.decorators.FirstOrDefault(x => x.media?.origin_url != null);
         if (!string.IsNullOrEmpty(commentMedia?.media?.origin_url))
         {

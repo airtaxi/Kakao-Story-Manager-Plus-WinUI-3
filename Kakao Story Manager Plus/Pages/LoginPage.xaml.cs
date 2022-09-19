@@ -229,7 +229,7 @@ public sealed partial class LoginPage : Page
         service.UseVerboseLogging = true;
 
         var options = new EdgeOptions();
-        options.AddArgument("headless");
+        //options.AddArgument("headless");
 
         SeleniumDriver = new EdgeDriver(service, options);
         SeleniumDriver.Navigate().GoToUrl("https://accounts.kakao.com/login/?continue=https://story.kakao.com/");

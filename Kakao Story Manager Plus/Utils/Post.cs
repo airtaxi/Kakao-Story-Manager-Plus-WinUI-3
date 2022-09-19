@@ -47,13 +47,16 @@ namespace KSMP.Utils
                     var container = new InlineUIContainer();
                     var url = await ApiHandler.GetEmoticonUrl(decorator.item_id, decorator.resource_id);
                     var image = new Image();
-                    var path = Path.Combine(Path.GetTempPath(), $"thumb_{decorator.item_id}_{decorator.resource_id.PadLeft(3, '0')}");
-                    var client = new RestClient(url);
-                    var request = new RestRequest();
-                    request.Method = Method.Get;
-                    request.AddHeader("Referer", "https://story.kakao.com/");
-                    var bytes = await client.DownloadDataAsync(request);
-                    File.WriteAllBytes(path, bytes);
+                    var path = Path.Combine(Path.GetTempPath(), $"thumb_{decorator.item_id}_{decorator.resource_id.PadLeft(3, '0')}.png");
+                    if (!File.Exists(path))
+                    {
+                        var client = new RestClient(url);
+                        var request = new RestRequest();
+                        request.Method = Method.Get;
+                        request.AddHeader("Referer", "https://story.kakao.com/");
+                        var bytes = await client.DownloadDataAsync(request);
+                        File.WriteAllBytes(path, bytes);
+                    }
 
                     image.Source = Utility.GenerateImageUrlSource(path);
                     image.Width = 80;
