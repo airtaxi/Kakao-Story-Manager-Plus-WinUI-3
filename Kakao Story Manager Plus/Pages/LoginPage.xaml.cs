@@ -25,6 +25,7 @@ using static StoryApi.ApiHandler.DataType.CommentData;
 using System.Threading;
 using OpenQA.Selenium.Support.UI;
 using System.Linq.Expressions;
+using System.Collections.Generic;
 
 namespace KSMP.Pages;
 
@@ -267,6 +268,7 @@ public sealed partial class LoginPage : Page
             bool isSuccess = rawCookies.Any(x => x.Name == "_karmt");
             if (!isSuccess) return false;
 
+            var cookies = new List<System.Net.Cookie>();
             var cookieContainer = new CookieContainer();
             foreach (var rawCookie in rawCookies)
             {
@@ -278,7 +280,7 @@ public sealed partial class LoginPage : Page
                 });
             }
 
-            StoryApi.ApiHandler.Init(cookieContainer);
+            StoryApi.ApiHandler.Init(cookieContainer, cookies);
             return true;
         }
         catch (Exception) { return false; }

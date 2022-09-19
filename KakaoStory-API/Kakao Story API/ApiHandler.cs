@@ -1,10 +1,13 @@
 ﻿using Newtonsoft.Json;
+using RestSharp;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Text;
+using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using static StoryApi.ApiHandler.DataType;
 using static StoryApi.ApiHandler.DataType.CommentData;
@@ -14,13 +17,18 @@ namespace StoryApi
     public partial class ApiHandler
     {
         private static CookieContainer _cookieContainer { get; set; } = null;
+        private static List<Cookie> Cookies { get; set; } = null;
         public delegate Task ReloginRequired();
         public static ReloginRequired OnReloginRequired;
         public static int MaxRetryCount { get; set; } = 15;
+        private const string KakaoApiKey = "90c1434c4e8916a6ec5aa88109889601";
 
-        public static void Init(CookieContainer cookieContainer)
+
+
+        public static void Init(CookieContainer cookieContainer, List<Cookie> cookies)
         {
             _cookieContainer = cookieContainer;
+            Cookies = cookies;
         }
         public static async Task<ProfileData.ProfileObject> GetProfileFeed(string id, string from, bool noActivity = false)
         {
@@ -31,6 +39,36 @@ namespace StoryApi
             string response = await GetResponseFromRequest(webRequest);
             ProfileData.ProfileObject obj = JsonConvert.DeserializeObject<ProfileData.ProfileObject>(response);
             return obj;
+        }
+
+        private const string EmoticonUrl = "https://mk.kakaocdn.net/dna/emoticons/resources";
+        private const string EmoticonAuthUrl = "https://api-item.kakao.com/api/sdk/config";
+
+        public static async Task<string> GetEmoticonUrl(string id, string resourceId)
+        {
+            var auth = await GetEmoticonCredential(); 
+            var url = EmoticonUrl;
+            url += $"/{id}/thum_{resourceId.PadLeft(3, '0')}.png";
+            url += $"?credential={auth.Auth.Credential}";
+            url += $"&expires={auth.Auth.Expires}";
+            url += "&allow_referer=story.kakao.com";
+            url += $"&signature={Uri.EscapeDataString(auth.Auth.Signature)}";
+            url += $"&path={auth.Auth.Path}";
+            return url;
+        }
+        private static async Task<AuthController> GetEmoticonCredential()
+        {
+            var client = new RestClient(EmoticonAuthUrl);
+            Cookies.ForEach(x => client.AddCookie(x.Name, x.Value, x.Path, x.Domain));
+            var request = new RestRequest();
+            request.Method = Method.Get;
+
+            request.AddHeader("authorization", $"KakaoAK {KakaoApiKey}");
+            request.AddHeader("ka", $"sdk/1.14.0 os/javascript lang/ko-KR device/Win32 origin/https%3A%2F%2Fstory.kakao.com");
+            request.AddHeader("js-origin", $"https://story.kakao.com/");
+            var response = await client.ExecuteAsync(request);
+            var data = JsonConvert.DeserializeObject<AuthController>(response.Content);
+            return data;
         }
         public static async Task<ProfileRelationshipData.ProfileRelationship> GetProfileRelationship(string id)
         {
@@ -674,7 +712,7 @@ namespace StoryApi
             request.CookieContainer = _cookieContainer;
 
             request.Headers["X-Kakao-DeviceInfo"] = "web:d;-;-";
-            request.Headers["X-Kakao-ApiLevel"] = "45";
+            request.Headers["X-Kakao-ApiLevel"] = "49";
             request.Headers["X-Requested-With"] = "XMLHttpRequest";
             request.Headers["X-Kakao-VC"] = "1b242cf8fa50f1f96765";
             request.Headers["Cache-Control"] = "max-age=0";
@@ -720,7 +758,7 @@ namespace StoryApi
             request.CookieContainer = _cookieContainer;
 
             request.Headers["X-Kakao-DeviceInfo"] = "web:d;-;-";
-            request.Headers["X-Kakao-ApiLevel"] = "46";
+            request.Headers["X-Kakao-ApiLevel"] = "49";
             request.Headers["X-Requested-With"] = "XMLHttpRequest";
             request.Headers["X-Kakao-VC"] = "185412afe1da9580e67f";
             request.Headers["Cache-Control"] = "max-age=0";
@@ -804,7 +842,7 @@ namespace StoryApi
 
             request.CookieContainer = _cookieContainer;
             request.Headers["X-Kakao-DeviceInfo"] = "web:d;-;-";
-            request.Headers["X-Kakao-ApiLevel"] = "46";
+            request.Headers["X-Kakao-ApiLevel"] = "49";
             request.Headers["X-Requested-With"] = "XMLHttpRequest";
             request.Headers["X-Kakao-VC"] = "185412afe1da9580e67f";
             request.Headers["Cache-Control"] = "max-age=0";
@@ -923,7 +961,7 @@ namespace StoryApi
             request.CookieContainer = _cookieContainer;
 
             request.Headers["X-Kakao-DeviceInfo"] = "web:d;-;-";
-            request.Headers["X-Kakao-ApiLevel"] = "46";
+            request.Headers["X-Kakao-ApiLevel"] = "49";
             request.Headers["X-Requested-With"] = "XMLHttpRequest";
             request.Headers["X-Kakao-VC"] = "185412afe1da9580e67f";
             request.Headers["Cache-Control"] = "max-age=0";
@@ -977,7 +1015,7 @@ namespace StoryApi
             request.CookieContainer = _cookieContainer;
 
             request.Headers["X-Kakao-DeviceInfo"] = "web:d;-;-";
-            request.Headers["X-Kakao-ApiLevel"] = "46";
+            request.Headers["X-Kakao-ApiLevel"] = "49";
             request.Headers["X-Requested-With"] = "XMLHttpRequest";
             request.Headers["X-Kakao-VC"] = "185412afe1da9580e67f";
 
@@ -1041,7 +1079,7 @@ namespace StoryApi
             webRequest.CookieContainer = _cookieContainer;
 
             webRequest.Headers["X-Kakao-DeviceInfo"] = "web:d;-;-";
-            webRequest.Headers["X-Kakao-ApiLevel"] = "46";
+            webRequest.Headers["X-Kakao-ApiLevel"] = "49";
             webRequest.Headers["X-Requested-With"] = "XMLHttpRequest";
             webRequest.Headers["X-Kakao-VC"] = Guid.NewGuid().ToString().ToLower().Substring(0, 20);
             webRequest.Headers["Cache-Control"] = "max-age=0";

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 
 namespace StoryApi
@@ -15,6 +16,38 @@ namespace StoryApi
                 public string Key;
                 public string Caption;
             }
+
+            public class EmoticonAuth
+            {
+                [JsonProperty("credential")]
+                public string Credential { get; set; }
+
+                [JsonProperty("signature")]
+                public string Signature { get; set; }
+
+                [JsonProperty("path")]
+                public string Path { get; set; }
+
+                [JsonProperty("expires")]
+                public int Expires { get; set; }
+            }
+
+            public class AuthController
+            {
+
+                [JsonProperty("resource_url_build_method")]
+                public int ResourceUrlBuildMethod { get; set; }
+
+                [JsonProperty("host")]
+                public string Host { get; set; }
+
+                [JsonProperty("base")]
+                public string Base { get; set; }
+
+                [JsonProperty("auth")]
+                public EmoticonAuth Auth { get; set; }
+            }
+
             public class MediaData
             {
                 public class MediaObject
@@ -1056,6 +1089,8 @@ namespace StoryApi
                 public string permalink { get; set; }
                 public string hashtag_type;
                 public string hashtag_type_id;
+                public string item_id;
+                public string resource_id;
             };
             public class ProfileData
             {

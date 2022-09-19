@@ -19,6 +19,8 @@ using KSMP.Extension;
 using Microsoft.UI;
 using System.IO;
 using Windows.Services.Maps;
+using RestSharp;
+using StoryApi;
 
 namespace KSMP
 {
@@ -63,7 +65,7 @@ namespace KSMP
             return bitmap;
         }
 
-        public static void SetTextContent(List<QuoteData> contentDecorators, RichTextBlock richTextBlock)
+        public static async void SetTextContent(List<QuoteData> contentDecorators, RichTextBlock richTextBlock)
         {
             var wordCount = 0;
             Paragraph paragraph = new();
@@ -83,6 +85,25 @@ namespace KSMP
                         Pages.MainPage.ShowProfile(decorator.id);
                     };
                     paragraph.Inlines.Add(hyperlink);
+                }
+                else if (decorator.type.Equals("emoticon"))
+                {
+                    var container = new InlineUIContainer();
+                    var url = await ApiHandler.GetEmoticonUrl(decorator.item_id, decorator.resource_id);
+                    var image = new Image();
+                    var path = Path.Combine(Path.GetTempPath(), $"thumb_{decorator.item_id}_{decorator.resource_id.PadLeft(3, '0')}");
+                    var client = new RestClient(url);
+                    var request = new RestRequest();
+                    request.Method = Method.Get;
+                    request.AddHeader("Referer", "https://story.kakao.com/");
+                    var bytes = await client.DownloadDataAsync(request);
+                    File.WriteAllBytes(path, bytes);
+
+                    image.Source = Utility.GenerateImageUrlSource(path);
+                    image.Width = 80;
+                    image.Height = 80;
+                    container.Child = image;
+                    paragraph.Inlines.Add(container);
                 }
                 else
                 {
