@@ -53,6 +53,15 @@ namespace KSMP
             }
             return images;
         }
+        public static async Task<BitmapImage> GenerateImageLocalFileStream(IRandomAccessStream fileStream, int width = 80, int height = 80)
+        {
+            var bitmap = new BitmapImage();
+            bitmap.DecodePixelWidth = width;
+            bitmap.DecodePixelHeight = height;
+            await bitmap.SetSourceAsync(fileStream);
+            _generatedImages.Add(bitmap);
+            return bitmap;
+        }
         public static BitmapImage GenerateImageUrlSource(string url, bool shouldNotBeFlushed = false)
         {
             if (string.IsNullOrEmpty(url)) url = "ms-appx:///Assets/Error.png";

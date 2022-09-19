@@ -20,6 +20,8 @@ namespace StoryApi
         private static List<Cookie> Cookies { get; set; } = null;
         public delegate Task ReloginRequired();
         public static ReloginRequired OnReloginRequired;
+        private static AuthController EmoticonCredential;
+
         public static int MaxRetryCount { get; set; } = 15;
         private const string KakaoApiKey = "90c1434c4e8916a6ec5aa88109889601";
 
@@ -46,14 +48,14 @@ namespace StoryApi
 
         public static async Task<string> GetEmoticonUrl(string id, string resourceId)
         {
-            var auth = await GetEmoticonCredential(); 
+            EmoticonCredential ??= await GetEmoticonCredential(); 
             var url = EmoticonUrl;
             url += $"/{id}/thum_{resourceId.PadLeft(3, '0')}.png";
-            url += $"?credential={auth.Auth.Credential}";
-            url += $"&expires={auth.Auth.Expires}";
+            url += $"?credential={EmoticonCredential.Auth.Credential}";
+            url += $"&expires={EmoticonCredential.Auth.Expires}";
             url += "&allow_referer=story.kakao.com";
-            url += $"&signature={Uri.EscapeDataString(auth.Auth.Signature)}";
-            url += $"&path={auth.Auth.Path}";
+            url += $"&signature={Uri.EscapeDataString(EmoticonCredential.Auth.Signature)}";
+            url += $"&path={EmoticonCredential.Auth.Path}";
             return url;
         }
         private static async Task<AuthController> GetEmoticonCredential()
