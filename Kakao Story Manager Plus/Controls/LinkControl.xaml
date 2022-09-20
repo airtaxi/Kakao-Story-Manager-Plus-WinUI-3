@@ -9,12 +9,12 @@
     d:DesignHeight="300"
     d:DesignWidth="400">
 
-    <Grid Height="300" CornerRadius="10" PointerEntered="OnPointerEntered" PointerExited="OnPointerExited" Tapped="OnTapped">
+    <Grid Height="240" CornerRadius="10" PointerEntered="OnPointerEntered" PointerExited="OnPointerExited" Tapped="OnTapped">
         <Image x:Name="ImgLink" Stretch="UniformToFill"/>
         <Frame Background="Black" Opacity="0.35"/>
         <StackPanel Margin="10" VerticalAlignment="Bottom" HorizontalAlignment="Left">
-            <TextBlock x:Name="TbLinkTitle" FontSize="20" FontWeight="Bold" Text="123" Foreground="White" TextTrimming="CharacterEllipsis" MaxLines="1"/>
-            <TextBlock x:Name="TbLinkDesc" FontSize="15" Text="123" Foreground="White" TextTrimming="CharacterEllipsis" MaxLines="1"/>
+            <TextBlock x:Name="TbLinkTitle" FontSize="20" FontWeight="Bold" Text="123" Foreground="White" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" MaxLines="2"/>
+            <TextBlock x:Name="TbLinkDesc" FontSize="15" Text="123" Foreground="White" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" MaxLines="2"/>
             <TextBlock x:Name="TbLinkUrl" FontSize="10" Text="https://intel.neugeumma.lake/" FontWeight="Bold" Foreground="White" TextTrimming="CharacterEllipsis" MaxLines="1"/>
         </StackPanel>
     </Grid>
