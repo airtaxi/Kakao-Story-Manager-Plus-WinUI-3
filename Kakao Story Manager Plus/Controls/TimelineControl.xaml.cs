@@ -656,10 +656,10 @@ public sealed partial class TimelineControl : UserControl, IDisposable
         e.Handled = true;
 
         if (SpShare.Visibility == Visibility.Collapsed) return;
-        var relationship = _post.@object.actor.relationship;
+        var relationship = _post.actor.relationship;
         if (!(relationship == "F" || relationship == "S" || _post.permission == "A"))
         {
-            await Utils.Dialog.ShowPermissionRequiredMessageDialog(this, _post.@object.actor.id, "해당 사용자와 친구를 맺어야 공유 리스트를 확인할 수 있습니다.");
+            await Utils.Dialog.ShowPermissionRequiredMessageDialog(this, _post.actor.id, "해당 사용자와 친구를 맺어야 공유 리스트를 확인할 수 있습니다.");
             return;
         }
 
