@@ -25,6 +25,7 @@ namespace KSMP.Utils
     {
         public static async void SetTextContent(List<QuoteData> contentDecorators, RichTextBlock richTextBlock)
         {
+            bool hasEmoticon = false;
             var wordCount = 0;
             Paragraph paragraph = new();
             foreach (var decorator in contentDecorators)
@@ -46,6 +47,7 @@ namespace KSMP.Utils
                 }
                 else if (decorator.type.Equals("emoticon"))
                 {
+                    hasEmoticon = true;
                     var container = new InlineUIContainer();
                     var url = await ApiHandler.GetEmoticonUrl(decorator.item_id, decorator.resource_id);
                     var image = new Image();
@@ -81,7 +83,7 @@ namespace KSMP.Utils
             }
             richTextBlock.Blocks.Clear();
             richTextBlock.Blocks.Add(paragraph);
-            if (wordCount == 0)
+            if (wordCount == 0 && !hasEmoticon)
                 richTextBlock.Visibility = Visibility.Collapsed;
         }
     }
