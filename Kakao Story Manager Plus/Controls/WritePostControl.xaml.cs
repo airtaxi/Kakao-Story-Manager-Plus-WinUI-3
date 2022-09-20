@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Security;
 using System.Threading.Tasks;
 using KSMP.Extension;
 using KSMP.Pages;
@@ -13,17 +11,11 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Media.Imaging;
-using OpenQA.Selenium.DevTools.V102.DOM;
 using StoryApi;
-using Windows.Security.Authentication.OnlineId;
 using Windows.Storage;
 using Windows.Storage.Pickers;
-using Windows.Storage.Streams;
-using Windows.UI.Text.Core;
 using WinRT.Interop;
-using static KSMP.ClassManager;
 using static StoryApi.ApiHandler.DataType;
-using static StoryApi.ApiHandler.DataType.TimeLineData;
 
 namespace KSMP.Controls;
 

@@ -5,13 +5,10 @@ using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
-using StoryApi;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Reflection.Metadata.Ecma335;
 using System.Threading.Tasks;
-using Windows.Devices.PointOfService.Provider;
 using static StoryApi.ApiHandler;
 
 namespace KSMP;

@@ -3,21 +3,10 @@ using System.Collections.Generic;
 using System.IO;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Media.Imaging;
 using Windows.ApplicationModel.DataTransfer;
-using Windows.Graphics.Imaging;
-using Windows.Storage.Streams;
 using Windows.Storage;
-using Windows.UI.Core;
 using static KSMP.ClassManager;
 using static StoryApi.ApiHandler.DataType;
-using System.Drawing;
-using System.Text;
-using System.Transactions;
-using static System.Net.WebRequestMethods;
-using static System.Net.Mime.MediaTypeNames;
-using System.Runtime.InteropServices.WindowsRuntime;
-using System.Runtime.CompilerServices;
 
 namespace KSMP.Controls;
 

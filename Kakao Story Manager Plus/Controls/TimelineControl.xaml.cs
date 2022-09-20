@@ -10,22 +10,12 @@ using static StoryApi.ApiHandler.DataType.CommentData;
 using static KSMP.ClassManager;
 using System;
 using KSMP.Pages;
-using static StoryApi.ApiHandler.DataType.ShareData;
 using Windows.Storage.Pickers;
 using WinRT.Interop;
-using Newtonsoft.Json;
-using System.IO;
-using Windows.System;
 using StoryApi;
 using Windows.Storage;
 using Windows.ApplicationModel.DataTransfer;
-using Microsoft.UI.Xaml.Media;
-using Microsoft.UI;
-using static StoryApi.ApiHandler.DataType.TimeLineData;
 using System.Diagnostics;
-using Windows.Security.Authentication.OnlineId;
-using Microsoft.UI.Xaml.Media.Imaging;
-using Windows.Media.Import;
 
 namespace KSMP.Controls;
 

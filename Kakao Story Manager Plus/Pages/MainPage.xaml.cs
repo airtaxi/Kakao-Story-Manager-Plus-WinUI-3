@@ -4,26 +4,17 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Timers;
-using H.NotifyIcon;
 using KSMP.Controls;
 using KSMP.Extension;
 using KSMP.Utils;
 using Microsoft.Toolkit.Uwp.Notifications;
-using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Input;
-using OpenQA.Selenium.DevTools.V102.DOM;
 using StoryApi;
-using Windows.Media.Devices.Core;
-using Windows.Media.MediaProperties;
-using Windows.Security.Authentication.OnlineId;
-using Windows.System.Threading;
 using static KSMP.ClassManager;
-using static KSMP.Controls.WritePostControl;
 using static StoryApi.ApiHandler.DataType.FriendData;
-using static StoryApi.ApiHandler.DataType.MailData;
 
 namespace KSMP.Pages;
 

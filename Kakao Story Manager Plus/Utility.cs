@@ -4,23 +4,11 @@ using System.Threading.Tasks;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Storage.Streams;
 using Windows.UI;
-using Microsoft.UI.Text;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Documents;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
-using static StoryApi.ApiHandler.DataType;
-using static StoryApi.ApiHandler.DataType.CommentData;
-using Windows.UI.Popups;
-using Windows.UI.Core;
-using System.Runtime.InteropServices;
 using KSMP.Extension;
-using Microsoft.UI;
-using System.IO;
-using Windows.Services.Maps;
-using RestSharp;
-using StoryApi;
 
 namespace KSMP
 {

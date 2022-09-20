@@ -1,23 +1,14 @@
-﻿using ABI.System;
-using KSMP.Extension;
-using Microsoft.UI.Text;
+﻿using Microsoft.UI.Text;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Documents;
-using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml.Media.Imaging;
 using RestSharp;
 using StoryApi;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
-using System.Net;
-using Windows.Services.Maps;
 using Windows.Storage;
 using static StoryApi.ApiHandler.DataType;
-using static StoryApi.ApiHandler.DataType.CommentData;
-using Uri = System.Uri;
 
 namespace KSMP.Utils
 {

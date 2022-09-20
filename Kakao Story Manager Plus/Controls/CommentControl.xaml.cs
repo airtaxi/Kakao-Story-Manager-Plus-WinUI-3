@@ -7,12 +7,7 @@ using KSMP.Extension;
 using static StoryApi.ApiHandler.DataType.CommentData;
 using KSMP.Pages;
 using static KSMP.ClassManager;
-using System;
-using Microsoft.UI.Xaml.Media;
 using StoryApi;
-using Microsoft.UI.Xaml.Media.Imaging;
-using System.Linq.Expressions;
-using Windows.Storage;
 using System.Threading.Tasks;
 
 namespace KSMP.Controls;

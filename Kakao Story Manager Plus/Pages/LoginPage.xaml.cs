@@ -5,26 +5,18 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 
 using KSMP.Extension;
-using Microsoft.Web.WebView2.Core;
 using System.Threading.Tasks;
 using System.Net;
 using System.Diagnostics;
 using System.IO;
-using Microsoft.UI.Windowing;
 using Version = System.Version;
 using System.Drawing.Text;
-using OpenQA.Selenium.Chromium;
 using OpenQA.Selenium.Edge;
 using WebDriverManager;
 using WebDriverManager.DriverConfigs.Impl;
 using Microsoft.Win32;
 using OpenQA.Selenium;
-using OpenQA.Selenium.Chrome;
-using OpenQA.Selenium.Support;
-using static StoryApi.ApiHandler.DataType.CommentData;
-using System.Threading;
 using OpenQA.Selenium.Support.UI;
-using System.Linq.Expressions;
 using System.Collections.Generic;
 
 namespace KSMP.Pages;

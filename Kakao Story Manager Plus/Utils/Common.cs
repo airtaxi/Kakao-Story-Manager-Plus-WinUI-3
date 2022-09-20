@@ -1,10 +1,7 @@
-﻿using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml.Media.Imaging;
+﻿using Microsoft.UI.Xaml.Media;
 using System;
 using System.Diagnostics;
 using System.Reflection;
-using Windows.ApplicationModel;
 using Windows.UI;
 using Windows.UI.Core;
 

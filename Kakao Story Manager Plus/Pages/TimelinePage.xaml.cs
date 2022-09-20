@@ -1,6 +1,5 @@
 ﻿using StoryApi;
 using System.Threading.Tasks;
-using System.Linq;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
