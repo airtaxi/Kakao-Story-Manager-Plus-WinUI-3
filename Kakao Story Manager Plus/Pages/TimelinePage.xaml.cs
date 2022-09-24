@@ -6,6 +6,7 @@ using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using System;
 using KSMP.Controls;
+using RestSharp;
 
 namespace KSMP.Pages;
 
@@ -119,22 +120,20 @@ public sealed partial class TimelinePage : Page
 
     private static bool IsValidFeed(ApiHandler.DataType.CommentData.PostData feed) => feed.deleted != true && (feed.@object?.deleted ?? false) != true && feed.blinded != true && (feed.@object?.blinded ?? false) != true && (feed.verb == "post" || feed.verb == "share");
 
-    private bool isRefreshing = false;
+    private bool _isRefreshing = false;
     private async void OnScrollViewerViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
     {
-        if (!isRefreshing)
-        {
-            var scrollViewer = sender as ScrollViewer;
-            var verticalOffset = scrollViewer.VerticalOffset;
-            var maxVerticalOffset = scrollViewer.ScrollableHeight;
+        if (_isRefreshing) return;
 
-            if (maxVerticalOffset < 0 || verticalOffset == maxVerticalOffset)
-            {
-                isRefreshing = true;
-                //LvContent.Items.Clear();
-                await Refresh(lastFeed);
-                isRefreshing = false;
-            }
+        var scrollViewer = sender as ScrollViewer;
+        var verticalOffset = scrollViewer.VerticalOffset;
+        var maxVerticalOffset = scrollViewer.ScrollableHeight;
+
+        if (maxVerticalOffset < 0 || verticalOffset == maxVerticalOffset)
+        {
+            _isRefreshing = true;
+            await Refresh(lastFeed);
+            _isRefreshing = false;
         }
     }
 }
