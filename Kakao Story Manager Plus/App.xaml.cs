@@ -11,15 +11,12 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
-// To learn more about WinUI, the WinUI project structure,
-// and more about our project templates, see: http://aka.ms/winui-project-info.
-
 namespace KSMP;
 
 public partial class App : Application
 {
     public static DispatcherQueue DispatcherQueue { get; private set; }
-    public static string BinaryDirectory = Path.GetDirectoryName(Process.GetCurrentProcess()?.MainModule?.FileName ?? "");
+    public static string BinaryDirectory = null;
     private static Window _window;
 
     public App()
@@ -28,6 +25,7 @@ public partial class App : Application
         AppDomain.CurrentDomain.UnhandledException += OnAppDomainUnhandledException;
         TaskScheduler.UnobservedTaskException += OnTaskSchedulerUnobservedTaskException;
         Current.UnhandledException += OnApplicationUnhandledException;
+        BinaryDirectory = Path.GetDirectoryName(Process.GetCurrentProcess()?.MainModule?.FileName ?? "");
 
         if (CheckForExistingProcess()) Environment.Exit(0);
         InitializeComponent();
@@ -62,7 +60,7 @@ public partial class App : Application
     private static bool ExceptionWritten = false;
     private static void WriteException(Exception exception)
     {
-        if (!ExceptionWritten)
+        if (!ExceptionWritten && !string.IsNullOrEmpty(BinaryDirectory))
         {
             ExceptionWritten = true;
             var path = Path.Combine(BinaryDirectory, "error.log");
@@ -132,13 +130,21 @@ public partial class App : Application
         });
     }
 
-    protected override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
+    protected override async void OnLaunched(LaunchActivatedEventArgs args)
     {
-        DispatcherQueue = DispatcherQueue.GetForCurrentThread();
+        try
+        {
+            DispatcherQueue = DispatcherQueue.GetForCurrentThread();
 
-        ToastNotificationManagerCompat.OnActivated += OnToastNotificationActivated;
-        if (!ToastNotificationManagerCompat.WasCurrentProcessToastActivated())
-            LaunchAndBringToForegroundIfNeeded();
+            ToastNotificationManagerCompat.OnActivated += OnToastNotificationActivated;
+            if (!ToastNotificationManagerCompat.WasCurrentProcessToastActivated())
+                LaunchAndBringToForegroundIfNeeded();
+        }
+        catch (Exception exception)
+        {
+            WriteException(exception);
+            await ShowErrorMessage(exception);
+        }
     }
 
     private static void LaunchAndBringToForegroundIfNeeded()

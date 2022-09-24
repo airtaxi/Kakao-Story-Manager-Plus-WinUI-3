@@ -106,6 +106,12 @@ public sealed partial class LoginPage : Page
         var client = new WebClient();
         var remoteVersionString = await client.DownloadStringTaskAsync(new Uri("https://kagamine-rin.com/KSMP/version"));
         var localVersionString = Utils.Common.GetVersionString();
+        if (localVersionString == null)
+        {
+            await this.ShowMessageDialogAsync("프로그램의 버전을 확인할 수 없습니다", "오류");
+            return;
+        }
+
         var remoteVersion = new Version(remoteVersionString);
         var localVersion = new Version(localVersionString);
         var result = remoteVersion.CompareTo(localVersion);

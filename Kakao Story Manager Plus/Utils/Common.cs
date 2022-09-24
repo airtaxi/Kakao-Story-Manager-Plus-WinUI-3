@@ -1,6 +1,7 @@
 ﻿using Microsoft.UI.Xaml.Media;
 using System;
 using System.Diagnostics;
+using System.IO;
 using System.Reflection;
 using Windows.UI;
 using Windows.UI.Core;
@@ -23,9 +24,15 @@ namespace KSMP.Utils
 
         public static string GetVersionString()
         {
-            Assembly assembly = Assembly.GetExecutingAssembly();
-            FileVersionInfo fileVersionInfo = FileVersionInfo.GetVersionInfo(assembly.Location);
-            return fileVersionInfo.ProductVersion;
+            try
+            {
+                var baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
+                var executableName = AppDomain.CurrentDomain.FriendlyName + ".exe";
+                var path = Path.Combine(baseDirectory, executableName);
+                FileVersionInfo fileVersionInfo = FileVersionInfo.GetVersionInfo(path);
+                return fileVersionInfo.ProductVersion;
+            }
+            catch (Exception) { return null; }
         }
 
         public static bool IsModifierDown(Windows.System.VirtualKey virtualKey = Windows.System.VirtualKey.Control)

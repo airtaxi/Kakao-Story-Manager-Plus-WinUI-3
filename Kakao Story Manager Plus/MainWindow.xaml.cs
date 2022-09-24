@@ -50,7 +50,7 @@ public sealed partial class MainWindow : Microsoft.UI.Xaml.Window
     private void SetupAppWindow()
     {
         var appWindow = this.GetAppWindow();
-        var versionString = Utils.Common.GetVersionString();
+        var versionString = Utils.Common.GetVersionString() ?? "VERSION ERROR";
         appWindow.Title = $"카카오스토리 매니저 PLUS {versionString}";
         appWindow.SetIcon("icon.ico");
     }
