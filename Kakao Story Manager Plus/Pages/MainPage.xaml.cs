@@ -95,10 +95,8 @@ public sealed partial class MainPage : Page
         try
         {
             NotificationTimer.Stop();
-            var status = await ApiHandler.GetNotificationStatus();
-            if (!status.HasNewNotification) return;
-            var notifications = await ApiHandler.GetNotifications();
 
+            var notifications = await ApiHandler.GetNotifications();
             for (int i = 0; i < notifications.Count; i++)
             {
                 ApiHandler.DataType.Notification notification = notifications[i];
@@ -153,45 +151,27 @@ public sealed partial class MainPage : Page
 
         if (willShow)
         {
-            var commentId = notification.comment_id;
-
             var builder = new ToastContentBuilder()
             .AddText(notification.message)
             .AddText(contentMessage)
             .AddArgument("Open");
 
-            var openButton = new ToastButton();
-            openButton.SetContent("열기");
-            openButton.AddArgument("Open");
-
+            var thumbnailUrl = notification.thumbnail_url;
+            if (!string.IsNullOrEmpty(thumbnailUrl)) builder.AddHeroImage(new Uri(thumbnailUrl));
             if (notification.scheme.StartsWith("kakaostory://profiles/"))
             {
                 var argument = $"Profile={profileId}";
-                openButton.AddArgument(argument);
                 builder.AddArgument(argument);
             }
 
             else if (notification.scheme.StartsWith("kakaostory://activities/"))
             {
                 var argument = $"Activity={activityId}";
-                openButton.AddArgument(argument);
                 builder.AddArgument(argument);
             }
 
-            builder.AddButton(openButton);
-
-            if (commentId != null)
-            {
-                var likeButton = new ToastButton();
-                likeButton.SetContent("좋아요");
-                likeButton.AddArgument("Like");
-                likeButton.AddArgument($"Activity={activityId}");
-                likeButton.AddArgument($"Comment={commentId}");
-                builder.AddButton(likeButton);
-            }
-
             if(!string.IsNullOrEmpty(notification?.thumbnail_url))
-                builder.AddHeroImage(new System.Uri(notification.thumbnail_url));
+                builder.AddHeroImage(new Uri(notification.thumbnail_url));
 
             builder.Show();
         }
