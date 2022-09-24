@@ -139,7 +139,7 @@
                         <RowDefinition x:Name="RdComment" Height="auto"/>
                         <RowDefinition Height="auto"/>
                     </Grid.RowDefinitions>
-                    <ScrollViewer Grid.Row="1" x:Name="SvComments" MaxHeight="200" Background="#FFFFFF" Padding="30,5,30,5" Visibility="Collapsed">
+                    <ScrollViewer Grid.Row="1" x:Name="SvComments" MaxHeight="200" Background="#FFFFFF" Padding="30,5,30,5" Visibility="Collapsed" ViewChanged="OnCommentsScrollViewerViewChanged">
                         <StackPanel x:Name="SpComments"/>
                     </ScrollViewer>
                     <Grid Grid.Row="2" Background="#FCFCFC" Visibility="Visible">

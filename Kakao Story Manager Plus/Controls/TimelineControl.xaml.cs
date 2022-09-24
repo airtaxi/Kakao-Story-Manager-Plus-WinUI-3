@@ -277,46 +277,11 @@ public sealed partial class TimelineControl : UserControl, IDisposable
             BdComments.Visibility = Visibility.Visible;
             RnComments.Text = _post.comment_count.ToString();
 
-            SpComments.Children.Clear();
-            var comments = await ApiHandler.GetComments(_post.id, null);
             SvComments.Visibility = Visibility.Visible;
             BdComments.Visibility = Visibility.Visible;
-            var lastComment = comments.Last();
-            foreach (var comment in comments)
-            {
-                var control = new CommentControl(comment, _post.id, _isOverlay);
-                
-                control.OnReplyClick += (Comment sender) =>
-                {
-                    var profile = sender.writer;
-                    var inputContol = FrComment.Content as InputControl;
-                    inputContol.AppendText("{!{{" + "\"id\":\"" + profile.id + "\", \"type\":\"profile\", \"text\":\"" + profile.display_name + "\"}}!} ");
-                };
-
-                control.OnDeleted += async () => await RefreshContent();
-
-
-                bool isMyComment = comment.writer.id == MainPage.Me.id;
-                bool isMyPost = _post.actor.id == MainPage.Me.id;
-                control.HideUnaccessableButton(isMyComment, isMyPost);
-
-                SpComments.Children.Add(control);
-
-                if (lastComment != comment)
-                {
-                    var border = new Border()
-                    {
-                        BorderBrush = Utility.GetColorFromHexa("#FFF2F2F2"),
-                        HorizontalAlignment = HorizontalAlignment.Stretch,
-                        VerticalAlignment = VerticalAlignment.Bottom,
-                        BorderThickness = new Thickness(0.5),
-                    };
-                    SpComments.Children.Add(border);
-                }
-            }
-            await Task.Delay(100);
+            await LoadComments();
             SvComments.UpdateLayout();
-            SvComments.ChangeView(0.0, double.MaxValue, 1.0f, true);
+            SvComments.ChangeView(0, double.MaxValue, 1);
         }
         else
         {
@@ -353,6 +318,40 @@ public sealed partial class TimelineControl : UserControl, IDisposable
         RefreshEmotionsButton();
 
         if (showLoading) GdLoading.Visibility = Visibility.Collapsed;
+    }
+
+    private async Task LoadComments(string since = null)
+    {
+        if (since == null) SpComments.Children.Clear();
+        var comments = await ApiHandler.GetComments(_post.id, since);
+        var currentComments = GetCurrentComments();
+        if (since != null) comments.Reverse();
+
+        foreach (var comment in comments)
+        {
+            if (currentComments.Any(x => x.id == comment.id)) continue;
+            var control = new CommentControl(comment, _post.id, _isOverlay);
+            control.Tag = comment;
+
+            control.OnReplyClick += (Comment sender) =>
+            {
+                var profile = sender.writer;
+                var inputContol = FrComment.Content as InputControl;
+                inputContol.AppendText("{!{{" + "\"id\":\"" + profile.id + "\", \"type\":\"profile\", \"text\":\"" + profile.display_name + "\"}}!} ");
+            };
+
+            control.OnDeleted += async () => await RefreshContent();
+
+
+            bool isMyComment = comment.writer.id == MainPage.Me.id;
+            bool isMyPost = _post.actor.id == MainPage.Me.id;
+            control.HideUnaccessableButton(isMyComment, isMyPost);
+
+            if (since == null)
+                SpComments.Children.Add(control);
+            else
+                SpComments.Children.Insert(0, control);
+        }
     }
 
     private void OnDotMenuTapped(object sender, TappedRoutedEventArgs e)
@@ -684,4 +683,32 @@ public sealed partial class TimelineControl : UserControl, IDisposable
         control.OnFriendSelected += OnSharedFriendSelected;
         flyout.Content = control;
     }
+
+    private bool _isRefreshing = false;
+    private async void OnCommentsScrollViewerViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
+    {
+        if (_post.comment_count < 30) return;
+        if (_isRefreshing || e.IsIntermediate) return;
+        var scrollViewer = sender as ScrollViewer;
+        var verticalOffset = scrollViewer.VerticalOffset;
+        if(verticalOffset == 0)
+        {
+            GdLoading.Visibility = Visibility.Visible;
+            _isRefreshing = true;
+            try
+            {
+                var comments = GetCurrentComments();
+                if (comments.Count == _post.comment_count) return;
+                var lastComment = comments.FirstOrDefault();
+                await LoadComments(lastComment.id);
+            }
+            finally
+            {
+                GdLoading.Visibility = Visibility.Collapsed;
+                _isRefreshing = false;
+            }
+        }
+    }
+
+    private List<Comment> GetCurrentComments() => SpComments.Children.Select(x => (x as CommentControl).Tag as Comment).ToList();
 }
