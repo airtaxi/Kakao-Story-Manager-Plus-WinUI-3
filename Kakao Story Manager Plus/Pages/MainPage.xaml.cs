@@ -127,7 +127,7 @@ public sealed partial class MainPage : Page
         _memoryUsageUpdateTimer.Start();
     }
 
-    private static void ShowNotificationToast(ApiHandler.DataType.Notification notification)
+    private static async void ShowNotificationToast(ApiHandler.DataType.Notification notification)
     {
         string contentMessage = notification.content ?? "내용 없음";
 
@@ -157,21 +157,26 @@ public sealed partial class MainPage : Page
             .AddArgument("Open");
 
             var thumbnailUrl = notification.thumbnail_url;
-            if (!string.IsNullOrEmpty(thumbnailUrl)) builder.AddHeroImage(new Uri(thumbnailUrl));
-            if (notification.scheme.StartsWith("kakaostory://profiles/"))
+
+            if (notification.scheme.StartsWith("kakaostory://activities/"))
+            {
+                if (string.IsNullOrEmpty(thumbnailUrl))
+                {
+                    var post = await ApiHandler.GetPost(activityId);
+                    if (post.media.Count > 0 && post.media_type != "video")
+                        thumbnailUrl = post.media[0].origin_url;
+                }
+                var argument = $"Activity={activityId}";
+                builder.AddArgument(argument);
+            }
+            else if (notification.scheme.StartsWith("kakaostory://profiles/"))
             {
                 var argument = $"Profile={profileId}";
                 builder.AddArgument(argument);
             }
 
-            else if (notification.scheme.StartsWith("kakaostory://activities/"))
-            {
-                var argument = $"Activity={activityId}";
-                builder.AddArgument(argument);
-            }
-
-            if(!string.IsNullOrEmpty(notification?.thumbnail_url))
-                builder.AddHeroImage(new Uri(notification.thumbnail_url));
+            if (!string.IsNullOrEmpty(thumbnailUrl))
+                builder.AddHeroImage(new Uri(thumbnailUrl));
 
             builder.Show();
         }
