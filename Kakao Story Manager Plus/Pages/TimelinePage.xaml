@@ -10,7 +10,7 @@
     Background="#f0f0f0" NavigationCacheMode="Disabled">
 
     <Grid>
-        <Grid>
+        <Grid x:Name="GdMain" SizeChanged="OnSizeChanged">
             <Grid.RowDefinitions>
                 <RowDefinition Height="auto"/>
                 <RowDefinition Height="*"/>

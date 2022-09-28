@@ -7,6 +7,8 @@ using Microsoft.UI.Xaml.Navigation;
 using System;
 using KSMP.Controls;
 using RestSharp;
+using System.Linq;
+using Windows.Security.Authentication.OnlineId;
 
 namespace KSMP.Pages;
 
@@ -72,7 +74,6 @@ public sealed partial class TimelinePage : Page
     }
     private async Task Refresh(string from = null)
     {
-        GC.Collect();
         PrLoading.Visibility = Visibility.Visible;
         if (from == null)
             LvContent.Items.Clear();
@@ -115,6 +116,7 @@ public sealed partial class TimelinePage : Page
                 lastFeed = feed.id;
             }
         }
+        ValidateTimeLineControlsSize(GdMain.ActualWidth);
         PrLoading.Visibility = Visibility.Collapsed;
     }
 
@@ -136,4 +138,24 @@ public sealed partial class TimelinePage : Page
             _isRefreshing = false;
         }
     }
+
+    private void ValidateTimeLineControlsSize(double width)
+    {
+        if(width < TimelineControlWidth + 20)
+            SetTimeLineControlsSize(Math.Max(width - 20, 0));
+        else
+            SetTimeLineControlsSize(TimelineControlWidth);
+    }
+    private void SetTimeLineControlsSize(double width)
+    {
+        var controls = LvContent.Items.Select(x => x as TimelineControl).ToList();
+        controls.RemoveAll(x => x == null);
+        foreach (var control in controls)
+        {
+            if (control.Width == width) continue;
+            control.Width = width;
+        }
+    }
+
+    private void OnSizeChanged(object sender, SizeChangedEventArgs e) => ValidateTimeLineControlsSize(e.NewSize.Width);
 }
