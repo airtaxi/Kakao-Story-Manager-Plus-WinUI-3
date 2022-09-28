@@ -142,13 +142,14 @@ public sealed partial class TimelinePage : Page
     private void ValidateTimeLineControlsSize(double width)
     {
         if(width < TimelineControlWidth + 20)
-            SetTimeLineControlsSize(Math.Max(width - 20, 0));
+            SetControlsSize(Math.Max(width - 20, 0));
         else
-            SetTimeLineControlsSize(TimelineControlWidth);
+            SetControlsSize(TimelineControlWidth);
     }
-    private void SetTimeLineControlsSize(double width)
+
+    private void SetControlsSize(double width)
     {
-        var controls = LvContent.Items.Select(x => x as TimelineControl).ToList();
+        var controls = LvContent.Items.Select(x => x as Control).ToList();
         controls.RemoveAll(x => x == null);
         foreach (var control in controls)
         {
