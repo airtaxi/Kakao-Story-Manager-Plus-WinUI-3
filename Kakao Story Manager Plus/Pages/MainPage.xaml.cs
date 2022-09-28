@@ -24,7 +24,7 @@ public sealed partial class MainPage : Page
     public static ApiHandler.DataType.UserProfile.ProfileData Me;
     public static Friends Friends = null;
     private static Timer NotificationTimer = null;
-    private Timer _memoryUsageUpdateTimer = new();
+    //private Timer _memoryUsageUpdateTimer = new();
     private bool _isWritePostFlyoutOpened = false;
 
     public MainPage()
@@ -43,9 +43,9 @@ public sealed partial class MainPage : Page
             NotificationTimer.Start();
         }
 
-        _memoryUsageUpdateTimer.Interval = 200;
-        _memoryUsageUpdateTimer.Elapsed += OnMemoryUsageUpdateTimerElapsed;
-        _memoryUsageUpdateTimer.Start();
+        //_memoryUsageUpdateTimer.Interval = 200;
+        //_memoryUsageUpdateTimer.Elapsed += OnMemoryUsageUpdateTimerElapsed;
+        //_memoryUsageUpdateTimer.Start();
     }
 
     private void InitializeSettingsFlyout()
@@ -112,20 +112,20 @@ public sealed partial class MainPage : Page
         finally { NotificationTimer.Start(); }
     }
 
-    private async void OnMemoryUsageUpdateTimerElapsed(object sender, ElapsedEventArgs e)
-    {
-        _memoryUsageUpdateTimer.Stop();
-        var process = Process.GetCurrentProcess();
-        var memorySize = process.PrivateMemorySize64 / 1024 / 1024;
-        var source = new TaskCompletionSource();
-        DispatcherQueue.TryEnqueue(() =>
-        {
-            TbMemory.Text = $"메모리 사용량: {memorySize:N0}MB";
-            source.SetResult();
-        });
-        await source.Task;
-        _memoryUsageUpdateTimer.Start();
-    }
+    //private async void OnMemoryUsageUpdateTimerElapsed(object sender, ElapsedEventArgs e)
+    //{
+    //    _memoryUsageUpdateTimer.Stop();
+    //    var process = Process.GetCurrentProcess();
+    //    var memorySize = process.PrivateMemorySize64 / 1024 / 1024;
+    //    var source = new TaskCompletionSource();
+    //    DispatcherQueue.TryEnqueue(() =>
+    //    {
+    //        //TbMemory.Text = $"메모리 사용량: {memorySize:N0}MB";
+    //        source.SetResult();
+    //    });
+    //    await source.Task;
+    //    _memoryUsageUpdateTimer.Start();
+    //}
 
     private static async void ShowNotificationToast(ApiHandler.DataType.Notification notification)
     {
@@ -317,9 +317,13 @@ public sealed partial class MainPage : Page
 
     private async void OnLogoutButtonClicked(object sender, RoutedEventArgs e)
     {
-        Configuration.SetValue("willRememberCredentials", false);
-        await this.ShowMessageDialogAsync("로그아웃되었습니다.\n프로그램을 재실행해주세요.", "안내");
-        Environment.Exit(0);
+        var dialogResult = await this.ShowMessageDialogAsync("정말로 로그아웃 하시겠습니까?", "경고", true);
+        if(dialogResult == ContentDialogResult.Primary)
+        {
+            Configuration.SetValue("willRememberCredentials", false);
+            await this.ShowMessageDialogAsync("로그아웃되었습니다.\n프로그램을 재실행해주세요.", "안내");
+            Environment.Exit(0);
+        }
     }
 
     public static void ShowProfile(string id)
