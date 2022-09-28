@@ -27,7 +27,15 @@ public partial class App : Application
         Current.UnhandledException += OnApplicationUnhandledException;
         BinaryDirectory = Path.GetDirectoryName(Process.GetCurrentProcess()?.MainModule?.FileName ?? "");
 
-        if (CheckForExistingProcess()) Environment.Exit(0);
+        if (CheckForExistingProcess())
+        {
+            var builder = new ToastContentBuilder()
+            .AddText("안내")
+            .AddText("프로그램이 이미 실행중입니다.");
+            builder.Show();
+            Environment.Exit(0);
+        }
+
         InitializeComponent();
     }
 
