@@ -8,6 +8,7 @@ using Microsoft.UI.Xaml.Input;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Threading.Tasks;
 using static StoryApi.ApiHandler;
 
@@ -52,7 +53,7 @@ public sealed partial class MainWindow : Microsoft.UI.Xaml.Window
         var appWindow = this.GetAppWindow();
         var versionString = Utils.Common.GetVersionString() ?? "VERSION ERROR";
         appWindow.Title = $"카카오스토리 매니저 PLUS {versionString}";
-        appWindow.SetIcon("icon.ico");
+        appWindow.SetIcon(Path.Combine(App.BinaryDirectory, "icon.ico"));
     }
 
 
