@@ -140,6 +140,8 @@ public sealed partial class MainPage : Page
         if (disableVip && notification.decorators != null && notification.decorators[0] != null && notification.decorators[0].text != null && notification.decorators[0].text.StartsWith("관심친구"))
             willShow = false;
 
+        if (!willShow) return;
+
         string profileId = GetProfileIdFromNotification(notification);
         string activityId = GetActivityIdFromNotification(notification);
 
@@ -149,39 +151,36 @@ public sealed partial class MainPage : Page
             if (timelineControl?.PostId == activityId) await timelineControl.RefreshContent();
         });
 
-        if (willShow)
+        var builder = new ToastContentBuilder()
+        .AddText(notification.message)
+        .AddText(contentMessage)
+        .AddArgument("Open");
+
+        var thumbnailUrl = notification.thumbnail_url;
+
+        if (notification.scheme.StartsWith("kakaostory://activities/"))
         {
-            var builder = new ToastContentBuilder()
-            .AddText(notification.message)
-            .AddText(contentMessage)
-            .AddArgument("Open");
-
-            var thumbnailUrl = notification.thumbnail_url;
-
-            if (notification.scheme.StartsWith("kakaostory://activities/"))
+            if (string.IsNullOrEmpty(thumbnailUrl))
             {
-                if (string.IsNullOrEmpty(thumbnailUrl))
-                {
-                    var post = await ApiHandler.GetPost(activityId);
-                    var mediaCount = post?.media?.Count ?? 0;
-                    var mediaType = post?.media_type;
-                    if (mediaCount > 0 && mediaType != "video")
-                        thumbnailUrl = post?.media[0]?.origin_url ?? thumbnailUrl;
-                }
-                var argument = $"Activity={activityId}";
-                builder.AddArgument(argument);
+                var post = await ApiHandler.GetPost(activityId);
+                var mediaCount = post?.media?.Count ?? 0;
+                var mediaType = post?.media_type;
+                if (mediaCount > 0 && mediaType != "video")
+                    thumbnailUrl = post?.media[0]?.origin_url ?? thumbnailUrl;
             }
-            else if (notification.scheme.StartsWith("kakaostory://profiles/"))
-            {
-                var argument = $"Profile={profileId}";
-                builder.AddArgument(argument);
-            }
-
-            if (!string.IsNullOrEmpty(thumbnailUrl))
-                builder.AddHeroImage(new Uri(thumbnailUrl));
-
-            builder.Show();
+            var argument = $"Activity={activityId}";
+            builder.AddArgument(argument);
         }
+        else if (notification.scheme.StartsWith("kakaostory://profiles/"))
+        {
+            var argument = $"Profile={profileId}";
+            builder.AddArgument(argument);
+        }
+
+        if (!string.IsNullOrEmpty(thumbnailUrl))
+            builder.AddHeroImage(new Uri(thumbnailUrl));
+
+        builder.Show();
     }
 
     private static string GetProfileIdFromNotification(ApiHandler.DataType.Notification notification)
