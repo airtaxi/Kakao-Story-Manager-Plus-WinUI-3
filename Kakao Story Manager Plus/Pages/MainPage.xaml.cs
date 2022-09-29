@@ -163,8 +163,10 @@ public sealed partial class MainPage : Page
                 if (string.IsNullOrEmpty(thumbnailUrl))
                 {
                     var post = await ApiHandler.GetPost(activityId);
-                    if (post.media.Count > 0 && post.media_type != "video")
-                        thumbnailUrl = post.media[0].origin_url;
+                    var mediaCount = post?.media?.Count ?? 0;
+                    var mediaType = post?.media_type;
+                    if (mediaCount > 0 && mediaType != "video")
+                        thumbnailUrl = post?.media[0]?.origin_url ?? thumbnailUrl;
                 }
                 var argument = $"Activity={activityId}";
                 builder.AddArgument(argument);
