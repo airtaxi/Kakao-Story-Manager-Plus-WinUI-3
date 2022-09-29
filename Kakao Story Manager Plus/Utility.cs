@@ -13,18 +13,7 @@ using KSMP.Extension;
 namespace KSMP
 {
     public static class Utility
-    {
-        public static List<BitmapImage> _generatedImages = new();
-        public static void FlushBitmapImages()
-        {
-            _generatedImages.ForEach(x =>
-            {
-                x.UriSource = null;
-                x.DisposeSource();
-            });
-            _generatedImages.Clear();
-        }
-        
+    {   
         public static List<Image> GenerateMedias(IEnumerable<string> urls)
         {
             if (urls == null) return null;
@@ -47,10 +36,9 @@ namespace KSMP
             bitmap.DecodePixelWidth = width;
             bitmap.DecodePixelHeight = height;
             await bitmap.SetSourceAsync(fileStream);
-            _generatedImages.Add(bitmap);
             return bitmap;
         }
-        public static BitmapImage GenerateImageUrlSource(string url, bool shouldNotBeFlushed = false)
+        public static BitmapImage GenerateImageUrlSource(string url)
         {
             if (string.IsNullOrEmpty(url)) url = "ms-appx:///Assets/Error.png";
             var imageUrl = new Uri(url);
@@ -58,7 +46,6 @@ namespace KSMP
             {
                 UriSource = imageUrl
             };
-            if (!shouldNotBeFlushed) _generatedImages.Add(bitmap);
             return bitmap;
         }
 

@@ -52,7 +52,6 @@ public sealed partial class NotificationControl : UserControl
             notificationDatas.Add(notificationData);
         }
         (Content as ListView).ItemsSource = notificationDatas;
-        Unloaded += (s, e) => (Content as ListView).ItemsSource = null;
     }
 
     private void ProfileImageTapped(object sender, TappedRoutedEventArgs e)

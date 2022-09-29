@@ -11,7 +11,7 @@ namespace KSMP.Extension;
 
 public static class PageExtension
 {
-    public static AppWindow GetAppWindow(this Microsoft.UI.Xaml.Window window)
+    public static AppWindow GetAppWindow(this Window window)
     {
         var hWnd = WinRT.Interop.WindowNative.GetWindowHandle(window);
         var windowId = Win32Interop.GetWindowIdFromWindow(hWnd);

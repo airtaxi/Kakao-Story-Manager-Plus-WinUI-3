@@ -22,17 +22,6 @@ public sealed partial class TimelinePage : Page
     public TimelinePage()
     {
         InitializeComponent();
-        Unloaded += OnUnloaded;
-    }
-
-    private void OnUnloaded(object sender, RoutedEventArgs e)
-    {
-        foreach (var rawItem in LvContent.Items)
-        {
-            var item = rawItem as TimelineControl;
-            if (item is null) return;
-            item.Dispose();
-        }
     }
 
     protected override async void OnNavigatedTo(NavigationEventArgs e)

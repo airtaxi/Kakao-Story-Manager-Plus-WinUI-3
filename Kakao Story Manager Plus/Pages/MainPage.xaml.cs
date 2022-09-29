@@ -210,7 +210,6 @@ public sealed partial class MainPage : Page
 
     public static void NavigateTimeline(string args = null)
     {
-        Utility.FlushBitmapImages();
         if (args != null) _instance.FrContent.Navigate(typeof(TimelinePage), args);
         else _instance.FrContent.Navigate(typeof(TimelinePage));
     }
@@ -299,7 +298,7 @@ public sealed partial class MainPage : Page
         Me = await ApiHandler.GetProfileData();
         TbName.Text = Me.display_name;
         var profileUrl = Me.GetValidUserProfileUrl();
-        if (!string.IsNullOrEmpty(profileUrl)) PpMyProfile.ProfilePicture = Utility.GenerateImageUrlSource(profileUrl, true);
+        if (!string.IsNullOrEmpty(profileUrl)) PpMyProfile.ProfilePicture = Utility.GenerateImageUrlSource(profileUrl);
         NavigateTimeline();
     }
 

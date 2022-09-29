@@ -18,13 +18,11 @@ public sealed partial class ImageViewerControl : UserControl
     {
         InitializeComponent();
         _urlList = urlList;
-        Loaded += (s,e) => LoadImage();
-        Unloaded += (s, e) => UnloadImage();
+        LoadImage();
         FvImages.SelectedIndex = index;
     }
 
     private void LoadImage() => FvImages.ItemsSource = _urlList;
-    private void UnloadImage() => FvImages.ItemsSource = null;
 
     private void OnScrollViewerTapped(object sender, TappedRoutedEventArgs e) => ResetImageSize((sender as ScrollViewer).Content as Image, sender as ScrollViewer);
 

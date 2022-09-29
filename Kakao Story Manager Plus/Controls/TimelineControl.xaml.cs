@@ -20,7 +20,7 @@ using System.Diagnostics;
 namespace KSMP.Controls;
 
 
-public sealed partial class TimelineControl : UserControl, IDisposable
+public sealed partial class TimelineControl : UserControl
 {
     private PostData _post;
     private readonly bool _isOverlay;
@@ -88,29 +88,8 @@ public sealed partial class TimelineControl : UserControl, IDisposable
         FrComment.Content = inputControl;
         _ = RefreshContent();
 
-        PpUser.Loaded += (s, e) => PpUser.ProfilePicture = Utility.GenerateImageUrlSource(post.actor?.GetValidUserProfileUrl());
-        PpUser.Unloaded += (s, e) => PpUser.DisposeImage();
-
-        Loaded += (s, e) => FvMedia.ItemsSource = Utility.GenerateMedias(post?.media?.Select(x => x.origin_url ?? x.url_hq));
-        Unloaded += (s, e) => UnloadFlipViewImages();
-    }
-
-    private void UnloadFlipViewImages()
-    {
-        var images = FvMedia.ItemsSource as List<Image>;
-        images?.ForEach(x => x.DisposeImage());
-        FvMedia.ItemsSource = null;
-    }
-
-    public void Dispose()
-    {
-        UnloadFlipViewImages();
-        var inputControl = FrComment.Content as InputControl;
-        inputControl.OnSubmitShortcutActivated -= OnSubmitShortcutActivated;
-        inputControl.OnImagePasted -= OnImagePasted;
-        BtShare.Flyout = null;
-        FrOverlay.Content = null;
-        GdOverlay.Children.Clear();
+        PpUser.ProfilePicture = Utility.GenerateImageUrlSource(post.actor?.GetValidUserProfileUrl());
+        FvMedia.ItemsSource = Utility.GenerateMedias(post?.media?.Select(x => x.origin_url ?? x.url_hq));
     }
 
     private async void OnImagePasted(string temporaryImageFilePath)
