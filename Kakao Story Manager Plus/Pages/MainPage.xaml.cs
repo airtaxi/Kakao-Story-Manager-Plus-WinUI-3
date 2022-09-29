@@ -392,8 +392,6 @@ public sealed partial class MainPage : Page
         control.AdjustDefaultPostWritingPermission();
     }
 
-    private void OnMemoryUsageTextBlockTapped(object sender, TappedRoutedEventArgs e) => GC.Collect(4);
-
     private async void OnPageSizeChanged(object sender, SizeChangedEventArgs e)
     {
         if (_isWritePostFlyoutOpened)
@@ -402,5 +400,11 @@ public sealed partial class MainPage : Page
             var flyout = BtWrite?.Flyout as Flyout;
             flyout?.ShowAt(BtWrite);
         }
+    }
+
+    private async void OnExitButtonClicked(object sender, RoutedEventArgs e)
+    {
+        var dialogResult = await this.ShowMessageDialogAsync("정말로 프로그램을 종료하시곘습니까?", "경고", true);
+        if (dialogResult == ContentDialogResult.Primary) Environment.Exit(0);
     }
 }
