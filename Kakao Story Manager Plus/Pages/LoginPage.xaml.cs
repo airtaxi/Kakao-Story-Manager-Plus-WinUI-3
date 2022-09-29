@@ -259,7 +259,7 @@ public sealed partial class LoginPage : Page
                 loginButton.Click();
             }
 
-            var wait = new WebDriverWait(SeleniumDriver, TimeSpan.FromSeconds(10));
+            var wait = new WebDriverWait(SeleniumDriver, TimeSpan.FromDays(1));
             wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.UrlToBe("https://story.kakao.com/"));
             var rawCookies = SeleniumDriver.Manage().Cookies.AllCookies;
 
