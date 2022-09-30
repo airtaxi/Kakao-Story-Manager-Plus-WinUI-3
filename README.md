@@ -6,6 +6,7 @@ Third-party client of Kakao Story for Windows 10/11 made with Windows App SDK\
 Known Bugs
 ----
 Posts in ListView are not garbage collected due to the bug of the Windows App SDK (Memory Leak)
+
 Developer
 ----
 `이호원 (Howon Lee) a.k.a hoyo321 or kck4156, airtaxi`
