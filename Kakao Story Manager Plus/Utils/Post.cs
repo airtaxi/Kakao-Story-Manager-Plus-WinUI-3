@@ -35,6 +35,7 @@ namespace KSMP.Utils
                         Pages.MainPage.ShowProfile(decorator.id);
                     };
                     paragraph.Inlines.Add(hyperlink);
+                    wordCount += decorator.text.Length;
                 }
                 else if (decorator.type.Equals("emoticon"))
                 {
