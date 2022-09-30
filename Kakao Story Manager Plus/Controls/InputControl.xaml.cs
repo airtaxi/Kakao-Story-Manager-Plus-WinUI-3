@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media.Imaging;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Storage;
 using static KSMP.ClassManager;
@@ -128,5 +129,10 @@ public sealed partial class InputControl : UserControl
             if (item?.Path != null) OnImagePasted?.Invoke(item.Path);
     }
 
-    private void OnDragOver(object sender, DragEventArgs e) => e.AcceptedOperation = DataPackageOperation.Copy;
+    private void OnDragOver(object sender, DragEventArgs e)
+    {
+        e.AcceptedOperation = DataPackageOperation.Copy;
+        e.DragUIOverride.Caption = "미디어 끌어오기";
+        e.DragUIOverride.IsCaptionVisible = true;
+    }
 }
