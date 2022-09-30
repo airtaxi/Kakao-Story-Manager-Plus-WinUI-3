@@ -270,6 +270,14 @@ public sealed partial class MainPage : Page
     public static void HideOverlay(bool willDispose = true)
     {
         if (_instance == null) return;
+        var isWritePostFlyoutOpened = _instance?.BtWrite?.Flyout?.IsOpen ?? false;
+        if(isWritePostFlyoutOpened)
+        {
+            ((_instance.BtWrite.Flyout as Flyout).Content as WritePostControl).PreventClose = false;
+            _instance._isWritePostFlyoutOpened = false;
+            _instance.BtWrite.Flyout.Hide();
+            return;
+        }
         var isSecond = _instance.GdOverlay2.Visibility == Visibility.Visible;
         var overlay = isSecond ? _instance.GdOverlay2 : _instance.GdOverlay;
         overlay.Visibility = Visibility.Collapsed;
