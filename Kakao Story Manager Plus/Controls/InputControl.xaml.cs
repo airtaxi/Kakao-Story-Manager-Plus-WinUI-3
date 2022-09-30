@@ -117,4 +117,16 @@ public sealed partial class InputControl : UserControl
             }
         }
     }
+
+    private async void OnDropped(object sender, DragEventArgs e)
+    {
+        if (!e.DataView.Contains(StandardDataFormats.StorageItems)) return;
+        var items = await e.DataView.GetStorageItemsAsync();
+        if (items == null) return;
+
+        foreach(var item in items) 
+            if (item?.Path != null) OnImagePasted?.Invoke(item.Path);
+    }
+
+    private void OnDragOver(object sender, DragEventArgs e) => e.AcceptedOperation = DataPackageOperation.Copy;
 }
