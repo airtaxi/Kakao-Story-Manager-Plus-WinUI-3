@@ -217,6 +217,9 @@ public sealed partial class TimelineControl : UserControl
 
     private void HideOverlay()
     {
+        var control = FrOverlay.Content as WritePostControl;
+        if (control != null) control.OnPostCompleted -= OnPostCompleted;
+
         GdOverlay.Visibility = Visibility.Collapsed;
         FrOverlay.Content = null;
     }
