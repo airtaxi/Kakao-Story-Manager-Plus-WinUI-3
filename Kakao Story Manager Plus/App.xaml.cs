@@ -22,14 +22,18 @@ public partial class App : Application
 
     public App()
     {
-        UnhandledException += OnApplicationUnhandledException;
-        AppDomain.CurrentDomain.UnhandledException += OnAppDomainUnhandledException;
-        TaskScheduler.UnobservedTaskException += OnTaskSchedulerUnobservedTaskException;
-        Current.UnhandledException += OnApplicationUnhandledException;
-        BinaryDirectory = Path.GetDirectoryName(Process.GetCurrentProcess()?.MainModule?.FileName ?? "");
+        try
+        {
+            UnhandledException += OnApplicationUnhandledException;
+            AppDomain.CurrentDomain.UnhandledException += OnAppDomainUnhandledException;
+            TaskScheduler.UnobservedTaskException += OnTaskSchedulerUnobservedTaskException;
+            Current.UnhandledException += OnApplicationUnhandledException;
+            BinaryDirectory = Path.GetDirectoryName(Process.GetCurrentProcess()?.MainModule?.FileName ?? "");
 
-        if (CheckForExistingProcess()) ExitProgramByExistingProcess();
-        else InitializeComponent();
+            if (CheckForExistingProcess()) ExitProgramByExistingProcess();
+            else InitializeComponent();
+        }
+        catch (Exception exception) { _ = HandleException(exception); }
     }
 
     private void ExitProgramByExistingProcess()
@@ -48,23 +52,19 @@ public partial class App : Application
         return processes.Any(x => x.ProcessName == process.ProcessName && x.Id != process.Id);
     }
 
-    private async void OnTaskSchedulerUnobservedTaskException(object sender, UnobservedTaskExceptionEventArgs e)
+
+    private async Task HandleException(Exception exception)
     {
-        WriteException(e.Exception);
-        await ShowErrorMessage(e.Exception);
+        WriteException(exception);
+        await ShowErrorMessage(exception);
     }
 
+    private async void OnTaskSchedulerUnobservedTaskException(object sender, UnobservedTaskExceptionEventArgs e) => await HandleException(e.Exception);
+    private async void OnAppDomainUnhandledException(object sender, System.UnhandledExceptionEventArgs e) => await HandleException(e.ExceptionObject as Exception);
     private async void OnApplicationUnhandledException(object sender, Microsoft.UI.Xaml.UnhandledExceptionEventArgs e)
     {
         e.Handled = true;
-        WriteException(e.Exception);
-        await ShowErrorMessage(e.Exception);
-    }
-
-    private async void OnAppDomainUnhandledException(object sender, System.UnhandledExceptionEventArgs e)
-    {
-        WriteException(e.ExceptionObject as Exception);
-        await ShowErrorMessage(e.ExceptionObject as Exception);
+        await HandleException(e.Exception);
     }
 
     private static bool ExceptionWritten = false;
@@ -150,11 +150,7 @@ public partial class App : Application
             if (!ToastNotificationManagerCompat.WasCurrentProcessToastActivated())
                 LaunchAndBringToForegroundIfNeeded();
         }
-        catch (Exception exception)
-        {
-            WriteException(exception);
-            await ShowErrorMessage(exception);
-        }
+        catch (Exception exception) { await HandleException(exception); }
     }
 
     private static void LaunchAndBringToForegroundIfNeeded()

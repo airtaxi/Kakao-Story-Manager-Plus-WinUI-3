@@ -87,7 +87,7 @@ public sealed partial class MainWindow : Microsoft.UI.Xaml.Window
         menuFlyout.Items.Add(quit);
         TiMain.ContextFlyout = menuFlyout;
         TiMain.MenuActivation = H.NotifyIcon.Core.PopupActivationMode.LeftOrRightClick;
-        var icon = new Icon("icon.ico");
+        var icon = new Icon(Path.Combine(App.BinaryDirectory, "icon.ico"));
         TiMain.Icon = icon;
         TiMain.ContextMenuMode = ContextMenuMode.PopupMenu;
     }
