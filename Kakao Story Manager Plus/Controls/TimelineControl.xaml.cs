@@ -16,6 +16,7 @@ using StoryApi;
 using Windows.Storage;
 using Windows.ApplicationModel.DataTransfer;
 using System.Diagnostics;
+using Windows.Media.Core;
 
 namespace KSMP.Controls;
 
@@ -90,6 +91,17 @@ public sealed partial class TimelineControl : UserControl
 
         PpUser.ProfilePicture = Utility.GenerateImageUrlSource(post.actor?.GetValidUserProfileUrl());
         FvMedia.ItemsSource = Utility.GenerateMedias(post?.media?.Select(x => x.origin_url ?? x.url_hq));
+    }
+
+    public void DisposeMedias()
+    {
+        var medias = FvMedia.ItemsSource as List<FrameworkElement>;
+        if (medias == null) return;
+        foreach(var media in medias)
+        {
+            if (media is MediaPlayerElement video) (video.Source as MediaSource)?.Dispose();
+            if (media is Image image) image.DisposeImage();
+        }
     }
 
     private async void OnImagePasted(string temporaryImageFilePath)
@@ -183,7 +195,7 @@ public sealed partial class TimelineControl : UserControl
         sharePostMenuFlyoutItem.Command = sharePostCommand;
         shareFlyout.Items.Add(sharePostMenuFlyoutItem);
 
-        if (!_post.sharable || _post.@object != null) 
+        if (!_post.sharable || _post.@object != null)
             sharePostMenuFlyoutItem.Visibility = Visibility.Collapsed;
 
         var copyUrlPostMenuFlyoutItem = new MenuFlyoutItem() { Text = $"URL 복사하기" };
@@ -244,7 +256,7 @@ public sealed partial class TimelineControl : UserControl
         TbName.Text = _post.actor.display_name;
         var timestampString = StoryApi.Utils.GetTimeString(_post.created_at);
         TbTime.Text = timestampString;
-        if(_post.content_updated_at != DateTime.MinValue)
+        if (_post.content_updated_at != DateTime.MinValue)
             TbTime.Text += " (수정됨)";
 
         RtbEmotions.Visibility = Visibility.Visible;
@@ -314,16 +326,8 @@ public sealed partial class TimelineControl : UserControl
             if (currentComments.Any(x => x.id == comment.id)) continue;
             var control = new CommentControl(comment, _post.id, _isOverlay);
             control.Tag = comment;
-
-            control.OnReplyClick += (Comment sender) =>
-            {
-                var profile = sender.writer;
-                var inputContol = FrComment.Content as InputControl;
-                inputContol.AppendText("{!{{" + "\"id\":\"" + profile.id + "\", \"type\":\"profile\", \"text\":\"" + profile.display_name + "\"}}!} ");
-            };
-
-            control.OnDeleted += async () => await RefreshContent();
-
+            control.OnReplyClicked += OnCommentReplyClicked;
+            control.OnDeleted += OnCommentDeleted;
 
             bool isMyComment = comment.writer.id == MainPage.Me.id;
             bool isMyPost = _post.actor.id == MainPage.Me.id;
@@ -335,6 +339,14 @@ public sealed partial class TimelineControl : UserControl
                 SpComments.Children.Insert(0, control);
         }
     }
+
+    private void OnCommentReplyClicked(Comment sender)
+    {
+        var profile = sender.writer;
+        var inputContol = FrComment.Content as InputControl;
+        inputContol.AppendText("{!{{" + "\"id\":\"" + profile.id + "\", \"type\":\"profile\", \"text\":\"" + profile.display_name + "\"}}!} ");
+    }
+    private async void OnCommentDeleted() => await RefreshContent();
 
     private void OnDotMenuTapped(object sender, TappedRoutedEventArgs e)
     {
@@ -442,6 +454,7 @@ public sealed partial class TimelineControl : UserControl
         e.Handled = true;
 
         var media = FvMedia.SelectedItem as Image;
+        if (media == null) return;
         var url = media.Tag as string;
         if (url.Contains(".mp4"))
         {

@@ -16,7 +16,7 @@ public sealed partial class CommentControl : UserControl
 {
     public delegate void ReplyClick(Comment comment);
     public delegate void Deleted();
-    public ReplyClick OnReplyClick;
+    public ReplyClick OnReplyClicked;
     public Deleted OnDeleted;
     private Comment _comment;
     private readonly string _postId;
@@ -88,7 +88,7 @@ public sealed partial class CommentControl : UserControl
     private void OnReplyTapped(object sender, TappedRoutedEventArgs e)
     {
         e.Handled = true;
-        OnReplyClick.Invoke(_comment);
+        OnReplyClicked.Invoke(_comment);
     }
 
     private void UserProfilePictureTapped(object sender, TappedRoutedEventArgs e)
@@ -174,7 +174,7 @@ public sealed partial class CommentControl : UserControl
             OnDeleted?.Invoke();
         }
     }
-    private void OnReplyUserCommentButtonClicked(object sender, RoutedEventArgs e) => OnReplyClick.Invoke(_comment);
+    private void OnReplyUserCommentButtonClicked(object sender, RoutedEventArgs e) => OnReplyClicked.Invoke(_comment);
 
     private void OnCommentMenuTapped(object sender, TappedRoutedEventArgs e) => e.Handled = true;
 }

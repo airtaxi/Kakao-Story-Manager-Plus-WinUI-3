@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Threading.Tasks;
 using System.Timers;
 using KSMP.Controls;
+using KSMP.Controls.Flyouts;
 using KSMP.Extension;
 using KSMP.Utils;
 using Microsoft.Toolkit.Uwp.Notifications;
@@ -13,6 +15,8 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Input;
 using StoryApi;
+using Windows.ApplicationModel.DataTransfer;
+using Windows.Media.Core;
 using static KSMP.ClassManager;
 using static StoryApi.ApiHandler.DataType.FriendData;
 
@@ -90,6 +94,7 @@ public sealed partial class MainPage : Page
     private void OnPostCompleted() => InitializeWritePostFlyout();
 
     private DateTime? _lastNotificationTimestamp = null;
+
     private async void OnNotificationTimerElapsed(object sender, ElapsedEventArgs e)
     {
         try
@@ -211,6 +216,8 @@ public sealed partial class MainPage : Page
 
     public static void NavigateTimeline(string args = null)
     {
+        GC.Collect();
+        Utility.DisposeAllMedias();
         if (args != null) _instance.FrContent.Navigate(typeof(TimelinePage), args);
         else _instance.FrContent.Navigate(typeof(TimelinePage));
     }
@@ -284,6 +291,7 @@ public sealed partial class MainPage : Page
 
         if (!willDispose) return;
         var frame = isSecond ? _instance.FrOverlay2 : _instance.FrOverlay;
+        (frame.Content as TimelineControl)?.DisposeMedias();
         frame.Content = null;
     }
 
@@ -393,12 +401,31 @@ public sealed partial class MainPage : Page
 
     private void SearchFriendQuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args) => SearchFriend(sender);
 
-    private void OnWritePostButtonClicked(object sender, RoutedEventArgs e)
+    private async void OnWritePostButtonClicked(object sender, RoutedEventArgs e)
     {
         var button = sender as Button;
         var flyout = button.Flyout as Flyout;
         var control = flyout.Content as WritePostControl;
         control.AdjustDefaultPostWritingPermission();
+
+        DataPackageView dataPackageView = Clipboard.GetContent();
+        var hasImage = dataPackageView.Contains(StandardDataFormats.Bitmap);
+        if (hasImage)
+        {
+            var pasteClipboardImageQueryFlyout = new Flyout();
+            var pasteClipboardImageQueryControl = new PasteClipboardImageQueryControl();
+
+            pasteClipboardImageQueryControl.OnPaste += async () =>
+            {
+                var filePath = await Utility.GenerateClipboardImagePathAsync(dataPackageView);
+                await control.AddImageFromPath(filePath);
+                pasteClipboardImageQueryFlyout.Hide();
+            };
+            pasteClipboardImageQueryControl.OnClose += () => pasteClipboardImageQueryFlyout.Hide();
+
+            pasteClipboardImageQueryFlyout.Content = control;
+            pasteClipboardImageQueryFlyout.ShowAt(control);
+        }
     }
 
     private async void OnPageSizeChanged(object sender, SizeChangedEventArgs e)

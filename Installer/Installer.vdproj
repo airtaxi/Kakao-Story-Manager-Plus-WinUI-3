@@ -15,7 +15,7 @@
     {
         "Entry"
         {
-        "MsmKey" = "8:_53844C80132A4811BE911B41856CBAB8"
+        "MsmKey" = "8:_0226358607B14614B6E2A2DBB2C36DBD"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -45,7 +45,7 @@
         "InstallerBootstrapper" = "3:2"
             "BootstrapperCfg:{63ACBE69-63AA-4F98-B2B6-99F9E24495F2}"
             {
-            "Enabled" = "11:TRUE"
+            "Enabled" = "11:FALSE"
             "PromptEnabled" = "11:TRUE"
             "PrerequisitesLocation" = "2:1"
             "Url" = "8:"
@@ -201,15 +201,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Kakao Story Manager Plus"
-        "ProductCode" = "8:{3BCC2161-1A95-407B-B12E-18B5B8654EEA}"
-        "PackageCode" = "8:{C62340B5-97C4-4361-A2E1-3AE4C809EA8D}"
+        "ProductCode" = "8:{8FC949EE-75C9-43DD-9D6C-C2B8CC655D65}"
+        "PackageCode" = "8:{CFCD3612-6291-473A-BCDB-EA2A332510A6}"
         "UpgradeCode" = "8:{CF6B712E-4C0E-43F0-9685-5B70D93AC822}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:FALSE"
-        "ProductVersion" = "8:128"
+        "ProductVersion" = "8:129"
         "Manufacturer" = "8:Howon Lee"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:https://kagamine-rin.com"
@@ -322,7 +322,7 @@
         }
         "Shortcut"
         {
-            "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_158B86732A5C4DD1B1901AF2EFC65EA3"
+            "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_32C3EB593C044872A8ABCF4966580649"
             {
             "Name" = "8:Kakao Story Manager Plus"
             "Arguments" = "8:"
@@ -330,13 +330,13 @@
             "ShowCmd" = "3:1"
             "IconIndex" = "3:0"
             "Transitive" = "11:FALSE"
-            "Target" = "8:_53844C80132A4811BE911B41856CBAB8"
+            "Target" = "8:_0226358607B14614B6E2A2DBB2C36DBD"
             "Folder" = "8:_549B50A6F2BF42DBAE348EA4A3DF77A2"
             "WorkingFolder" = "8:_D2F08FF79DE641A8804581F1BFAC78DF"
             "Icon" = "8:_6DB85BBAAF7241D3992054FD3784D1B5"
             "Feature" = "8:"
             }
-            "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_2BADEEC8985F4675933E5385FAC60C5A"
+            "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_B47E069BA9F6480DA84A351922A88DE2"
             {
             "Name" = "8:Kakao Story Manager Plus"
             "Arguments" = "8:"
@@ -344,7 +344,7 @@
             "ShowCmd" = "3:1"
             "IconIndex" = "3:0"
             "Transitive" = "11:FALSE"
-            "Target" = "8:_53844C80132A4811BE911B41856CBAB8"
+            "Target" = "8:_0226358607B14614B6E2A2DBB2C36DBD"
             "Folder" = "8:_E23C34A71518480EAB22C0F1515C9FF9"
             "WorkingFolder" = "8:_D2F08FF79DE641A8804581F1BFAC78DF"
             "Icon" = "8:_6DB85BBAAF7241D3992054FD3784D1B5"
@@ -749,9 +749,9 @@
         }
         "ProjectOutput"
         {
-            "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_53844C80132A4811BE911B41856CBAB8"
+            "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_0226358607B14614B6E2A2DBB2C36DBD"
             {
-            "SourcePath" = "8:..\\Kakao Story Manager Plus\\obj\\x64\\Release\\net6.0-windows10.0.19041.0\\win10-x64\\apphost.exe"
+            "SourcePath" = "8:..\\Kakao Story Manager Plus\\obj\\x64\\Debug\\net6.0-windows10.0.19041.0\\win10-x64\\apphost.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_D2F08FF79DE641A8804581F1BFAC78DF"
@@ -769,7 +769,7 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             "ProjectOutputGroupRegister" = "3:1"
-            "OutputConfiguration" = "8:Release|x64"
+            "OutputConfiguration" = "8:"
             "OutputGroupCanonicalName" = "8:PublishItems"
             "OutputProjectGuid" = "8:{C4C99F05-1D64-4AFC-9171-F1A47CD47B55}"
             "ShowKeyOutput" = "11:TRUE"

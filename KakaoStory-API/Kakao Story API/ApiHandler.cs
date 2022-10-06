@@ -1002,11 +1002,7 @@ namespace StoryApi
             {
                 if ((int)(e.Response as HttpWebResponse).StatusCode == 403) return false;
                 else if ((int)(e.Response as HttpWebResponse).StatusCode == 404) return false;
-                else if ((int)(e.Response as HttpWebResponse).StatusCode == 401)
-                {
-                    await OnReloginRequired?.Invoke();
-                    return await WaitForMetaVideoFinish(access_key, ++retryCount);
-                }
+                else if ((int)(e.Response as HttpWebResponse).StatusCode == 401) return await WaitForMetaVideoFinish(access_key, ++retryCount);
                 else
                 {
                     if (retryCount < MaxRetryCount)
@@ -1062,11 +1058,7 @@ namespace StoryApi
             {
                 if ((int)(e.Response as HttpWebResponse).StatusCode == 403) return false;
                 else if ((int)(e.Response as HttpWebResponse).StatusCode == 404) return false;
-                else if ((int)(e.Response as HttpWebResponse).StatusCode == 401)
-                {
-                    await OnReloginRequired?.Invoke();
-                    return await WaitForVideoUploadFinish(access_key, ++retryCount);
-                }
+                else if ((int)(e.Response as HttpWebResponse).StatusCode == 401) return await WaitForVideoUploadFinish(access_key, ++retryCount);
                 else
                 {
                     if (retryCount < MaxRetryCount)

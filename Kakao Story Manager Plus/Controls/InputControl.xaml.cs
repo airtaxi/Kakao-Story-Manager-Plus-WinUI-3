@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Media.Imaging;
 using Windows.ApplicationModel.DataTransfer;
-using Windows.Storage;
 using static KSMP.ClassManager;
 using static StoryApi.ApiHandler.DataType;
 
@@ -100,21 +97,13 @@ public sealed partial class InputControl : UserControl
         }
         else if (isControlDown && e.Key == Windows.System.VirtualKey.V)
         {
-            var view = Clipboard.GetContent();
             DataPackageView dataPackageView = Clipboard.GetContent();
             var hasImage = dataPackageView.Contains(StandardDataFormats.Bitmap);
             if (hasImage)
             {
-                var randomFilePath = Path.GetTempFileName();
-                var rawImage = await dataPackageView.GetBitmapAsync();
-                using var imageStream = await rawImage.OpenReadAsync();
-                var stream = await StorageFile.GetFileFromPathAsync(randomFilePath);
-                var writeStream = await stream.OpenStreamForWriteAsync();
-                await imageStream.AsStreamForRead().CopyToAsync(writeStream);
-                writeStream.Close();
-
+                var filePath = await Utility.GenerateClipboardImagePathAsync(dataPackageView);
                 e.Handled = true;
-                OnImagePasted?.Invoke(randomFilePath);
+                OnImagePasted?.Invoke(filePath);
             }
         }
     }

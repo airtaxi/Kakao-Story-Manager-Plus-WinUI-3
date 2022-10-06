@@ -97,19 +97,20 @@ public sealed partial class WritePostControl : UserControl
         _inputControl.SetMaxHeight(300);
         _inputControl.AcceptReturn(true);
         _inputControl.WrapText(true);
-        if (canAddMedia) _inputControl.OnImagePasted += OnImagePasted;
+        if (canAddMedia) _inputControl.OnImagePasted += OnPasteImage;
         _inputControl.OnSubmitShortcutActivated += OnSubmitShortcutActivated;
     }
 
     private async void OnSubmitShortcutActivated() => await WritePostAsync();
 
-    private async void OnImagePasted(string temporaryImageFilePath)
+    public async Task AddImageFromPath(string filePath)
     {
         GdLink.Visibility = Visibility.Collapsed;
         ResetLinkControl();
-        var file = await StorageFile.GetFileFromPathAsync(temporaryImageFilePath);
+        var file = await StorageFile.GetFileFromPathAsync(filePath);
         await AddMediaFromFile(file);
     }
+    private async void OnPasteImage(string filePath) => await AddImageFromPath(filePath);
 
     private readonly List<string> _permissons = new()
     {

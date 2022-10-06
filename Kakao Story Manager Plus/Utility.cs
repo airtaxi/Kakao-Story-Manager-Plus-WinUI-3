@@ -9,27 +9,80 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
 using KSMP.Extension;
+using OpenQA.Selenium.DevTools.V104.Page;
+using Windows.Media.Core;
+using Microsoft.UI.Input;
+using Microsoft.UI.Xaml.Input;
+using static StoryApi.ApiHandler.DataType.VideoData;
+using Windows.Storage;
+using System.IO;
 
 namespace KSMP
 {
     public static class Utility
-    {   
-        public static List<Image> GenerateMedias(IEnumerable<string> urls)
+    {
+        private static List<MediaPlayerElement> videos = new();
+        private static List<Image> images = new();
+
+        public static void DisposeAllMedias()
+        {
+            images.ForEach(image => image.DisposeImage());
+            images.Clear();
+
+            videos.ForEach(video =>
+            {
+                video.PointerEntered -= OnVideoPointerEntered;
+                video.PointerExited -= OnVideoPointerExited;
+                (video.Source as MediaSource)?.Dispose();
+            });
+            videos.Clear();
+        }
+
+        public static List<FrameworkElement> GenerateMedias(IEnumerable<string> urls)
         {
             if (urls == null) return null;
-            var images = new List<Image>();
+            var medias = new List<FrameworkElement>();
             foreach(var url in urls)
             {
-                var image = new Image();
-                var finalUrl = url;
-                if (url.Contains(".mp4")) finalUrl = "ms-appx:///Assets/VideoThumbnail.png";
-                image.Source = GenerateImageUrlSource(finalUrl);
-                image.Tag = url;
-                image.Stretch = Stretch.Uniform;
-                images.Add(image);
+                if (url.Contains(".mp4"))
+                {
+                    var video = new MediaPlayerElement();
+
+                    video.Source = MediaSource.CreateFromUri(new Uri(url));
+
+                    video.TransportControls.IsVolumeEnabled = true;
+                    video.TransportControls.IsVolumeButtonVisible = true;
+                    video.TransportControls.IsZoomEnabled = true;
+                    video.TransportControls.IsZoomButtonVisible = true;
+
+                    video.AreTransportControlsEnabled = true;
+                    video.MediaPlayer.IsLoopingEnabled = true;
+                    video.AutoPlay = false;
+
+                    video.PointerEntered += OnVideoPointerEntered;
+                    video.PointerExited += OnVideoPointerExited;
+
+                    videos.Add(video);
+                    medias.Add(video);
+                }
+                else
+                {
+                    var image = new Image();
+
+                    image.Source = GenerateImageUrlSource(url);
+                    image.Tag = url;
+                    image.Stretch = Stretch.Uniform;
+
+                    images.Add(image);
+                    medias.Add(image);
+                }
             }
-            return images;
+            return medias;
         }
+
+        public static void OnVideoPointerEntered(object sender, PointerRoutedEventArgs e) => (sender as MediaPlayerElement).TransportControls.Show();
+        public static void OnVideoPointerExited(object sender, PointerRoutedEventArgs e) => (sender as MediaPlayerElement).TransportControls.Hide();
+
         public static async Task<BitmapImage> GenerateImageLocalFileStream(IRandomAccessStream fileStream, int width = 80, int height = 80)
         {
             var bitmap = new BitmapImage();
@@ -38,6 +91,7 @@ namespace KSMP
             await bitmap.SetSourceAsync(fileStream);
             return bitmap;
         }
+
         public static BitmapImage GenerateImageUrlSource(string url)
         {
             if (string.IsNullOrEmpty(url)) url = "ms-appx:///Assets/Error.png";
@@ -83,6 +137,23 @@ namespace KSMP
                     Convert.ToByte(hexaColor.Substring(7, 2), 16)
                 )
             );
+        }
+
+        public static async Task<string> GenerateClipboardImagePathAsync(DataPackageView dataPackageView = null)
+        {
+            dataPackageView ??= Clipboard.GetContent();
+
+            var filePath = Path.GetTempFileName();
+
+            var rawImage = await dataPackageView.GetBitmapAsync();
+
+            using var imageStream = await rawImage.OpenReadAsync();
+            var stream = await StorageFile.GetFileFromPathAsync(filePath);
+            using var writeStream = await stream.OpenStreamForWriteAsync();
+            await imageStream.AsStreamForRead().CopyToAsync(writeStream);
+            writeStream.Close();
+
+            return filePath;
         }
     }
 }

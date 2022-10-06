@@ -17,9 +17,9 @@
 		<UseWindowsForms>False</UseWindowsForms>
 		<Nullable>disable</Nullable>
 		<PlatformTarget>AnyCPU</PlatformTarget>
-		<FileVersion>0.1.0.128</FileVersion>
-		<AssemblyVersion>0.1.0.128</AssemblyVersion>
-		<Version>0.1.0.128</Version>
+		<FileVersion>0.1.0.129</FileVersion>
+		<AssemblyVersion>0.1.0.129</AssemblyVersion>
+		<Version>0.1.0.129</Version>
 	</PropertyGroup>
 	<ItemGroup>
 	  <Content Remove="Assets\Error.png" />
@@ -34,6 +34,7 @@
 	  <None Remove="Controls\Emotions\LikeControl.xaml" />
 	  <None Remove="Controls\Emotions\PleasureControl.xaml" />
 	  <None Remove="Controls\Emotions\SadControl.xaml" />
+	  <None Remove="Controls\Flyouts\PasteClipboardImageQueryControl.xaml" />
 	  <None Remove="Controls\SettingsControl.xaml" />
 	  <None Remove="Pages\BlankPage.xaml" />
 	  <None Remove="Pages\LoginPage.xaml" />
@@ -76,6 +77,9 @@
 	  <None Update="Assets\VideoThumbnail.png">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>
+	  <Page Update="Controls\Flyout\PasteClipboardImageQueryControl.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
 	  <Page Update="Pages\BlankPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </Page>
