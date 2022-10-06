@@ -6,7 +6,6 @@ using System.Security.Cryptography;
 using System.Threading.Tasks;
 using System.Timers;
 using KSMP.Controls;
-using KSMP.Controls.Flyouts;
 using KSMP.Extension;
 using KSMP.Utils;
 using Microsoft.Toolkit.Uwp.Notifications;
@@ -412,19 +411,12 @@ public sealed partial class MainPage : Page
         var hasImage = dataPackageView.Contains(StandardDataFormats.Bitmap);
         if (hasImage)
         {
-            var pasteClipboardImageQueryFlyout = new Flyout();
-            var pasteClipboardImageQueryControl = new PasteClipboardImageQueryControl();
+            await Task.Delay(100);
+            var result = await this.ShowMessageDialogAsync("클립보드에 이미지가 있습니다.\n이미지를 추가할까요?", "안내", true);
+            if (result != ContentDialogResult.Primary) return;
 
-            pasteClipboardImageQueryControl.OnPaste += async () =>
-            {
-                var filePath = await Utility.GenerateClipboardImagePathAsync(dataPackageView);
-                await control.AddImageFromPath(filePath);
-                pasteClipboardImageQueryFlyout.Hide();
-            };
-            pasteClipboardImageQueryControl.OnClose += () => pasteClipboardImageQueryFlyout.Hide();
-
-            pasteClipboardImageQueryFlyout.Content = control;
-            pasteClipboardImageQueryFlyout.ShowAt(control);
+            var filePath = await Utility.GenerateClipboardImagePathAsync(dataPackageView);
+            await control.AddImageFromPath(filePath);
         }
     }
 

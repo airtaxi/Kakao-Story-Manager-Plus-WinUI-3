@@ -34,7 +34,6 @@
 	  <None Remove="Controls\Emotions\LikeControl.xaml" />
 	  <None Remove="Controls\Emotions\PleasureControl.xaml" />
 	  <None Remove="Controls\Emotions\SadControl.xaml" />
-	  <None Remove="Controls\Flyouts\PasteClipboardImageQueryControl.xaml" />
 	  <None Remove="Controls\SettingsControl.xaml" />
 	  <None Remove="Pages\BlankPage.xaml" />
 	  <None Remove="Pages\LoginPage.xaml" />
