@@ -411,7 +411,7 @@ public sealed partial class MainPage : Page
         var hasImage = dataPackageView.Contains(StandardDataFormats.Bitmap);
         if (hasImage)
         {
-            await Task.Delay(100);
+            await Task.Delay(400);
             var result = await this.ShowMessageDialogAsync("클립보드에 이미지가 있습니다.\n이미지를 추가할까요?", "안내", true);
             if (result != ContentDialogResult.Primary) return;
 
