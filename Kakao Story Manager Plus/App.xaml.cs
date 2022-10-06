@@ -24,11 +24,10 @@ public partial class App : Application
     {
         try
         {
-            UnhandledException += OnApplicationUnhandledException;
+            BinaryDirectory = Path.GetDirectoryName(Process.GetCurrentProcess()?.MainModule?.FileName ?? "");
+            Current.UnhandledException += OnApplicationUnhandledException;
             AppDomain.CurrentDomain.UnhandledException += OnAppDomainUnhandledException;
             TaskScheduler.UnobservedTaskException += OnTaskSchedulerUnobservedTaskException;
-            Current.UnhandledException += OnApplicationUnhandledException;
-            BinaryDirectory = Path.GetDirectoryName(Process.GetCurrentProcess()?.MainModule?.FileName ?? "");
 
             if (CheckForExistingProcess()) ExitProgramByExistingProcess();
             else InitializeComponent();
@@ -86,7 +85,6 @@ public partial class App : Application
             await MainPage.GetInstance().ShowMessageDialogAsync($"{exception.Message}/{exception.StackTrace}", "런타임 오류");
         }
         catch (Exception) { } //Ignore
-
     }
 
     private static bool _toastActivateFlag = true;
