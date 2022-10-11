@@ -1,6 +1,7 @@
 ﻿using H.NotifyIcon;
 using KSMP.Extension;
 using KSMP.Pages;
+using Microsoft.UI.Composition.Interactions;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -35,11 +36,15 @@ public sealed partial class MainWindow : Microsoft.UI.Xaml.Window
         };
     }
 
-    private void OnReloginRequiredHandler()
+    private async Task<bool> OnReloginRequiredHandler()
     {
+        FrMain.IsEnabled = false;
         var email = Utils.Configuration.GetValue("email") as string;
         var password = Utils.Configuration.GetValue("password") as string;
-        LoginManager.LoginWithSelenium(email, password);
+        var success = LoginManager.LoginWithSelenium(email, password);
+        if (!success) await FrMain.ShowMessageDialogAsync("재로그인 도중 문제가 발생하였습니다.", "오류");
+        FrMain.IsEnabled = true;
+        return success;
     }
 
     public static void Navigate(Type type) => Instance.FrMain.Navigate(type);
