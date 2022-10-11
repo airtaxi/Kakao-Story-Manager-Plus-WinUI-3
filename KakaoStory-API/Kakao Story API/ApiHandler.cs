@@ -889,7 +889,7 @@ namespace StoryApi
                 else if ((int)(e.Response as HttpWebResponse).StatusCode == 401)
                 {
                     var success = await OnReloginRequired?.Invoke();
-                    if (!success) return null;
+                    if (!success) return false;
                     return await WritePost(quoteDatas, mediaData, permission, isCommentable, isSharable, with_ids, trust_ids, scrapDataString, isEdit, editOldMediaPaths, editPostId, ++retryCount);
                 }
                 else
