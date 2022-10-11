@@ -39,6 +39,7 @@ public sealed partial class ImageViewerControl : UserControl
             scrollViewer.ChangeView(scrollViewer.ScrollableWidth / 2, scrollViewer.ScrollableHeight / 2, widthFactor);
         }
     }
+
     private void ImageLoaded(object sender, RoutedEventArgs e)
     {
         var image = sender as Image;

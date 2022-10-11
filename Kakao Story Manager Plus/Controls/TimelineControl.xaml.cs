@@ -462,8 +462,10 @@ public sealed partial class TimelineControl : UserControl
             return;
         }
 
-        var medias = _post.media;
+        var medias = _post.media.ToList();
         var index = FvMedia.SelectedIndex;
+        medias.RemoveAll(x => x.origin_url == null);
+        medias.RemoveAll(x => x.origin_url.Contains(".mp4"));
         var control = new ImageViewerControl(medias, index);
         MainPage.ShowOverlay(control, true);
     }
