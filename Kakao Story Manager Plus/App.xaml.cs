@@ -127,10 +127,7 @@ public partial class App : Application
                     else if (action == "Like") await StoryApi.ApiHandler.LikeComment(activityId, commentId, false);
                 }
             }
-            catch (Exception)
-            {
-                LoginPage.OnLoginSuccess += () => OnToastNotificationActivated(toastArgs);
-            }
+            catch (Exception) { }
             finally
             {
                 LaunchAndBringToForegroundIfNeeded();

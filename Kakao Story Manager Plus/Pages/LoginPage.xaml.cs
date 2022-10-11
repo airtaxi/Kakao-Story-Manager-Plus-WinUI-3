@@ -24,9 +24,6 @@ namespace KSMP.Pages;
 public sealed partial class LoginPage : Page
 {
     public static bool IsLoggedIn;
-    public delegate void LoginSuccess();
-    public static LoginSuccess OnLoginSuccess;
-    public static EdgeDriver SeleniumDriver = null;
 
     public LoginPage()
     {
@@ -162,12 +159,7 @@ public sealed partial class LoginPage : Page
             Utils.Configuration.SetValue("password", password);
             Utils.Configuration.SetValue("willRememberCredentials", willRememberCredentials);
         }
-        else
-        {
-            Utils.Configuration.SetValue("email", null);
-            Utils.Configuration.SetValue("password", null);
-            Utils.Configuration.SetValue("willRememberCredentials", null);
-        }
+        else Utils.Configuration.SetValue("willRememberCredentials", null);
     }
 
     private void OnLoginTextBoxKeyDown(object sender, KeyRoutedEventArgs e)
@@ -188,7 +180,7 @@ public sealed partial class LoginPage : Page
         var email = TbxLogin.Text;
         var password = PbxLogin.Password;
         bool loginSuccess = false;
-        await Task.Run(() => loginSuccess = LoginWithSelenium(email, password));
+        await Task.Run(() => loginSuccess = LoginManager.LoginWithSelenium(email, password));
         PbLogin.Visibility = Visibility.Collapsed;
         IsEnabled = true;
 
@@ -198,95 +190,6 @@ public sealed partial class LoginPage : Page
             IsLoggedIn = true;
             SaveCredentials(email, password, CbxRememberCredentials.IsChecked == true);
             MainWindow.Navigate(typeof(MainPage));
-        }
-    }
-
-    private static bool CheckIfElementExists(WebDriver driver, By by)
-    {
-        try
-        {
-            driver.FindElement(by);
-            return true;
-        }
-        catch (NoSuchElementException)
-        {
-            return false;
-        }
-    }
-
-
-    private static bool LoginWithSelenium(string email, string password)
-    {
-        var key = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Edge\BLBeacon", true);
-        string version = key.GetValue("version") as string;
-        var driverPath = new DriverManager().SetUpDriver(new EdgeConfig(), version);
-        driverPath = Path.GetDirectoryName(driverPath);
-
-        var service = EdgeDriverService.CreateDefaultService(driverPath);
-        service.HideCommandPromptWindow = true;
-        service.UseVerboseLogging = true;
-
-        var options = new EdgeOptions();
-        //options.AddArgument("headless");
-
-        SeleniumDriver = new EdgeDriver(service, options);
-        SeleniumDriver.Navigate().GoToUrl("https://accounts.kakao.com/login/?continue=https://story.kakao.com/");
-
-        try
-        {
-            var isNewLogin = CheckIfElementExists(SeleniumDriver, By.XPath("//*[@id=\"input-loginKey\"]"));
-
-            if (isNewLogin)
-            {
-                var emailBox = SeleniumDriver.FindElement(By.XPath("//*[@id=\"input-loginKey\"]"));
-                emailBox.SendKeys(email);
-
-                var passwordBox = SeleniumDriver.FindElement(By.XPath("//*[@id=\"input-password\"]"));
-                passwordBox.SendKeys(password);
-
-                var loginButton = SeleniumDriver.FindElement(By.XPath("//*[@id=\"mainContent\"]/div/div/form/div[4]/button[1]"));
-                loginButton.Click();
-            }
-            else
-            {
-                var emailBox = SeleniumDriver.FindElement(By.XPath("//*[@id=\"id_email_2\"]"));
-                emailBox.SendKeys(email);
-
-                var passwordBox = SeleniumDriver.FindElement(By.XPath("//*[@id=\"id_password_3\"]"));
-                passwordBox.SendKeys(password);
-
-                var loginButton = SeleniumDriver.FindElement(By.XPath("//*[@id=\"login-form\"]/fieldset/div[8]/button[1]"));
-                loginButton.Click();
-            }
-
-            var wait = new WebDriverWait(SeleniumDriver, TimeSpan.FromDays(1));
-            wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.UrlToBe("https://story.kakao.com/"));
-            var rawCookies = SeleniumDriver.Manage().Cookies.AllCookies;
-
-            bool isSuccess = rawCookies.Any(x => x.Name == "_karmt");
-            if (!isSuccess) return false;
-
-            var cookies = new List<System.Net.Cookie>();
-            var cookieContainer = new CookieContainer();
-            foreach (var rawCookie in rawCookies)
-            {
-                cookieContainer.Add(new System.Net.Cookie()
-                {
-                    Name = rawCookie.Name,
-                    Domain = rawCookie.Domain,
-                    Value = rawCookie.Value
-                });
-            }
-
-            StoryApi.ApiHandler.Init(cookieContainer, cookies);
-            return true;
-        }
-        catch (Exception) { return false; }
-        finally
-        {
-            SeleniumDriver?.Close();
-            SeleniumDriver?.Dispose();
-            SeleniumDriver = null;
         }
     }
 

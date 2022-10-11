@@ -18,7 +18,7 @@ namespace StoryApi
     {
         private static CookieContainer _cookieContainer { get; set; } = null;
         private static List<Cookie> Cookies { get; set; } = null;
-        public delegate Task ReloginRequired();
+        public delegate void ReloginRequired();
         public static ReloginRequired OnReloginRequired;
         private static AuthController EmoticonCredential;
 
@@ -626,7 +626,7 @@ namespace StoryApi
                 else if ((int)(e.Response as HttpWebResponse).StatusCode == 404) return null;
                 else if ((int)(e.Response as HttpWebResponse).StatusCode == 401)
                 {
-                    await OnReloginRequired?.Invoke();
+                    OnReloginRequired?.Invoke();
                     return await GetResponseFromRequest(webRequest, ++count);
                 }
                 else
@@ -887,7 +887,7 @@ namespace StoryApi
                 else if ((int)(e.Response as HttpWebResponse).StatusCode == 404) return false;
                 else if ((int)(e.Response as HttpWebResponse).StatusCode == 401)
                 {
-                    await OnReloginRequired?.Invoke();
+                    OnReloginRequired?.Invoke();
                     return await WritePost(quoteDatas, mediaData, permission, isCommentable, isSharable, with_ids, trust_ids, scrapDataString, isEdit, editOldMediaPaths, editPostId, ++retryCount);
                 }
                 else
@@ -948,7 +948,7 @@ namespace StoryApi
                 else if ((int)(e.Response as HttpWebResponse).StatusCode == 404) return null;
                 else if ((int)(e.Response as HttpWebResponse).StatusCode == 401)
                 {
-                    await OnReloginRequired?.Invoke();
+                    OnReloginRequired?.Invoke();
                     return await UploadImage(asset, ++retryCount);
                 }
                 else

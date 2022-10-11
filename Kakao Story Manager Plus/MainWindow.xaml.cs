@@ -29,17 +29,17 @@ public sealed partial class MainWindow : Microsoft.UI.Xaml.Window
         OnReloginRequired += OnReloginRequiredHandler;
         Closed += (s, e) =>
         {
-            LoginPage.SeleniumDriver?.Close();
-            LoginPage.SeleniumDriver?.Dispose();
-            LoginPage.SeleniumDriver = null;
+            LoginManager.SeleniumDriver?.Close();
+            LoginManager.SeleniumDriver?.Dispose();
+            LoginManager.SeleniumDriver = null;
         };
     }
 
-    private async Task OnReloginRequiredHandler()
+    private void OnReloginRequiredHandler()
     {
-        ReloginTaskCompletionSource = new();
-        Navigate(typeof(LoginPage));
-        await ReloginTaskCompletionSource.Task;
+        var email = Utils.Configuration.GetValue("email") as string;
+        var password = Utils.Configuration.GetValue("password") as string;
+        LoginManager.LoginWithSelenium(email, password);
     }
 
     public static void Navigate(Type type) => Instance.FrMain.Navigate(type);
