@@ -1,13 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using ImageMagick;
 using KSMP.Extension;
 using KSMP.Pages;
 using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Automation.Peers;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Media.Imaging;
@@ -47,7 +50,7 @@ public sealed partial class WritePostControl : UserControl
         LvMedias.ItemsSource = _medias;
         AdjustDefaultPostWritingPermission();
         BtWriteClose.Visibility = Visibility.Visible;
-        if(_button?.Flyout != null)
+        if (_button?.Flyout != null)
         {
             PreventClose = true;
             _button.Flyout.Closing += OnFlyoutClosing;
@@ -124,6 +127,13 @@ public sealed partial class WritePostControl : UserControl
 
     private async Task WritePostAsync()
     {
+        var hasWebP = _medias.Any(x => x.Key == null && x.Path.ToLower().EndsWith(".webp"));
+        if (hasWebP)
+        {
+            var result = await this.ShowMessageDialogAsync("webp 파일을 gif로 변환하여 업로드하시겠습니까?", "안내", true);
+            if (result == ContentDialogResult.Primary)
+                await ConvertWebPToGifAsync();
+        }
         IsEnabled = false;
         PbMain.Visibility = Visibility.Visible;
         var quoteDatas = StoryApi.Utils.GetQuoteDataFromString(_inputControl.GetTextBox().Text);
@@ -195,6 +205,20 @@ public sealed partial class WritePostControl : UserControl
         OnPostCompleted.Invoke();
 
         await MainPage.GetTimelinePage()?.Renew();
+    }
+
+    private async Task ConvertWebPToGifAsync()
+    {
+        foreach (var media in _medias)
+        {
+            if (media.Key != null) continue;
+            var originalPath = media.Path;
+            var fileName = Guid.NewGuid().ToString()[..8] + ".gif";
+            using var animatedWebP = new MagickImageCollection(originalPath);
+            var newGifPath = Path.Combine(Path.GetTempPath(), fileName);
+            await animatedWebP.WriteAsync(newGifPath, MagickFormat.Gif);
+            media.Path = newGifPath;
+        }
     }
 
     public async Task SetEditMedia(CommentData.PostData postToEdit)
@@ -293,6 +317,7 @@ public sealed partial class WritePostControl : UserControl
         InitializeWithWindow.Initialize(fileOpenPicker, WindowNative.GetWindowHandle(MainWindow.Instance));
         fileOpenPicker.FileTypeFilter.Add(".jpg");
         fileOpenPicker.FileTypeFilter.Add(".png");
+        fileOpenPicker.FileTypeFilter.Add(".webp");
         fileOpenPicker.FileTypeFilter.Add(".gif");
         fileOpenPicker.FileTypeFilter.Add(".mp4");
         var files = (await fileOpenPicker.PickMultipleFilesAsync()).ToList();
