@@ -15,7 +15,13 @@
                 <RowDefinition Height="auto"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
-            <ListView Grid.Row="1" x:Name="LvContent" SelectionMode="None" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"/>
+            <ListView Grid.Row="1" x:Name="LvContent" SelectionMode="None" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center">
+                <ListView.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <ItemsStackPanel CacheLength="0" />
+                    </ItemsPanelTemplate>
+                </ListView.ItemsPanel>
+            </ListView>
         </Grid>
         <muxc:ProgressRing x:Name="PrLoading" Foreground="#E96A49" IsIndeterminate="True" VerticalAlignment="Center" Width="100" Height="100" HorizontalAlignment="Center" Visibility="Collapsed"/>
     </Grid>
