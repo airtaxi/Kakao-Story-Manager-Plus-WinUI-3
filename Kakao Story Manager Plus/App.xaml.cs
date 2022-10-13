@@ -10,6 +10,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Windows.ApplicationModel.Email;
 using Windows.UI.Notifications;
 
 namespace KSMP;
@@ -82,6 +83,8 @@ public partial class App : Application
     {
         try
         {
+            var message = exception.Message ?? string.Empty;
+            if (message.Contains("E_FAIL")) return;
             await MainPage.GetInstance().ShowMessageDialogAsync($"{exception.Message}/{exception.StackTrace}", "런타임 오류");
         }
         catch (Exception) { } //Ignore
