@@ -127,6 +127,9 @@ public sealed partial class WritePostControl : UserControl
 
     private async Task WritePostAsync()
     {
+        IsEnabled = false;
+        PbMain.Visibility = Visibility.Visible;
+
         var hasWebP = _medias.Any(x => x.Key == null && x.Path.ToLower().EndsWith(".webp"));
         if (hasWebP)
         {
@@ -134,8 +137,7 @@ public sealed partial class WritePostControl : UserControl
             if (result == ContentDialogResult.Primary)
                 await ConvertWebPToGifAsync();
         }
-        IsEnabled = false;
-        PbMain.Visibility = Visibility.Visible;
+
         var quoteDatas = StoryApi.Utils.GetQuoteDataFromString(_inputControl.GetTextBox().Text);
         if (_postToShare != null)
             await ApiHandler.SharePost(_postToShare.id, quoteDatas, _permissons[CbxPermission.SelectedIndex], true, null, null);
