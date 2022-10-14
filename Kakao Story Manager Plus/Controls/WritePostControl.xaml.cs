@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Net;
 using System.Threading.Tasks;
 using ByteSizeLib;
@@ -232,7 +233,7 @@ public sealed partial class WritePostControl : UserControl
             var fileName = Guid.NewGuid().ToString()[..8] + ".gif";
             using var animatedWebP = new MagickImageCollection(originalPath);
             var newGifPath = Path.Combine(Path.GetTempPath(), fileName);
-            await animatedWebP.WriteAsync(newGifPath, MagickFormat.Gif);
+            await Task.Run(async () => await animatedWebP.WriteAsync(newGifPath, MagickFormat.Gif));
             var info = new FileInfo(newGifPath);
             var size = info.Length;
             if (size > FileSizeLimit)
