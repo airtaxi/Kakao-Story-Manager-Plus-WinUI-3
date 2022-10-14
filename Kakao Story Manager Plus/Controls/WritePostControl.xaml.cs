@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using ByteSizeLib;
 using ImageMagick;
 using KSMP.Extension;
 using KSMP.Pages;
@@ -130,86 +131,99 @@ public sealed partial class WritePostControl : UserControl
         IsEnabled = false;
         PbMain.Visibility = Visibility.Visible;
 
-        var hasWebP = _medias.Any(x => x.Key == null && x.Path.ToLower().EndsWith(".webp"));
-        if (hasWebP)
+        try
         {
-            var result = await this.ShowMessageDialogAsync("webp 파일을 gif로 변환하여 업로드하시겠습니까?", "안내", true);
-            if (result == ContentDialogResult.Primary)
-                await ConvertWebPToGifAsync();
-        }
-
-        var quoteDatas = StoryApi.Utils.GetQuoteDataFromString(_inputControl.GetTextBox().Text);
-        if (_postToShare != null)
-            await ApiHandler.SharePost(_postToShare.id, quoteDatas, _permissons[CbxPermission.SelectedIndex], true, null, null);
-        else
-        {
-            var mediaData = new MediaData();
-            if (_medias.Count > 0)
+            var hasWebP = _medias.Any(x => x.Key == null && x.Path.ToLower().EndsWith(".webp"));
+            if (hasWebP)
             {
-                var medias = new List<MediaData.MediaObject>();
-                foreach (var rawMedia in _medias)
+                var result = await this.ShowMessageDialogAsync("webp 파일을 gif로 변환하여 업로드하시겠습니까?", "안내", true);
+                if (result == ContentDialogResult.Primary)
                 {
-                    var media = new MediaData.MediaObject();
-                    var path = rawMedia.Path;
-                    if (rawMedia.Key != null)
+                    var success = await ConvertWebPToGifAsync();
+                    if (!success)
                     {
-                        media.media_path = rawMedia.Path;
-                        media.media_type = rawMedia.Type.Split('/')[0];
+                        await this.ShowMessageDialogAsync("변환된 gif 파일의 크기가 20mb를 초과하여 업로드를 중단합니다.", "오류");
+                        return;
                     }
-                    else
+                }
+            }
+
+            var quoteDatas = StoryApi.Utils.GetQuoteDataFromString(_inputControl.GetTextBox().Text);
+            if (_postToShare != null)
+                await ApiHandler.SharePost(_postToShare.id, quoteDatas, _permissons[CbxPermission.SelectedIndex], true, null, null);
+            else
+            {
+                var mediaData = new MediaData();
+                if (_medias.Count > 0)
+                {
+                    var medias = new List<MediaData.MediaObject>();
+                    foreach (var rawMedia in _medias)
                     {
-                        if (!rawMedia.IsVideo)
+                        var media = new MediaData.MediaObject();
+                        var path = rawMedia.Path;
+                        if (rawMedia.Key != null)
                         {
-                            var type = path.ToLower().EndsWith(".gif") ? "gif" : "image";
-                            var key = await ApiHandler.UploadImage(new AssetData()
-                            {
-                                Path = path,
-                            });
-                            media.media_path = key;
-                            media.media_type = type;
+                            media.media_path = rawMedia.Path;
+                            media.media_type = rawMedia.Type.Split('/')[0];
                         }
                         else
                         {
-                            var key = await StoryApi.ApiHandler.UploadVideo(new()
+                            if (!rawMedia.IsVideo)
                             {
-                                Path = path,
-                            });
-                            media.media_path = key;
-                            await StoryApi.ApiHandler.WaitForVideoUploadFinish(key);
-                            media.media_type = "video";
+                                var type = path.ToLower().EndsWith(".gif") ? "gif" : "image";
+                                var key = await ApiHandler.UploadImage(new AssetData()
+                                {
+                                    Path = path,
+                                });
+                                media.media_path = key;
+                                media.media_type = type;
+                            }
+                            else
+                            {
+                                var key = await ApiHandler.UploadVideo(new()
+                                {
+                                    Path = path,
+                                });
+                                media.media_path = key;
+                                await ApiHandler.WaitForVideoUploadFinish(key);
+                                media.media_type = "video";
+                            }
                         }
+                        media.caption = new();
+                        medias.Add(media);
                     }
-                    media.caption = new();
-                    medias.Add(media);
+                    mediaData.media = medias;
+
+                    string mediaType = null;
+                    var imageExists = _medias.Any(x => !x.IsVideo);
+                    var videoExists = _medias.Any(x => x.IsVideo);
+                    if (imageExists && videoExists)
+                        mediaType = "mixed";
+                    else if (imageExists)
+                        mediaType = "image";
+                    else if (videoExists)
+                        mediaType = "video";
+                    mediaData.media_type = mediaType;
                 }
-                mediaData.media = medias;
-
-                string mediaType = null;
-                var imageExists = _medias.Any(x => !x.IsVideo);
-                var videoExists = _medias.Any(x => x.IsVideo);
-                if (imageExists && videoExists)
-                    mediaType = "mixed";
-                else if (imageExists)
-                    mediaType = "image";
-                else if (videoExists)
-                    mediaType = "video";
-                mediaData.media_type = mediaType;
+                else mediaData = null;
+                var oldPaths = _postToEdit?.media?.Select(x => x.media_path).ToList();
+                var url = FiLink.Tag as string;
+                await ApiHandler.WritePost(quoteDatas, mediaData, _permissons[CbxPermission.SelectedIndex], true, true, null, null, url, _postToEdit != null, oldPaths, _postToEdit?.id);
             }
-            else mediaData = null;
-            var oldPaths = _postToEdit?.media?.Select(x => x.media_path).ToList();
-            var url = FiLink.Tag as string;
-            await ApiHandler.WritePost(quoteDatas, mediaData, _permissons[CbxPermission.SelectedIndex], true, true, null, null, url, _postToEdit != null, oldPaths, _postToEdit?.id);
+            _button?.Flyout.Hide();
+            OnPostCompleted.Invoke();
+            PreventClose = false;
+            await MainPage.GetTimelinePage()?.Renew();
         }
-        PbMain.Visibility = Visibility.Collapsed;
-        IsEnabled = true;
-        PreventClose = false;
-        _button?.Flyout.Hide();
-        OnPostCompleted.Invoke();
-
-        await MainPage.GetTimelinePage()?.Renew();
+        finally
+        {
+            PbMain.Visibility = Visibility.Collapsed;
+            IsEnabled = true;
+        }
     }
 
-    private async Task ConvertWebPToGifAsync()
+    private static readonly double FileSizeLimit = ByteSize.FromMegaBytes(20).Bytes;
+    private async Task<bool> ConvertWebPToGifAsync()
     {
         foreach (var media in _medias)
         {
@@ -219,8 +233,13 @@ public sealed partial class WritePostControl : UserControl
             using var animatedWebP = new MagickImageCollection(originalPath);
             var newGifPath = Path.Combine(Path.GetTempPath(), fileName);
             await animatedWebP.WriteAsync(newGifPath, MagickFormat.Gif);
+            var info = new FileInfo(newGifPath);
+            var size = info.Length;
+            if (size > FileSizeLimit)
+                return false;
             media.Path = newGifPath;
         }
+        return true;
     }
 
     public async Task SetEditMedia(CommentData.PostData postToEdit)
