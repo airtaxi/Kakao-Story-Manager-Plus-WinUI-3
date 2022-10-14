@@ -697,6 +697,7 @@ public sealed partial class TimelineControl : UserControl
                 var comments = GetCurrentComments();
                 if (comments.Count == _post.comment_count) return;
                 var lastComment = comments.FirstOrDefault();
+                if (lastComment == null) return;
                 await LoadComments(lastComment.id);
             }
             finally
