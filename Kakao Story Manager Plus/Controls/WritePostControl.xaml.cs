@@ -210,9 +210,9 @@ public sealed partial class WritePostControl : UserControl
                 var url = FiLink.Tag as string;
                 await ApiHandler.WritePost(quoteDatas, mediaData, _permissons[CbxPermission.SelectedIndex], true, true, null, null, url, _postToEdit != null, oldPaths, _postToEdit?.id);
             }
+            PreventClose = false;
             _button?.Flyout.Hide();
             OnPostCompleted.Invoke();
-            PreventClose = false;
             await MainPage.GetTimelinePage()?.Renew();
         }
         finally
