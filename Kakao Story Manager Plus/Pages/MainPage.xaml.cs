@@ -152,7 +152,8 @@ public sealed partial class MainPage : Page
         _ = _instance.RunOnMainThreadAsync(async () =>
         {
             var timelineControl = _instance.FrOverlay.Content as TimelineControl;
-            if (timelineControl?.PostId == activityId) await timelineControl.RefreshContent();
+            if (timelineControl == null) return;
+            else if (timelineControl.PostId == activityId) await timelineControl.RefreshContent();
         });
 
         var builder = new ToastContentBuilder()
