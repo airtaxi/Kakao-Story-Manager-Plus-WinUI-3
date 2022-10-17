@@ -19,19 +19,29 @@ namespace KSMP.Controls
             this.InitializeComponent();
             bool willReceiveFavoriteFriendNotification = (Utils.Configuration.GetValue("FavoriteFriendNotification") as bool?) ?? true;
             bool willReceiveEmotionalNotification = (Utils.Configuration.GetValue("EmotionalNotification") as bool?) ?? true;
+            bool willRefreshAfterWritePost = (Utils.Configuration.GetValue("RefreshAfterWritePost") as bool?) ?? true;
             bool willLaunchAtStartup = (Utils.Configuration.GetValue("LaunchAtStartup") as bool?) ?? false;
 
             TsFavoriteFriendNotification.IsOn = willReceiveFavoriteFriendNotification;
             TsEmotionalNotification.IsOn = willReceiveEmotionalNotification;
+            TsRefreshAfterWritePost.IsOn = willRefreshAfterWritePost;
             TsLaunchAtStartup.IsOn = willLaunchAtStartup;
 
             TsFavoriteFriendNotification.Toggled += OnReceiveFavoriteFriendNotificationToggleSwitchToggled;
             TsEmotionalNotification.Toggled += OnReceiveEmotionalNotificationToggleSwitchToggled;
+            TsRefreshAfterWritePost.Toggled += OnRefreshAfterWritePostToggleSwitchToggled;
             TsLaunchAtStartup.Toggled += OnLaunchAtStartupToggleSwitchToggled;
 
             int defaultPostWritingPermission = (Utils.Configuration.GetValue("DefaultPostWritingPermission") as int?) ?? 0;
             CbxDefaultPostWritingPermission.SelectedIndex = defaultPostWritingPermission;
             CbxDefaultPostWritingPermission.SelectionChanged += OnDefaultPostWritingPermissionComboBoxSelectionChanged;
+        }
+
+        private void OnRefreshAfterWritePostToggleSwitchToggled(object sender, RoutedEventArgs e)
+        {
+            var toggleSwitch = sender as ToggleSwitch;
+            var isOn = toggleSwitch.IsOn;
+            Utils.Configuration.SetValue("RefreshAfterWritePost", isOn);
         }
 
         private void OnDefaultPostWritingPermissionComboBoxSelectionChanged(object sender, SelectionChangedEventArgs e)
