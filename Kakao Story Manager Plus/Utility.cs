@@ -21,22 +21,23 @@ namespace KSMP
 {
     public static class Utility
     {
-        private static List<MediaPlayerElement> videos = new();
-        private static List<Image> images = new();
+        private static List<MediaPlayerElement> LoadedVideos = new();
+        private static List<Image> LoadedImges = new();
 
         public static void DisposeAllMedias()
         {
-            images.ForEach(image => image.DisposeImage());
-            images.Clear();
+            LoadedImges.ForEach(image => image.DisposeImage());
+            LoadedImges.Clear();
 
-            videos.ForEach(video =>
+            LoadedVideos.ForEach(video =>
             {
                 video.PointerEntered -= OnVideoPointerEntered;
                 video.PointerExited -= OnVideoPointerExited;
                 (video.Source as MediaSource)?.Dispose();
+                video.MediaPlayer?.Dispose();
                 video.Source = null;
             });
-            videos.Clear();
+            LoadedVideos.Clear();
         }
 
         public static List<FrameworkElement> GenerateMedias(IEnumerable<string> urls)
@@ -63,7 +64,7 @@ namespace KSMP
                     video.PointerEntered += OnVideoPointerEntered;
                     video.PointerExited += OnVideoPointerExited;
 
-                    videos.Add(video);
+                    LoadedVideos.Add(video);
                     medias.Add(video);
                 }
                 else
@@ -74,7 +75,7 @@ namespace KSMP
                     image.Tag = url;
                     image.Stretch = Stretch.Uniform;
 
-                    images.Add(image);
+                    LoadedImges.Add(image);
                     medias.Add(image);
                 }
             }
