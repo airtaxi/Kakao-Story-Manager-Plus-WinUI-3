@@ -54,6 +54,11 @@
 		<PackageReference Include="Microsoft.Windows.CsWinRT" Version="2.0.0" />
 		<PackageReference Include="Microsoft.WindowsAppSDK" Version="1.2.220930.4-preview2" />
 		<PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.25211-preview" />
+		<PackageReference Include="MimeTypes" Version="2.4.0">
+		  <PrivateAssets>all</PrivateAssets>
+		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="RestSharp" Version="108.0.2" />
 		<PackageReference Include="Selenium.Support" Version="4.5.1" />
 		<PackageReference Include="Selenium.WebDriver" Version="4.5.1" />
 		<PackageReference Include="SeleniumExtras.WaitHelpers" Version="1.0.2" />
@@ -68,9 +73,6 @@
   -->
 	<ItemGroup Condition="'$(DisableMsixProjectCapabilityAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">
 		<ProjectCapability Include="Msix" />
-	</ItemGroup>
-	<ItemGroup>
-	  <ProjectReference Include="..\KakaoStory-API\Kakao Story API\KakaoStory API.csproj" />
 	</ItemGroup>
 	<ItemGroup>
 	  <None Update="Assets\Video.png">
