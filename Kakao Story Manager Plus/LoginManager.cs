@@ -6,8 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using System.Text;
-using System.Threading.Tasks;
 using WebDriverManager.DriverConfigs.Impl;
 using WebDriverManager;
 using System.IO;
@@ -82,19 +80,24 @@ public static class LoginManager
             bool isSuccess = rawCookies.Any(x => x.Name == "_karmt");
             if (!isSuccess) return false;
 
+            var appKey = SeleniumDriver.ExecuteScript("return Kakao.Auth.getAppKey();").ToString();
+
             var cookies = new List<System.Net.Cookie>();
             var cookieContainer = new CookieContainer();
             foreach (var rawCookie in rawCookies)
             {
-                cookieContainer.Add(new System.Net.Cookie()
+                var cookie = new System.Net.Cookie()
                 {
                     Name = rawCookie.Name,
                     Domain = rawCookie.Domain,
+                    Path = rawCookie.Path,
                     Value = rawCookie.Value
-                });
+                };
+                cookieContainer.Add(cookie);
+                cookies.Add(cookie);
             }
 
-            StoryApi.ApiHandler.Init(cookieContainer, cookies);
+            StoryApi.ApiHandler.Init(cookieContainer, cookies, appKey);
             return true;
         }
         catch (Exception) { return false; }

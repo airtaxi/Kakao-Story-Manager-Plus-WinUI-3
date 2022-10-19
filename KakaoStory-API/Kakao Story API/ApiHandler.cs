@@ -18,19 +18,20 @@ namespace StoryApi
     {
         private static CookieContainer _cookieContainer { get; set; } = null;
         private static List<Cookie> Cookies { get; set; } = null;
+        private static string KakaoApiKey { get; set; } = null;
         public delegate Task<bool> ReloginRequired();
         public static ReloginRequired OnReloginRequired;
         private static AuthController EmoticonCredential;
 
         public static int MaxRetryCount { get; set; } = 15;
-        private const string KakaoApiKey = "90c1434c4e8916a6ec5aa88109889601";
 
 
 
-        public static void Init(CookieContainer cookieContainer, List<Cookie> cookies)
+        public static void Init(CookieContainer cookieContainer, List<Cookie> cookies, string appKey)
         {
             _cookieContainer = cookieContainer;
             Cookies = cookies;
+            KakaoApiKey = appKey;
         }
         public static async Task<ProfileData.ProfileObject> GetProfileFeed(string id, string from, bool noActivity = false)
         {
@@ -43,6 +44,7 @@ namespace StoryApi
             return obj;
         }
 
+        private const string EmoticonListUrl = "https://api-item.kakao.com/api/sdk/items";
         private const string EmoticonUrl = "https://mk.kakaocdn.net/dna/emoticons/resources";
         private const string EmoticonAuthUrl = "https://api-item.kakao.com/api/sdk/config";
 
@@ -70,6 +72,23 @@ namespace StoryApi
             request.AddHeader("js-origin", $"https://story.kakao.com/");
             var response = await client.ExecuteAsync(request);
             var data = JsonConvert.DeserializeObject<AuthController>(response.Content);
+            return data;
+        }
+
+        public static async Task<EmoticonItems> GetEmoticonList()
+        {
+            var client = new RestClient(EmoticonListUrl);
+            Cookies.ForEach(x => client.AddCookie(x.Name, x.Value, x.Path, x.Domain));
+            var request = new RestRequest();
+            request.Method = Method.Get;
+
+            request.AddHeader("authorization", $"KakaoAK {KakaoApiKey}");
+            request.AddHeader("ka", "sdk/1.14.0 os/javascript lang/ko-KR device/Win32 origin/https%3A%2F%2Fstory.kakao.com");
+            request.AddHeader("js-origin", "https://story.kakao.com/");
+            request.AddHeader("referer", "https://api-item.kakao.com/cors/");
+            var response = await client.ExecuteAsync(request);
+            var text = response.Content;
+            var data = JsonConvert.DeserializeObject<EmoticonItems>(text);
             return data;
         }
         public static async Task<ProfileRelationshipData.ProfileRelationship> GetProfileRelationship(string id)

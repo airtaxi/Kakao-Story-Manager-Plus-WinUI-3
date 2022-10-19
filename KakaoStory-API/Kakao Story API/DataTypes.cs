@@ -22,6 +22,7 @@ namespace StoryApi
                 [JsonProperty("has_new_notification")]
                 public bool HasNewNotification { get; set; }
             }
+
             public class EmoticonAuth
             {
                 [JsonProperty("credential")]
@@ -35,6 +36,60 @@ namespace StoryApi
 
                 [JsonProperty("expires")]
                 public int Expires { get; set; }
+            }
+
+            public class EmoticonItems
+            {
+                public class Item
+                {
+                    [JsonProperty("id")]
+                    public string Id { get; set; }
+
+                    [JsonProperty("title")]
+                    public string Title { get; set; }
+
+                    [JsonProperty("editor_name")]
+                    public string EditorName { get; set; }
+
+                    [JsonProperty("item_sub_type")]
+                    public int ItemSubType { get; set; }
+
+                    [JsonProperty("version")]
+                    public int Version { get; set; }
+
+                    [JsonProperty("count")]
+                    public int Count { get; set; }
+
+                    [JsonProperty("expired_at")]
+                    public int ExpiredAt { get; set; }
+
+                    [JsonProperty("title_image_url")]
+                    public string TitleImageUrl { get; set; }
+
+                    [JsonProperty("on_image_url")]
+                    public string OnImageUrl { get; set; }
+
+                    [JsonProperty("off_image_url")]
+                    public string OffImageUrl { get; set; }
+
+                    [JsonProperty("is_event_item")]
+                    public bool IsEventItem { get; set; }
+                }
+
+                [JsonProperty("id")]
+                public string Id { get; set; }
+
+                [JsonProperty("items")]
+                public List<Item> Items { get; set; }
+
+                [JsonProperty("logged_in")]
+                public bool LoggedIn { get; set; }
+
+                [JsonProperty("normal_cp_supported")]
+                public bool NormalCpSupported { get; set; }
+
+                [JsonProperty("settings_banner_image_url")]
+                public string SettingsBannerImageUrl { get; set; }
             }
 
             public class AuthController
