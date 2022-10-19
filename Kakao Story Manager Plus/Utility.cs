@@ -34,7 +34,6 @@ namespace KSMP
                 video.PointerEntered -= OnVideoPointerEntered;
                 video.PointerExited -= OnVideoPointerExited;
                 (video.Source as MediaSource)?.Dispose();
-                video.MediaPlayer?.Dispose();
                 video.Source = null;
             });
             LoadedVideos.Clear();
