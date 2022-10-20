@@ -126,9 +126,7 @@ public sealed partial class MainWindow : Microsoft.UI.Xaml.Window
 
         if (e.Key == Windows.System.VirtualKey.Escape)
             MainPage.HideOverlay();
-        else if (e.Key == Windows.System.VirtualKey.F5)
-            await (MainPage.GetOverlayTimeLineControl()?.RefreshContent(true) ?? Task.CompletedTask);
-        else if (isControlDown && e.Key == Windows.System.VirtualKey.R)
+        else if ((isControlDown && e.Key == Windows.System.VirtualKey.R) || e.Key == Windows.System.VirtualKey.F5)
             await (MainPage.GetOverlayTimeLineControl()?.RefreshContent(true) ?? Task.CompletedTask);
         else if (isControlDown && e.Key == Windows.System.VirtualKey.S)
             await (MainPage.GetOverlayTimeLineControl()?.SharePost() ?? Task.CompletedTask);
