@@ -44,15 +44,26 @@
                         <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe7e7;" FontSize="17" Foreground="#717171"/>
                     </Viewbox>
                 </Button>
-                <Button x:Name="BtLogout" Width="40" Height="40" CornerRadius="10" ToolTipService.ToolTip="로그아웃" Margin="10,0,0,0" Click="OnLogoutButtonClicked">
+                <Button Width="40" Height="40" CornerRadius="10" Margin="10,0,0,0">
                     <Viewbox>
-                        <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xf3b1;" FontSize="17" Foreground="#717171"/>
+                        <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe712;" FontSize="17" Foreground="#717171"/>
                     </Viewbox>
-                </Button>
-                <Button x:Name="BtExit" Width="40" Height="40" CornerRadius="10" ToolTipService.ToolTip="프로그램 종료" Margin="10,0,0,0" Click="OnExitButtonClicked">
-                    <Viewbox>
-                        <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe711;" FontSize="17" Foreground="#717171"/>
-                    </Viewbox>
+                    <Button.Flyout>
+                        <Flyout>
+                            <StackPanel Orientation="Horizontal">
+                                <Button x:Name="BtLogout" Width="40" Height="40" CornerRadius="10" ToolTipService.ToolTip="로그아웃" Click="OnLogoutButtonClicked">
+                                    <Viewbox>
+                                        <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xf3b1;" FontSize="17" Foreground="#717171"/>
+                                    </Viewbox>
+                                </Button>
+                                <Button x:Name="BtExit" Width="40" Height="40" CornerRadius="10" ToolTipService.ToolTip="프로그램 종료" Margin="10,0,0,0" Click="OnExitButtonClicked">
+                                    <Viewbox>
+                                        <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe711;" FontSize="17" Foreground="#717171"/>
+                                    </Viewbox>
+                                </Button>
+                            </StackPanel>
+                        </Flyout>
+                    </Button.Flyout>
                 </Button>
                 <!--<TextBlock x:Name="TbMemory" Margin="10,0,0,0" VerticalAlignment="Center" Tapped="OnMemoryUsageTextBlockTapped"/>
                 <TeachingTip
