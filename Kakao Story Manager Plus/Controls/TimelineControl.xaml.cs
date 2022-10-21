@@ -17,6 +17,9 @@ using Windows.Storage;
 using Windows.ApplicationModel.DataTransfer;
 using System.Diagnostics;
 using Windows.Media.Core;
+using static StoryApi.ApiHandler.DataType.EmoticonItems;
+using System.Linq.Expressions;
+using OpenQA.Selenium.DevTools.V104.DOM;
 
 namespace KSMP.Controls;
 
@@ -27,8 +30,11 @@ public sealed partial class TimelineControl : UserControl
     private readonly bool _isOverlay;
     private readonly bool _isShare;
 
+    private bool _isUploading = false;
     private bool isBookmarking = false;
+
     private ApiHandler.DataType.UploadedImageProp _commentMedia = null;
+    private (EmoticonItem, int) _commentEmoticon = (null, 0);
 
     public string PostId => _post?.id;
 
@@ -587,18 +593,38 @@ public sealed partial class TimelineControl : UserControl
 
     private async void OnSendCommentButtonClicked(object sender, RoutedEventArgs e)
     {
-        if (BtAddMedia.IsEnabled == false) return;
+        if (_isUploading) return;
         var button = sender as Button;
+        BtAddEmoticon.IsEnabled = false;
         BtAddMedia.IsEnabled = false;
         button.IsEnabled = false;
         var inputContol = FrComment.Content as InputControl;
         var textBox = inputContol.GetTextBox();
         var textBoxString = textBox.Text;
         var quotas = StoryApi.Utils.GetQuoteDataFromString(textBoxString, true);
+        var emoticonItem = _commentEmoticon.Item1;
+        if (emoticonItem != null)
+        {
+            quotas.Insert(0, new()
+            {
+                item_id = emoticonItem.Id,
+                item_sub_type = emoticonItem.ItemSubType,
+                item_ver = emoticonItem.Version,
+                resource_id = _commentEmoticon.Item2,
+                text = "(Emoticon) ",
+                type = "emoticon"
+            });
+            _commentMedia = null;
+            _commentEmoticon = (null, 0);
+        }
         var text = string.Join(' ', quotas.Select(x => x.text));
         await ApiHandler.ReplyToPost(_post.id, text, quotas, _commentMedia);
         await RefreshContent();
         _commentMedia = null;
+
+        BtAddEmoticon.IsEnabled = true;
+        FiAddEmoticon.Glyph = "\ue899";
+
         FiAddMedia.Glyph = "\ue7c5";
         BtAddMedia.IsEnabled = true;
         textBox.Text = "";
@@ -622,17 +648,25 @@ public sealed partial class TimelineControl : UserControl
         {
             _commentMedia = null;
             FiAddMedia.Glyph = "\ue7c5";
+            BtAddEmoticon.IsEnabled = true;
         }
     }
 
     private async Task UploadCommentImageFile(StorageFile file)
     {
+        _isUploading = true;
         if (BtAddMedia.IsEnabled == false) return;
+
         BtAddMedia.IsEnabled = false;
         FiAddMedia.Glyph = "\ue895";
+
+        BtAddEmoticon.IsEnabled = false;
+
         _commentMedia = await ApiHandler.UploadImage(file.Path);
+
         FiAddMedia.Glyph = "\ue74d";
         BtAddMedia.IsEnabled = true;
+        _isUploading = false;
     }
 
     private void OnOverlayCloseButtonClicked(object sender, RoutedEventArgs e) => HideOverlay();
@@ -709,4 +743,29 @@ public sealed partial class TimelineControl : UserControl
     }
 
     private List<Comment> GetCurrentComments() => SpComments.Children.Select(x => (x as CommentControl).Tag as Comment).ToList();
+
+    private async void OnAddEmoticonButtonClicked(object sender, RoutedEventArgs e)
+    {
+        var button = sender as Button;
+        if (_commentEmoticon.Item1 == null)
+        {
+            var inputContol = FrComment.Content as InputControl;
+            var emoticonListControl = Utils.Post.ShowEmoticonListToButton(button);
+            emoticonListControl.OnSelected += (item, index) =>
+            {
+                _commentEmoticon.Item1 = item;
+                _commentEmoticon.Item2 = index;
+
+                FiAddEmoticon.Glyph = "\ue74d";
+                BtAddMedia.IsEnabled = false;
+            };
+        }
+        else
+        {
+            button.Flyout = null;
+            _commentEmoticon = (null, 0);
+            FiAddEmoticon.Glyph = "\ue899";
+            BtAddMedia.IsEnabled = true;
+        }
+    }
 }

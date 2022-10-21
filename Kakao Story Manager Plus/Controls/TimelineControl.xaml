@@ -150,10 +150,26 @@
                                 <ColumnDefinition Width="auto"/>
                             </Grid.ColumnDefinitions>
                             <Frame x:Name="FrComment" Grid.Column="0" VerticalAlignment="Bottom" HorizontalAlignment="Stretch" Margin="30,10,5,10"/>
-                            <Button x:Name="BtAddMedia" Grid.Column="1" VerticalAlignment="Bottom" HorizontalAlignment="Stretch" Margin="5,0,5,10" Click="OnAddMediaButtonClicked">
+                            <Button Grid.Column="1" Height="30" VerticalAlignment="Bottom" HorizontalAlignment="Stretch" Margin="5,0,5,10">
                                 <Viewbox>
-                                    <FontIcon x:Name="FiAddMedia" FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe7c5;"/>
+                                    <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe712;" FontSize="17" Foreground="#717171"/>
                                 </Viewbox>
+                                <Button.Flyout>
+                                    <Flyout>
+                                        <StackPanel Orientation="Horizontal">
+                                            <Button x:Name="BtAddMedia" Click="OnAddMediaButtonClicked">
+                                                <Viewbox>
+                                                    <FontIcon x:Name="FiAddMedia" FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe7c5;"/>
+                                                </Viewbox>
+                                            </Button>
+                                            <Button x:Name="BtAddEmoticon" Click="OnAddEmoticonButtonClicked" Margin="5,0,0,0">
+                                                <Viewbox>
+                                                    <FontIcon x:Name="FiAddEmoticon" FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe899;"/>
+                                                </Viewbox>
+                                            </Button>
+                                        </StackPanel>
+                                    </Flyout>
+                                </Button.Flyout>
                             </Button>
                             <Button x:Name="BtSendComment" Grid.Column="2" Margin="5,0,30,10" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Background="#E96A49" Click="OnSendCommentButtonClicked">
                                 <TextBlock Text="전송" Foreground="White"/>

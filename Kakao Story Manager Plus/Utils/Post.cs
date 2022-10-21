@@ -1,4 +1,5 @@
-﻿using Microsoft.UI.Text;
+﻿using KSMP.Controls;
+using Microsoft.UI.Text;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Documents;
@@ -50,6 +51,7 @@ namespace KSMP.Utils
                     image.Height = 80;
                     container.Child = image;
                     paragraph.Inlines.Add(container);
+                    paragraph.Inlines.Add(new Run() { Text = "\n" });
                 }
                 else
                 {
@@ -66,6 +68,24 @@ namespace KSMP.Utils
             richTextBlock.Blocks.Add(paragraph);
             if (wordCount == 0 && !hasEmoticon)
                 richTextBlock.Visibility = Visibility.Collapsed;
+        }
+
+        public static EmoticonListControl ShowEmoticonListToButton(Button button, InputControl inputControl = null)
+        {
+            var flyout = new Flyout();
+            button.Flyout = flyout;
+
+            var emoticonListControl = new EmoticonListControl();
+            flyout.Content = emoticonListControl;
+
+            emoticonListControl.OnSelected += (item, index) =>
+            {
+                inputControl?.AddEmoticon(item, index);
+                flyout.Hide();
+            };
+
+            flyout.ShowAt(button);
+            return emoticonListControl;
         }
     }
 }

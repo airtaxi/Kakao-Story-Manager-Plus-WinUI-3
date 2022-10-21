@@ -417,19 +417,6 @@ public sealed partial class WritePostControl : UserControl
     private void OnEmoticonButtonClicked(object sender, RoutedEventArgs e)
     {
         var button = sender as Button;
-
-        var flyout = new Flyout();
-        button.Flyout = flyout;
-
-        var emoticonListControl = new EmoticonListControl();
-        flyout.Content = emoticonListControl;
-
-        emoticonListControl.OnSelected += (item, index) =>
-        {
-            _inputControl.AddEmoticon(item, index);
-            flyout.Hide();
-        };
-
-        flyout.ShowAt(button);
+        Utils.Post.ShowEmoticonListToButton(button, _inputControl);
     }
 }
