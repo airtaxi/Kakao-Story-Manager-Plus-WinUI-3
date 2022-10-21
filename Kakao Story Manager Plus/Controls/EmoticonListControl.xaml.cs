@@ -3,6 +3,8 @@
 
 using ABI.Windows.Foundation;
 using AngleSharp.Common;
+using KSMP.Extension;
+using KSMP.Pages;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
@@ -43,18 +45,21 @@ namespace KSMP.Controls
             PrLoading.Visibility = Visibility.Visible;
             SpList.Children.Clear();
             var data = await ApiHandler.GetEmoticonList();
-            foreach(var item in data.Items)
+            foreach (var item in data.Items)
             {
                 var thumbnailUrl = $"https:{item.OnImageUrl}";
                 var container = new Button();
                 container.Padding = new Thickness(2);
+
                 var image = new Image
                 {
-                    Source = Utility.GenerateImageUrlSource(thumbnailUrl),
                     Width = 30,
                     Height = 30
                 };
+                var source = Utility.GenerateImageUrlSource(thumbnailUrl);
+                _ = Task.Run(async () => await MainPage.GetInstance().RunOnMainThreadAsync(() => image.Source = source));
                 Utility.LoadedImges.Add(image);
+
                 container.Content = image;
                 container.Margin = new Thickness(2.5,0,2.5,0);
                 container.Tag = item;
