@@ -83,7 +83,7 @@ public sealed partial class InputControl : UserControl
 
     public void AddEmoticon(EmoticonItem item, int index)
     {
-        AppendText("{!{" + $"{{\"item_ver\":1,\"item_id\":\"{item.Id}\",\"item_sub_type\":{item.ItemSubType},\"resource_id\":{index},\"text\":\"(Emoticon) \",\"type\":\"emoticon\"}}" + "}!}");
+        AppendText("{!{" + $"{{\"item_ver\":{item.Version},\"item_id\":\"{item.Id}\",\"item_sub_type\":{item.ItemSubType},\"resource_id\":{index},\"text\":\"(Emoticon) \",\"type\":\"emoticon\"}}" + "}!}");
     }
 
     public void AppendText(string append)
