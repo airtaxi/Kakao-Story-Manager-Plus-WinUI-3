@@ -16,13 +16,15 @@ using Microsoft.UI.Xaml.Input;
 using static StoryApi.ApiHandler.DataType.VideoData;
 using Windows.Storage;
 using System.IO;
+using RestSharp;
+using KSMP.Pages;
 
 namespace KSMP
 {
     public static class Utility
     {
-        private static List<MediaPlayerElement> LoadedVideos = new();
-        private static List<Image> LoadedImges = new();
+        public static List<MediaPlayerElement> LoadedVideos = new();
+        public static List<Image> LoadedImges = new();
 
         public static void DisposeAllMedias()
         {
@@ -79,6 +81,29 @@ namespace KSMP
                 }
             }
             return medias;
+        }
+
+
+        public static async Task SetEmoticonImage(string url, Image image)
+        {
+            LoadedImges.Add(image);
+            var path = Path.GetTempFileName();
+
+            var client = new RestClient(url);
+            var request = new RestRequest();
+            request.Method = Method.Get;
+            request.AddHeader("Referer", "https://story.kakao.com/");
+            var bytes = await client.DownloadDataAsync(request);
+            try
+            {
+                File.WriteAllBytes(path, bytes);
+                var file = await StorageFile.GetFileFromPathAsync(path);
+                using var stream = await file.OpenAsync(FileAccessMode.Read);
+                await MainPage.GetInstance().RunOnMainThreadAsync(async () => image.Source = await GenerateImageLocalFileStream(stream));
+            }
+            catch (Exception) { }
+            finally { File.Delete(path); }
+
         }
 
         public static void OnVideoPointerEntered(object sender, PointerRoutedEventArgs e) => (sender as MediaPlayerElement).TransportControls.Show();

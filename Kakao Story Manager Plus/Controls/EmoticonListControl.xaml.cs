@@ -54,6 +54,7 @@ namespace KSMP.Controls
                     Width = 30,
                     Height = 30
                 };
+                Utility.LoadedImges.Add(image);
                 container.Content = image;
                 container.Margin = new Thickness(2.5,0,2.5,0);
                 container.Tag = item;
@@ -83,9 +84,10 @@ namespace KSMP.Controls
                     Width = 60,
                     Height = 60
                 };
-                await Utils.Post.SetEmoticonImage(url, image);
-                image.Tag = (data, index);
                 GvMain.Items.Add(image);
+
+                _ = Task.Run(async () => await Utility.SetEmoticonImage(url, image));
+                image.Tag = (data, index);
             }
             IsEnabled = true;
             PrLoading.Visibility = Visibility.Collapsed;
@@ -98,6 +100,7 @@ namespace KSMP.Controls
             var image = gridView.SelectedItem as FrameworkElement;
             if (image == null) return;
             GvMain.SelectedItem = null;
+            if (image.Tag == null) return;
             (EmoticonItem, int) tag = ((EmoticonItem, int))image.Tag;
             OnSelected?.Invoke(tag.Item1, tag.Item2);
         }

@@ -83,7 +83,7 @@
                 <Button x:Name="BtWriteClose" Content="닫기" Click="OnCloseButtonClicked" Margin="5,0,0,0"/>
             </StackPanel>
             <StackPanel Orientation="Horizontal">
-                <Button x:Name="BtEmoticon" VerticalAlignment="Stretch">
+                <Button x:Name="BtEmoticon" VerticalAlignment="Stretch" Click="OnEmoticonButtonClicked">
                     <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe899;"/>
                 </Button>
                 <ComboBox x:Name="CbxPermission" SelectedIndex="1" Margin="5,0,0,0">

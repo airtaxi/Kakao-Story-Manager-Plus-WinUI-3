@@ -104,16 +104,6 @@ public sealed partial class WritePostControl : UserControl
         _inputControl.WrapText(true);
         if (canAddMedia) _inputControl.OnImagePasted += OnPasteImage;
         _inputControl.OnSubmitShortcutActivated += OnSubmitShortcutActivated;
-
-        var flyout = new Flyout();
-        BtEmoticon.Flyout = flyout;
-        var emoticonListControl = new EmoticonListControl();
-        flyout.Content = emoticonListControl;
-        emoticonListControl.OnSelected += (item, index) =>
-        {
-            _inputControl.AddEmoticon(item, index);
-            flyout.Hide();
-        };
     }
 
     private async void OnSubmitShortcutActivated() => await WritePostAsync();
@@ -422,5 +412,24 @@ public sealed partial class WritePostControl : UserControl
     {
         PreventClose = false;
         _button.Flyout.Hide();
+    }
+
+    private void OnEmoticonButtonClicked(object sender, RoutedEventArgs e)
+    {
+        var button = sender as Button;
+
+        var flyout = new Flyout();
+        button.Flyout = flyout;
+
+        var emoticonListControl = new EmoticonListControl();
+        flyout.Content = emoticonListControl;
+
+        emoticonListControl.OnSelected += (item, index) =>
+        {
+            _inputControl.AddEmoticon(item, index);
+            flyout.Hide();
+        };
+
+        flyout.ShowAt(button);
     }
 }
