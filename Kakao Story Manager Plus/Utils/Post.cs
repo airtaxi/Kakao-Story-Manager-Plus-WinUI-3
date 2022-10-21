@@ -22,6 +22,7 @@ namespace KSMP.Utils
             bool hasEmoticon = false;
             var wordCount = 0;
             Paragraph paragraph = new();
+            Run newLineForEmoticon = null;
             foreach (var decorator in contentDecorators)
             {
                 if (decorator.type.Equals("profile"))
@@ -51,7 +52,8 @@ namespace KSMP.Utils
                     image.Height = 80;
                     container.Child = image;
                     paragraph.Inlines.Add(container);
-                    paragraph.Inlines.Add(new Run() { Text = "\n" });
+                    newLineForEmoticon = new Run() { Text = "\n" };
+                    paragraph.Inlines.Add(newLineForEmoticon);
                 }
                 else
                 {
@@ -68,6 +70,7 @@ namespace KSMP.Utils
             richTextBlock.Blocks.Add(paragraph);
             if (wordCount == 0 && !hasEmoticon)
                 richTextBlock.Visibility = Visibility.Collapsed;
+            else if (wordCount == 0) paragraph.Inlines.Remove(newLineForEmoticon);
         }
 
         public static EmoticonListControl ShowEmoticonListToButton(Button button, InputControl inputControl = null)
