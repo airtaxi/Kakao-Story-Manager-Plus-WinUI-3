@@ -92,6 +92,7 @@ namespace StoryApi
             var data = JsonConvert.DeserializeObject<EmoticonItems>(text);
             return data;
         }
+		
         public static async Task<ProfileRelationshipData.ProfileRelationship> GetProfileRelationship(string id)
         {
             string requestURI = "https://story.kakao.com/a/profiles/" + id + "?profile_only=true";

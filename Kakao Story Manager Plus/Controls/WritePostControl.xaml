@@ -82,32 +82,37 @@
                 </Button>
                 <Button x:Name="BtWriteClose" Content="닫기" Click="OnCloseButtonClicked" Margin="5,0,0,0"/>
             </StackPanel>
-            <ComboBox x:Name="CbxPermission" SelectedIndex="1">
-                <ComboBoxItem x:Name="CbiShareAll" Tag="A">
-                    <StackPanel Orientation="Horizontal">
-                        <Viewbox>
-                            <FontIcon FontFamily="{StaticResource Fluent Icons}" Margin="5" Foreground="#AAAAAA" Width="30" Glyph="&#xe774;"/>
-                        </Viewbox>
-                        <TextBlock Text="전체 공개" Margin="5" FontWeight="Bold"/>
-                    </StackPanel>
-                </ComboBoxItem>
-                <ComboBoxItem x:Name="CbiShareFriend" Tag="F">
-                    <StackPanel Orientation="Horizontal">
-                        <Viewbox>
-                            <FontIcon FontFamily="{StaticResource Fluent Icons}" Margin="5" Foreground="#AAAAAA" Width="30" Glyph="&#xe716;"/>
-                        </Viewbox>
-                        <TextBlock Text="친구 공개" Margin="5" FontWeight="Bold"/>
-                    </StackPanel>
-                </ComboBoxItem>
-                <ComboBoxItem Tag="M">
-                    <StackPanel Orientation="Horizontal">
-                        <Viewbox>
-                            <FontIcon FontFamily="{StaticResource Fluent Icons}" Margin="5" Foreground="#AAAAAA" Width="30" Glyph="&#xe72e;"/>
-                        </Viewbox>
-                        <TextBlock Text="나만 보기" Margin="5" FontWeight="Bold"/>
-                    </StackPanel>
-                </ComboBoxItem>
-            </ComboBox>
+            <StackPanel Orientation="Horizontal">
+                <Button x:Name="BtEmoticon" VerticalAlignment="Stretch">
+                    <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe899;"/>
+                </Button>
+                <ComboBox x:Name="CbxPermission" SelectedIndex="1" Margin="5,0,0,0">
+                    <ComboBoxItem x:Name="CbiShareAll" Tag="A">
+                        <StackPanel Orientation="Horizontal">
+                            <Viewbox>
+                                <FontIcon FontFamily="{StaticResource Fluent Icons}" Margin="5" Foreground="#AAAAAA" Width="30" Glyph="&#xe774;"/>
+                            </Viewbox>
+                            <TextBlock Text="전체 공개" Margin="5" FontWeight="Bold"/>
+                        </StackPanel>
+                    </ComboBoxItem>
+                    <ComboBoxItem x:Name="CbiShareFriend" Tag="F">
+                        <StackPanel Orientation="Horizontal">
+                            <Viewbox>
+                                <FontIcon FontFamily="{StaticResource Fluent Icons}" Margin="5" Foreground="#AAAAAA" Width="30" Glyph="&#xe716;"/>
+                            </Viewbox>
+                            <TextBlock Text="친구 공개" Margin="5" FontWeight="Bold"/>
+                        </StackPanel>
+                    </ComboBoxItem>
+                    <ComboBoxItem Tag="M">
+                        <StackPanel Orientation="Horizontal">
+                            <Viewbox>
+                                <FontIcon FontFamily="{StaticResource Fluent Icons}" Margin="5" Foreground="#AAAAAA" Width="30" Glyph="&#xe72e;"/>
+                            </Viewbox>
+                            <TextBlock Text="나만 보기" Margin="5" FontWeight="Bold"/>
+                        </StackPanel>
+                    </ComboBoxItem>
+                </ComboBox>
+            </StackPanel>
         </Grid>
         <ProgressBar x:Name="PbMain" Visibility="Collapsed" Grid.Row="3" IsIndeterminate="True" VerticalAlignment="Top" HorizontalAlignment="Stretch" Margin="5,0,5,0" CornerRadius="2"/>
     </Grid>

@@ -7,7 +7,9 @@ using StoryApi;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading.Tasks;
 using Windows.Storage;
+using Windows.Storage.Streams;
 using static StoryApi.ApiHandler.DataType;
 
 namespace KSMP.Utils
@@ -41,22 +43,9 @@ namespace KSMP.Utils
                 {
                     hasEmoticon = true;
                     var container = new InlineUIContainer();
-                    var url = await ApiHandler.GetEmoticonUrl(decorator.item_id, decorator.resource_id);
+                    var url = await ApiHandler.GetEmoticonUrl(decorator.item_id, decorator.resource_id.ToString());
                     var image = new Image();
-                    var path = Path.GetTempFileName();
-
-                    var client = new RestClient(url);
-                    var request = new RestRequest();
-                    request.Method = Method.Get;
-                    request.AddHeader("Referer", "https://story.kakao.com/");
-                    var bytes = await client.DownloadDataAsync(request);
-                    File.WriteAllBytes(path, bytes);
-
-                    var file = await StorageFile.GetFileFromPathAsync(path);
-                    using var stream = await file.OpenAsync(FileAccessMode.Read);
-                    image.Source = await Utility.GenerateImageLocalFileStream(stream);
-                    stream.Dispose();
-                    File.Delete(path);
+                    await SetEmoticonImage(url, image);
                     image.Width = 80;
                     image.Height = 80;
                     container.Child = image;
@@ -77,6 +66,24 @@ namespace KSMP.Utils
             richTextBlock.Blocks.Add(paragraph);
             if (wordCount == 0 && !hasEmoticon)
                 richTextBlock.Visibility = Visibility.Collapsed;
+        }
+
+        public static async Task SetEmoticonImage(string url, Image image)
+        {
+            var path = Path.GetTempFileName();
+
+            var client = new RestClient(url);
+            var request = new RestRequest();
+            request.Method = Method.Get;
+            request.AddHeader("Referer", "https://story.kakao.com/");
+            var bytes = await client.DownloadDataAsync(request);
+            File.WriteAllBytes(path, bytes);
+
+            var file = await StorageFile.GetFileFromPathAsync(path);
+            var stream = await file.OpenAsync(FileAccessMode.Read);
+            image.Source = await Utility.GenerateImageLocalFileStream(stream);
+            stream.Dispose();
+            File.Delete(path);
         }
     }
 }

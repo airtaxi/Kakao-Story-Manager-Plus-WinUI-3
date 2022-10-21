@@ -71,8 +71,8 @@ public sealed partial class WritePostControl : UserControl
     {
         InitializeComponent();
         _postToShare = postToShare;
-        TbWritePost.Text = "공유";
         InitializeInputControl(false);
+        TbWritePost.Text = "공유";
         BdMedia.Visibility = Visibility.Collapsed;
         if (postToShare.permission == "F")
             CbiShareAll.Visibility = Visibility.Collapsed;
@@ -104,6 +104,16 @@ public sealed partial class WritePostControl : UserControl
         _inputControl.WrapText(true);
         if (canAddMedia) _inputControl.OnImagePasted += OnPasteImage;
         _inputControl.OnSubmitShortcutActivated += OnSubmitShortcutActivated;
+
+        var flyout = new Flyout();
+        BtEmoticon.Flyout = flyout;
+        var emoticonListControl = new EmoticonListControl();
+        flyout.Content = emoticonListControl;
+        emoticonListControl.OnSelected += (item, index) =>
+        {
+            _inputControl.AddEmoticon(item, index);
+            flyout.Hide();
+        };
     }
 
     private async void OnSubmitShortcutActivated() => await WritePostAsync();

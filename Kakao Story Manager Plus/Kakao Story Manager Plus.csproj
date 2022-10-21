@@ -28,6 +28,7 @@
 	  <Content Remove="Assets\VideoThumbnail.png" />
 	</ItemGroup>
 	<ItemGroup>
+	  <None Remove="Controls\EmoticonListControl.xaml" />
 	  <None Remove="Controls\EmotionsListControl.xaml" />
 	  <None Remove="Controls\Emotions\CheerUpControl.xaml" />
 	  <None Remove="Controls\Emotions\CoolControl.xaml" />
@@ -81,6 +82,9 @@
 	  <None Update="Assets\VideoThumbnail.png">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>
+	  <Page Update="Controls\EmoticonListControl.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
 	  <Page Update="Controls\Flyout\PasteClipboardImageQueryControl.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </Page>

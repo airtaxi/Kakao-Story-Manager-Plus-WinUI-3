@@ -5,6 +5,7 @@ using Microsoft.UI.Xaml.Controls;
 using Windows.ApplicationModel.DataTransfer;
 using static KSMP.ClassManager;
 using static StoryApi.ApiHandler.DataType;
+using static StoryApi.ApiHandler.DataType.EmoticonItems;
 
 namespace KSMP.Controls;
 
@@ -78,6 +79,11 @@ public sealed partial class InputControl : UserControl
     {
         TbxMain.Focus(FocusState.Keyboard);
         TbxMain.Select(TbxMain.Text.Length, 0);
+    }
+
+    public void AddEmoticon(EmoticonItem item, int index)
+    {
+        AppendText("{!{" + $"{{\"item_ver\":1,\"item_id\":\"{item.Id}\",\"item_sub_type\":{item.ItemSubType},\"resource_id\":{index},\"text\":\"(Emoticon) \",\"type\":\"emoticon\"}}" + "}!}");
     }
 
     public void AppendText(string append)

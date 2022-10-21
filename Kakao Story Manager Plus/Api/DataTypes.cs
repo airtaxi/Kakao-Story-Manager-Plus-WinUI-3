@@ -40,7 +40,7 @@ namespace StoryApi
 
             public class EmoticonItems
             {
-                public class Item
+                public class EmoticonItem
                 {
                     [JsonProperty("id")]
                     public string Id { get; set; }
@@ -80,7 +80,7 @@ namespace StoryApi
                 public string Id { get; set; }
 
                 [JsonProperty("items")]
-                public List<Item> Items { get; set; }
+                public List<EmoticonItem> Items { get; set; }
 
                 [JsonProperty("logged_in")]
                 public bool LoggedIn { get; set; }
@@ -1149,8 +1149,12 @@ namespace StoryApi
                 public string permalink { get; set; }
                 public string hashtag_type;
                 public string hashtag_type_id;
+
+                // Emoticon
                 public string item_id;
-                public string resource_id;
+                public int item_ver;
+                public int item_sub_type;
+                public int resource_id;
             };
             public class ProfileData
             {
