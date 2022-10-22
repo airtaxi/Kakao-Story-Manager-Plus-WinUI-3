@@ -101,6 +101,7 @@ public sealed partial class TimelineControl : UserControl
 
     public void DisposeMedias()
     {
+        (FrShare.Content as TimelineControl)?.DisposeMedias();
         var medias = FvMedia.ItemsSource as List<FrameworkElement>;
         if (medias == null) return;
         foreach(var media in medias)
@@ -108,6 +109,8 @@ public sealed partial class TimelineControl : UserControl
             if (media is MediaPlayerElement video) video.DisposeVideo();
             else if (media is Image image) image.DisposeImage();
         }
+        GC.Collect(GC.MaxGeneration);
+        GC.WaitForPendingFinalizers();
     }
 
     private async void OnImagePasted(string temporaryImageFilePath)

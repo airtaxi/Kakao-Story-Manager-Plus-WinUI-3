@@ -9,6 +9,7 @@ using KSMP.Controls;
 using RestSharp;
 using System.Linq;
 using Windows.Security.Authentication.OnlineId;
+using System.Collections.Generic;
 
 namespace KSMP.Pages;
 
@@ -31,6 +32,13 @@ public sealed partial class TimelinePage : Page
         await LoadId(id);
     }
 
+    public List<TimelineControl> GetTimelineControls()
+    {
+        var list = LvContent.Items.Select(x => x as TimelineControl).ToList();
+        list.RemoveAll(x => x is null);
+        return list;
+    }
+
     private async Task LoadId(string id)
     {
         MainPage.SelectFriend(id);
@@ -48,7 +56,6 @@ public sealed partial class TimelinePage : Page
 
     private string _lastFeed = null;
 
-    public static async Task Refresh() => await _instance.Refresh();
     public void RemovePost(string postId)
     {
         foreach (FrameworkElement item in LvContent.Items)
@@ -57,16 +64,26 @@ public sealed partial class TimelinePage : Page
             if (timelineControl?.PostId == postId) LvContent.Items.Remove(item);
         }
     }
+
     public async Task Renew()
     {
         _lastFeed = null;
         await Refresh();
     }
+
+    public static async Task Refresh() => await _instance.Refresh();
     private async Task Refresh(string from = null)
     {
         PrLoading.Visibility = Visibility.Visible;
         if (from == null)
+        {
+            foreach (TimelineControl item in LvContent.Items) item?.DisposeMedias();
             LvContent.Items.Clear();
+            Utility.DisposeAllMedias();
+            GC.Collect(GC.MaxGeneration);
+            GC.WaitForPendingFinalizers();
+        }
+
         if (Id == null)
         {
             var data = await ApiHandler.GetFeed(_lastFeed);
@@ -127,8 +144,6 @@ public sealed partial class TimelinePage : Page
         {
             _isRefreshing = true;
             LvContent.Items.Clear();
-            Utility.DisposeAllMedias();
-            GC.Collect();
             await Refresh(_lastFeed);
             _isRefreshing = false;
         }
