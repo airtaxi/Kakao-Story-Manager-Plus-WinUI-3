@@ -271,6 +271,7 @@ public sealed partial class MainPage : Page
         var overlay = isSecond ? _instance.GdOverlay2 : _instance.GdOverlay;
         var frame = isSecond ? _instance.FrOverlay2 : _instance.FrOverlay;
         overlay.Visibility = Visibility.Visible;
+        (frame.Content as TimelineControl)?.DisposeMedias();
         frame.Content = element;
         _instance.GdRoot.Focus(FocusState.Keyboard);
     }
