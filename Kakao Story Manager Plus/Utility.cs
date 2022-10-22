@@ -33,8 +33,8 @@ namespace KSMP
 
             LoadedVideos.ForEach(video =>
             {
-                video.PointerEntered -= OnVideoPointerEntered;
-                video.PointerExited -= OnVideoPointerExited;
+                //video.PointerEntered -= OnVideoPointerEntered;
+                //video.PointerExited -= OnVideoPointerExited;
                 (video.Source as MediaSource)?.Dispose();
                 video.Source = null;
             });
@@ -62,8 +62,8 @@ namespace KSMP
                     video.MediaPlayer.IsLoopingEnabled = true;
                     video.AutoPlay = false;
 
-                    video.PointerEntered += OnVideoPointerEntered;
-                    video.PointerExited += OnVideoPointerExited;
+                    //video.PointerEntered += OnVideoPointerEntered;
+                    //video.PointerExited += OnVideoPointerExited;
 
                     LoadedVideos.Add(video);
                     medias.Add(video);
@@ -106,8 +106,8 @@ namespace KSMP
 
         }
 
-        public static void OnVideoPointerEntered(object sender, PointerRoutedEventArgs e) => (sender as MediaPlayerElement).TransportControls.Show();
-        public static void OnVideoPointerExited(object sender, PointerRoutedEventArgs e) => (sender as MediaPlayerElement).TransportControls.Hide();
+        //public static void OnVideoPointerEntered(object sender, PointerRoutedEventArgs e) => (sender as MediaPlayerElement).TransportControls.Show();
+        //public static void OnVideoPointerExited(object sender, PointerRoutedEventArgs e) => (sender as MediaPlayerElement).TransportControls.Hide();
 
         public static async Task<BitmapImage> GenerateImageLocalFileStream(IRandomAccessStream fileStream, int width = 80, int height = 80)
         {

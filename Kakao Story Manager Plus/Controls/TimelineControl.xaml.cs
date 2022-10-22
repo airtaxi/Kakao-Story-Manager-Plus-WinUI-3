@@ -105,8 +105,8 @@ public sealed partial class TimelineControl : UserControl
         if (medias == null) return;
         foreach(var media in medias)
         {
-            if (media is MediaPlayerElement video) (video.Source as MediaSource)?.Dispose();
-            if (media is Image image) image.DisposeImage();
+            if (media is MediaPlayerElement video) video.DisposeVideo();
+            else if (media is Image image) image.DisposeImage();
         }
     }
 
