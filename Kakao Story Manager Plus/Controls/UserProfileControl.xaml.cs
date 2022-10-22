@@ -5,6 +5,7 @@ using KSMP.Pages;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
+using Windows.System;
 
 namespace KSMP.Controls;
 
@@ -48,6 +49,9 @@ public sealed partial class UserProfileControl : UserControl
 
         PpProfilePicture.ProfilePicture = Utility.GenerateImageUrlSource(user.profile.GetValidUserProfileUrl());
         ImgProfileBackground.Source = Utility.GenerateImageUrlSource(user.profile.bg_image_url);
+
+        Utility.LoadedImages.Add(ImgProfileBackground);
+        Utility.LoadedPersonPictures.Add(PpProfilePicture);
 
         TbName.Text = profile.display_name;
 

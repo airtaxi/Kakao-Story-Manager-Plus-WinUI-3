@@ -24,14 +24,23 @@ namespace KSMP
     public static class Utility
     {
         public static List<MediaPlayerElement> LoadedVideos = new();
-        public static List<Image> LoadedImges = new();
+        public static List<Image> LoadedImages = new();
+        public static List<PersonPicture> LoadedPersonPictures = new();
 
         public static void DisposeAllMedias()
         {
-            LoadedImges.ForEach(image => image.DisposeImage());
-            LoadedImges.Clear();
+            LoadedPersonPictures.ForEach(image => image.DisposeImage());
+            LoadedPersonPictures.Clear();
 
-            LoadedVideos.ForEach(video => video.DisposeVideo());
+            LoadedImages.ForEach(image => image.DisposeImage());
+            LoadedImages.Clear();
+
+            LoadedVideos.ForEach(video =>
+            {
+                video.PointerEntered -= OnVideoPointerEntered;
+                video.PointerExited -= OnVideoPointerExited;
+                video.DisposeVideo();
+            });
             LoadedVideos.Clear();
         }
 
@@ -56,8 +65,8 @@ namespace KSMP
                     video.MediaPlayer.IsLoopingEnabled = true;
                     video.AutoPlay = false;
 
-                    //video.PointerEntered += OnVideoPointerEntered;
-                    //video.PointerExited += OnVideoPointerExited;
+                    video.PointerEntered += OnVideoPointerEntered;
+                    video.PointerExited += OnVideoPointerExited;
 
                     LoadedVideos.Add(video);
                     medias.Add(video);
@@ -70,7 +79,7 @@ namespace KSMP
                     image.Tag = url;
                     image.Stretch = Stretch.Uniform;
 
-                    LoadedImges.Add(image);
+                    LoadedImages.Add(image);
                     medias.Add(image);
                 }
             }
@@ -80,7 +89,7 @@ namespace KSMP
 
         public static async Task SetEmoticonImage(string url, Image image)
         {
-            LoadedImges.Add(image);
+            LoadedImages.Add(image);
             var path = Path.GetTempFileName();
 
             var client = new RestClient(url);
@@ -100,8 +109,8 @@ namespace KSMP
 
         }
 
-        //public static void OnVideoPointerEntered(object sender, PointerRoutedEventArgs e) => (sender as MediaPlayerElement).TransportControls.Show();
-        //public static void OnVideoPointerExited(object sender, PointerRoutedEventArgs e) => (sender as MediaPlayerElement).TransportControls.Hide();
+        public static void OnVideoPointerEntered(object sender, PointerRoutedEventArgs e) => (sender as MediaPlayerElement).TransportControls.Show();
+        public static void OnVideoPointerExited(object sender, PointerRoutedEventArgs e) => (sender as MediaPlayerElement).TransportControls.Hide();
 
         public static async Task<BitmapImage> GenerateImageLocalFileStream(IRandomAccessStream fileStream, int width = 80, int height = 80)
         {

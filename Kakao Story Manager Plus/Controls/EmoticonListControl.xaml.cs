@@ -58,7 +58,7 @@ namespace KSMP.Controls
                 };
                 var source = Utility.GenerateImageUrlSource(thumbnailUrl);
                 _ = Task.Run(async () => await MainPage.GetInstance().RunOnMainThreadAsync(() => image.Source = source));
-                Utility.LoadedImges.Add(image);
+                Utility.LoadedImages.Add(image);
 
                 container.Content = image;
                 container.Margin = new Thickness(2.5,0,2.5,0);

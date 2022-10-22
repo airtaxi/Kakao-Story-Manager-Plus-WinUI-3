@@ -80,8 +80,6 @@ public sealed partial class TimelinePage : Page
             foreach (TimelineControl item in LvContent.Items) item?.DisposeMedias();
             LvContent.Items.Clear();
             Utility.DisposeAllMedias();
-            GC.Collect(GC.MaxGeneration);
-            GC.WaitForPendingFinalizers();
         }
 
         if (Id == null)
