@@ -31,13 +31,7 @@ namespace KSMP
             LoadedImges.ForEach(image => image.DisposeImage());
             LoadedImges.Clear();
 
-            LoadedVideos.ForEach(video =>
-            {
-                //video.PointerEntered -= OnVideoPointerEntered;
-                //video.PointerExited -= OnVideoPointerExited;
-                (video.Source as MediaSource)?.Dispose();
-                video.Source = null;
-            });
+            LoadedVideos.ForEach(video => video.DisposeVideo());
             LoadedVideos.Clear();
         }
 
