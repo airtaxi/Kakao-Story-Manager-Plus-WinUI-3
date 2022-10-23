@@ -45,9 +45,16 @@ namespace KSMP.Utils
                 {
                     hasEmoticon = true;
                     var container = new InlineUIContainer();
-                    var url = await ApiHandler.GetEmoticonUrl(decorator.item_id, decorator.resource_id.ToString());
+                    var url = "";
+                    if (decorator.item_id.StartsWith("4"))
+                        url = $"http://item-kr.talk.kakao.co.kr/dw/{decorator.item_id}.emot_{decorator.resource_id.ToString().PadLeft(3, '0')}.webp";
+                    else
+                        url = await ApiHandler.GetEmoticonUrl(decorator.item_id, decorator.resource_id.ToString());
                     var image = new Image();
-                    await Utility.SetEmoticonImage(url, image);
+                    if (decorator.item_id.StartsWith("4"))
+                        await Utility.SetAnimatedEmoticonImage(url, image);
+                    else
+                        await Utility.SetEmoticonImage(url, image);
                     image.Width = 80;
                     image.Height = 80;
                     container.Child = image;

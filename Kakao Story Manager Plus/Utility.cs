@@ -18,6 +18,7 @@ using Windows.Storage;
 using System.IO;
 using RestSharp;
 using KSMP.Pages;
+using KSMP.Utils;
 
 namespace KSMP
 {
@@ -100,6 +101,28 @@ namespace KSMP
             try
             {
                 File.WriteAllBytes(path, bytes);
+                var file = await StorageFile.GetFileFromPathAsync(path);
+                using var stream = await file.OpenAsync(FileAccessMode.Read);
+                await MainPage.GetInstance().RunOnMainThreadAsync(async () => image.Source = await GenerateImageLocalFileStream(stream));
+            }
+            catch (Exception) { }
+            finally { File.Delete(path); }
+
+        }
+
+        public static async Task SetAnimatedEmoticonImage(string url, Image image)
+        {
+            LoadedImages.Add(image);
+            var path = Path.GetTempFileName();
+
+            var client = new RestClient(url);
+            var request = new RestRequest();
+            request.Method = Method.Get;
+            var bytes = await client.DownloadDataAsync(request);
+            try
+            {
+                bytes = EmoticonDecryptor.decodeImage(bytes);
+                EmoticonDecryptor.ConvertWebPToGIF(bytes, path);
                 var file = await StorageFile.GetFileFromPathAsync(path);
                 using var stream = await file.OpenAsync(FileAccessMode.Read);
                 await MainPage.GetInstance().RunOnMainThreadAsync(async () => image.Source = await GenerateImageLocalFileStream(stream));
