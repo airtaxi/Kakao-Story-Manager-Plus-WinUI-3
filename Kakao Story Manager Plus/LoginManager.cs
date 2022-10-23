@@ -33,8 +33,8 @@ public static class LoginManager
     {
         var key = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Edge\BLBeacon", true);
         string version = key.GetValue("version") as string;
-        var driverPath = new DriverManager().SetUpDriver(new EdgeConfig(), version);
-        driverPath = Path.GetDirectoryName(driverPath);
+        new DriverManager().SetUpDriver(new EdgeConfig(), version);
+        string driverPath = Path.Combine(App.BinaryDirectory, "Edge", version, "X64");
 
         var service = EdgeDriverService.CreateDefaultService(driverPath);
         service.HideCommandPromptWindow = true;
