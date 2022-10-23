@@ -8,7 +8,7 @@ namespace KSMP.Utils
 {
     public static class EmoticonDecryptor
     {
-        public static void ConvertWebPToGIF(byte[] data, string fileName)
+        public static void ConvertWebPToGif(byte[] data, string fileName)
         {
             using var animatedWebP = new MagickImageCollection(data);
             animatedWebP.Write(fileName, MagickFormat.Gif);
@@ -17,7 +17,7 @@ namespace KSMP.Utils
         public static byte[] DecodeImage(byte[] buffer)
         {
             List<uint> sequence = GenerateLFsr("a271730728cbe141e47fd9d677e9006da271730728cbe141e47fd9d677e9006d");
-            for (int i = 0; i < 128; i++) buffer[i] = (byte)ByteXor(buffer[i], sequence);
+            for (int i = 0; i < 128; i++) buffer[i] = (byte)ApplyByteXor(buffer[i], sequence);
             return buffer;
         }
 
@@ -41,7 +41,7 @@ namespace KSMP.Utils
             return sequence;
         }
 
-        private static int ByteXor(uint b, List<uint> sequence)
+        private static int ApplyByteXor(uint b, List<uint> sequence)
         {
             char flag1 = (char)1;
             char flag2 = (char)0;
