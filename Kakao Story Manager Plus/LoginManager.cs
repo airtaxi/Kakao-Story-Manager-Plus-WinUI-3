@@ -69,6 +69,9 @@ public static class LoginManager
                 var passwordBox = SeleniumDriver.FindElement(By.XPath("//*[@id=\"id_password_3\"]"));
                 passwordBox.SendKeys(password);
 
+                var checkBox = SeleniumDriver.FindElement(By.XPath("//*[@id=\"login-form\"]/fieldset/div[4]/div/label/span[1]"));
+                checkBox.Click();
+
                 var loginButton = SeleniumDriver.FindElement(By.XPath("//*[@id=\"login-form\"]/fieldset/div[8]/button[1]"));
                 loginButton.Click();
             }
@@ -100,7 +103,7 @@ public static class LoginManager
             StoryApi.ApiHandler.Init(cookieContainer, cookies, appKey);
             return true;
         }
-        catch (Exception) { return false; }
+        catch (Exception exception) { return false; }
         finally
         {
             SeleniumDriver?.Close();
