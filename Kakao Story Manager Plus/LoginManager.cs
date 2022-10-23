@@ -29,7 +29,7 @@ public static class LoginManager
         }
     }
 
-    public static bool LoginWithSelenium(string email, string password)
+    public static bool LoginWithSelenium(string email, string password, bool isHeadless = true)
     {
         var key = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Edge\BLBeacon", true);
         string version = key.GetValue("version") as string;
@@ -41,7 +41,7 @@ public static class LoginManager
         service.UseVerboseLogging = true;
 
         var options = new EdgeOptions();
-        //options.AddArgument("headless");
+        if(isHeadless) options.AddArgument("headless");
 
         SeleniumDriver = new EdgeDriver(service, options);
         SeleniumDriver.Navigate().GoToUrl("https://accounts.kakao.com/login/?continue=https://story.kakao.com/");
@@ -81,7 +81,11 @@ public static class LoginManager
             var rawCookies = SeleniumDriver.Manage().Cookies.AllCookies;
 
             bool isSuccess = rawCookies.Any(x => x.Name == "_karmt");
-            if (!isSuccess) return false;
+            if (!isSuccess)
+            {
+                if (isHeadless) return false;
+                else return LoginWithSelenium(email, password, false);
+            }
 
             var appKey = SeleniumDriver.ExecuteScript("return Kakao.Auth.getAppKey();").ToString();
 
@@ -103,7 +107,11 @@ public static class LoginManager
             StoryApi.ApiHandler.Init(cookieContainer, cookies, appKey);
             return true;
         }
-        catch (Exception exception) { return false; }
+        catch (Exception exception)
+        {
+            if (isHeadless) return false;
+            else return LoginWithSelenium(email, password, false);
+        }
         finally
         {
             SeleniumDriver?.Close();
