@@ -1,6 +1,8 @@
-﻿using Microsoft.UI.Xaml;
+﻿using KSMP.Extension;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.Win32;
+using OpenQA.Selenium.DevTools.V104.HeapProfiler;
 using System;
 using static KSMP.ClassManager;
 
@@ -21,20 +23,32 @@ namespace KSMP.Controls
             bool willReceiveEmotionalNotification = (Utils.Configuration.GetValue("EmotionalNotification") as bool?) ?? true;
             bool willRefreshAfterWritePost = (Utils.Configuration.GetValue("RefreshAfterWritePost") as bool?) ?? true;
             bool willLaunchAtStartup = (Utils.Configuration.GetValue("LaunchAtStartup") as bool?) ?? false;
+            bool willUseGifProfileImage = (Utils.Configuration.GetValue("UseGifProfileImage") as bool?) ?? true;
 
             TsFavoriteFriendNotification.IsOn = willReceiveFavoriteFriendNotification;
             TsEmotionalNotification.IsOn = willReceiveEmotionalNotification;
             TsRefreshAfterWritePost.IsOn = willRefreshAfterWritePost;
             TsLaunchAtStartup.IsOn = willLaunchAtStartup;
+            TsUseGifProfileImage.IsOn = willUseGifProfileImage;
 
             TsFavoriteFriendNotification.Toggled += OnReceiveFavoriteFriendNotificationToggleSwitchToggled;
             TsEmotionalNotification.Toggled += OnReceiveEmotionalNotificationToggleSwitchToggled;
             TsRefreshAfterWritePost.Toggled += OnRefreshAfterWritePostToggleSwitchToggled;
             TsLaunchAtStartup.Toggled += OnLaunchAtStartupToggleSwitchToggled;
+            TsUseGifProfileImage.Toggled += OnUseGifProfileImageToggleSwitchToggled;
 
             int defaultPostWritingPermission = (Utils.Configuration.GetValue("DefaultPostWritingPermission") as int?) ?? 0;
             CbxDefaultPostWritingPermission.SelectedIndex = defaultPostWritingPermission;
             CbxDefaultPostWritingPermission.SelectionChanged += OnDefaultPostWritingPermissionComboBoxSelectionChanged;
+        }
+
+        private async void OnUseGifProfileImageToggleSwitchToggled(object sender, RoutedEventArgs e)
+        {
+            var toggleSwitch = sender as ToggleSwitch;
+            var isOn = toggleSwitch.IsOn;
+            Utils.Configuration.SetValue("UseGifProfileImage", isOn);
+            var result = await this.ShowMessageDialogAsync("옵션을 완전히 적용하기 위해서는 프로그램 재시작이 필요합니다.\n확인을 누르면 프로그램을 종료합니다.", "안내", true);
+            if (result == ContentDialogResult.Primary) Environment.Exit(0);
         }
 
         private void OnRefreshAfterWritePostToggleSwitchToggled(object sender, RoutedEventArgs e)

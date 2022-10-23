@@ -11,6 +11,7 @@
         <ToggleSwitch x:Name="TsFavoriteFriendNotification" OnContent="관심 친구 알림 받음" OffContent="관심 친구 알림 받지 않음"/>
         <ToggleSwitch x:Name="TsEmotionalNotification" OnContent="느낌 알림 받음" OffContent="느낌 알림 받지 않음" Margin="0,5,0,0"/>
         <ToggleSwitch x:Name="TsRefreshAfterWritePost" OnContent="글쓰기 이후 타임라인 새로고침" OffContent="글쓰기 이후 타임라인 새로고침 안함" Margin="0,5,0,0"/>
+        <ToggleSwitch x:Name="TsUseGifProfileImage" OnContent="GIF 프로필 이미지 사용" OffContent="GIF 프로필 이미지 사용 안함" Margin="0,5,0,0"/>
         <ToggleSwitch x:Name="TsLaunchAtStartup" OnContent="부팅시 자동 시작됨" OffContent="부팅시 자동 시작 해제됨" Margin="0,5,0,0"/>
         <ComboBox x:Name="CbxDefaultPostWritingPermission" Header="기본 게시글 공개 범위" Margin="0,5,0,0">
             <ComboBoxItem Content="친구 공개"/>
