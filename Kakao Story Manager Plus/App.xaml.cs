@@ -74,7 +74,7 @@ public partial class App : Application
         {
             ExceptionWritten = true;
             var path = Path.Combine(BinaryDirectory, "error.log");
-            var text = $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss.fff}] {exception?.Message ?? "ERRMSG"}: {exception?.StackTrace ?? "ERRST"}\n\n";
+            var text = $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss.fff}] {exception?.Message ?? "ERRMSG"}: {exception?.StackTrace ?? "ERRST"}\n(BDIR: {BinaryDirectory})\n\n";
             File.AppendAllText(path, text);
         }
     }
