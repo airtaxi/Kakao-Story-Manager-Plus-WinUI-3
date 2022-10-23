@@ -216,8 +216,8 @@ public sealed partial class MainPage : Page
 
     public static void NavigateTimeline(string args = null)
     {
-        GC.Collect(GC.MaxGeneration);
-        GC.WaitForPendingFinalizers();
+        //GC.Collect(GC.MaxGeneration);
+        //GC.WaitForPendingFinalizers();
         Utility.DisposeAllMedias();
         if (args != null) _instance.FrContent.Navigate(typeof(TimelinePage), args);
         else _instance.FrContent.Navigate(typeof(TimelinePage));
@@ -441,7 +441,7 @@ public sealed partial class MainPage : Page
 
     private void OnSettingsButtonClicked(object sender, RoutedEventArgs e)
     {
-        GC.Collect(GC.MaxGeneration);
-        GC.WaitForPendingFinalizers();
+        //GC.Collect(GC.MaxGeneration);
+        //GC.WaitForPendingFinalizers();
     }
 }

@@ -109,8 +109,8 @@ public sealed partial class TimelineControl : UserControl
             if (media is MediaPlayerElement video) video.DisposeVideo();
             else if (media is Image image) image.DisposeImage();
         }
-        GC.Collect(GC.MaxGeneration);
-        GC.WaitForPendingFinalizers();
+        //GC.Collect(GC.MaxGeneration);
+        //GC.WaitForPendingFinalizers();
     }
 
     private async void OnImagePasted(string temporaryImageFilePath)
