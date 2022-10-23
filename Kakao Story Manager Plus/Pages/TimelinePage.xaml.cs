@@ -77,7 +77,7 @@ public sealed partial class TimelinePage : Page
         PrLoading.Visibility = Visibility.Visible;
         if (from == null)
         {
-            foreach (TimelineControl item in LvContent.Items) item?.DisposeMedias();
+            foreach (object item in LvContent.Items) (item as TimelineControl)?.DisposeMedias();
             LvContent.Items.Clear();
             Utility.DisposeAllMedias();
         }
