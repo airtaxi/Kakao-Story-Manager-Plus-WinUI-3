@@ -19,7 +19,7 @@ namespace StoryApi
     {
         private static CookieContainer _cookieContainer { get; set; } = null;
         private static List<Cookie> Cookies { get; set; } = null;
-        private static string KakaoApiKey { get; set; } = null;
+        private static string KakaoAppKey { get; set; } = null;
         public delegate Task<bool> ReloginRequired();
         public static ReloginRequired OnReloginRequired;
         private static AuthController EmoticonCredential;
@@ -32,7 +32,7 @@ namespace StoryApi
         {
             _cookieContainer = cookieContainer;
             Cookies = cookies;
-            KakaoApiKey = appKey;
+            KakaoAppKey = appKey;
         }
         public static async Task<ProfileData.ProfileObject> GetProfileFeed(string id, string from, bool noActivity = false)
         {
@@ -68,7 +68,7 @@ namespace StoryApi
             var request = new RestRequest();
             request.Method = Method.Get;
 
-            request.AddHeader("authorization", $"KakaoAK {KakaoApiKey}");
+            request.AddHeader("authorization", $"KakaoAK {KakaoAppKey}");
             request.AddHeader("ka", $"sdk/1.14.0 os/javascript lang/ko-KR device/Win32 origin/https%3A%2F%2Fstory.kakao.com");
             request.AddHeader("js-origin", $"https://story.kakao.com/");
             var response = await client.ExecuteAsync(request);
@@ -83,7 +83,7 @@ namespace StoryApi
             var request = new RestRequest();
             request.Method = Method.Get;
 
-            request.AddHeader("authorization", $"KakaoAK {KakaoApiKey}");
+            request.AddHeader("authorization", $"KakaoAK {KakaoAppKey}");
             request.AddHeader("ka", "sdk/1.14.0 os/javascript lang/ko-KR device/Win32 origin/https%3A%2F%2Fstory.kakao.com");
             request.AddHeader("js-origin", "https://story.kakao.com/");
             request.AddHeader("referer", "https://api-item.kakao.com/cors/");
