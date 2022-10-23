@@ -40,6 +40,7 @@ namespace KSMP
             {
                 video.PointerEntered -= OnVideoPointerEntered;
                 video.PointerExited -= OnVideoPointerExited;
+                video.Tapped -= OnVideoTapped;
                 video.DisposeVideo();
             });
             LoadedVideos.Clear();
@@ -63,11 +64,13 @@ namespace KSMP
                     video.TransportControls.IsZoomButtonVisible = true;
 
                     video.AreTransportControlsEnabled = true;
-                    video.MediaPlayer.IsLoopingEnabled = true;
                     video.AutoPlay = false;
+
+                    video.MediaPlayer.IsLoopingEnabled = true;
 
                     video.PointerEntered += OnVideoPointerEntered;
                     video.PointerExited += OnVideoPointerExited;
+                    video.Tapped += OnVideoTapped;
 
                     LoadedVideos.Add(video);
                     medias.Add(video);
@@ -86,7 +89,6 @@ namespace KSMP
             }
             return medias;
         }
-
 
         public static async Task SetEmoticonImage(string url, Image image)
         {
@@ -132,8 +134,9 @@ namespace KSMP
 
         }
 
-        public static void OnVideoPointerEntered(object sender, PointerRoutedEventArgs e) => (sender as MediaPlayerElement).TransportControls.Show();
-        public static void OnVideoPointerExited(object sender, PointerRoutedEventArgs e) => (sender as MediaPlayerElement).TransportControls.Hide();
+        private static void OnVideoPointerEntered(object sender, PointerRoutedEventArgs e) => (sender as MediaPlayerElement).TransportControls.Show();
+        private static void OnVideoPointerExited(object sender, PointerRoutedEventArgs e) => (sender as MediaPlayerElement).TransportControls.Hide();
+        private static void OnVideoTapped(object sender, TappedRoutedEventArgs e) => (sender as MediaPlayerElement).TransportControls.Show();
 
         public static async Task<BitmapImage> GenerateImageLocalFileStream(IRandomAccessStream fileStream, int width = 80, int height = 80)
         {
