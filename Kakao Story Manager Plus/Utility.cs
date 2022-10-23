@@ -124,7 +124,7 @@ namespace KSMP
             try
             {
                 bytes = EmoticonDecryptor.DecodeImage(bytes);
-                EmoticonDecryptor.ConvertWebPToGif(bytes, path);
+                await Task.Run(() => EmoticonDecryptor.ConvertWebPToGif(bytes, path));
                 var file = await StorageFile.GetFileFromPathAsync(path);
                 using var stream = await file.OpenAsync(FileAccessMode.Read);
                 await MainPage.GetInstance().RunOnMainThreadAsync(async () => image.Source = await GenerateImageLocalFileStream(stream));

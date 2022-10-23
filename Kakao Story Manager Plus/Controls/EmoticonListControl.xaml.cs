@@ -91,7 +91,7 @@ namespace KSMP.Controls
                 };
                 GvMain.Items.Add(image);
 
-                _ = Task.Run(async () => await Utility.SetEmoticonImage(url, image));
+                _ = Utility.SetEmoticonImage(url, image);
                 image.Tag = (data, index);
             }
             IsEnabled = true;

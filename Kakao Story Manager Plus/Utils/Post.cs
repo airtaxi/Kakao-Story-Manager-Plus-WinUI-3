@@ -52,9 +52,9 @@ namespace KSMP.Utils
                         url = await ApiHandler.GetEmoticonUrl(decorator.item_id, decorator.resource_id.ToString());
                     var image = new Image();
                     if (decorator.item_id.StartsWith("4"))
-                        await Utility.SetAnimatedEmoticonImage(url, image);
+                        _ = Utility.SetAnimatedEmoticonImage(url, image);
                     else
-                        await Utility.SetEmoticonImage(url, image);
+                        _ = Utility.SetEmoticonImage(url, image);
                     image.Width = 80;
                     image.Height = 80;
                     container.Child = image;

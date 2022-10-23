@@ -3,12 +3,13 @@
 using ImageMagick;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace KSMP.Utils
 {
     public static class EmoticonDecryptor
     {
-        public static void ConvertWebPToGif(byte[] data, string fileName)
+        public static async void ConvertWebPToGif(byte[] data, string fileName)
         {
             using var animatedWebP = new MagickImageCollection(data);
             animatedWebP.Write(fileName, MagickFormat.Gif);
