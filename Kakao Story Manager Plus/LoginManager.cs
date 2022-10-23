@@ -33,7 +33,7 @@ public static class LoginManager
     {
         var key = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Edge\BLBeacon", true);
         string version = key.GetValue("version") as string;
-        new DriverManager().SetUpDriver(new EdgeConfig(), version);
+        try { new DriverManager().SetUpDriver(new EdgeConfig(), version); } catch (Exception) { };
         string driverPath = Path.Combine(App.BinaryDirectory, "Edge", version, "X64");
 
         var service = EdgeDriverService.CreateDefaultService(driverPath);
