@@ -6,47 +6,42 @@ using System.Text;
 
 namespace KSMP.Utils
 {
-    class EmoticonDecryptor
+    public static class EmoticonDecryptor
     {
         public static void ConvertWebPToGIF(byte[] data, string fileName)
         {
-            using (var animatedWebP = new MagickImageCollection(data))
-            {
-                animatedWebP.Write(fileName, MagickFormat.Gif);
-            }
+            using var animatedWebP = new MagickImageCollection(data);
+            animatedWebP.Write(fileName, MagickFormat.Gif);
         }
-        public static byte[] decodeImage(byte[] buf)
-        {
-            List<uint> seq = new List<uint>();
-            seq = generateLFSR("a271730728cbe141e47fd9d677e9006da271730728cbe141e47fd9d677e9006d");
-            for (int i = 0; i < 128; i++)
-            {
-                buf[i] = (byte)xorByte(buf[i], seq);
-            }
 
-            return buf;
+        public static byte[] DecodeImage(byte[] buffer)
+        {
+            List<uint> sequence = GenerateLFsr("a271730728cbe141e47fd9d677e9006da271730728cbe141e47fd9d677e9006d");
+            for (int i = 0; i < 128; i++) buffer[i] = (byte)ByteXor(buffer[i], sequence);
+            return buffer;
         }
-        public static List<uint> generateLFSR(string key)
+
+        public static List<uint> GenerateLFsr(string key)
         {
-            List<uint> seq = new List<uint>();
+            List<uint> sequence = new();
 
-            byte[] keySet = Encoding.UTF8.GetBytes(key);
+            byte[] keys = Encoding.UTF8.GetBytes(key);
 
-            seq.Add(0x12000032);
-            seq.Add(0x2527ac91);
-            seq.Add(0x888c1214);
-
+            sequence.Add(0x12000032);
+            sequence.Add(0x2527ac91);
+            sequence.Add(0x888c1214);
 
             for (int i = 0; i < 4; ++i)
             {
-                seq[0] = keySet[i] | (seq[0] << 8);
-                seq[1] = keySet[4 + i] | (seq[1] << 8);
-                seq[2] = keySet[8 + i] | (seq[2] << 8);
+                sequence[0] = keys[i] | (sequence[0] << 8);
+                sequence[1] = keys[4 + i] | (sequence[1] << 8);
+                sequence[2] = keys[8 + i] | (sequence[2] << 8);
             }
 
-            return seq;
+            return sequence;
         }
-        private static int xorByte(uint b, List<uint> seq)
+
+        private static int ByteXor(uint b, List<uint> sequence)
         {
             char flag1 = (char)1;
             char flag2 = (char)0;
@@ -55,38 +50,38 @@ namespace KSMP.Utils
 
             for (int i = 0; i < 8; i++)
             {
-                int v10 = (int)(seq[0] >> 1);
-                if ((seq[0] << 31) != 0)
+                int v10 = (int)(sequence[0] >> 1);
+                if ((sequence[0] << 31) != 0)
                 {
-                    seq[0] = (uint)(v10 ^ 0xC0000031);
-                    uint v12 = seq[1] >> 1;
-                    if (seq[1] << 31 != 0)
+                    sequence[0] = (uint)(v10 ^ 0xC0000031);
+                    uint v12 = sequence[1] >> 1;
+                    if (sequence[1] << 31 != 0)
                     {
-                        seq[1] = (uint)((v12 | 0xC0000000) ^ 0x20000010);
+                        sequence[1] = (v12 | 0xC0000000) ^ 0x20000010;
                         flag1 = (char)1;
                     }
                     else
                     {
-                        seq[1] = (uint)(v12 & 0x3FFFFFFF);
+                        sequence[1] = v12 & 0x3FFFFFFF;
                         flag1 = (char)0;
                     }
                 }
                 else
                 {
-                    seq[0] = (uint)v10;
-                    int v11 = (int)(seq[2] >> 1);
-                    if (seq[2] << 31 != 0)
+                    sequence[0] = (uint)v10;
+                    int v11 = (int)(sequence[2] >> 1);
+                    if (sequence[2] << 31 != 0)
                     {
-                        seq[2] = (uint)((v11 | 0xF0000000) ^ 0x8000001);
+                        sequence[2] = (uint)((v11 | 0xF0000000) ^ 0x8000001);
                         flag2 = (char)1;
                     }
                     else
                     {
-                        seq[2] = (uint)(v11 & 0xFFFFFFF);
+                        sequence[2] = (uint)(v11 & 0xFFFFFFF);
                         flag2 = (char)0;
                     }
                 }
-                result = (flag1 ^ flag2 | 2 * result);
+                result = flag1 ^ flag2 | 2 * result;
             }
             result = (int)(result ^ b);
             return result;

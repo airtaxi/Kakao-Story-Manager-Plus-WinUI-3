@@ -121,7 +121,7 @@ namespace KSMP
             var bytes = await client.DownloadDataAsync(request);
             try
             {
-                bytes = EmoticonDecryptor.decodeImage(bytes);
+                bytes = EmoticonDecryptor.DecodeImage(bytes);
                 EmoticonDecryptor.ConvertWebPToGIF(bytes, path);
                 var file = await StorageFile.GetFileFromPathAsync(path);
                 using var stream = await file.OpenAsync(FileAccessMode.Read);
