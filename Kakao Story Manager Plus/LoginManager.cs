@@ -83,7 +83,7 @@ public static class LoginManager
             bool isSuccess = rawCookies.Any(x => x.Name == "_karmt");
             if (!isSuccess)
             {
-                if (isHeadless) return false;
+                if (!isHeadless) return false;
                 else return LoginWithSelenium(email, password, false);
             }
 
@@ -107,9 +107,9 @@ public static class LoginManager
             StoryApi.ApiHandler.Init(cookieContainer, cookies, appKey);
             return true;
         }
-        catch (Exception exception)
+        catch (Exception)
         {
-            if (isHeadless) return false;
+            if (!isHeadless) return false;
             else return LoginWithSelenium(email, password, false);
         }
         finally
