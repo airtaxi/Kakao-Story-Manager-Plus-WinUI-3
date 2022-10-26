@@ -76,7 +76,7 @@ public static class LoginManager
                 loginButton.Click();
             }
 
-            var timeout = isHeadless ? TimeSpan.FromDays(1) : TimeSpan.FromSeconds(5);
+            var timeout = isHeadless ? TimeSpan.FromSeconds(5) : TimeSpan.FromDays(1);
             var wait = new WebDriverWait(SeleniumDriver, timeout);
             wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.UrlToBe("https://story.kakao.com/"));
             var rawCookies = SeleniumDriver.Manage().Cookies.AllCookies;
