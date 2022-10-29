@@ -10,7 +10,9 @@
     d:DesignWidth="600">
 
     <Grid Margin="10" CornerRadius="10">
-        <Image x:Name="ImgProfileBackground" Height="300" Stretch="UniformToFill"/>
+        <Grid Height="300">
+            <Image x:Name="ImgProfileBackground" Stretch="UniformToFill" HorizontalAlignment="Stretch" VerticalAlignment="Center"/>
+        </Grid>
         <Rectangle Fill="Black" Opacity="0.3"/>
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="20">
             <Grid>
