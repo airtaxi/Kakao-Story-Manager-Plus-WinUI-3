@@ -47,8 +47,8 @@ public sealed partial class UserProfileControl : UserControl
         var user = await StoryApi.ApiHandler.GetProfileFeed(_id, null, true);
         var profile = user.profile;
 
-        PpProfilePicture.ProfilePicture = Utility.GenerateImageUrlSource(user.profile.GetValidUserProfileUrl());
-        ImgProfileBackground.Source = Utility.GenerateImageUrlSource(user.profile.bg_image_url);
+        Utility.SetImageUrlSource(PpProfilePicture, user.profile.GetValidUserProfileUrl());
+        Utility.SetImageUrlSource(ImgProfileBackground, user.profile.bg_image_url);
 
         Utility.LoadedImages.Add(ImgProfileBackground);
         Utility.LoadedPersonPictures.Add(PpProfilePicture);

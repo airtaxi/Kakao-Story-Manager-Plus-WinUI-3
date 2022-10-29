@@ -288,7 +288,9 @@ public sealed partial class WritePostControl : UserControl
             }
             else
             {
-                var image = Utility.GenerateImageUrlSource("ms-appx:///Assets/Video.png");
+                var image = new BitmapImage();
+                image.UriSource = new Uri("ms-appx:///Assets/Video.png");
+                image.CreateOptions = BitmapCreateOptions.IgnoreImageCache;
                 media.Thumbnail = image;
             }
             _medias.Add(media);
@@ -315,7 +317,9 @@ public sealed partial class WritePostControl : UserControl
         }
         else
         {
-            var image = Utility.GenerateImageUrlSource("ms-appx:///Assets/Video.png");
+            var image = new BitmapImage();
+            image.UriSource = new Uri("ms-appx:///Assets/Video.png");
+            image.CreateOptions = BitmapCreateOptions.IgnoreImageCache;
             media.Thumbnail = image;
         }
 

@@ -40,7 +40,7 @@ public sealed partial class CommentControl : UserControl
         RtbContent.Blocks.Clear();
         TbName.Text = comment.writer.display_name;
         TbTime.Text = StoryApi.Utils.GetTimeString(comment.created_at) + (comment.updated_at.Year > 1 ? " (수정됨)" : "");
-        PpUser.ProfilePicture = Utility.GenerateImageUrlSource(comment.writer.GetValidUserProfileUrl());
+        Utility.SetImageUrlSource(PpUser, comment.writer.GetValidUserProfileUrl());
         Utility.LoadedPersonPictures.Add(PpUser);
 
         if (comment.liked) MfiLike.Text = "좋아요 취소";
@@ -58,7 +58,7 @@ public sealed partial class CommentControl : UserControl
         if (!string.IsNullOrEmpty(commentMedia?.media?.origin_url))
         {
             ImgMain.Visibility = Visibility.Visible;
-            ImgMain.Source = Utility.GenerateImageUrlSource(commentMedia.media.origin_url);
+            Utility.SetImageUrlSource(ImgMain, commentMedia.media.origin_url);
 
             ImgMain.Tapped += (s, e) =>
             {

@@ -13,8 +13,7 @@ public sealed partial class LinkControl : UserControl
     public LinkControl(TimeLineData.Scrap data)
     {
         InitializeComponent();
-        if ((data.image?.Count ?? 0) > 0)
-            ImgLink.Source = Utility.GenerateImageUrlSource(data.image[0]);
+        if ((data.image?.Count ?? 0) > 0) Utility.SetImageUrlSource(ImgLink, data.image[0]);
         TbLinkTitle.Text = data.title ?? "";
         TbLinkDesc.Text = data.description ?? "";
         TbLinkUrl.Text = data.host ?? "";

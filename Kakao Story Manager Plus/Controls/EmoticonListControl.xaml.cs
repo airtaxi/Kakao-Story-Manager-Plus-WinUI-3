@@ -56,8 +56,7 @@ namespace KSMP.Controls
                     Width = 30,
                     Height = 30
                 };
-                var source = Utility.GenerateImageUrlSource(thumbnailUrl);
-                _ = Task.Run(async () => await MainPage.GetInstance().RunOnMainThreadAsync(() => image.Source = source));
+                _ = Task.Run(async () => await MainPage.GetInstance().RunOnMainThreadAsync(() => Utility.SetImageUrlSource(image, thumbnailUrl)));
                 Utility.LoadedImages.Add(image);
 
                 container.Content = image;

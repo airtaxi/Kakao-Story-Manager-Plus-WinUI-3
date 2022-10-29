@@ -79,7 +79,7 @@ namespace KSMP
                 {
                     var image = new Image();
 
-                    image.Source = GenerateImageUrlSource(url);
+                    SetImageUrlSource(image, url);
                     image.Tag = url;
                     image.Stretch = Stretch.Uniform;
 
@@ -150,15 +150,25 @@ namespace KSMP
             return bitmap;
         }
 
-        public static BitmapImage GenerateImageUrlSource(string url)
+        public static BitmapImage SetImageUrlSource(PersonPicture personPicture, string url)
         {
             if (string.IsNullOrEmpty(url)) url = "ms-appx:///Assets/Error.png";
             var imageUrl = new Uri(url);
-            var bitmap = new BitmapImage
-            {
-                UriSource = imageUrl,
-                CreateOptions = BitmapCreateOptions.None
-            };
+            var bitmap = new BitmapImage();
+            personPicture.ProfilePicture = bitmap;
+            bitmap.UriSource = imageUrl;
+            bitmap.CreateOptions = BitmapCreateOptions.IgnoreImageCache;
+            return bitmap;
+        }
+
+        public static BitmapImage SetImageUrlSource(Image image, string url)
+        {
+            if (string.IsNullOrEmpty(url)) url = "ms-appx:///Assets/Error.png";
+            var imageUrl = new Uri(url);
+            var bitmap = new BitmapImage();
+            image.Source = bitmap;
+            bitmap.UriSource = imageUrl;
+            bitmap.CreateOptions = BitmapCreateOptions.IgnoreImageCache;
             return bitmap;
         }
 

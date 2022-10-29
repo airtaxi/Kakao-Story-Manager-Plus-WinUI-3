@@ -93,7 +93,7 @@ public sealed partial class TimelineControl : UserControl
         FrComment.Content = inputControl;
         _ = RefreshContent();
 
-        PpUser.ProfilePicture = Utility.GenerateImageUrlSource(post.actor?.GetValidUserProfileUrl());
+        Utility.SetImageUrlSource(PpUser, post.actor?.GetValidUserProfileUrl());
         FvMedia.ItemsSource = Utility.GenerateMedias(post?.media?.Select(x => x.origin_url ?? x.url_hq));
     }
 

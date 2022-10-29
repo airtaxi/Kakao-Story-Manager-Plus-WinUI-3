@@ -317,7 +317,7 @@ public sealed partial class MainPage : Page
         Me = await ApiHandler.GetProfileData();
         TbName.Text = Me.display_name;
         var profileUrl = Me.GetValidUserProfileUrl();
-        if (!string.IsNullOrEmpty(profileUrl)) PpMyProfile.ProfilePicture = Utility.GenerateImageUrlSource(profileUrl);
+        if (!string.IsNullOrEmpty(profileUrl)) Utility.SetImageUrlSource(PpMyProfile, profileUrl);
         NavigateTimeline();
     }
 
