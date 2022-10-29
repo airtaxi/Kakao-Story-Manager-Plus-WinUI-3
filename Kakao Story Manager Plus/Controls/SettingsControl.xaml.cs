@@ -23,7 +23,7 @@ namespace KSMP.Controls
             bool willReceiveEmotionalNotification = (Utils.Configuration.GetValue("EmotionalNotification") as bool?) ?? true;
             bool willRefreshAfterWritePost = (Utils.Configuration.GetValue("RefreshAfterWritePost") as bool?) ?? true;
             bool willLaunchAtStartup = (Utils.Configuration.GetValue("LaunchAtStartup") as bool?) ?? false;
-            bool willUseGifProfileImage = (Utils.Configuration.GetValue("UseGifProfileImage") as bool?) ?? true;
+            bool willUseGifProfileImage = (Utils.Configuration.GetValue("UseGifProfileImage") as bool?) ?? false;
 
             TsFavoriteFriendNotification.IsOn = willReceiveFavoriteFriendNotification;
             TsEmotionalNotification.IsOn = willReceiveEmotionalNotification;
