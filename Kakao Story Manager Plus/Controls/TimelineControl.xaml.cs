@@ -16,10 +16,8 @@ using StoryApi;
 using Windows.Storage;
 using Windows.ApplicationModel.DataTransfer;
 using System.Diagnostics;
-using Windows.Media.Core;
 using static StoryApi.ApiHandler.DataType.EmoticonItems;
-using System.Linq.Expressions;
-using OpenQA.Selenium.DevTools.V104.DOM;
+using Microsoft.UI.Xaml.Media.Imaging;
 
 namespace KSMP.Controls;
 
@@ -770,5 +768,25 @@ public sealed partial class TimelineControl : UserControl
             FiAddEmoticon.Glyph = "\ue899";
             BtAddMedia.IsEnabled = true;
         }
+    }
+
+    private void OnMediaFlipViewSelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        var flipView = sender as FlipView;
+        var item = flipView.SelectedItem as FrameworkElement;
+        var image = item as Image;
+        var bitmap = image?.Source as BitmapImage;
+        if (bitmap == null) return;
+
+        void SetHeight()
+        {
+            var currentItem = flipView.SelectedItem as FrameworkElement;
+            flipView.Height = 400;
+            flipView.UpdateLayout();
+            if (currentItem == item) flipView.Height = Math.Min(image.ActualHeight, 400);
+        }
+
+        if (bitmap.PixelHeight == 0) bitmap.ImageOpened += (s, e) => SetHeight();
+        else SetHeight();
     }
 }

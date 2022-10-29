@@ -14,7 +14,7 @@
     </UserControl.Resources>
     <Frame>
         <Grid>
-            <Grid x:Name="GdMain" Margin="10" Background="White" CornerRadius="10">
+            <Grid x:Name="GdMain" Margin="10" Background="White" CornerRadius="5">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="auto"/>
                     <RowDefinition Height="*"/>
@@ -67,9 +67,9 @@
                                 <InlineUIContainer/>
                             </Paragraph>
                         </RichTextBlock>
-                        <Grid Margin="5,10,5,0">
+                        <Grid Margin="5,10,5,0" HorizontalAlignment="Stretch">
                             <Rectangle Stroke="LightGray"/>
-                            <FlipView x:Name="FvMedia" Visibility="Collapsed" HorizontalAlignment="Center" VerticalAlignment="Center" Width="auto" Height="400" Margin="1" Tapped="OnMediaTapped">
+                            <FlipView x:Name="FvMedia" Visibility="Collapsed" HorizontalAlignment="Stretch" VerticalAlignment="Center" MaxHeight="400" Margin="1" Tapped="OnMediaTapped" SelectionChanged="OnMediaFlipViewSelectionChanged">
                                 <FlipView.ItemTemplate>
                                     <DataTemplate>
                                         <Frame Content="{Binding}"/>
@@ -180,18 +180,18 @@
                     <Border Grid.Row="0" x:Name="BdComments" BorderBrush="#F2F2F2" VerticalAlignment="Top" HorizontalAlignment="Stretch" BorderThickness="0.5"/>
                     <Border Grid.Row="0" x:Name="BdCommentsHorizontal" Grid.RowSpan="3" BorderBrush="#F2F2F2" VerticalAlignment="Stretch" HorizontalAlignment="Left" Visibility="Collapsed" BorderThickness="0.5"/>
                 </Grid>
-                <Border x:Name="BdShare" CornerRadius="10" BorderBrush="LightGray" Grid.RowSpan="4" BorderThickness="1" Visibility="Collapsed"/>
+                <Border x:Name="BdShare" CornerRadius="5" BorderBrush="LightGray" Grid.RowSpan="4" BorderThickness="1" Visibility="Collapsed"/>
             </Grid>
-            <Grid x:Name="GdOverlay" Margin="10" CornerRadius="10" Visibility="Collapsed">
+            <Grid x:Name="GdOverlay" Margin="10" CornerRadius="5" Visibility="Collapsed">
                 <Rectangle Fill="Black" Opacity="0.85"/>
-                <Frame x:Name="FrOverlay" Background="White" Padding="10" CornerRadius="10" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                <Frame x:Name="FrOverlay" Background="White" Padding="10" CornerRadius="5" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                 <Button Background="Transparent" BorderThickness="0" Click="OnOverlayCloseButtonClicked" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="10">
                     <Viewbox Width="20" Height="20">
                         <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe711;" Foreground="White"/>
                     </Viewbox>
                 </Button>
             </Grid>
-            <Grid x:Name="GdLoading" Margin="10" CornerRadius="10" Visibility="Collapsed">
+            <Grid x:Name="GdLoading" Margin="10" CornerRadius="5" Visibility="Collapsed">
                 <Rectangle Fill="Black" Opacity="0.85"/>
                 <ProgressRing IsIndeterminate="True" IsActive="True" Width="150" Height="150"/>
             </Grid>
