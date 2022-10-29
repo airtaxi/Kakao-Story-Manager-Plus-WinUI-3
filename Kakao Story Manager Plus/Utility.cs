@@ -140,9 +140,12 @@ namespace KSMP
 
         public static async Task<BitmapImage> GenerateImageLocalFileStream(IRandomAccessStream fileStream, int width = 80, int height = 80)
         {
-            var bitmap = new BitmapImage();
-            bitmap.DecodePixelWidth = width;
-            bitmap.DecodePixelHeight = height;
+            var bitmap = new BitmapImage
+            {
+                DecodePixelWidth = width,
+                DecodePixelHeight = height,
+                CreateOptions = BitmapCreateOptions.None
+            };
             await bitmap.SetSourceAsync(fileStream);
             return bitmap;
         }
@@ -153,7 +156,8 @@ namespace KSMP
             var imageUrl = new Uri(url);
             var bitmap = new BitmapImage
             {
-                UriSource = imageUrl
+                UriSource = imageUrl,
+                CreateOptions = BitmapCreateOptions.None
             };
             return bitmap;
         }
