@@ -432,5 +432,5 @@ public sealed partial class MainPage : Page
         GC.WaitForPendingFinalizers();
     }
 
-    private void OnRestartButtonClicked(object sender, RoutedEventArgs e) => MainWindow.Restart();
+    private void OnRestartButtonClicked(object sender, RoutedEventArgs e) => Utility.RestartProgram();
 }
