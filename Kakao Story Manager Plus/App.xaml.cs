@@ -5,13 +5,15 @@ using KSMP.Utils;
 using Microsoft.Toolkit.Uwp.Notifications;
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
+using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
-using Windows.ApplicationModel.Email;
-using Windows.UI.Notifications;
+using static KSMP.ClassManager;
 
 namespace KSMP;
 
@@ -19,7 +21,8 @@ public partial class App : Application
 {
     public static DispatcherQueue DispatcherQueue { get; private set; }
     public static string BinaryDirectory = null;
-    private static Window _window;
+    private static Window s_window;
+    private static string s_restartArgs = null;
 
     public App()
     {
@@ -29,9 +32,36 @@ public partial class App : Application
             Current.UnhandledException += OnApplicationUnhandledException;
             AppDomain.CurrentDomain.UnhandledException += OnAppDomainUnhandledException;
             TaskScheduler.UnobservedTaskException += OnTaskSchedulerUnobservedTaskException;
+            var restartFlagPath = Path.Combine(BinaryDirectory, "restart");
+            var checkProcess = File.Exists(restartFlagPath) == false;
 
-            if (CheckForExistingProcess()) ExitProgramByExistingProcess();
+            if (!checkProcess)
+            {
+                var cookieDataString = File.ReadAllText(restartFlagPath);
+                var restartFlag = JsonConvert.DeserializeObject<RestartFlag>(cookieDataString);
+
+                var cookies = new List<Cookie>();
+                var cookieContainer = new CookieContainer();
+
+                foreach (var rawCookie in restartFlag.Cookies)
+                {
+                    var cookie = new Cookie()
+                    {
+                        Name = rawCookie.Name,
+                        Domain = rawCookie.Domain,
+                        Path = rawCookie.Path,
+                        Value = rawCookie.Value
+                    };
+                    cookieContainer.Add(cookie);
+                    cookies.Add(cookie);
+                }
+
+                StoryApi.ApiHandler.Init(cookieContainer, cookies, null);
+                s_restartArgs = restartFlag.LastArgs ?? string.Empty;
+            }
+            if (checkProcess && CheckForExistingProcess()) ExitProgramByExistingProcess();
             else InitializeComponent();
+            File.Delete(restartFlagPath);
         }
         catch (Exception exception) { _ = HandleException(exception); }
     }
@@ -93,7 +123,7 @@ public partial class App : Application
     private static bool _toastActivateFlag = true;
     private static void OnToastNotificationActivated(ToastNotificationActivatedEventArgsCompat toastArgs)
     {
-        var dispatcherQueue = _window?.DispatcherQueue ?? DispatcherQueue;
+        var dispatcherQueue = s_window?.DispatcherQueue ?? DispatcherQueue;
         dispatcherQueue.TryEnqueue(async () =>
         {
             try
@@ -153,12 +183,12 @@ public partial class App : Application
 
     private static void LaunchAndBringToForegroundIfNeeded()
     {
-        if (_window == null)
+        if (s_window == null)
         {
-            _window = new MainWindow();
-            _window.Activate();
-            WindowHelper.ShowWindow(_window);
+            s_window = new MainWindow(s_restartArgs);
+            s_window.Activate();
+            WindowHelper.ShowWindow(s_window);
         }
-        else WindowHelper.ShowWindow(_window);
+        else WindowHelper.ShowWindow(s_window);
     }
 }

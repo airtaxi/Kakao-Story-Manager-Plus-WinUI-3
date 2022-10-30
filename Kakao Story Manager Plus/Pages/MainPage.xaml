@@ -44,19 +44,24 @@
                         <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe7e7;" FontSize="17" Foreground="#717171"/>
                     </Viewbox>
                 </Button>
-                <Button Width="40" Height="40" CornerRadius="10" Margin="10,0,0,0">
+                <Button Width="40" Height="40" CornerRadius="10" Margin="10,0,0,0" Click="OnMoreButtonClicked">
                     <Viewbox>
                         <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe712;" FontSize="17" Foreground="#717171"/>
                     </Viewbox>
                     <Button.Flyout>
                         <Flyout>
                             <StackPanel Orientation="Horizontal">
-                                <Button x:Name="BtLogout" Width="40" Height="40" CornerRadius="10" ToolTipService.ToolTip="로그아웃" Click="OnLogoutButtonClicked">
+                                <Button Width="40" Height="40" CornerRadius="10" ToolTipService.ToolTip="로그아웃" Click="OnLogoutButtonClicked">
                                     <Viewbox>
                                         <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xf3b1;" FontSize="17" Foreground="#717171"/>
                                     </Viewbox>
                                 </Button>
-                                <Button x:Name="BtExit" Width="40" Height="40" CornerRadius="10" ToolTipService.ToolTip="프로그램 종료" Margin="10,0,0,0" Click="OnExitButtonClicked">
+                                <Button Width="40" Height="40" CornerRadius="10" ToolTipService.ToolTip="메모리 정리" Margin="10,0,0,0" Click="OnRestartButtonClicked">
+                                    <Viewbox>
+                                        <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe964;" FontSize="17" Foreground="#717171"/>
+                                    </Viewbox>
+                                </Button>
+                                <Button Width="40" Height="40" CornerRadius="10" ToolTipService.ToolTip="프로그램 종료" Margin="10,0,0,0" Click="OnExitButtonClicked">
                                     <Viewbox>
                                         <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe711;" FontSize="17" Foreground="#717171"/>
                                     </Viewbox>
@@ -85,7 +90,7 @@
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
             <Grid MinHeight="200">
-                <Button x:Name="BtSettings" Background="Transparent" BorderThickness="0" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,5,0,0" Foreground="Gray" Click="OnSettingsButtonClicked">
+                <Button x:Name="BtSettings" Background="Transparent" BorderThickness="0" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,5,0,0" Foreground="Gray">
                     <Viewbox Width="20" Height="20">
                         <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe713;"/>
                     </Viewbox>

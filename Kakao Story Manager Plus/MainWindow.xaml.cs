@@ -6,11 +6,19 @@ using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
+using Microsoft.UI.Xaml.Navigation;
+using Newtonsoft.Json;
+using OpenQA.Selenium.DevTools.V104.DOM;
+using StoryApi;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
+using System.Net;
 using System.Threading.Tasks;
+using Windows.UI.WebUI;
+using static KSMP.ClassManager;
 using static StoryApi.ApiHandler;
 
 namespace KSMP;
@@ -19,14 +27,18 @@ public sealed partial class MainWindow : Microsoft.UI.Xaml.Window
 {
     public static MainWindow Instance { get; private set; }
     public static TaskCompletionSource ReloginTaskCompletionSource = null;
-    private static List<MenuFlyoutItem> LoginRequiredMenuFlyoutItems = new();
-    public MainWindow()
+    private static List<MenuFlyoutItem> s_loginRequiredMenuFlyoutItems = new();
+    private bool _shouldClose { get; set; } = false;
+    private string _lastArgs { get; set; } = null;
+
+    public MainWindow(string args = null)
     {
         Instance = this;
         InitializeComponent();
         SetupAppWindow();
         SetupTrayIcon();
-        FrMain.Navigate(typeof(LoginPage));
+        if (args == null) FrMain.Navigate(typeof(LoginPage));
+        else FrMain.Navigate(typeof(MainPage), args);
         OnReloginRequired += OnReloginRequiredHandler;
         Closed += (s, e) =>
         {
@@ -35,6 +47,8 @@ public sealed partial class MainWindow : Microsoft.UI.Xaml.Window
             LoginManager.SeleniumDriver = null;
         };
     }
+
+    public void SetClosable(bool shouldClose = true) => _shouldClose = shouldClose;
 
     private async Task<bool> OnReloginRequiredHandler()
     {
@@ -50,8 +64,8 @@ public sealed partial class MainWindow : Microsoft.UI.Xaml.Window
     public static void Navigate(Type type) => Instance.FrMain.Navigate(type);
     public static void Navigate(Type type, object args) => Instance.FrMain.Navigate(type, args);
 
-    public static void EnableLoginRequiredMenuFlyoutItems() => LoginRequiredMenuFlyoutItems.ForEach(x => x.IsEnabled = true);
-    public static void DisableLoginRequiredMenuFlyoutItems() => LoginRequiredMenuFlyoutItems.ForEach(x => x.IsEnabled = false);
+    public static void EnableLoginRequiredMenuFlyoutItems() => s_loginRequiredMenuFlyoutItems.ForEach(x => x.IsEnabled = true);
+    public static void DisableLoginRequiredMenuFlyoutItems() => s_loginRequiredMenuFlyoutItems.ForEach(x => x.IsEnabled = false);
 
     private void SetupAppWindow()
     {
@@ -64,7 +78,7 @@ public sealed partial class MainWindow : Microsoft.UI.Xaml.Window
 
     private void SetupTrayIcon()
     {
-        LoginRequiredMenuFlyoutItems.Clear();
+        s_loginRequiredMenuFlyoutItems.Clear();
 
         MenuFlyout menuFlyout = new();
 
@@ -72,13 +86,13 @@ public sealed partial class MainWindow : Microsoft.UI.Xaml.Window
         var showTimelineCommand = new XamlUICommand();
         showTimelineCommand.ExecuteRequested += (s, e) => MainPage.ShowTimeline();
         showTimeline.Command = showTimelineCommand;
-        LoginRequiredMenuFlyoutItems.Add(showTimeline);
+        s_loginRequiredMenuFlyoutItems.Add(showTimeline);
 
         MenuFlyoutItem showMyProfile = new() { Text="내 프로필" };
         var showMyProfileCommand = new XamlUICommand();
         showMyProfileCommand.ExecuteRequested += (s, e) => MainPage.ShowMyProfile();
         showMyProfile.Command = showMyProfileCommand;
-        LoginRequiredMenuFlyoutItems.Add(showMyProfile);
+        s_loginRequiredMenuFlyoutItems.Add(showMyProfile);
 
         MenuFlyoutItem quit = new() { Text="프로그램 종료" };
         var quitCommand = new XamlUICommand();
@@ -101,6 +115,12 @@ public sealed partial class MainWindow : Microsoft.UI.Xaml.Window
 
     private void WindowClosed(object sender, WindowEventArgs args)
     {
+        if (_shouldClose)
+        {
+            OnReloginRequired -= OnReloginRequiredHandler;
+            return;
+        }
+
         args.Handled = true;
         var appWindow = this.GetAppWindow();
         appWindow.Hide();
@@ -134,7 +154,29 @@ public sealed partial class MainWindow : Microsoft.UI.Xaml.Window
             await (MainPage.GetOverlayTimeLineControl()?.EditPost() ?? Task.CompletedTask);
         else if (isControlDown && e.Key == Windows.System.VirtualKey.D)
             await (MainPage.GetOverlayTimeLineControl()?.DeletePost() ?? Task.CompletedTask);
-        else if (isControlDown && e.Key == Windows.System.VirtualKey.Q)
+        else if (isControlDown && e.Key == Windows.System.VirtualKey.W)
             Utility.DisposeAllMedias();
+        else if (isControlDown && e.Key == Windows.System.VirtualKey.Q) Restart();
+    }
+
+    public static async void Restart()
+    {
+        var restartFlagPath = Path.Combine(App.BinaryDirectory, "restart");
+        var RestartFlag = new RestartFlag
+        {
+            Cookies = Cookies,
+            LastArgs = MainPage.LastArgs
+        };
+        var restartFlagString = JsonConvert.SerializeObject(RestartFlag);
+        File.WriteAllText(restartFlagPath, restartFlagString);
+
+        var binaryPath = System.Reflection.Assembly.GetExecutingAssembly().Location;
+        binaryPath = binaryPath[..^4];
+        binaryPath += ".exe";
+        Process.Start(binaryPath);
+
+        Instance.SetClosable();
+        await Task.Delay(100);
+        Instance.Close();
     }
 }

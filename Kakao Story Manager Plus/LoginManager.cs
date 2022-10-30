@@ -29,7 +29,7 @@ public static class LoginManager
         }
     }
 
-    public static bool LoginWithSelenium(string email, string password, bool isHeadless = true)
+    public static bool LoginWithSelenium(string email, string password, bool isHeadless = false)
     {
         var key = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Edge\BLBeacon", true);
         string version = key.GetValue("version") as string;
@@ -42,6 +42,9 @@ public static class LoginManager
 
         var options = new EdgeOptions();
         if(isHeadless) options.AddArgument("headless");
+
+        SeleniumDriver?.Close();
+        SeleniumDriver?.Dispose();
 
         SeleniumDriver = new EdgeDriver(service, options);
         SeleniumDriver.Navigate().GoToUrl("https://accounts.kakao.com/login/?continue=https://story.kakao.com/");
@@ -57,6 +60,9 @@ public static class LoginManager
 
                 var passwordBox = SeleniumDriver.FindElement(By.XPath("//*[@id=\"input-password\"]"));
                 passwordBox.SendKeys(password);
+
+                var checkBox = SeleniumDriver.FindElement(By.XPath("//*[@id=\"mainContent\"]/div/div/form/div[3]/div/label/span[1]"));
+                checkBox.Click();
 
                 var loginButton = SeleniumDriver.FindElement(By.XPath("//*[@id=\"mainContent\"]/div/div/form/div[4]/button[1]"));
                 loginButton.Click();
@@ -92,6 +98,7 @@ public static class LoginManager
 
             var cookies = new List<System.Net.Cookie>();
             var cookieContainer = new CookieContainer();
+
             foreach (var rawCookie in rawCookies)
             {
                 var cookie = new System.Net.Cookie()

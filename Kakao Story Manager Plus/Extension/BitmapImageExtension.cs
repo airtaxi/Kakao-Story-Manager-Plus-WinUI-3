@@ -2,26 +2,19 @@
 using System;
 using System.IO;
 
-namespace KSMP.Extension
+namespace KSMP.Extension;
+
+public static class BitmapImageExtension
 {
-    public static class BitmapImageExtension
+    public static void DisposeSource(this BitmapImage image)
     {
-        public static void DisposeSource(this BitmapImage image)
+        if (image == null) return;
+        try
         {
-            if (image != null)
-            {
-                try
-                {
-                    image.UriSource = null;
-                    using (var ms = new MemoryStream(new byte[] { 0x0 }))
-                    {
-                        image.SetSource(ms.AsRandomAccessStream());
-                    }
-                }
-                catch (Exception)
-                {
-                }
-            }
+            image.UriSource = null;
+            using var ms = new MemoryStream(new byte[] { 0x0 });
+            image.SetSource(ms.AsRandomAccessStream());
         }
+        catch (Exception) { } //Ignore
     }
 }

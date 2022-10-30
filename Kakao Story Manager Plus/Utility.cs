@@ -150,8 +150,9 @@ namespace KSMP
             return bitmap;
         }
 
-        public static BitmapImage SetImageUrlSource(PersonPicture personPicture, string url)
+        public static BitmapImage SetImageUrlSource(PersonPicture personPicture, string url, bool shouldDispose = true)
         {
+            if (shouldDispose) LoadedPersonPictures.Add(personPicture);
             if (string.IsNullOrEmpty(url)) url = "ms-appx:///Assets/Error.png";
             var imageUrl = new Uri(url);
             var bitmap = new BitmapImage();
@@ -163,6 +164,7 @@ namespace KSMP
 
         public static BitmapImage SetImageUrlSource(Image image, string url)
         {
+            LoadedImages.Add(image);
             if (string.IsNullOrEmpty(url)) url = "ms-appx:///Assets/Error.png";
             var imageUrl = new Uri(url);
             var bitmap = new BitmapImage();

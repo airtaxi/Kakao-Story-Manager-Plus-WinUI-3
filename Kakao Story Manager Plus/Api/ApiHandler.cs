@@ -17,22 +17,24 @@ namespace StoryApi
 {
     public partial class ApiHandler
     {
-        private static CookieContainer _cookieContainer { get; set; } = null;
-        private static List<Cookie> Cookies { get; set; } = null;
-        private static string KakaoAppKey { get; set; } = null;
-        public delegate Task<bool> ReloginRequired();
-        public static ReloginRequired OnReloginRequired;
-        private static AuthController EmoticonCredential;
+        public static List<Cookie> Cookies { get; set; } = null;
 
+        private static CookieContainer s_cookieContainer { get; set; } = null;
+        private static string s_kakaoAppKey { get; set; } = "90c1434c4e8916a6ec5aa88109889601";
+        private static AuthController s_emoticonCredential;
+
+        public delegate Task<bool> ReloginRequired();
+
+        public static ReloginRequired OnReloginRequired;
         public static int MaxRetryCount { get; set; } = 15;
 
 
 
         public static void Init(CookieContainer cookieContainer, List<Cookie> cookies, string appKey)
         {
-            _cookieContainer = cookieContainer;
+            s_cookieContainer = cookieContainer;
+            if (!string.IsNullOrEmpty(appKey)) s_kakaoAppKey = appKey;
             Cookies = cookies;
-            KakaoAppKey = appKey;
         }
         public static async Task<ProfileData.ProfileObject> GetProfileFeed(string id, string from, bool noActivity = false)
         {
@@ -51,14 +53,14 @@ namespace StoryApi
 
         public static async Task<string> GetEmoticonUrl(string id, string resourceId)
         {
-            EmoticonCredential ??= await GetEmoticonCredential(); 
+            s_emoticonCredential ??= await GetEmoticonCredential(); 
             var url = EmoticonUrl;
             url += $"/{id}/thum_{resourceId.PadLeft(3, '0')}.png";
-            url += $"?credential={EmoticonCredential.Auth.Credential}";
-            url += $"&expires={EmoticonCredential.Auth.Expires}";
+            url += $"?credential={s_emoticonCredential.Auth.Credential}";
+            url += $"&expires={s_emoticonCredential.Auth.Expires}";
             url += "&allow_referer=story.kakao.com";
-            url += $"&signature={Uri.EscapeDataString(EmoticonCredential.Auth.Signature)}";
-            url += $"&path={EmoticonCredential.Auth.Path}";
+            url += $"&signature={Uri.EscapeDataString(s_emoticonCredential.Auth.Signature)}";
+            url += $"&path={s_emoticonCredential.Auth.Path}";
             return url;
         }
         private static async Task<AuthController> GetEmoticonCredential()
@@ -68,7 +70,7 @@ namespace StoryApi
             var request = new RestRequest();
             request.Method = Method.Get;
 
-            request.AddHeader("authorization", $"KakaoAK {KakaoAppKey}");
+            request.AddHeader("authorization", $"KakaoAK {s_kakaoAppKey}");
             request.AddHeader("ka", $"sdk/1.14.0 os/javascript lang/ko-KR device/Win32 origin/https%3A%2F%2Fstory.kakao.com");
             request.AddHeader("js-origin", $"https://story.kakao.com/");
             var response = await client.ExecuteAsync(request);
@@ -83,7 +85,7 @@ namespace StoryApi
             var request = new RestRequest();
             request.Method = Method.Get;
 
-            request.AddHeader("authorization", $"KakaoAK {KakaoAppKey}");
+            request.AddHeader("authorization", $"KakaoAK {s_kakaoAppKey}");
             request.AddHeader("ka", "sdk/1.14.0 os/javascript lang/ko-KR device/Win32 origin/https%3A%2F%2Fstory.kakao.com");
             request.AddHeader("js-origin", "https://story.kakao.com/");
             request.AddHeader("referer", "https://api-item.kakao.com/cors/");
@@ -741,7 +743,7 @@ namespace StoryApi
             request.Method = "POST";
             string boundary = "----" + DateTime.Now.Ticks.ToString("x");
             request.ContentType = "multipart/form-data; boundary=" + boundary;
-            request.CookieContainer = _cookieContainer;
+            request.CookieContainer = s_cookieContainer;
 
             request.Headers["X-Kakao-DeviceInfo"] = "web:d;-;-";
             request.Headers["X-Kakao-ApiLevel"] = "49";
@@ -787,7 +789,7 @@ namespace StoryApi
             HttpWebRequest request = WebRequest.CreateHttp(requestURI);
             request.Method = "POST";
             request.ContentType = "multipart/form-data; boundary=" + boundary;
-            request.CookieContainer = _cookieContainer;
+            request.CookieContainer = s_cookieContainer;
 
             request.Headers["X-Kakao-DeviceInfo"] = "web:d;-;-";
             request.Headers["X-Kakao-ApiLevel"] = "49";
@@ -872,7 +874,7 @@ namespace StoryApi
                 request.Method = "PUT";
             request.ContentType = "application/x-www-form-urlencoded; charset=UTF-8";
 
-            request.CookieContainer = _cookieContainer;
+            request.CookieContainer = s_cookieContainer;
             request.Headers["X-Kakao-DeviceInfo"] = "web:d;-;-";
             request.Headers["X-Kakao-ApiLevel"] = "49";
             request.Headers["X-Requested-With"] = "XMLHttpRequest";
@@ -932,7 +934,7 @@ namespace StoryApi
             HttpWebRequest request = WebRequest.CreateHttp(requestURI);
             request.Method = "POST";
             request.ContentType = "multipart/form-data; boundary=" + boundary;
-            request.CookieContainer = _cookieContainer;
+            request.CookieContainer = s_cookieContainer;
 
             request.Headers["Accept-Encoding"] = "gzip, deflate, br";
             request.Headers["Accept-Language"] = "ko-KR";
@@ -992,7 +994,7 @@ namespace StoryApi
             request.Method = "GET";
 
             request.ContentType = "application/x-www-form-urlencoded; charset=UTF-8";
-            request.CookieContainer = _cookieContainer;
+            request.CookieContainer = s_cookieContainer;
 
             request.Headers["X-Kakao-DeviceInfo"] = "web:d;-;-";
             request.Headers["X-Kakao-ApiLevel"] = "49";
@@ -1042,7 +1044,7 @@ namespace StoryApi
 
             request.Method = "GET";
 
-            request.CookieContainer = _cookieContainer;
+            request.CookieContainer = s_cookieContainer;
 
             request.Headers["X-Kakao-DeviceInfo"] = "web:d;-;-";
             request.Headers["X-Kakao-ApiLevel"] = "49";
@@ -1102,7 +1104,7 @@ namespace StoryApi
             webRequest.Method = method.ToUpper();
             webRequest.ContentType = "application/x-www-form-urlencoded; charset=utf-8";
 
-            webRequest.CookieContainer = _cookieContainer;
+            webRequest.CookieContainer = s_cookieContainer;
 
             webRequest.Headers["X-Kakao-DeviceInfo"] = "web:d;-;-";
             webRequest.Headers["X-Kakao-ApiLevel"] = "49";

@@ -1,10 +1,18 @@
 ﻿using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using System.Collections.Generic;
+using System.Net;
 
 namespace KSMP
 {
     public class ClassManager
     {
+        public class RestartFlag
+        {
+            public List<Cookie> Cookies { get; set; }
+            public string LastArgs { get; set; }
+        }
+
         public enum PostWritingPermission
         {
             F,

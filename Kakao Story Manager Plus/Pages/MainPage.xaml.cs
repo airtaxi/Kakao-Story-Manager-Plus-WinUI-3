@@ -13,6 +13,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Input;
+using Microsoft.UI.Xaml.Navigation;
 using StoryApi;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Media.Core;
@@ -23,32 +24,38 @@ namespace KSMP.Pages;
 
 public sealed partial class MainPage : Page
 {
-    private static MainPage _instance;
     public static ApiHandler.DataType.UserProfile.ProfileData Me;
     public static Friends Friends = null;
-    private static Timer NotificationTimer = null;
-    //private Timer _memoryUsageUpdateTimer = new();
+    public static string LastArgs = null;
+
+    private static MainPage s_instance;
+    private static Timer s_notificationTimer = null;
+
     private bool _isWritePostFlyoutOpened = false;
 
     public MainPage()
     {
         InitializeComponent();
-        _ = Refresh();
-        _instance = this;
+        s_instance = this;
         InitializeWritePostFlyout();
         InitializeSettingsFlyout();
 
-        if (NotificationTimer == null)
+        if (s_notificationTimer == null)
         {
-            NotificationTimer = new();
-            NotificationTimer.Interval = 2250;
-            NotificationTimer.Elapsed += OnNotificationTimerElapsed;
-            NotificationTimer.Start();
+            s_notificationTimer = new();
+            s_notificationTimer.Interval = 2250;
+            s_notificationTimer.Elapsed += OnNotificationTimerElapsed;
+            s_notificationTimer.Start();
         }
+    }
 
-        //_memoryUsageUpdateTimer.Interval = 200;
-        //_memoryUsageUpdateTimer.Elapsed += OnMemoryUsageUpdateTimerElapsed;
-        //_memoryUsageUpdateTimer.Start();
+    protected override async void OnNavigatedTo(NavigationEventArgs e)
+    {
+        base.OnNavigatedTo(e);
+        string id = e.Parameter as string;
+        await Refresh();
+        if (!string.IsNullOrEmpty(id)) NavigateTimeline(id);
+        else NavigateTimeline();
     }
 
     private void InitializeSettingsFlyout()
@@ -88,7 +95,7 @@ public sealed partial class MainPage : Page
 
     private void OnWritePostFlyoutClosed(object sender, object e) => _isWritePostFlyoutOpened = false;
 
-    public static MainPage GetInstance() => _instance;
+    public static MainPage GetInstance() => s_instance;
 
     private void OnPostCompleted() => InitializeWritePostFlyout();
 
@@ -98,7 +105,7 @@ public sealed partial class MainPage : Page
     {
         try
         {
-            NotificationTimer.Stop();
+            s_notificationTimer.Stop();
 
             var notifications = await ApiHandler.GetNotifications();
             for (int i = 0; i < notifications.Count; i++)
@@ -113,23 +120,8 @@ public sealed partial class MainPage : Page
             _lastNotificationTimestamp = first?.created_at;
         }
         catch (Exception) { } //Ignore
-        finally { NotificationTimer.Start(); }
+        finally { s_notificationTimer.Start(); }
     }
-
-    //private async void OnMemoryUsageUpdateTimerElapsed(object sender, ElapsedEventArgs e)
-    //{
-    //    _memoryUsageUpdateTimer.Stop();
-    //    var process = Process.GetCurrentProcess();
-    //    var memorySize = process.PrivateMemorySize64 / 1024 / 1024;
-    //    var source = new TaskCompletionSource();
-    //    DispatcherQueue.TryEnqueue(() =>
-    //    {
-    //        //TbMemory.Text = $"메모리 사용량: {memorySize:N0}MB";
-    //        source.SetResult();
-    //    });
-    //    await source.Task;
-    //    _memoryUsageUpdateTimer.Start();
-    //}
 
     private static async void ShowNotificationToast(ApiHandler.DataType.Notification notification)
     {
@@ -149,9 +141,9 @@ public sealed partial class MainPage : Page
         string profileId = GetProfileIdFromNotification(notification);
         string activityId = GetActivityIdFromNotification(notification);
 
-        _ = _instance.RunOnMainThreadAsync(async () =>
+        _ = s_instance.RunOnMainThreadAsync(async () =>
         {
-            var timelineControl = _instance.FrOverlay.Content as TimelineControl;
+            var timelineControl = s_instance.FrOverlay.Content as TimelineControl;
             if (timelineControl == null) return;
             else if (timelineControl.PostId == activityId) await timelineControl.RefreshContent();
         });
@@ -216,11 +208,10 @@ public sealed partial class MainPage : Page
 
     public static void NavigateTimeline(string args = null)
     {
-        //GC.Collect(GC.MaxGeneration);
-        //GC.WaitForPendingFinalizers();
+        LastArgs = args;
         Utility.DisposeAllMedias();
-        if (args != null) _instance.FrContent.Navigate(typeof(TimelinePage), args);
-        else _instance.FrContent.Navigate(typeof(TimelinePage));
+        if (args != null) s_instance.FrContent.Navigate(typeof(TimelinePage), args);
+        else s_instance.FrContent.Navigate(typeof(TimelinePage));
     }
 
     public static void ShowTimeline()
@@ -233,7 +224,7 @@ public sealed partial class MainPage : Page
 
     public static void ShowMyProfile()
     {
-        if (_instance == null) return;
+        if (s_instance == null) return;
         ShowWindow();
         HideOverlay();
         NavigateTimeline(Me.id);
@@ -247,18 +238,18 @@ public sealed partial class MainPage : Page
             Content = new Controls.NotificationControl(),
             Placement = FlyoutPlacementMode.BottomEdgeAlignedLeft
         };
-        flyout.ShowAt(_instance);
+        flyout.ShowAt(s_instance);
     }
 
 
     public static void SelectFriend(string id)
     {
-        var page = _instance.FrContent.Content as TimelinePage;
+        var page = s_instance.FrContent.Content as TimelinePage;
         if (!string.IsNullOrEmpty(id) && page?.Id == id) return;
 
-        var items = _instance.LvFriends.ItemsSource as List<FriendProfile>;
+        var items = s_instance.LvFriends.ItemsSource as List<FriendProfile>;
         var item = items.FirstOrDefault(x => x.Id == id);
-        _instance.LvFriends.SelectedItem = item;
+        s_instance.LvFriends.SelectedItem = item;
     }
 
     private static async Task RefreshFriends()
@@ -266,33 +257,33 @@ public sealed partial class MainPage : Page
         Friends = await ApiHandler.GetFriends();
     }
 
-    public static TimelineControl GetOverlayTimeLineControl() => _instance?.FrOverlay?.Content as TimelineControl;
+    public static TimelineControl GetOverlayTimeLineControl() => s_instance?.FrOverlay?.Content as TimelineControl;
     public static void ShowOverlay(UIElement element, bool isSecond = false)
     {
-        var overlay = isSecond ? _instance.GdOverlay2 : _instance.GdOverlay;
-        var frame = isSecond ? _instance.FrOverlay2 : _instance.FrOverlay;
+        var overlay = isSecond ? s_instance.GdOverlay2 : s_instance.GdOverlay;
+        var frame = isSecond ? s_instance.FrOverlay2 : s_instance.FrOverlay;
         overlay.Visibility = Visibility.Visible;
         (frame.Content as TimelineControl)?.DisposeMedias();
         frame.Content = element;
-        _instance.GdRoot.Focus(FocusState.Keyboard);
+        s_instance.GdRoot.Focus(FocusState.Keyboard);
     }
     public static void HideOverlay(bool willDispose = true)
     {
-        if (_instance == null) return;
-        var isWritePostFlyoutOpened = _instance?.BtWrite?.Flyout?.IsOpen ?? false;
+        if (s_instance == null) return;
+        var isWritePostFlyoutOpened = s_instance?.BtWrite?.Flyout?.IsOpen ?? false;
         if(isWritePostFlyoutOpened)
         {
-            ((_instance.BtWrite.Flyout as Flyout).Content as WritePostControl).PreventClose = false;
-            _instance._isWritePostFlyoutOpened = false;
-            _instance.BtWrite.Flyout.Hide();
+            ((s_instance.BtWrite.Flyout as Flyout).Content as WritePostControl).PreventClose = false;
+            s_instance._isWritePostFlyoutOpened = false;
+            s_instance.BtWrite.Flyout.Hide();
             return;
         }
-        var isSecond = _instance.GdOverlay2.Visibility == Visibility.Visible;
-        var overlay = isSecond ? _instance.GdOverlay2 : _instance.GdOverlay;
+        var isSecond = s_instance.GdOverlay2.Visibility == Visibility.Visible;
+        var overlay = isSecond ? s_instance.GdOverlay2 : s_instance.GdOverlay;
         overlay.Visibility = Visibility.Collapsed;
 
         if (!willDispose) return;
-        var frame = isSecond ? _instance.FrOverlay2 : _instance.FrOverlay;
+        var frame = isSecond ? s_instance.FrOverlay2 : s_instance.FrOverlay;
         (frame.Content as TimelineControl)?.DisposeMedias();
         frame.Content = null;
     }
@@ -317,8 +308,7 @@ public sealed partial class MainPage : Page
         Me = await ApiHandler.GetProfileData();
         TbName.Text = Me.display_name;
         var profileUrl = Me.GetValidUserProfileUrl();
-        if (!string.IsNullOrEmpty(profileUrl)) Utility.SetImageUrlSource(PpMyProfile, profileUrl);
-        NavigateTimeline();
+        if (!string.IsNullOrEmpty(profileUrl)) Utility.SetImageUrlSource(PpMyProfile, profileUrl, false);
     }
 
     private void OnFriendListSelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -346,15 +336,15 @@ public sealed partial class MainPage : Page
 
     public static void ShowProfile(string id)
     {
-        var itemsSource = _instance.LvFriends.ItemsSource as List<FriendProfile>;
+        var itemsSource = s_instance.LvFriends.ItemsSource as List<FriendProfile>;
         var item = itemsSource.Where(x => x.Id == id);
-        _instance.LvFriends.SelectedItem = item;
+        s_instance.LvFriends.SelectedItem = item;
 
         HideOverlay();
         NavigateTimeline(id);
     }
 
-    public static TimelinePage GetTimelinePage() => _instance.FrContent.Content as TimelinePage;
+    public static TimelinePage GetTimelinePage() => s_instance.FrContent.Content as TimelinePage;
 
     private void FriendPointerEntered(object sender, PointerRoutedEventArgs e) => Utility.ChangeCursor(true);
 
@@ -439,9 +429,11 @@ public sealed partial class MainPage : Page
         if (dialogResult == ContentDialogResult.Primary) Environment.Exit(0);
     }
 
-    private void OnSettingsButtonClicked(object sender, RoutedEventArgs e)
+    private void OnMoreButtonClicked(object sender, RoutedEventArgs e)
     {
-        //GC.Collect(GC.MaxGeneration);
-        //GC.WaitForPendingFinalizers();
+        GC.Collect(GC.MaxGeneration);
+        GC.WaitForPendingFinalizers();
     }
+
+    private void OnRestartButtonClicked(object sender, RoutedEventArgs e) => MainWindow.Restart();
 }

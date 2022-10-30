@@ -41,7 +41,7 @@ public sealed partial class TimelinePage : Page
 
     private async Task LoadId(string id)
     {
-        MainPage.SelectFriend(id);
+        if(!string.IsNullOrEmpty(id)) MainPage.SelectFriend(id);
 
         Id = id;
         _instance = this;
@@ -82,7 +82,7 @@ public sealed partial class TimelinePage : Page
             Utility.DisposeAllMedias();
         }
 
-        if (Id == null)
+        if (string.IsNullOrEmpty(Id))
         {
             var data = await ApiHandler.GetFeed(_lastFeed);
             foreach (var feed in data.feeds)
