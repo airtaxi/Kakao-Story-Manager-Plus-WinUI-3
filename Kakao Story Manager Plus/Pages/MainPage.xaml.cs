@@ -209,7 +209,7 @@ public sealed partial class MainPage : Page
     public static void NavigateTimeline(string args = null)
     {
         LastArgs = args;
-        Utility.DisposeAllMedias();
+        //Utility.DisposeAllMedias();
         if (args != null) s_instance.FrContent.Navigate(typeof(TimelinePage), args);
         else s_instance.FrContent.Navigate(typeof(TimelinePage));
     }
@@ -305,7 +305,7 @@ public sealed partial class MainPage : Page
             friendProfiles.Add(friendProfile);
         }
         LvFriends.ItemsSource = friendProfiles;
-        Me = await ApiHandler.GetProfileData();
+        Me ??= await ApiHandler.GetProfileData();
         TbName.Text = Me.display_name;
         var profileUrl = Me.GetValidUserProfileUrl();
         if (!string.IsNullOrEmpty(profileUrl)) Utility.SetImageUrlSource(PpMyProfile, profileUrl, false);

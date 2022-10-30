@@ -16,13 +16,18 @@ namespace KSMP.Pages;
 public sealed partial class TimelinePage : Page
 {
     private const int TimelineControlWidth = 600;
+
+    private static TimelinePage s_instance;
+
     public string Id = null;
-    private static TimelinePage _instance;
     public bool IsMyTimeline => Id == MainPage.Me.id;
+    private string _lastFeedId = null;
+    public static string LastFeedId = null;
 
     public TimelinePage()
     {
         InitializeComponent();
+        LastFeedId = null;
     }
 
     protected override async void OnNavigatedTo(NavigationEventArgs e)
@@ -44,17 +49,16 @@ public sealed partial class TimelinePage : Page
         if(!string.IsNullOrEmpty(id)) MainPage.SelectFriend(id);
 
         Id = id;
-        _instance = this;
-        await Refresh();
+        s_instance = this;
+        await Refresh(App.RecordedFirstFeedId);
+        App.RecordedFirstFeedId = null;
         Border border = VisualTreeHelper.GetChild(LvContent, 0) as Border;
         if (border == null) return;
         ScrollViewer scrollViewer = VisualTreeHelper.GetChild(border, 0) as ScrollViewer;
         scrollViewer.ViewChanged += OnScrollViewerViewChanged;
     }
 
-    public static void HidePostFromTimeline(TimelineControl control) => _instance.LvContent.Items.Remove(control);
-
-    private string _lastFeed = null;
+    public static void HidePostFromTimeline(TimelineControl control) => s_instance.LvContent.Items.Remove(control);
 
     public void RemovePost(string postId)
     {
@@ -67,24 +71,24 @@ public sealed partial class TimelinePage : Page
 
     public async Task Renew()
     {
-        _lastFeed = null;
+        _lastFeedId = null;
         await Refresh();
     }
 
-    public static async Task Refresh() => await _instance.Refresh();
+    public static async Task Refresh() => await s_instance.Refresh();
     private async Task Refresh(string from = null)
     {
         PrLoading.Visibility = Visibility.Visible;
         if (from == null)
         {
-            foreach (object item in LvContent.Items) (item as TimelineControl)?.DisposeMedias();
             LvContent.Items.Clear();
-            Utility.DisposeAllMedias();
+            //foreach (object item in LvContent.Items) (item as TimelineControl)?.DisposeMedias();
+            //Utility.DisposeAllMedias();
         }
 
         if (string.IsNullOrEmpty(Id))
         {
-            var data = await ApiHandler.GetFeed(_lastFeed);
+            var data = await ApiHandler.GetFeed(from);
             foreach (var feed in data.feeds)
             {
                 if (IsValidFeed(feed))
@@ -93,8 +97,9 @@ public sealed partial class TimelinePage : Page
                     control.Width = TimelineControlWidth;
                     LvContent.Items.Add(control);
                 }
-                _lastFeed = feed.id;
             }
+            LastFeedId = _lastFeedId;
+            _lastFeedId = data.feeds.LastOrDefault()?.id;
         }
         else
         {
@@ -109,7 +114,7 @@ public sealed partial class TimelinePage : Page
                 LvContent.Items.Add(profileFrame);
             }
 
-            var data = await ApiHandler.GetProfileFeed(Id, _lastFeed);
+            var data = await ApiHandler.GetProfileFeed(Id, from);
             foreach (var feed in data.activities)
             {
                 if (IsValidFeed(feed))
@@ -119,8 +124,9 @@ public sealed partial class TimelinePage : Page
                     LvContent.Items.Add(control);
                 }
             }
-            if (data.activities.Count > 15) _lastFeed = data.activities.LastOrDefault().id;
-            else _lastFeed = null;
+            LastFeedId = _lastFeedId;
+            if (data.activities.Count > 15) _lastFeedId = data.activities.LastOrDefault().id;
+            else _lastFeedId = null;
         }
         ValidateTimeLineControlsSize(GdMain.ActualWidth);
         PrLoading.Visibility = Visibility.Collapsed;
@@ -131,7 +137,7 @@ public sealed partial class TimelinePage : Page
     private bool _isRefreshing = false;
     private async void OnScrollViewerViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
     {
-        if (_lastFeed == null) return;
+        if (_lastFeedId == null) return;
         if (_isRefreshing) return;
 
         var scrollViewer = sender as ScrollViewer;
@@ -142,7 +148,7 @@ public sealed partial class TimelinePage : Page
         {
             _isRefreshing = true;
             LvContent.Items.Clear();
-            await Refresh(_lastFeed);
+            await Refresh(_lastFeedId);
             _isRefreshing = false;
         }
     }

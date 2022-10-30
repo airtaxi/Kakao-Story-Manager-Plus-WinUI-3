@@ -1,4 +1,5 @@
 ﻿using H.NotifyIcon;
+using KSMP.Controls;
 using KSMP.Extension;
 using KSMP.Pages;
 using Microsoft.UI.Composition.Interactions;
@@ -16,6 +17,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Net;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Windows.UI.WebUI;
 using static KSMP.ClassManager;
@@ -31,14 +33,23 @@ public sealed partial class MainWindow : Microsoft.UI.Xaml.Window
     private bool _shouldClose { get; set; } = false;
     private string _lastArgs { get; set; } = null;
 
-    public MainWindow(string args = null)
+    public MainWindow(RestartFlag flag = null)
     {
         Instance = this;
         InitializeComponent();
         SetupAppWindow();
         SetupTrayIcon();
-        if (args == null) FrMain.Navigate(typeof(LoginPage));
-        else FrMain.Navigate(typeof(MainPage), args);
+        if (flag == null) FrMain.Navigate(typeof(LoginPage));
+        else
+        {
+            var wasMaximized = flag.WasMaximized;
+            if (wasMaximized) (this.GetAppWindow().Presenter as OverlappedPresenter).Maximize();
+            FrMain.Navigate(typeof(MainPage), flag.LastArgs);
+
+            var postId = flag.PostId;
+            if (!string.IsNullOrEmpty(postId)) ShowPost(postId);
+        }
+
         OnReloginRequired += OnReloginRequiredHandler;
         Closed += (s, e) =>
         {
@@ -46,6 +57,13 @@ public sealed partial class MainWindow : Microsoft.UI.Xaml.Window
             LoginManager.SeleniumDriver?.Dispose();
             LoginManager.SeleniumDriver = null;
         };
+    }
+
+    private static async void ShowPost(string postId)
+    {
+        MainPage.Me ??= await GetProfileData();
+        var post = await GetPost(postId);
+        MainPage.ShowOverlay(new TimelineControl(post, false, true));
     }
 
     public void SetClosable(bool shouldClose = true) => _shouldClose = shouldClose;
@@ -161,11 +179,20 @@ public sealed partial class MainWindow : Microsoft.UI.Xaml.Window
 
     public static async void Restart()
     {
+        var appWindow = Instance.GetAppWindow();
+        var presenter = appWindow.Presenter as OverlappedPresenter;
+        var isMaximized = presenter.State == OverlappedPresenterState.Maximized;
+        var overlay = MainPage.GetOverlayTimeLineControl();
+        var postId = overlay?.PostId;
+
         var restartFlagPath = Path.Combine(App.BinaryDirectory, "restart");
         var RestartFlag = new RestartFlag
         {
             Cookies = Cookies,
-            LastArgs = MainPage.LastArgs
+            LastArgs = MainPage.LastArgs,
+            WasMaximized = isMaximized,
+            PostId = postId,
+            LastFeedId = TimelinePage.LastFeedId
         };
         var restartFlagString = JsonConvert.SerializeObject(RestartFlag);
         File.WriteAllText(restartFlagPath, restartFlagString);

@@ -11,6 +11,9 @@ namespace KSMP
         {
             public List<Cookie> Cookies { get; set; }
             public string LastArgs { get; set; }
+            public string PostId { get; set; }
+            public string LastFeedId { get; set; }
+            public bool WasMaximized { get; set; }
         }
 
         public enum PostWritingPermission

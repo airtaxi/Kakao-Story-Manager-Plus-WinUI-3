@@ -487,8 +487,7 @@ public sealed partial class TimelineControl : UserControl
             return;
         }
 
-        if (!_isOverlay)
-            MainPage.ShowOverlay(new TimelineControl(_post, false, true));
+        if (!_isOverlay) MainPage.ShowOverlay(new TimelineControl(_post, false, true));
     }
 
     private void PointerEnteredShowHand(object sender, PointerRoutedEventArgs e) => Utility.ChangeCursor(true);

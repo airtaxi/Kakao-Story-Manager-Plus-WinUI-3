@@ -21,8 +21,9 @@ public partial class App : Application
 {
     public static DispatcherQueue DispatcherQueue { get; private set; }
     public static string BinaryDirectory = null;
+    public static string RecordedFirstFeedId = null;
     private static Window s_window;
-    private static string s_restartArgs = null;
+    private static RestartFlag s_restartFlag = null;
 
     public App()
     {
@@ -39,6 +40,7 @@ public partial class App : Application
             {
                 var cookieDataString = File.ReadAllText(restartFlagPath);
                 var restartFlag = JsonConvert.DeserializeObject<RestartFlag>(cookieDataString);
+                RecordedFirstFeedId = restartFlag.LastFeedId;
 
                 var cookies = new List<Cookie>();
                 var cookieContainer = new CookieContainer();
@@ -57,7 +59,7 @@ public partial class App : Application
                 }
 
                 StoryApi.ApiHandler.Init(cookieContainer, cookies, null);
-                s_restartArgs = restartFlag.LastArgs ?? string.Empty;
+                s_restartFlag = restartFlag;
                 LoginPage.IsLoggedIn = true;
             }
             if (checkProcess && CheckForExistingProcess()) ExitProgramByExistingProcess();
@@ -186,7 +188,7 @@ public partial class App : Application
     {
         if (s_window == null)
         {
-            s_window = new MainWindow(s_restartArgs);
+            s_window = new MainWindow(s_restartFlag);
             s_window.Activate();
             WindowHelper.ShowWindow(s_window);
         }
