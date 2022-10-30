@@ -58,6 +58,7 @@ public partial class App : Application
 
                 StoryApi.ApiHandler.Init(cookieContainer, cookies, null);
                 s_restartArgs = restartFlag.LastArgs ?? string.Empty;
+                LoginPage.IsLoggedIn = true;
             }
             if (checkProcess && CheckForExistingProcess()) ExitProgramByExistingProcess();
             else InitializeComponent();
