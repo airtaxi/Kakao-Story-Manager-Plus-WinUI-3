@@ -9,16 +9,17 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
 using KSMP.Extension;
-using OpenQA.Selenium.DevTools.V104.Page;
 using Windows.Media.Core;
-using Microsoft.UI.Input;
 using Microsoft.UI.Xaml.Input;
-using static StoryApi.ApiHandler.DataType.VideoData;
 using Windows.Storage;
 using System.IO;
 using RestSharp;
 using KSMP.Pages;
 using KSMP.Utils;
+using Microsoft.UI.Windowing;
+using Newtonsoft.Json;
+using System.Diagnostics;
+using StoryApi;
 
 namespace KSMP
 {
@@ -225,6 +226,37 @@ namespace KSMP
             writeStream.Close();
 
             return filePath;
+        }
+
+
+        public static async void RestartProgram()
+        {
+            var appWindow = MainWindow.Instance.GetAppWindow();
+            var presenter = appWindow.Presenter as OverlappedPresenter;
+            var isMaximized = presenter.State == OverlappedPresenterState.Maximized;
+            var overlay = MainPage.GetOverlayTimeLineControl();
+            var postId = overlay?.PostId;
+
+            var restartFlagPath = Path.Combine(App.BinaryDirectory, "restart");
+            var RestartFlag = new ClassManager.RestartFlag
+            {
+                Cookies = ApiHandler.Cookies,
+                LastArgs = MainPage.LastArgs,
+                WasMaximized = isMaximized,
+                PostId = postId,
+                LastFeedId = TimelinePage.LastFeedId
+            };
+            var restartFlagString = JsonConvert.SerializeObject(RestartFlag);
+            File.WriteAllText(restartFlagPath, restartFlagString);
+
+            var binaryPath = System.Reflection.Assembly.GetExecutingAssembly().Location;
+            binaryPath = binaryPath[..^4];
+            binaryPath += ".exe";
+            Process.Start(binaryPath);
+
+            MainWindow.Instance.SetClosable();
+            await Task.Delay(100);
+            MainWindow.Instance.Close();
         }
     }
 }

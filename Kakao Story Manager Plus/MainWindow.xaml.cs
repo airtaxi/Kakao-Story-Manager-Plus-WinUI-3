@@ -2,24 +2,15 @@
 using KSMP.Controls;
 using KSMP.Extension;
 using KSMP.Pages;
-using Microsoft.UI.Composition.Interactions;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Navigation;
-using Newtonsoft.Json;
-using OpenQA.Selenium.DevTools.V104.DOM;
-using StoryApi;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Drawing;
 using System.IO;
-using System.Net;
-using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
-using Windows.UI.WebUI;
 using static KSMP.ClassManager;
 using static StoryApi.ApiHandler;
 
@@ -175,35 +166,5 @@ public sealed partial class MainWindow : Microsoft.UI.Xaml.Window
         else if (isControlDown && e.Key == Windows.System.VirtualKey.W)
             Utility.DisposeAllMedias();
         else if (isControlDown && e.Key == Windows.System.VirtualKey.Q) Restart();
-    }
-
-    public static async void Restart()
-    {
-        var appWindow = Instance.GetAppWindow();
-        var presenter = appWindow.Presenter as OverlappedPresenter;
-        var isMaximized = presenter.State == OverlappedPresenterState.Maximized;
-        var overlay = MainPage.GetOverlayTimeLineControl();
-        var postId = overlay?.PostId;
-
-        var restartFlagPath = Path.Combine(App.BinaryDirectory, "restart");
-        var RestartFlag = new RestartFlag
-        {
-            Cookies = Cookies,
-            LastArgs = MainPage.LastArgs,
-            WasMaximized = isMaximized,
-            PostId = postId,
-            LastFeedId = TimelinePage.LastFeedId
-        };
-        var restartFlagString = JsonConvert.SerializeObject(RestartFlag);
-        File.WriteAllText(restartFlagPath, restartFlagString);
-
-        var binaryPath = System.Reflection.Assembly.GetExecutingAssembly().Location;
-        binaryPath = binaryPath[..^4];
-        binaryPath += ".exe";
-        Process.Start(binaryPath);
-
-        Instance.SetClosable();
-        await Task.Delay(100);
-        Instance.Close();
     }
 }

@@ -3,14 +3,9 @@ using Microsoft.UI.Text;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Documents;
-using RestSharp;
 using StoryApi;
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Threading.Tasks;
-using Windows.Storage;
-using Windows.Storage.Streams;
 using static StoryApi.ApiHandler.DataType;
 
 namespace KSMP.Utils

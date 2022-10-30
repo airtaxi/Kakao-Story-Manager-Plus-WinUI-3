@@ -11,13 +11,7 @@ using System.Diagnostics;
 using System.IO;
 using Version = System.Version;
 using System.Drawing.Text;
-using OpenQA.Selenium.Edge;
-using WebDriverManager;
-using WebDriverManager.DriverConfigs.Impl;
 using Microsoft.Win32;
-using OpenQA.Selenium;
-using OpenQA.Selenium.Support.UI;
-using System.Collections.Generic;
 
 namespace KSMP.Pages;
 

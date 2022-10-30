@@ -6,9 +6,7 @@ using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using System;
 using KSMP.Controls;
-using RestSharp;
 using System.Linq;
-using Windows.Security.Authentication.OnlineId;
 using System.Collections.Generic;
 
 namespace KSMP.Pages;

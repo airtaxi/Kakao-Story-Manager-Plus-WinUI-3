@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Security.Cryptography;
 using System.Threading.Tasks;
 using System.Timers;
 using KSMP.Controls;
@@ -16,7 +14,6 @@ using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Navigation;
 using StoryApi;
 using Windows.ApplicationModel.DataTransfer;
-using Windows.Media.Core;
 using static KSMP.ClassManager;
 using static StoryApi.ApiHandler.DataType.FriendData;
 

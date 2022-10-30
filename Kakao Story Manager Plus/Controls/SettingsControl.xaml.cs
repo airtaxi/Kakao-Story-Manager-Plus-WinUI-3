@@ -2,7 +2,6 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.Win32;
-using OpenQA.Selenium.DevTools.V104.HeapProfiler;
 using System;
 using static KSMP.ClassManager;
 
@@ -47,8 +46,8 @@ namespace KSMP.Controls
             var toggleSwitch = sender as ToggleSwitch;
             var isOn = toggleSwitch.IsOn;
             Utils.Configuration.SetValue("UseGifProfileImage", isOn);
-            var result = await this.ShowMessageDialogAsync("옵션을 완전히 적용하기 위해서는 프로그램 재시작이 필요합니다.\n확인을 누르면 프로그램을 종료합니다.", "안내", true);
-            if (result == ContentDialogResult.Primary) Environment.Exit(0);
+            var result = await this.ShowMessageDialogAsync("옵션을 완전히 적용하기 위해서는 프로그램 재시작이 필요합니다.\n확인을 누르면 프로그램을 재시작합니다.", "안내", true);
+            if (result == ContentDialogResult.Primary) MainWindow.Restart();
         }
 
         private void OnRefreshAfterWritePostToggleSwitchToggled(object sender, RoutedEventArgs e)
