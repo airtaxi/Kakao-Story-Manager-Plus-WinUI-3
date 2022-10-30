@@ -22,6 +22,7 @@ public partial class App : Application
     public static DispatcherQueue DispatcherQueue { get; private set; }
     public static string BinaryDirectory = null;
     public static string RecordedFirstFeedId = null;
+
     private static Window s_window;
     private static RestartFlag s_restartFlag = null;
 

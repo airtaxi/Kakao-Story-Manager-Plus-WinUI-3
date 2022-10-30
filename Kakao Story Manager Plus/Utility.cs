@@ -244,7 +244,7 @@ namespace KSMP
                 LastArgs = MainPage.LastArgs,
                 WasMaximized = isMaximized,
                 PostId = postId,
-                LastFeedId = TimelinePage.LastFeedId
+                LastFeedId = TimelinePage.LastFeedId,
             };
             var restartFlagString = JsonConvert.SerializeObject(RestartFlag);
             File.WriteAllText(restartFlagPath, restartFlagString);
@@ -257,6 +257,13 @@ namespace KSMP
             MainWindow.Instance.SetClosable();
             await Task.Delay(100);
             MainWindow.Instance.Close();
+        }
+
+        public static ScrollViewer GetScrollViewer(ListView listView)
+        {
+            Border border = VisualTreeHelper.GetChild(listView, 0) as Border;
+            if (border == null) return null;
+            return VisualTreeHelper.GetChild(border, 0) as ScrollViewer;
         }
     }
 }

@@ -433,4 +433,5 @@ public sealed partial class MainPage : Page
     }
 
     private void OnRestartButtonClicked(object sender, RoutedEventArgs e) => Utility.RestartProgram();
+    private void OnImageUnloadButtonClicked(object sender, RoutedEventArgs e) => Utility.DisposeAllMedias();
 }

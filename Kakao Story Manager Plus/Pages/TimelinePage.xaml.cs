@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using System;
 using KSMP.Controls;
@@ -50,9 +49,7 @@ public sealed partial class TimelinePage : Page
         s_instance = this;
         await Refresh(App.RecordedFirstFeedId);
         App.RecordedFirstFeedId = null;
-        Border border = VisualTreeHelper.GetChild(LvContent, 0) as Border;
-        if (border == null) return;
-        ScrollViewer scrollViewer = VisualTreeHelper.GetChild(border, 0) as ScrollViewer;
+        var scrollViewer = Utility.GetScrollViewer(LvContent);
         scrollViewer.ViewChanged += OnScrollViewerViewChanged;
     }
 
@@ -126,6 +123,8 @@ public sealed partial class TimelinePage : Page
             if (data.activities.Count > 15) _lastFeedId = data.activities.LastOrDefault().id;
             else _lastFeedId = null;
         }
+
+
         ValidateTimeLineControlsSize(GdMain.ActualWidth);
         PrLoading.Visibility = Visibility.Collapsed;
     }

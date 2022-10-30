@@ -56,6 +56,11 @@
                                         <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xf3b1;" FontSize="17" Foreground="#717171"/>
                                     </Viewbox>
                                 </Button>
+                                <Button Width="40" Height="40" CornerRadius="10" ToolTipService.ToolTip="이미지 언로드" Margin="10,0,0,0" Click="OnImageUnloadButtonClicked">
+                                    <Viewbox>
+                                        <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe75c;" FontSize="17" Foreground="#717171"/>
+                                    </Viewbox>
+                                </Button>
                                 <Button Width="40" Height="40" CornerRadius="10" ToolTipService.ToolTip="메모리 정리" Margin="10,0,0,0" Click="OnRestartButtonClicked">
                                     <Viewbox>
                                         <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe964;" FontSize="17" Foreground="#717171"/>
