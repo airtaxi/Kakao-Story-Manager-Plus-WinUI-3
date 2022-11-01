@@ -17,9 +17,9 @@
 		<UseWindowsForms>False</UseWindowsForms>
 		<Nullable>disable</Nullable>
 		<PlatformTarget>AnyCPU</PlatformTarget>
-		<FileVersion>0.1.0.176</FileVersion>
-		<AssemblyVersion>0.1.0.176</AssemblyVersion>
-		<Version>0.1.0.176</Version>
+		<FileVersion>0.1.0.177</FileVersion>
+		<AssemblyVersion>0.1.0.177</AssemblyVersion>
+		<Version>0.1.0.177</Version>
 	</PropertyGroup>
 	<ItemGroup>
 	  <Content Remove="Assets\Error.png" />
