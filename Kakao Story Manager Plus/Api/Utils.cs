@@ -29,7 +29,7 @@ namespace StoryApi
                             NullValueHandling = NullValueHandling.Ignore
                         }) + "}!}");
                     }
-                    if (data.type.Equals("emoticon"))
+                    else if (data.type.Equals("emoticon"))
                     {
                         sb.Append("{!{" + JsonConvert.SerializeObject(data, Formatting.None, new JsonSerializerSettings
                         {
