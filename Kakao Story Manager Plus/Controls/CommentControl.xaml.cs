@@ -54,7 +54,7 @@ public sealed partial class CommentControl : UserControl
             TbLike.Text = comment.like_count.ToString();
         }
         Utils.Post.SetTextContent(comment.decorators, RtbContent);
-        var commentMedia = comment.decorators.FirstOrDefault(x => x.media?.origin_url != null);
+        var commentMedia = comment.decorators.FirstOrDefault(x => x.media?.thumbnail_url != null);
         if (!string.IsNullOrEmpty(commentMedia?.media?.origin_url))
         {
             ImgMain.Visibility = Visibility.Visible;
