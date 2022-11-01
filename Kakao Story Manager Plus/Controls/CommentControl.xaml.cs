@@ -58,7 +58,7 @@ public sealed partial class CommentControl : UserControl
         if (!string.IsNullOrEmpty(commentMedia?.media?.origin_url))
         {
             ImgMain.Visibility = Visibility.Visible;
-            Utility.SetImageUrlSource(ImgMain, commentMedia.media.origin_url);
+            Utility.SetImageUrlSource(ImgMain, commentMedia.media.thumbnail_url);
 
             ImgMain.Tapped += (s, e) =>
             {
