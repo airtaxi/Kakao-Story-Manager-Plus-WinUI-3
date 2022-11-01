@@ -94,7 +94,7 @@ public sealed partial class TimelineControl : UserControl
         _ = RefreshContent();
 
         Utility.SetImageUrlSource(PpUser, post.actor?.GetValidUserProfileUrl());
-        FvMedia.ItemsSource = Utility.GenerateMedias(post?.media?.Select(x => x.origin_url ?? x.url_hq));
+        FvMedia.ItemsSource = Utility.GenerateMedias(post?.media);
     }
 
     public void DisposeMedias()

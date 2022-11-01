@@ -22,6 +22,7 @@ using System.Diagnostics;
 using StoryApi;
 using System.Runtime.CompilerServices;
 using ImageMagick;
+using static StoryApi.ApiHandler.DataType.CommentData;
 
 namespace KSMP
 {
@@ -49,13 +50,14 @@ namespace KSMP
             LoadedVideos.Clear();
         }
 
-        public static List<FrameworkElement> GenerateMedias(IEnumerable<string> urls)
+        public static List<FrameworkElement> GenerateMedias(IEnumerable<Medium> mediums)
         {
-            if (urls == null) return null;
+            if (mediums == null) return null;
 
             var medias = new List<FrameworkElement>();
-            foreach (var url in urls)
+            foreach (var medium in mediums)
             {
+                var url = medium?.origin_url ?? medium?.url_hq;
                 if (url == null) continue;
                 else if (url.Contains(".mp4"))
                 {
@@ -83,9 +85,9 @@ namespace KSMP
                 else
                 {
                     var image = new Image();
-
-                    SetImageUrlSource(image, url);
-                    image.Tag = url;
+                    var finalUrl = medium.thumbnail_url3 ?? medium.origin_url;
+                    SetImageUrlSource(image, finalUrl);
+                    image.Tag = medium.origin_url;
                     image.Stretch = Stretch.Uniform;
 
                     LoadedImages.Add(image);
