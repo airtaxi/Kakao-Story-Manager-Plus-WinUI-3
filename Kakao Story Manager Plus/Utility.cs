@@ -20,6 +20,8 @@ using Microsoft.UI.Windowing;
 using Newtonsoft.Json;
 using System.Diagnostics;
 using StoryApi;
+using System.Runtime.CompilerServices;
+using ImageMagick;
 
 namespace KSMP
 {
@@ -50,10 +52,12 @@ namespace KSMP
         public static List<FrameworkElement> GenerateMedias(IEnumerable<string> urls)
         {
             if (urls == null) return null;
+
             var medias = new List<FrameworkElement>();
-            foreach(var url in urls)
+            foreach (var url in urls)
             {
-                if (url.Contains(".mp4"))
+                if (url == null) continue;
+                else if (url.Contains(".mp4"))
                 {
                     var video = new MediaPlayerElement();
 
@@ -93,7 +97,10 @@ namespace KSMP
 
         public static async Task SetEmoticonImage(string url, Image image)
         {
+            if (url == null) return;
+
             LoadedImages.Add(image);
+
             var path = Path.GetTempFileName();
 
             var client = new RestClient(url);
@@ -110,12 +117,14 @@ namespace KSMP
             }
             catch (Exception) { }
             finally { File.Delete(path); }
-
         }
 
         public static async Task SetAnimatedEmoticonImage(string url, Image image)
         {
+            if (url == null) return;
+
             LoadedImages.Add(image);
+
             var path = Path.GetTempFileName();
 
             var client = new RestClient(url);
@@ -132,7 +141,6 @@ namespace KSMP
             }
             catch (Exception) { }
             finally { File.Delete(path); }
-
         }
 
         private static void OnVideoPointerEntered(object sender, PointerRoutedEventArgs e) => (sender as MediaPlayerElement).TransportControls.Show();
@@ -145,34 +153,65 @@ namespace KSMP
             {
                 DecodePixelWidth = width,
                 DecodePixelHeight = height,
-                CreateOptions = BitmapCreateOptions.None
             };
             await bitmap.SetSourceAsync(fileStream);
             return bitmap;
         }
 
-        public static BitmapImage SetImageUrlSource(PersonPicture personPicture, string url, bool shouldDispose = true)
+        public static async void SetImageUrlSource(PersonPicture image, string url, bool shouldDispose = true)
         {
-            if (shouldDispose) LoadedPersonPictures.Add(personPicture);
-            if (string.IsNullOrEmpty(url)) url = "ms-appx:///Assets/Error.png";
-            var imageUrl = new Uri(url);
-            var bitmap = new BitmapImage();
-            personPicture.ProfilePicture = bitmap;
-            bitmap.UriSource = imageUrl;
-            bitmap.CreateOptions = BitmapCreateOptions.IgnoreImageCache;
-            return bitmap;
+            if (shouldDispose) LoadedPersonPictures.Add(image);
+            await LoadImage(image, url);
         }
 
-        public static BitmapImage SetImageUrlSource(Image image, string url)
+        public static async void SetImageUrlSource(Image image, string url)
         {
             LoadedImages.Add(image);
-            if (string.IsNullOrEmpty(url)) url = "ms-appx:///Assets/Error.png";
-            var imageUrl = new Uri(url);
-            var bitmap = new BitmapImage();
-            image.Source = bitmap;
-            bitmap.UriSource = imageUrl;
-            bitmap.CreateOptions = BitmapCreateOptions.IgnoreImageCache;
-            return bitmap;
+            await LoadImage(image, url);
+        }
+
+        private static async Task LoadImage(Image image, string url)
+        {
+            if (url == null) return;
+
+            var client = new RestClient(url);
+            var bytes = await client.DownloadDataAsync(new());
+            var path = Path.GetTempFileName();
+            try
+            {
+                await File.WriteAllBytesAsync(path, bytes);
+
+                var file = await StorageFile.GetFileFromPathAsync(path);
+                var stream = await file.OpenAsync(FileAccessMode.Read);
+                var bitmap = new BitmapImage();
+                bitmap.CreateOptions = BitmapCreateOptions.IgnoreImageCache;
+                image.Source = bitmap;
+                await bitmap.SetSourceAsync(stream);
+                stream.Dispose();
+            }
+            finally { File.Delete(path); }
+        }
+
+        private static async Task LoadImage(PersonPicture image, string url)
+        {
+            if (url == null) return;
+
+            var client = new RestClient(url);
+            var bytes = await client.DownloadDataAsync(new());
+            var path = Path.GetTempFileName();
+            try
+            {
+                await File.WriteAllBytesAsync(path, bytes);
+
+                var file = await StorageFile.GetFileFromPathAsync(path);
+                var stream = await file.OpenAsync(FileAccessMode.Read);
+                var bitmap = new BitmapImage();
+                bitmap.CreateOptions = BitmapCreateOptions.IgnoreImageCache;
+                image.ProfilePicture = bitmap;
+                await bitmap.SetSourceAsync(stream);
+                stream.Dispose();
+            }
+            finally { File.Delete(path); }
         }
 
         public static async Task SetTextClipboard(UIElement element, string text, string message = "복사되었습니다.")

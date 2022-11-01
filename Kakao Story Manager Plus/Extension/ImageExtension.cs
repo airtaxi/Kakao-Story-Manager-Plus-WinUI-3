@@ -5,19 +5,7 @@ namespace KSMP.Extension
 {
     public static class ImageExtension
     {
-        public static void DisposeImage(this Image image)
-        {
-            var bitmapSource = image.Source as BitmapImage;
-            if (bitmapSource == null) return;
-            bitmapSource.DisposeSource();
-            image.Source = null;
-        }
-        public static void DisposeImage(this PersonPicture image)
-        {
-            var bitmapSource = image.ProfilePicture as BitmapImage;
-            if (bitmapSource == null) return;
-            bitmapSource.DisposeSource();
-            image.ProfilePicture = null;
-        }
+        public static void DisposeImage(this Image image) => image.Source = null;
+        public static void DisposeImage(this PersonPicture image) => image.ProfilePicture = null;
     }
 }
