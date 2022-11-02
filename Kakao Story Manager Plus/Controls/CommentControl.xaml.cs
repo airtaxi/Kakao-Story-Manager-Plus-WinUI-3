@@ -40,7 +40,7 @@ public sealed partial class CommentControl : UserControl
         RtbContent.Blocks.Clear();
         TbName.Text = comment.writer.display_name;
         TbTime.Text = StoryApi.Utils.GetTimeString(comment.created_at) + (comment.updated_at.Year > 1 ? " (수정됨)" : "");
-        Utility.SetImageUrlSource(PpUser, comment.writer.GetValidUserProfileUrl());
+        Utility.SetPersonPictureUrlSource(PpUser, comment.writer.GetValidUserProfileUrl());
         Utility.LoadedPersonPictures.Add(PpUser);
 
         if (comment.liked) MfiLike.Text = "좋아요 취소";

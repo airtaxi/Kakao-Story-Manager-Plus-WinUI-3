@@ -49,7 +49,7 @@ public sealed partial class TimelinePage : Page
         s_instance = this;
         await Refresh(App.RecordedFirstFeedId);
         App.RecordedFirstFeedId = null;
-        var scrollViewer = Utility.GetScrollViewer(LvContent);
+        var scrollViewer = Utility.GetScrollViewerFromListView(LvContent);
         scrollViewer.ViewChanged += OnScrollViewerViewChanged;
     }
 

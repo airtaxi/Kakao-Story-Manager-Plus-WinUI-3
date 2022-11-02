@@ -3,13 +3,12 @@
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 
-namespace KSMP.Controls.Emotions
+namespace KSMP.Controls.Emotions;
+
+public sealed partial class LikeControl : UserControl
 {
-    public sealed partial class LikeControl : UserControl
+    public LikeControl()
     {
-        public LikeControl()
-        {
-            this.InitializeComponent();
-        }
+        this.InitializeComponent();
     }
 }

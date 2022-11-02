@@ -30,9 +30,9 @@ public sealed partial class LinkControl : UserControl
         ToolTipService.SetToolTip(TbLinkUrl, data.url);
     }
 
-    private void OnPointerEntered(object sender, PointerRoutedEventArgs e) => Utility.ChangeCursor(true);
+    private void OnPointerEntered(object sender, PointerRoutedEventArgs e) => Utility.ChangeSystemMouseCursor(true);
 
-    private void OnPointerExited(object sender, PointerRoutedEventArgs e) => Utility.ChangeCursor(false);
+    private void OnPointerExited(object sender, PointerRoutedEventArgs e) => Utility.ChangeSystemMouseCursor(false);
 
     private async void OnTapped(object sender, TappedRoutedEventArgs e)
     {

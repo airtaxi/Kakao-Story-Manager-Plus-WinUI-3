@@ -93,7 +93,7 @@ public sealed partial class TimelineControl : UserControl
         FrComment.Content = inputControl;
         _ = RefreshContent();
 
-        Utility.SetImageUrlSource(PpUser, post.actor?.GetValidUserProfileUrl());
+        Utility.SetPersonPictureUrlSource(PpUser, post.actor?.GetValidUserProfileUrl());
         FvMedia.ItemsSource = Utility.GenerateMedias(post?.media);
     }
 
@@ -490,9 +490,9 @@ public sealed partial class TimelineControl : UserControl
         if (!_isOverlay) MainPage.ShowOverlay(new TimelineControl(_post, false, true));
     }
 
-    private void PointerEnteredShowHand(object sender, PointerRoutedEventArgs e) => Utility.ChangeCursor(true);
+    private void PointerEnteredShowHand(object sender, PointerRoutedEventArgs e) => Utility.ChangeSystemMouseCursor(true);
 
-    private void PointerExitedShowHand(object sender, PointerRoutedEventArgs e) => Utility.ChangeCursor(false);
+    private void PointerExitedShowHand(object sender, PointerRoutedEventArgs e) => Utility.ChangeSystemMouseCursor(false);
 
     private void CloseButtonClicked(object sender, TappedRoutedEventArgs e) => MainPage.HideOverlay();
 

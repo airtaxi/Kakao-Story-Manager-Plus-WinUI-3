@@ -23,13 +23,13 @@ public sealed partial class UserProfileControl : UserControl
     {
         if (!isFavorite)
         {
-            RtFavorite.Fill = Utility.GetColorFromHexa("#FF808080");
-            FaFavorite.Foreground = Utility.GetColorFromHexa("#FFD3D3D3");
+            RtFavorite.Fill = Utility.GetSolidColorBrushFromHexString("#FF808080");
+            FaFavorite.Foreground = Utility.GetSolidColorBrushFromHexString("#FFD3D3D3");
         }
         else
         {
-            RtFavorite.Fill = Utility.GetColorFromHexa("#FFD15F4E");
-            FaFavorite.Foreground = Utility.GetColorFromHexa("#FFD7D7D7");
+            RtFavorite.Fill = Utility.GetSolidColorBrushFromHexString("#FFD15F4E");
+            FaFavorite.Foreground = Utility.GetSolidColorBrushFromHexString("#FFD7D7D7");
         }
     }
 
@@ -46,7 +46,7 @@ public sealed partial class UserProfileControl : UserControl
         var user = await StoryApi.ApiHandler.GetProfileFeed(_id, null, true);
         var profile = user.profile;
 
-        Utility.SetImageUrlSource(PpProfilePicture, user.profile.GetValidUserProfileUrl());
+        Utility.SetPersonPictureUrlSource(PpProfilePicture, user.profile.GetValidUserProfileUrl());
         Utility.SetImageUrlSource(ImgProfileBackground, user.profile.bg_image_url);
 
         Utility.LoadedImages.Add(ImgProfileBackground);
@@ -99,9 +99,9 @@ public sealed partial class UserProfileControl : UserControl
 
     private async void OnFavoriteTapped(object sender, TappedRoutedEventArgs e) => await SetFavorite();
 
-    private void FavoritePointerEntered(object sender, PointerRoutedEventArgs e) => Utility.ChangeCursor(true);
+    private void FavoritePointerEntered(object sender, PointerRoutedEventArgs e) => Utility.ChangeSystemMouseCursor(true);
 
-    private void FavoritePointerExited(object sender, PointerRoutedEventArgs e) => Utility.ChangeCursor(false);
+    private void FavoritePointerExited(object sender, PointerRoutedEventArgs e) => Utility.ChangeSystemMouseCursor(false);
 
     private async void FriendButtonClicked(object sender, RoutedEventArgs e)
     {

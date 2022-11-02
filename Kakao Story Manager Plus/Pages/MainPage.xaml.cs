@@ -305,7 +305,7 @@ public sealed partial class MainPage : Page
         Me ??= await ApiHandler.GetProfileData();
         TbName.Text = Me.display_name;
         var profileUrl = Me.GetValidUserProfileUrl();
-        if (!string.IsNullOrEmpty(profileUrl)) Utility.SetImageUrlSource(PpMyProfile, profileUrl, false);
+        if (!string.IsNullOrEmpty(profileUrl)) Utility.SetPersonPictureUrlSource(PpMyProfile, profileUrl, false);
     }
 
     private void OnFriendListSelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -316,9 +316,9 @@ public sealed partial class MainPage : Page
         NavigateTimeline(data.Id);
     }
 
-    private void ProfilePointerEntered(object sender, PointerRoutedEventArgs e) => Utility.ChangeCursor(true);
+    private void ProfilePointerEntered(object sender, PointerRoutedEventArgs e) => Utility.ChangeSystemMouseCursor(true);
 
-    private void ProfilePointerExited(object sender, PointerRoutedEventArgs e) => Utility.ChangeCursor(false);
+    private void ProfilePointerExited(object sender, PointerRoutedEventArgs e) => Utility.ChangeSystemMouseCursor(false);
 
     private async void OnLogoutButtonClicked(object sender, RoutedEventArgs e)
     {
@@ -343,9 +343,9 @@ public sealed partial class MainPage : Page
 
     public static TimelinePage GetTimelinePage() => s_instance.FrContent.Content as TimelinePage;
 
-    private void FriendPointerEntered(object sender, PointerRoutedEventArgs e) => Utility.ChangeCursor(true);
+    private void FriendPointerEntered(object sender, PointerRoutedEventArgs e) => Utility.ChangeSystemMouseCursor(true);
 
-    private void FriendPointerExited(object sender, PointerRoutedEventArgs e) => Utility.ChangeCursor(false);
+    private void FriendPointerExited(object sender, PointerRoutedEventArgs e) => Utility.ChangeSystemMouseCursor(false);
 
     private void ProfileTapped(object sender, TappedRoutedEventArgs e) => NavigateTimeline(Me.id);
 
@@ -432,6 +432,6 @@ public sealed partial class MainPage : Page
         GC.WaitForPendingFinalizers();
     }
 
-    private void OnRestartButtonClicked(object sender, RoutedEventArgs e) => Utility.RestartProgram();
-    private void OnImageUnloadButtonClicked(object sender, RoutedEventArgs e) => Utility.DisposeAllMedias();
+    private void OnRestartButtonClicked(object sender, RoutedEventArgs e) => Utility.SaveCurrentStateAndRestartProgram();
+    private void OnImageUnloadButtonClicked(object sender, RoutedEventArgs e) => Utility.ManuallyDisposeAllMedias();
 }

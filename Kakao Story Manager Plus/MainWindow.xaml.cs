@@ -164,7 +164,7 @@ public sealed partial class MainWindow : Microsoft.UI.Xaml.Window
         else if (isControlDown && e.Key == Windows.System.VirtualKey.D)
             await (MainPage.GetOverlayTimeLineControl()?.DeletePost() ?? Task.CompletedTask);
         else if (isControlDown && e.Key == Windows.System.VirtualKey.W)
-            Utility.DisposeAllMedias();
-        else if (isControlDown && e.Key == Windows.System.VirtualKey.Q) Utility.RestartProgram();
+            Utility.ManuallyDisposeAllMedias();
+        else if (isControlDown && e.Key == Windows.System.VirtualKey.Q) Utility.SaveCurrentStateAndRestartProgram();
     }
 }

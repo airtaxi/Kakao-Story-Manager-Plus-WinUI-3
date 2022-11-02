@@ -55,9 +55,9 @@ public sealed partial class ImageViewerControl : UserControl
         await Utility.SetImageClipboardFromUrl(this, medium.origin_url);
     }
 
-    private void OnButtonPointerEntered(object sender, PointerRoutedEventArgs e) => Utility.ChangeCursor(true);
+    private void OnButtonPointerEntered(object sender, PointerRoutedEventArgs e) => Utility.ChangeSystemMouseCursor(true);
 
-    private void OnButtonPointerExited(object sender, PointerRoutedEventArgs e) => Utility.ChangeCursor(false);
+    private void OnButtonPointerExited(object sender, PointerRoutedEventArgs e) => Utility.ChangeSystemMouseCursor(false);
 
     private void CloseButtonTapped(object sender, TappedRoutedEventArgs e) => Pages.MainPage.HideOverlay();
     private async void DownloadButtonTapped(object sender, TappedRoutedEventArgs e)
