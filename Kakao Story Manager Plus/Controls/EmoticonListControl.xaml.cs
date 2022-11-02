@@ -78,7 +78,7 @@ public sealed partial class EmoticonListControl : UserControl
             };
             GvMain.Items.Add(image);
 
-            _ = Utility.SetEmoticonImage(image, url);
+            Utility.SetEmoticonImage(image, url);
             image.Tag = (data, index);
         }
         IsEnabled = true;

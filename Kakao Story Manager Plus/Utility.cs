@@ -81,7 +81,7 @@ public static class Utility
     private static Image GenerateImageFromUrl(Medium medium)
     {
         var image = new Image();
-        var finalUrl = medium.thumbnail_url ?? medium.origin_url;
+        var finalUrl = medium.origin_url;
         SetImageUrlSource(image, finalUrl);
 
         image.Tag = medium.origin_url;
@@ -113,55 +113,18 @@ public static class Utility
         return video;
     }
 
-    public static async Task SetEmoticonImage(Image image, string url, int retryCount = 0)
+    public static void SetEmoticonImage(Image image, string url)
     {
         LoadedImages.Add(image);
-        if (url == null) return;
-
-        var path = Path.GetTempFileName();
-
-        var client = new RestClient(url);
-        var request = new RestRequest();
-        request.Method = Method.Get;
-        request.AddHeader("Referer", "https://story.kakao.com/");
-        var bytes = await client.DownloadDataAsync(request);
-        if (bytes == null && retryCount < MaxImageLoadRetryCount) await SetEmoticonImage(image, url, ++retryCount);
-        else if (bytes == null) return;
-
-        try
-        {
-            File.WriteAllBytes(path, bytes);
-            var file = await StorageFile.GetFileFromPathAsync(path);
-            using var stream = await file.OpenAsync(FileAccessMode.Read);
-            await MainPage.GetInstance().RunOnMainThreadAsync(async () => image.Source = await GenerateImageLocalFileStream(stream));
-        }
-        catch (Exception) { }
-        finally { File.Delete(path); }
+        image.Loaded += async (s, e) => await LoadEmoticonImage(image, url);
+        image.Unloaded += (s, e) => image.Source = null;
     }
 
-    public static async Task SetAnimatedEmoticonImage(Image image, string url, int retryCount = 0)
+    public static void SetAnimatedEmoticonImage(Image image, string url)
     {
         LoadedImages.Add(image);
-        if (url == null) return;
-
-        var client = new RestClient(url);
-        var request = new RestRequest();
-        request.Method = Method.Get;
-        var bytes = await client.DownloadDataAsync(request);
-        if (bytes == null && retryCount < MaxImageLoadRetryCount) await SetAnimatedEmoticonImage(image, url, ++retryCount);
-        else if (bytes == null) return;
-
-        var path = Path.GetTempFileName();
-        try
-        {
-            bytes = EmoticonDecryptor.DecodeImage(bytes);
-            await Task.Run(() => EmoticonDecryptor.ConvertWebPToGif(bytes, path));
-            var file = await StorageFile.GetFileFromPathAsync(path);
-            using var stream = await file.OpenAsync(FileAccessMode.Read);
-            await MainPage.GetInstance().RunOnMainThreadAsync(async () => image.Source = await GenerateImageLocalFileStream(stream));
-        }
-        catch (Exception) { }
-        finally { File.Delete(path); }
+        image.Loaded += async (s, e) => await LoadAnimatedEmoticonImage(image, url);
+        image.Unloaded += (s, e) => image.Source = null;
     }
 
     private static void OnVideoPointerEntered(object sender, PointerRoutedEventArgs e) => (sender as MediaPlayerElement).TransportControls.Show();
@@ -179,16 +142,67 @@ public static class Utility
         return bitmap;
     }
 
-    public static async void SetPersonPictureUrlSource(PersonPicture image, string url, bool shouldDispose = true)
+    public static void SetPersonPictureUrlSource(PersonPicture personPicture, string url, bool shouldDispose = true)
     {
-        if (shouldDispose) LoadedPersonPictures.Add(image);
-        await LoadPersonPicture(image, url);
+        if (shouldDispose) LoadedPersonPictures.Add(personPicture);
+        personPicture.Loaded += async (s, e) => await LoadPersonPicture(personPicture, url);
+        personPicture.Unloaded += (s, e) => personPicture.ProfilePicture = null;
     }
 
-    public static async void SetImageUrlSource(Image image, string url)
+    public static void SetImageUrlSource(Image image, string url)
     {
         LoadedImages.Add(image);
-        await LoadImage(image, url);
+        image.Loaded += async (s, e) => await LoadImage(image, url);
+        image.Unloaded += (s, e) => image.Source = null;
+    }
+
+    private static async Task LoadEmoticonImage(Image image, string url, int retryCount = 0)
+    {
+        if (url == null) return;
+
+        var path = Path.GetTempFileName();
+
+        var client = new RestClient(url);
+        var request = new RestRequest();
+        request.Method = Method.Get;
+        request.AddHeader("Referer", "https://story.kakao.com/");
+        var bytes = await client.DownloadDataAsync(request);
+        if (bytes == null && retryCount < MaxImageLoadRetryCount) await LoadEmoticonImage(image, url, ++retryCount);
+        else if (bytes == null) return;
+
+        try
+        {
+            File.WriteAllBytes(path, bytes);
+            var file = await StorageFile.GetFileFromPathAsync(path);
+            using var stream = await file.OpenAsync(FileAccessMode.Read);
+            await MainPage.GetInstance().RunOnMainThreadAsync(async () => image.Source = await GenerateImageLocalFileStream(stream));
+        }
+        catch (Exception) { }
+        finally { File.Delete(path); }
+    }
+
+    private static async Task LoadAnimatedEmoticonImage(Image image, string url, int retryCount = 0)
+    {
+        if (url == null) return;
+
+        var client = new RestClient(url);
+        var request = new RestRequest();
+        request.Method = Method.Get;
+        var bytes = await client.DownloadDataAsync(request);
+        if (bytes == null && retryCount < MaxImageLoadRetryCount) await LoadAnimatedEmoticonImage(image, url, ++retryCount);
+        else if (bytes == null) return;
+
+        var path = Path.GetTempFileName();
+        try
+        {
+            bytes = EmoticonDecryptor.DecodeImage(bytes);
+            await Task.Run(() => EmoticonDecryptor.ConvertWebPToGif(bytes, path));
+            var file = await StorageFile.GetFileFromPathAsync(path);
+            using var stream = await file.OpenAsync(FileAccessMode.Read);
+            await MainPage.GetInstance().RunOnMainThreadAsync(async () => image.Source = await GenerateImageLocalFileStream(stream));
+        }
+        catch (Exception) { }
+        finally { File.Delete(path); }
     }
 
     private static async Task LoadImage(Image image, string url, int retryCount = 0)

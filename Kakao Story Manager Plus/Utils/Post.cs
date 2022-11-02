@@ -47,9 +47,9 @@ public static class Post
                     url = await ApiHandler.GetEmoticonUrl(decorator.item_id, decorator.resource_id.ToString());
                 var image = new Image();
                 if (decorator.item_id.StartsWith("4"))
-                    _ = Utility.SetAnimatedEmoticonImage(image, url);
+                    Utility.SetAnimatedEmoticonImage(image, url);
                 else
-                    _ = Utility.SetEmoticonImage(image, url);
+                    Utility.SetEmoticonImage(image, url);
                 image.Width = 80;
                 image.Height = 80;
                 container.Child = image;
