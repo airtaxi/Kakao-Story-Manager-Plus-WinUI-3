@@ -115,15 +115,21 @@ public static class Utility
 
     public static void SetEmoticonImage(Image image, string url)
     {
-        LoadedImages.Add(image);
-        image.Loaded += async (s, e) => await LoadEmoticonImage(image, url);
+        image.Loaded += async (s, e) =>
+        {
+            LoadedImages.Add(image);
+            await LoadEmoticonImage(image, url);
+        };
         image.Unloaded += (s, e) => image.Source = null;
     }
 
     public static void SetAnimatedEmoticonImage(Image image, string url)
     {
-        LoadedImages.Add(image);
-        image.Loaded += async (s, e) => await LoadAnimatedEmoticonImage(image, url);
+        image.Loaded += async (s, e) =>
+        {
+            LoadedImages.Add(image);
+            await LoadAnimatedEmoticonImage(image, url);
+        };
         image.Unloaded += (s, e) => image.Source = null;
     }
 
@@ -144,15 +150,21 @@ public static class Utility
 
     public static void SetPersonPictureUrlSource(PersonPicture personPicture, string url, bool shouldDispose = true)
     {
-        if (shouldDispose) LoadedPersonPictures.Add(personPicture);
-        personPicture.Loaded += async (s, e) => await LoadPersonPicture(personPicture, url);
+        personPicture.Loaded += async (s, e) =>
+        {
+            if (shouldDispose) LoadedPersonPictures.Add(personPicture);
+            await LoadPersonPicture(personPicture, url);
+        };
         personPicture.Unloaded += (s, e) => personPicture.ProfilePicture = null;
     }
 
     public static void SetImageUrlSource(Image image, string url)
     {
-        LoadedImages.Add(image);
-        image.Loaded += async (s, e) => await LoadImage(image, url);
+        image.Loaded += async (s, e) =>
+        {
+            LoadedImages.Add(image);
+            await LoadImage(image, url);
+        };
         image.Unloaded += (s, e) => image.Source = null;
     }
 
