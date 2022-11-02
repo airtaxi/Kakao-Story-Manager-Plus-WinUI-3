@@ -81,7 +81,7 @@ public static class Utility
     private static Image GenerateImageFromUrl(Medium medium)
     {
         var image = new Image();
-        var finalUrl = medium.thumbnail_url3 ?? medium.origin_url;
+        var finalUrl = medium.thumbnail_url ?? medium.origin_url;
         SetImageUrlSource(image, finalUrl);
 
         image.Tag = medium.origin_url;
@@ -208,11 +208,11 @@ public static class Utility
             var file = await StorageFile.GetFileFromPathAsync(path);
             var stream = await file.OpenAsync(FileAccessMode.Read);
             var bitmap = new BitmapImage();
-            bitmap.CreateOptions = BitmapCreateOptions.IgnoreImageCache;
             image.Source = bitmap;
             await bitmap.SetSourceAsync(stream);
             stream.Dispose();
         }
+        catch (ArgumentNullException) { await LoadImage(image, url, ++retryCount); }
         finally { File.Delete(path); }
     }
 
@@ -233,11 +233,11 @@ public static class Utility
             var file = await StorageFile.GetFileFromPathAsync(path);
             var stream = await file.OpenAsync(FileAccessMode.Read);
             var bitmap = new BitmapImage();
-            bitmap.CreateOptions = BitmapCreateOptions.IgnoreImageCache;
             personPicture.ProfilePicture = bitmap;
             await bitmap.SetSourceAsync(stream);
             stream.Dispose();
         }
+        catch (ArgumentNullException) { await LoadPersonPicture(personPicture, url, ++retryCount); }
         finally { File.Delete(path); }
     }
 
