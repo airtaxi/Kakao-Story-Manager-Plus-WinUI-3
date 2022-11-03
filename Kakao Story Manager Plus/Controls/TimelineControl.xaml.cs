@@ -91,6 +91,11 @@ public sealed partial class TimelineControl : UserControl
         inputControl.WrapText(true);
         inputControl.OnSubmitShortcutActivated += OnSubmitShortcutActivated;
         inputControl.OnImagePasted += OnImagePasted;
+        if (isOverlay)
+        {
+            inputControl.SetPopupDesiredPlacement(PopupPlacementMode.Top);
+        }
+
         FrComment.Content = inputControl;
         _ = RefreshContent();
 
