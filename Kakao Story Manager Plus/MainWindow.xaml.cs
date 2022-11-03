@@ -12,7 +12,7 @@ using System.Drawing;
 using System.IO;
 using System.Threading.Tasks;
 using static KSMP.ClassManager;
-using static StoryApi.ApiHandler;
+using static KSMP.ApiHandler;
 
 namespace KSMP;
 

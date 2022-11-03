@@ -7,7 +7,7 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using Windows.Storage.Pickers;
 using WinRT.Interop;
-using static StoryApi.ApiHandler.DataType.CommentData;
+using static KSMP.ApiHandler.DataType.CommentData;
 
 namespace KSMP.Controls;
 

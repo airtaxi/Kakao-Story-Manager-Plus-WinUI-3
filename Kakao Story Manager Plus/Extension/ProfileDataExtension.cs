@@ -1,4 +1,4 @@
-﻿using static StoryApi.ApiHandler.DataType;
+﻿using static KSMP.ApiHandler.DataType;
 
 namespace KSMP.Extension;
 

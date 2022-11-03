@@ -13,11 +13,11 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Media.Imaging;
-using StoryApi;
+using KSMP;
 using Windows.Storage;
 using Windows.Storage.Pickers;
 using WinRT.Interop;
-using static StoryApi.ApiHandler.DataType;
+using static KSMP.ApiHandler.DataType;
 
 namespace KSMP.Controls;
 
@@ -146,7 +146,7 @@ public sealed partial class WritePostControl : UserControl
                 }
             }
 
-            var quoteDatas = StoryApi.Utils.GetQuoteDataFromString(_inputControl.GetTextBox().Text);
+            var quoteDatas = Api.Story.Utils.GetQuoteDataFromString(_inputControl.GetTextBox().Text);
             if (_postToShare != null)
                 await ApiHandler.SharePost(_postToShare.id, quoteDatas, _permissons[CbxPermission.SelectedIndex], true, null, null);
             else
@@ -255,7 +255,7 @@ public sealed partial class WritePostControl : UserControl
         CbxPermission.SelectedIndex = permissionIndex;
         _postToEdit = postToEdit;
         TbWritePost.Text = "글 수정";
-        var text = StoryApi.Utils.GetStringFromQuoteData(postToEdit.content_decorators, true);
+        var text = Api.Story.Utils.GetStringFromQuoteData(postToEdit.content_decorators, true);
         _inputControl.GetTextBox().Text = text;
 
         var serverMedias = postToEdit.media ?? new();

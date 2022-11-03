@@ -3,10 +3,11 @@ using Microsoft.UI.Text;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Documents;
-using StoryApi;
+using KSMP;
 using System;
 using System.Collections.Generic;
-using static StoryApi.ApiHandler.DataType;
+using static KSMP.ApiHandler.DataType;
+using System.Linq.Expressions;
 
 namespace KSMP.Utils;
 
@@ -60,10 +61,13 @@ public static class Post
             else
             {
                 var run = new Run();
-                var text = decorator.text;
+                var text = decorator.text ?? string.Empty;
+                if (text == "(Image) ") text = string.Empty;
                 run.Text = text;
-                if (decorator.type.Equals("hashtag"))
+
+                if (decorator.type == "hashtag")
                     run.FontWeight = FontWeights.Bold;
+
                 paragraph.Inlines.Add(run);
                 wordCount += text.Length;
             }

@@ -19,10 +19,11 @@ using KSMP.Utils;
 using Microsoft.UI.Windowing;
 using Newtonsoft.Json;
 using System.Diagnostics;
-using StoryApi;
+using KSMP;
 using System.Runtime.CompilerServices;
 using ImageMagick;
-using static StoryApi.ApiHandler.DataType.CommentData;
+using static KSMP.ApiHandler.DataType.CommentData;
+using Newtonsoft.Json.Linq;
 
 namespace KSMP;
 
@@ -59,7 +60,9 @@ public static class Utility
         var medias = new List<FrameworkElement>();
         foreach (var medium in mediums)
         {
-            var url = medium?.origin_url ?? medium?.url_hq;
+            bool willUseGifInTimeline = (Configuration.GetValue("UseGifInTimeline") as bool?) ?? false;
+            var defaultUrl = willUseGifInTimeline ? medium?.origin_url : medium.thumbnail_url;
+            var url = defaultUrl ?? medium?.url_hq;
             if (url == null) continue;
             else if (url.Contains(".mp4"))
             {
@@ -81,8 +84,10 @@ public static class Utility
     private static Image GenerateImageFromUrl(Medium medium)
     {
         var image = new Image();
-        var finalUrl = medium.origin_url;
-        SetImageUrlSource(image, finalUrl);
+
+        bool willUseGifInTimeline = (Configuration.GetValue("UseGifInTimeline") as bool?) ?? false;
+        var url = willUseGifInTimeline ? medium?.origin_url : medium.thumbnail_url;
+        SetImageUrlSource(image, url);
 
         image.Tag = medium.origin_url;
         image.Stretch = Stretch.Uniform;
@@ -144,6 +149,7 @@ public static class Utility
             DecodePixelWidth = width,
             DecodePixelHeight = height,
         };
+        bitmap.CreateOptions = BitmapCreateOptions.IgnoreImageCache;
         await bitmap.SetSourceAsync(fileStream);
         return bitmap;
     }
@@ -234,6 +240,7 @@ public static class Utility
             var file = await StorageFile.GetFileFromPathAsync(path);
             var stream = await file.OpenAsync(FileAccessMode.Read);
             var bitmap = new BitmapImage();
+            bitmap.CreateOptions = BitmapCreateOptions.IgnoreImageCache;
             image.Source = bitmap;
             await bitmap.SetSourceAsync(stream);
             stream.Dispose();
@@ -259,6 +266,7 @@ public static class Utility
             var file = await StorageFile.GetFileFromPathAsync(path);
             var stream = await file.OpenAsync(FileAccessMode.Read);
             var bitmap = new BitmapImage();
+            bitmap.CreateOptions = BitmapCreateOptions.IgnoreImageCache;
             personPicture.ProfilePicture = bitmap;
             await bitmap.SetSourceAsync(stream);
             stream.Dispose();
@@ -356,5 +364,11 @@ public static class Utility
         Border border = VisualTreeHelper.GetChild(listView, 0) as Border;
         if (border == null) return null;
         return VisualTreeHelper.GetChild(border, 0) as ScrollViewer;
+    }
+
+    public static List<Api.DcCon.DataType.Package> GetCurrentDcConList()
+    {
+        var data = Configuration.GetValue("DcConList") as JArray ?? new();
+        return data.ToObject<List<Api.DcCon.DataType.Package>>();
     }
 }

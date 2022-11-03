@@ -6,17 +6,17 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Input;
 using KSMP.Extension;
-using static StoryApi.ApiHandler.DataType.CommentData;
+using static KSMP.ApiHandler.DataType.CommentData;
 using static KSMP.ClassManager;
 using System;
 using KSMP.Pages;
 using Windows.Storage.Pickers;
 using WinRT.Interop;
-using StoryApi;
 using Windows.Storage;
+using System.IO;
 using Windows.ApplicationModel.DataTransfer;
 using System.Diagnostics;
-using static StoryApi.ApiHandler.DataType.EmoticonItems;
+using static KSMP.ApiHandler.DataType.EmoticonItems;
 using Microsoft.UI.Xaml.Media.Imaging;
 
 namespace KSMP.Controls;
@@ -32,6 +32,7 @@ public sealed partial class TimelineControl : UserControl
     private bool isBookmarking = false;
 
     private ApiHandler.DataType.UploadedImageProp _commentMedia = null;
+    private ApiHandler.DataType.UploadedImageProp _commentDcCon = null;
     private (EmoticonItem, int) _commentEmoticon = (null, 0);
 
     public string PostId => _post?.id;
@@ -261,7 +262,7 @@ public sealed partial class TimelineControl : UserControl
         if (!_isShare) _post = await ApiHandler.GetPost(_post.id);
 
         TbName.Text = _post.actor.display_name;
-        var timestampString = StoryApi.Utils.GetTimeString(_post.created_at);
+        var timestampString = Api.Story.Utils.GetTimeString(_post.created_at);
         TbTime.Text = timestampString;
         if (_post.content_updated_at != DateTime.MinValue)
             TbTime.Text += " (수정됨)";
@@ -335,6 +336,7 @@ public sealed partial class TimelineControl : UserControl
             control.Tag = comment;
             control.OnReplyClicked += OnCommentReplyClicked;
             control.OnDeleted += OnCommentDeleted;
+            await control.LoadCommentCompletionSource.Task;
 
             bool isMyComment = comment.writer.id == MainPage.Me.id;
             bool isMyPost = _post.actor.id == MainPage.Me.id;
@@ -595,13 +597,15 @@ public sealed partial class TimelineControl : UserControl
     {
         if (_isUploading) return;
         var button = sender as Button;
+        BtCommentMore.IsEnabled = false;
         BtAddEmoticon.IsEnabled = false;
         BtAddMedia.IsEnabled = false;
+        BtAddDcCon.IsEnabled = false;
         button.IsEnabled = false;
         var inputContol = FrComment.Content as InputControl;
         var textBox = inputContol.GetTextBox();
         var textBoxString = textBox.Text;
-        var quotas = StoryApi.Utils.GetQuoteDataFromString(textBoxString, true);
+        var quotas = Api.Story.Utils.GetQuoteDataFromString(textBoxString, true);
         var emoticonItem = _commentEmoticon.Item1;
         if (emoticonItem != null)
         {
@@ -618,7 +622,7 @@ public sealed partial class TimelineControl : UserControl
             _commentEmoticon = (null, 0);
         }
         var text = string.Join(' ', quotas.Select(x => x.text));
-        await ApiHandler.ReplyToPost(_post.id, text, quotas, _commentMedia);
+        await ApiHandler.ReplyToPost(_post.id, text, quotas, _commentMedia ?? _commentDcCon);
         await RefreshContent();
         _commentMedia = null;
 
@@ -627,29 +631,14 @@ public sealed partial class TimelineControl : UserControl
 
         FiAddMedia.Glyph = "\ue7c5";
         BtAddMedia.IsEnabled = true;
+        BtCommentMore.IsEnabled = true;
+
+        BtAddDcCon.IsEnabled = true;
+        VbMandu.Visibility = Visibility.Visible;
+        VbDelete.Visibility = Visibility.Collapsed;
+
         textBox.Text = "";
         button.IsEnabled = true;
-    }
-
-
-    private async void OnAddMediaButtonClicked(object sender, RoutedEventArgs e)
-    {
-        if (_commentMedia == null)
-        {
-            var fileOpenPicker = new FileOpenPicker();
-            InitializeWithWindow.Initialize(fileOpenPicker, WindowNative.GetWindowHandle(MainWindow.Instance));
-            fileOpenPicker.FileTypeFilter.Add(".jpg");
-            fileOpenPicker.FileTypeFilter.Add(".png");
-            fileOpenPicker.FileTypeFilter.Add(".gif");
-            var file = await fileOpenPicker.PickSingleFileAsync();
-            if (file != null) await UploadCommentImageFile(file);
-        }
-        else
-        {
-            _commentMedia = null;
-            FiAddMedia.Glyph = "\ue7c5";
-            BtAddEmoticon.IsEnabled = true;
-        }
     }
 
     private async Task UploadCommentImageFile(StorageFile file)
@@ -661,11 +650,15 @@ public sealed partial class TimelineControl : UserControl
         FiAddMedia.Glyph = "\ue895";
 
         BtAddEmoticon.IsEnabled = false;
+        BtAddDcCon.IsEnabled = false;
 
+        BtCommentMore.IsEnabled = false;
         _commentMedia = await ApiHandler.UploadImage(file.Path);
+        BtCommentMore.IsEnabled = true;
 
         FiAddMedia.Glyph = "\ue74d";
         BtAddMedia.IsEnabled = true;
+        BtAddDcCon.IsEnabled = true;
         _isUploading = false;
     }
 
@@ -744,12 +737,11 @@ public sealed partial class TimelineControl : UserControl
 
     private List<Comment> GetCurrentComments() => SpComments.Children.Select(x => (x as CommentControl).Tag as Comment).ToList();
 
-    private async void OnAddEmoticonButtonClicked(object sender, RoutedEventArgs e)
+    private void OnAddEmoticonButtonClicked(object sender, RoutedEventArgs e)
     {
         var button = sender as Button;
         if (_commentEmoticon.Item1 == null)
         {
-            var inputContol = FrComment.Content as InputControl;
             var emoticonListControl = Utils.Post.ShowEmoticonListToButton(button);
             emoticonListControl.OnSelected += (item, index) =>
             {
@@ -758,6 +750,7 @@ public sealed partial class TimelineControl : UserControl
 
                 FiAddEmoticon.Glyph = "\ue74d";
                 BtAddMedia.IsEnabled = false;
+                BtAddDcCon.IsEnabled = false;
             };
         }
         else
@@ -766,6 +759,85 @@ public sealed partial class TimelineControl : UserControl
             _commentEmoticon = (null, 0);
             FiAddEmoticon.Glyph = "\ue899";
             BtAddMedia.IsEnabled = true;
+            BtAddDcCon.IsEnabled = true;
+        }
+    }
+
+    private async void OnAddMediaButtonClicked(object sender, RoutedEventArgs e)
+    {
+        if (_commentMedia == null)
+        {
+            var fileOpenPicker = new FileOpenPicker();
+            InitializeWithWindow.Initialize(fileOpenPicker, WindowNative.GetWindowHandle(MainWindow.Instance));
+            fileOpenPicker.FileTypeFilter.Add(".jpg");
+            fileOpenPicker.FileTypeFilter.Add(".png");
+            fileOpenPicker.FileTypeFilter.Add(".gif");
+            var file = await fileOpenPicker.PickSingleFileAsync();
+            if (file != null) await UploadCommentImageFile(file);
+        }
+        else
+        {
+            _commentMedia = null;
+            FiAddMedia.Glyph = "\ue7c5";
+            BtAddEmoticon.IsEnabled = true;
+            BtAddDcCon.IsEnabled = true;
+        }
+    }
+
+    private async void OnAddDcConButtonClicked(object sender, RoutedEventArgs e)
+    {
+        var button = sender as Button;
+        if (_commentDcCon == null)
+        {
+            var list = Utility.GetCurrentDcConList();
+            if(list.Count == 0)
+            {
+                await this.ShowMessageDialogAsync("설정된 디시콘이 없습니다", "오류");
+                return;
+            }
+            var flyout = new Flyout();
+
+            var dcConListControl = new DcConListControl();
+            dcConListControl.OnSelected += async (item) =>
+            {
+                
+                BtAddDcCon.IsEnabled = false;
+                BtAddEmoticon.IsEnabled = false;
+                BtAddMedia.IsEnabled = false;
+                flyout.Hide();
+
+
+                BtCommentMore.IsEnabled = false;
+
+                var path = Path.Combine(Path.GetTempPath(), $"{item.PackageIndex}_{item.Index}.{item.Extension}");
+                try
+                {
+                    var data = await Api.DcCon.ApiHandler.GetDcDonImage(item.Path);
+                    await File.WriteAllBytesAsync(path, data);
+                    _isUploading = true;
+                    _commentDcCon = await ApiHandler.UploadImage(path);
+                }
+                catch (ArgumentNullException) { } //Ignore
+                finally
+                {
+                    _isUploading = false;
+                    File.Delete(path);
+                    BtCommentMore.IsEnabled = true;
+
+                    BtAddDcCon.IsEnabled = true;
+                    VbMandu.Visibility = Visibility.Collapsed;
+                    VbDelete.Visibility = Visibility.Visible;
+                }
+            };
+            flyout.Content = dcConListControl;
+            flyout.ShowAt(button);
+        }
+        else
+        {
+            _commentDcCon = null;
+            VbMandu.Visibility = Visibility.Visible;
+            VbDelete.Visibility = Visibility.Collapsed;
+            BtAddEmoticon.IsEnabled = true;
         }
     }
 

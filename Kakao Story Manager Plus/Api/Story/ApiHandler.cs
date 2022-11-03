@@ -7,10 +7,10 @@ using System.IO;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
-using static StoryApi.ApiHandler.DataType;
-using static StoryApi.ApiHandler.DataType.CommentData;
+using static KSMP.ApiHandler.DataType;
+using static KSMP.ApiHandler.DataType.CommentData;
 
-namespace StoryApi;
+namespace KSMP;
 
 public partial class ApiHandler
 {
@@ -33,7 +33,6 @@ public partial class ApiHandler
         if (!string.IsNullOrEmpty(appKey)) s_kakaoAppKey = appKey;
         Cookies = cookies;
     }
-
     public static async Task<ProfileData.ProfileObject> GetProfileFeed(string id, string from, bool noActivity = false)
     {
         string requestURI = "https://story.kakao.com/a/profiles/" + id + (!noActivity ? "?with=activities" : "");
@@ -61,7 +60,6 @@ public partial class ApiHandler
         url += $"&path={s_emoticonCredential.Auth.Path}";
         return url;
     }
-
     private static async Task<AuthController> GetEmoticonCredential()
     {
         var client = new RestClient(EmoticonAuthUrl);
@@ -102,7 +100,6 @@ public partial class ApiHandler
         ProfileRelationshipData.ProfileRelationship obj = JsonConvert.DeserializeObject<ProfileRelationshipData.ProfileRelationship>(response);
         return obj;
     }
-
     public static async Task<TimeLineData.TimeLine> GetFeed(string from = null)
     {
         string requestURI = "https://story.kakao.com/a/feeds";
@@ -112,21 +109,18 @@ public partial class ApiHandler
         string response = await GetResponseFromRequest(webRequest);
         return JsonConvert.DeserializeObject<TimeLineData.TimeLine>(response);
     }
-
     public static async Task HidePost(string id)
     {
         string requestURI = "https://story.kakao.com/a/feeds/" + id;
         HttpWebRequest webRequest = GenerateDefaultProfile(requestURI, "DELETE");
         await GetResponseFromRequest(webRequest);
     }
-
     public static async Task BlockProfile(string id, bool isUnblock)
     {
         string requestURI = "https://story.kakao.com/a/profiles/" + id + "/feed_block";
         HttpWebRequest webRequest = GenerateDefaultProfile(requestURI, isUnblock ? "DELETE" : "POST");
         await GetResponseFromRequest(webRequest);
     }
-
     public static async Task<FriendData.Friends> GetFriends()
     {
         string requestURI = "https://story.kakao.com/a/friends/";
@@ -134,7 +128,6 @@ public partial class ApiHandler
         HttpWebRequest webRequest = GenerateDefaultProfile(requestURI);
         return JsonConvert.DeserializeObject<FriendData.Friends>(await GetResponseFromRequest(webRequest));
     }
-
     public static async Task<BookmarkData.Bookmarks> GetBookmarks(string id, string from)
     {
         string requestURI = "https://story.kakao.com/a/profiles/" + id + "/sections/bookmark";
@@ -144,14 +137,12 @@ public partial class ApiHandler
         string response = await GetResponseFromRequest(webRequest);
         return JsonConvert.DeserializeObject<BookmarkData.Bookmarks>(response);
     }
-
     public static async Task<string> GetScrapData(string url)
     {
         string requestURI = "https://story.kakao.com/a/scraper?url=" + Uri.EscapeDataString(url);
         HttpWebRequest webRequest = GenerateDefaultProfile(requestURI);
         return await GetResponseFromRequest(webRequest);
     }
-
     public static async Task<bool> SetActivityProfile(string id, string permission, bool enable_share, bool comment_all_writable, bool is_must_read)
     {
         string requestURI = "https://story.kakao.com/a/activities/" + id;
@@ -165,7 +156,6 @@ public partial class ApiHandler
         writeStream.Close();
         return await GetResponseFromRequest(webRequest) != null;
     }
-
     public static async Task<bool> MutePost(string id, bool mute)
     {
         string requestURI = "https://story.kakao.com/a/activities/" + id + "/mute_push";
@@ -180,7 +170,6 @@ public partial class ApiHandler
 
         return await GetResponseFromRequest(webRequest) != null;
     }
-
     public static async Task<List<ShareData.Share>> GetShares(PostData data, bool isUP, string from = null)
     {
 
@@ -195,7 +184,6 @@ public partial class ApiHandler
         string response = await GetResponseFromRequest(webRequest);
         return JsonConvert.DeserializeObject<List<ShareData.Share>>(response);
     }
-
     public static async Task<List<Comment>> GetComments(string id, string since = null)
     {
         string requestURI = "https://story.kakao.com/a/activities/" + id + "/comments?lpp=30&order=desc";
@@ -205,7 +193,6 @@ public partial class ApiHandler
         string response = await GetResponseFromRequest(webRequest);
         return JsonConvert.DeserializeObject<List<Comment>>(response);
     }
-
     public static async Task<UserProfile.ProfileData> GetProfileData()
     {
         string requestURI = "https://story.kakao.com/a/settings/profile";
@@ -214,7 +201,6 @@ public partial class ApiHandler
         string response = await GetResponseFromRequest(webRequest);
         return JsonConvert.DeserializeObject<UserProfile.ProfileData>(response);
     }
-
     public static async Task<List<DataType.Actor>> GetSpecificFriend(string id)
     {
         string requestURI = "https://story.kakao.com/a/activities/" + id + "/specific_friends";
@@ -222,7 +208,6 @@ public partial class ApiHandler
         string response = await GetResponseFromRequest(webRequest);
         return JsonConvert.DeserializeObject<List<DataType.Actor>>(response);
     }
-
     public static async Task<List<CommentLikes>> GetCommentLikes(string postId, string commentID)
     {
         string requestURI = "https://story.kakao.com/a/activities/" + postId + "/comments/" + commentID + "/likes";
@@ -231,7 +216,6 @@ public partial class ApiHandler
         var response = await GetResponseFromRequest(webRequest);
         return JsonConvert.DeserializeObject<List<CommentLikes>>(response);
     }
-
     public static async Task<Comment> LikeComment(string postId, string commentID, bool isDelete)
     {
         string requestURI = "https://story.kakao.com/a/activities/" + postId + "/comments/" + commentID + "/likes";
@@ -244,7 +228,6 @@ public partial class ApiHandler
         var response = await GetResponseFromRequest(webRequest);
         return JsonConvert.DeserializeObject<Comment>(response);
     }
-
     public static async Task<bool> RequestFriend(string id, bool isDelete)
     {
         string requestURI;
@@ -271,7 +254,6 @@ public partial class ApiHandler
 
         return await GetResponseFromRequest(webRequest) != null;
     }
-
     public static async Task<bool> AcceptFriendRequest(string id, bool isDelete)
     {
         string requestURI;
@@ -290,7 +272,6 @@ public partial class ApiHandler
 
         return await GetResponseFromRequest(webRequest) != null;
     }
-
     public static async Task<bool> RequestFavorite(string id, bool isUnpin)
     {
         string requestURI = "https://story.kakao.com/a/friends/" + id + "/favorite";
@@ -304,7 +285,6 @@ public partial class ApiHandler
         webRequest.Method = method;
         return await GetResponseFromRequest(webRequest) != null;
     }
-
     public static async Task<bool> PinPost(string id, bool isUnpin)
     {
         string requestURI = "https://story.kakao.com/a/activities/" + id + "/bookmark";
@@ -317,7 +297,6 @@ public partial class ApiHandler
         HttpWebRequest webRequest = GenerateDefaultProfile(requestURI, method);
         return await GetResponseFromRequest(webRequest) != null;
     }
-
     public static async Task<bool> SharePost(string postId, List<QuoteData> quoteDatas, string permission, bool commentable, List<string> with_ids, List<string> trust_ids)
     {
         string requestURI = "https://story.kakao.com/a/activities/" + postId + "/share";
@@ -341,7 +320,6 @@ public partial class ApiHandler
 
         return await GetResponseFromRequest(webRequest) != null;
     }
-
     public static async Task<bool> UpPost(string postId, bool isDelete)
     {
         string requestURI = "https://story.kakao.com/a/activities/" + postId + "/sympathy";
@@ -354,7 +332,6 @@ public partial class ApiHandler
         HttpWebRequest webRequest = GenerateDefaultProfile(requestURI, method);
         return await GetResponseFromRequest(webRequest) != null;
     }
-
     public static async Task<bool> LikePost(string postId, string emotion)
     {
         string requestURI = "https://story.kakao.com/a/activities/" + postId + "/like";
@@ -380,7 +357,6 @@ public partial class ApiHandler
 
         return await GetResponseFromRequest(webRequest) != null;
     }
-
     public static async Task<PostData> GetPost(string activityID)
     {
         string requestURI = "https://story.kakao.com/a/activities/" + activityID;
@@ -393,14 +369,12 @@ public partial class ApiHandler
 
         return obj;
     }
-
     public static async Task<bool> DeleteFriend(string id)
     {
         string requestURI = "https://story.kakao.com/a/friends/" + id;
         HttpWebRequest webRequest = GenerateDefaultProfile(requestURI, "DELETE");
         return await GetResponseFromRequest(webRequest) != null;
     }
-
     public static async Task<bool> DeleteLike(string postId, string id)
     {
         string requestURI = "https://story.kakao.com/a/activities/" + postId + "/like";
@@ -417,14 +391,12 @@ public partial class ApiHandler
 
         return await GetResponseFromRequest(webRequest) != null;
     }
-
     public static async Task<bool> DeleteBirthday()
     {
         string requestURI = "https://story.kakao.com/a/agreement/birth";
         HttpWebRequest webRequest = GenerateDefaultProfile(requestURI, "DELETE");
         return await GetResponseFromRequest(webRequest) != null;
     }
-
     public static async Task<bool> SetProfileName(string name)
     {
         string requestURI = "https://story.kakao.com/a/settings/profile/name";
@@ -438,7 +410,6 @@ public partial class ApiHandler
 
         return await GetResponseFromRequest(webRequest) != null;
     }
-
     public static async Task<bool> SetBirthday(DateTime date, bool isLunar, bool isLeapType)
     {
         string requestURI = "https://story.kakao.com/a/settings/profile/birthday";
@@ -452,7 +423,6 @@ public partial class ApiHandler
 
         return await GetResponseFromRequest(webRequest) != null;
     }
-
     public static async Task<bool> SetGender(string gender, string permission)
     {
         string requestURI = "https://story.kakao.com/a/settings/profile/gender";
@@ -466,7 +436,6 @@ public partial class ApiHandler
 
         return await GetResponseFromRequest(webRequest) != null;
     }
-
     public static async Task<bool> DeleteGender()
     {
         string requestURI = "https://story.kakao.com/a/settings/profile/gender";
@@ -480,7 +449,6 @@ public partial class ApiHandler
 
         return await GetResponseFromRequest(webRequest) != null;
     }
-
     public static async Task<bool> SetStatusMessage(string message)
     {
         string requestURI = "https://story.kakao.com/a/settings/profile/status_message";
@@ -494,7 +462,6 @@ public partial class ApiHandler
 
         return await GetResponseFromRequest(webRequest) != null;
     }
-
     public static async Task<bool> SendMail(string content, string id, bool bomb, string imgURI = null)
     {
         string requestURI = "https://story.kakao.com/a/messages?_=" + ((long)DateTime.Now.Subtract(new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalSeconds - 32400).ToString() + "11149";
@@ -517,7 +484,6 @@ public partial class ApiHandler
 
         return await GetResponseFromRequest(webRequest) != null;
     }
-
     public static async Task<List<MailData.Mail>> GetMails(string since = null)
     {
         string requestURI = "https://story.kakao.com/a/messages/";
@@ -528,7 +494,6 @@ public partial class ApiHandler
 
         return JsonConvert.DeserializeObject<List<MailData.Mail>>(await GetResponseFromRequest(webRequest)); ;
     }
-
     public static async Task<MailData.MailDetail> GetMailDetail(string id)
     {
         string requestURI = "https://story.kakao.com/a/messages/" + id;
@@ -537,7 +502,6 @@ public partial class ApiHandler
 
         return JsonConvert.DeserializeObject<MailData.MailDetail>(await GetResponseFromRequest(webRequest)); ;
     }
-
     public static async Task<bool> DeleteMail(string id)
     {
         string requestURI = "https://story.kakao.com/a/messages/" + id;
@@ -546,7 +510,6 @@ public partial class ApiHandler
 
         return await GetResponseFromRequest(webRequest) != null;
     }
-
     public static async Task<NotificationStatus> GetNotificationStatus()
     {
         var milliseconds = DateTimeOffset.Now.ToUnixTimeMilliseconds();
@@ -555,7 +518,6 @@ public partial class ApiHandler
         string response = await GetResponseFromRequest(webRequest);
         return JsonConvert.DeserializeObject<NotificationStatus>(response);
     }
-
     public static async Task<List<Notification>> GetNotifications()
     {
         string requestURI = "https://story.kakao.com/a/notifications";
@@ -563,14 +525,12 @@ public partial class ApiHandler
         string response = await GetResponseFromRequest(webRequest);
         return JsonConvert.DeserializeObject<List<Notification>>(response);
     }
-
     public static async Task<bool> DeletePost(string id)
     {
         string requestURI = "https://story.kakao.com/a/activities/" + id;
         HttpWebRequest webRequest = GenerateDefaultProfile(requestURI, "DELETE");
         return await GetResponseFromRequest(webRequest) != null;
     }
-
     public static async Task<bool> ReplyToPost(string postId, string text, List<QuoteData> quoteDatas, UploadedImageProp img = null)
     {
         string requestURI = "https://story.kakao.com/a/activities/" + postId + "/comments";
@@ -601,14 +561,12 @@ public partial class ApiHandler
 
         return await GetResponseFromRequest(webRequest) != null;
     }
-
     public static async Task<bool> DeleteComment(string commentID, string postId)
     {
         string requestURI = "https://story.kakao.com/a/activities/" + postId + "/comments/" + commentID;
         HttpWebRequest webRequest = GenerateDefaultProfile(requestURI, "DELETE");
         return await GetResponseFromRequest(webRequest) != null;
     }
-
     public static async Task<Comment> EditComment(Comment comment, string postId, List<QuoteData> quoteDatas, string text)
     {
         string requestURI = "https://story.kakao.com/a/activities/" + postId + "/comments/" + comment.id + "/content";
@@ -643,7 +601,6 @@ public partial class ApiHandler
         var response = await GetResponseFromRequest(webRequest);
         return JsonConvert.DeserializeObject<Comment>(response);
     }
-
     public static async Task<List<ShareData.Share>> GetShares(bool isUP, PostData data, string from)
     {
 
@@ -658,7 +615,6 @@ public partial class ApiHandler
         string response = await GetResponseFromRequest(webRequest);
         return JsonConvert.DeserializeObject<List<ShareData.Share>>(response);
     }
-
     public static async Task<List<ShareData.Share>> GetLikes(PostData data, string from)
     {
         string requestURI = "https://story.kakao.com/a/activities/" + data.id + "/likes/";
@@ -668,7 +624,6 @@ public partial class ApiHandler
         string response = await GetResponseFromRequest(webRequest);
         return JsonConvert.DeserializeObject<List<ShareData.Share>>(response);
     }
-
     private static async Task<string> GetResponseFromRequest(WebRequest webRequest, int count = 0)
     {
         try
@@ -687,11 +642,9 @@ public partial class ApiHandler
         }
         catch (WebException e)
         {
-            int statusCode = GetStatusCodeFromWebException(e);
-
-            if (statusCode == 403) return null;
-            else if (statusCode == 404) return null;
-            else if (statusCode == 401)
+            if ((int)(e.Response as HttpWebResponse).StatusCode == 403) return null;
+            else if ((int)(e.Response as HttpWebResponse).StatusCode == 404) return null;
+            else if ((int)(e.Response as HttpWebResponse).StatusCode == 401)
             {
                 var success = await OnReloginRequired?.Invoke();
                 if (!success) return null;
@@ -711,6 +664,71 @@ public partial class ApiHandler
         return null;
     }
 
+    /// <summary>
+    /// Writes multi part HTTP POST request. Author : Farhan Ghumra
+    /// </summary>
+    private static void WriteMultipartForm(Stream s, string boundary, Dictionary<string, string> data, string fileName, string fileContentType, Stream fileStream)
+    {
+        /// The first boundary
+        byte[] boundarybytes = Encoding.UTF8.GetBytes("--" + boundary + "\r\n");
+        /// the last boundary.
+        byte[] trailer = Encoding.UTF8.GetBytes("\r\n--" + boundary + "--\r\n");
+        /// the form data, properly formatted
+        /// Content-Disposition: form-data; name="file_1"; filename="waifu.png"
+        //Content - Type: image / png
+
+        string formdataTemplate = "Content-Disposition; name=\"{0}\"\r\n\r\n{1}";
+        /// the form-data file upload, properly formatted
+        string fileheaderTemplate = "Content-Disposition: form-data; name=\"{0}\"; filename=\"{1}\";\r\nContent-Type: {2}\r\n\r\n";
+
+        /// Added to track if we need a CRLF or not.
+        bool bNeedsCRLF = false;
+
+        if (data != null)
+        {
+            foreach (string key in data.Keys)
+            {
+                /// if we need to drop a CRLF, do that.
+                if (bNeedsCRLF)
+                    WriteToStream(s, "\r\n");
+
+                /// Write the boundary.
+                WriteToStream(s, boundarybytes);
+
+                /// Write the key.
+                WriteToStream(s, string.Format(formdataTemplate, key, data[key]));
+                bNeedsCRLF = true;
+            }
+        }
+
+        /// If we don't have keys, we don't need a crlf.
+        if (bNeedsCRLF)
+            WriteToStream(s, "\r\n");
+
+        WriteToStream(s, boundarybytes);
+        WriteToStream(s, string.Format(fileheaderTemplate, "file_1", fileName, fileContentType));
+        // Write the file data to the stream.
+        byte[] buffer = new byte[4096];
+        while ((fileStream.Read(buffer, 0, buffer.Length)) != 0)
+        {
+            WriteToStream(s, buffer);
+        }
+        fileStream.Dispose();
+        WriteToStream(s, trailer);
+    }
+
+    /// <summary>
+    /// Writes string to stream. Author : Farhan Ghumra
+    /// </summary>
+    private static void WriteToStream(Stream s, string txt)
+    {
+        byte[] bytes = Encoding.UTF8.GetBytes(txt);
+        s.Write(bytes, 0, bytes.Length);
+    }
+    private static void WriteToStream(Stream s, byte[] bytes)
+    {
+        s.Write(bytes, 0, bytes.Length);
+    }
     public static async Task<UploadedImageProp> UploadImage(string filepath)
     {
         string filename = Path.GetFileName(filepath);
@@ -757,7 +775,6 @@ public partial class ApiHandler
         UploadedImageProp result = JsonConvert.DeserializeObject<UploadedImageProp>(respResult);
         return result;
     }
-
     public static async Task<string> UploadVideo(AssetData asset)
     {
         using var fileStream = new StreamReader(asset.Path);
@@ -805,7 +822,6 @@ public partial class ApiHandler
         var videoData = JsonConvert.DeserializeObject<VideoData.Video>(respResult);
         return videoData.access_key;
     }
-
     public static async Task<bool> WritePost(List<QuoteData> quoteDatas, MediaData mediaData, string permission, bool isCommentable, bool isSharable, List<string> with_ids, List<string> trust_ids, string scrapDataString = null, bool isEdit = false, List<string> editOldMediaPaths = null, string editPostId = null, int retryCount = 0)
     {
         if (editOldMediaPaths is null)
@@ -888,11 +904,9 @@ public partial class ApiHandler
         }
         catch (WebException e)
         {
-            int statusCode = GetStatusCodeFromWebException(e);
-
-            if (statusCode == 403) return false;
-            else if (statusCode == 404) return false;
-            else if (statusCode == 401)
+            if ((int)(e.Response as HttpWebResponse).StatusCode == 403) return false;
+            else if ((int)(e.Response as HttpWebResponse).StatusCode == 404) return false;
+            else if ((int)(e.Response as HttpWebResponse).StatusCode == 401)
             {
                 var success = await OnReloginRequired?.Invoke();
                 if (!success) return false;
@@ -906,7 +920,6 @@ public partial class ApiHandler
         }
         return true;
     }
-
     public static async Task<string> UploadImage(AssetData asset, int retryCount = 0)
     {
         using var fileStream = new StreamReader(asset.Path);
@@ -953,11 +966,9 @@ public partial class ApiHandler
         }
         catch (WebException e)
         {
-            int statusCode = GetStatusCodeFromWebException(e);
-
-            if (statusCode == 403) return null;
-            else if (statusCode == 404) return null;
-            else if (statusCode == 401)
+            if ((int)(e.Response as HttpWebResponse).StatusCode == 403) return null;
+            else if ((int)(e.Response as HttpWebResponse).StatusCode == 404) return null;
+            else if ((int)(e.Response as HttpWebResponse).StatusCode == 401)
             {
                 var success = await OnReloginRequired?.Invoke();
                 if (!success) return null;
@@ -1012,11 +1023,9 @@ public partial class ApiHandler
         }
         catch (WebException e)
         {
-            int statusCode = GetStatusCodeFromWebException(e);
-
-            if (statusCode == 403) return false;
-            else if (statusCode == 404) return false;
-            else if (statusCode == 401) return await WaitForMetaVideoFinish(access_key, ++retryCount);
+            if ((int)(e.Response as HttpWebResponse).StatusCode == 403) return false;
+            else if ((int)(e.Response as HttpWebResponse).StatusCode == 404) return false;
+            else if ((int)(e.Response as HttpWebResponse).StatusCode == 401) return await WaitForMetaVideoFinish(access_key, ++retryCount);
             else
             {
                 if (retryCount < MaxRetryCount)
@@ -1025,7 +1034,6 @@ public partial class ApiHandler
         }
         return false;
     }
-
     public static async Task<bool> WaitForVideoUploadFinish(string access_key, int retryCount = 0)
     {
         string requestURI = "https://story.kakao.com/a/kage/video/wcheck/" + access_key + "/?_t=0";
@@ -1071,11 +1079,9 @@ public partial class ApiHandler
         }
         catch (WebException e)
         {
-            int statusCode = GetStatusCodeFromWebException(e);
-
-            if (statusCode == 403) return false;
-            else if (statusCode == 404) return false;
-            else if (statusCode == 401) return await WaitForVideoUploadFinish(access_key, ++retryCount);
+            if ((int)(e.Response as HttpWebResponse).StatusCode == 403) return false;
+            else if ((int)(e.Response as HttpWebResponse).StatusCode == 404) return false;
+            else if ((int)(e.Response as HttpWebResponse).StatusCode == 401) return await WaitForVideoUploadFinish(access_key, ++retryCount);
             else
             {
                 if (retryCount < MaxRetryCount)
@@ -1085,6 +1091,10 @@ public partial class ApiHandler
         return false;
     }
 
+    private static string GetBoolString(bool src)
+    {
+        return src ? "true" : "false";
+    }
     private static HttpWebRequest GenerateDefaultProfile(string requestURI, string method = "GET")
     {
         HttpWebRequest webRequest = WebRequest.CreateHttp(requestURI);
@@ -1115,79 +1125,5 @@ public partial class ApiHandler
         webRequest.Date = DateTime.Now;
 
         return webRequest;
-    }
-
-    private static void WriteToStream(Stream s, string txt)
-    {
-        byte[] bytes = Encoding.UTF8.GetBytes(txt);
-        s.Write(bytes, 0, bytes.Length);
-    }
-
-    private static void WriteToStream(Stream s, byte[] bytes)
-    {
-        s.Write(bytes, 0, bytes.Length);
-    }
-
-    private static void WriteMultipartForm(Stream s, string boundary, Dictionary<string, string> data, string fileName, string fileContentType, Stream fileStream)
-    {
-        /// The first boundary
-        byte[] boundarybytes = Encoding.UTF8.GetBytes("--" + boundary + "\r\n");
-        /// the last boundary.
-        byte[] trailer = Encoding.UTF8.GetBytes("\r\n--" + boundary + "--\r\n");
-        /// the form data, properly formatted
-        /// Content-Disposition: form-data; name="file_1"; filename="waifu.png"
-        //Content - Type: image / png
-
-        string formdataTemplate = "Content-Disposition; name=\"{0}\"\r\n\r\n{1}";
-        /// the form-data file upload, properly formatted
-        string fileheaderTemplate = "Content-Disposition: form-data; name=\"{0}\"; filename=\"{1}\";\r\nContent-Type: {2}\r\n\r\n";
-
-        /// Added to track if we need a CRLF or not.
-        bool bNeedsCRLF = false;
-
-        if (data != null)
-        {
-            foreach (string key in data.Keys)
-            {
-                /// if we need to drop a CRLF, do that.
-                if (bNeedsCRLF)
-                    WriteToStream(s, "\r\n");
-
-                /// Write the boundary.
-                WriteToStream(s, boundarybytes);
-
-                /// Write the key.
-                WriteToStream(s, string.Format(formdataTemplate, key, data[key]));
-                bNeedsCRLF = true;
-            }
-        }
-
-        /// If we don't have keys, we don't need a crlf.
-        if (bNeedsCRLF)
-            WriteToStream(s, "\r\n");
-
-        WriteToStream(s, boundarybytes);
-        WriteToStream(s, string.Format(fileheaderTemplate, "file_1", fileName, fileContentType));
-        // Write the file data to the stream.
-        byte[] buffer = new byte[4096];
-        while ((fileStream.Read(buffer, 0, buffer.Length)) != 0)
-        {
-            WriteToStream(s, buffer);
-        }
-        fileStream.Dispose();
-        WriteToStream(s, trailer);
-    }
-
-    private static int GetStatusCodeFromWebException(WebException e)
-    {
-        var response = e.Response as HttpWebResponse;
-        int statusCode = -1;
-        if (response != null) statusCode = (int)response.StatusCode;
-        return statusCode;
-    }
-
-    private static string GetBoolString(bool src)
-    {
-        return src ? "true" : "false";
     }
 }

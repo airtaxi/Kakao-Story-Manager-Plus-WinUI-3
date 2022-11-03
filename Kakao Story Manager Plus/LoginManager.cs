@@ -112,7 +112,7 @@ public static class LoginManager
                 cookies.Add(cookie);
             }
 
-            StoryApi.ApiHandler.Init(cookieContainer, cookies, appKey);
+            KSMP.ApiHandler.Init(cookieContainer, cookies, appKey);
             return true;
         }
         catch (Exception)

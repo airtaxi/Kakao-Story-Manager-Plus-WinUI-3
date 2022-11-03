@@ -2,7 +2,7 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
-using static StoryApi.ApiHandler.DataType;
+using static KSMP.ApiHandler.DataType;
 
 namespace KSMP.Controls;
 

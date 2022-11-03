@@ -59,7 +59,7 @@ public partial class App : Application
                     cookies.Add(cookie);
                 }
 
-                StoryApi.ApiHandler.Init(cookieContainer, cookies, null);
+                KSMP.ApiHandler.Init(cookieContainer, cookies, null);
                 s_restartFlag = restartFlag;
                 LoginPage.IsLoggedIn = true;
             }
@@ -157,11 +157,11 @@ public partial class App : Application
                     {
                         var instance = MainPage.GetInstance();
 
-                        var post = await StoryApi.ApiHandler.GetPost(activityId);
+                        var post = await KSMP.ApiHandler.GetPost(activityId);
                         if (post != null) MainPage.ShowOverlay(new TimelineControl(post, false, true));
                         else await instance.ShowMessageDialogAsync("글을 볼 수 없거나 나만 보기로 설정된 글입니다.", "오류");
                     }
-                    else if (action == "Like") await StoryApi.ApiHandler.LikeComment(activityId, commentId, false);
+                    else if (action == "Like") await KSMP.ApiHandler.LikeComment(activityId, commentId, false);
                 }
             }
             catch (Exception) { }

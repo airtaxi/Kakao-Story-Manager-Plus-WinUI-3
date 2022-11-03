@@ -30,6 +30,7 @@ public class ClassManager
         public Flyout Flyout { get; set; }
         public bool IsUp { get; set; }
     }
+
     public class FriendProfile
     {
         public string Id { get; set; }

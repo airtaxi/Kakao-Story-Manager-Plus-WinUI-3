@@ -32,7 +32,7 @@ public sealed partial class NotificationControl : UserControl
     private async Task Refresh()
     {
         var notificationDatas = new List<NotificationData>();
-        var notifications = await StoryApi.ApiHandler.GetNotifications();
+        var notifications = await KSMP.ApiHandler.GetNotifications();
         foreach(var notification in notifications)
         {
             string contentMessage = notification.content;
@@ -44,7 +44,7 @@ public sealed partial class NotificationControl : UserControl
                 Title = notification.message,
                 Description = contentMessage,
                 ProfilePictureUrl = notification.actor?.GetValidUserProfileUrl(),
-                Time = StoryApi.Utils.GetTimeString(notification.created_at),
+                Time = Api.Story.Utils.GetTimeString(notification.created_at),
                 UnreadBarVisiblity = notification.is_new ? Visibility.Visible : Visibility.Collapsed,
                 Scheme = notification.scheme,
                 ActorId = notification.actor.id
@@ -72,7 +72,7 @@ public sealed partial class NotificationControl : UserControl
         {
             var objectStringStr = scheme.Split(new string[] { "?profile_id=" }, StringSplitOptions.None);
             var id = objectStringStr[0].Split(new string[] { "activities/" }, StringSplitOptions.None)[1];
-            var post = await StoryApi.ApiHandler.GetPost(id);
+            var post = await KSMP.ApiHandler.GetPost(id);
             Pages.MainPage.HideOverlay();
             Pages.MainPage.ShowOverlay(new TimelineControl(post, false, true));
         }

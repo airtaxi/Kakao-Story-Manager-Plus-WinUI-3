@@ -12,10 +12,11 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Navigation;
-using StoryApi;
+using KSMP;
 using Windows.ApplicationModel.DataTransfer;
 using static KSMP.ClassManager;
-using static StoryApi.ApiHandler.DataType.FriendData;
+using static KSMP.ApiHandler.DataType.FriendData;
+using OpenQA.Selenium.DevTools.V104.DOM;
 
 namespace KSMP.Pages;
 
@@ -35,7 +36,6 @@ public sealed partial class MainPage : Page
         InitializeComponent();
         s_instance = this;
         InitializeWritePostFlyout();
-        InitializeSettingsFlyout();
 
         if (s_notificationTimer == null)
         {
@@ -55,13 +55,7 @@ public sealed partial class MainPage : Page
         else NavigateTimeline();
     }
 
-    private void InitializeSettingsFlyout()
-    {
-        var flyout = new Flyout();
-        var control = new SettingsControl();
-        flyout.Content = control;
-        BtSettings.Flyout = flyout;
-    }
+    public static void HideSettingsFlyout() => (s_instance.BtSettings.Flyout as Flyout).Hide();
 
     private void InitializeWritePostFlyout()
     {

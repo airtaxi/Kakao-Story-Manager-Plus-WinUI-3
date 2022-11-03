@@ -2,9 +2,9 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using static StoryApi.ApiHandler.DataType;
+using static KSMP.ApiHandler.DataType;
 
-namespace StoryApi;
+namespace KSMP.Api.Story;
 
 public static class Utils
 {

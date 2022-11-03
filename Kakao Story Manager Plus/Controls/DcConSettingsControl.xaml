@@ -1,0 +1,69 @@
+﻿<UserControl
+    x:Class="KSMP.Controls.DcConSettingsControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:KSMP.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Grid Width="320" MaxHeight="300" HorizontalAlignment="Center" VerticalAlignment="Center" Background="White" CornerRadius="5" Padding="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0">
+            <TextBlock Text="디시콘 관리" HorizontalAlignment="Left"/>
+            <Button HorizontalAlignment="Right"
+                    Background="Transparent"
+                    BorderThickness="0"
+                    Tapped="OnExitButtonClicked">
+                <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe711;"/>
+            </Button>
+        </Grid>
+        <ListView Grid.Row="1" x:Name="LvMain" SelectionChanged="OnListViewSelectionChanged">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding PackageInfo.Title}"/>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+        <Grid Grid.Row="2" Margin="0,5,0,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="auto"/>
+            </Grid.ColumnDefinitions>
+            <TextBox Grid.Column="0" x:Name="TbxUrl" Header="디시콘 URL"/>
+            <Button Grid.Column="1" VerticalAlignment="Bottom" Margin="5,0,0,0">
+                <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe9ce;"/>
+                <Button.Flyout>
+                    <Flyout>
+                        <StackPanel>
+                            <TextBlock Text="원하는 디시콘을 클릭한 뒤, 주소창의 주소를 복사해주세요."/>
+                            <Button Content="디시콘 목록 열기"
+                                    Margin="0,5,0,0"
+                                    Click="OnShowDcConListButtonClicked"/>
+                        </StackPanel>
+                    </Flyout>
+                </Button.Flyout>
+            </Button>
+        </Grid>
+        <Grid Grid.Row="3" Margin="0,5,0,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="5"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Button Grid.Column="0" Content="추가"
+                    HorizontalAlignment="Stretch"
+                    Click="OnAddDcConButtonClicked"/>
+            <Button Grid.Column="2" x:Name="BtDelete"
+                    HorizontalAlignment="Stretch"
+                    Content="삭제"
+                    Click="OnDeleteDcConButtonClicked"
+                    IsEnabled="False"/>
+        </Grid>
+    </Grid>
+</UserControl>

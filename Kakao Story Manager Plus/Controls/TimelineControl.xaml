@@ -150,7 +150,7 @@
                                 <ColumnDefinition Width="auto"/>
                             </Grid.ColumnDefinitions>
                             <Frame x:Name="FrComment" Grid.Column="0" VerticalAlignment="Bottom" HorizontalAlignment="Stretch" Margin="30,10,5,10"/>
-                            <Button Grid.Column="1" Height="30" VerticalAlignment="Bottom" HorizontalAlignment="Stretch" Margin="5,0,5,10">
+                            <Button x:Name="BtCommentMore" Grid.Column="1" Height="30" VerticalAlignment="Bottom" HorizontalAlignment="Stretch" Margin="5,0,5,10">
                                 <Viewbox>
                                     <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe712;" FontSize="17" Foreground="#717171"/>
                                 </Viewbox>
@@ -161,6 +161,16 @@
                                                 <Viewbox>
                                                     <FontIcon x:Name="FiAddMedia" FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe7c5;"/>
                                                 </Viewbox>
+                                            </Button>
+                                            <Button x:Name="BtAddDcCon" Click="OnAddDcConButtonClicked" Margin="5,0,0,0">
+                                                <Grid>
+                                                    <Viewbox x:Name="VbMandu">
+                                                        <Image Source="ms-appx:///Assets/mandu.png" Width="20" Height="20"/>
+                                                    </Viewbox>
+                                                    <Viewbox x:Name="VbDelete" Visibility="Collapsed">
+                                                        <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe74d;"/>
+                                                    </Viewbox>
+                                                </Grid>
                                             </Button>
                                             <Button x:Name="BtAddEmoticon" Click="OnAddEmoticonButtonClicked" Margin="5,0,0,0">
                                                 <Viewbox>

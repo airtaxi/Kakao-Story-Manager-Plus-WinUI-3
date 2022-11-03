@@ -4,8 +4,8 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Windows.ApplicationModel.DataTransfer;
 using static KSMP.ClassManager;
-using static StoryApi.ApiHandler.DataType;
-using static StoryApi.ApiHandler.DataType.EmoticonItems;
+using static KSMP.ApiHandler.DataType;
+using static KSMP.ApiHandler.DataType.EmoticonItems;
 
 namespace KSMP.Controls;
 
@@ -53,7 +53,7 @@ public sealed partial class InputControl : UserControl
     public void AcceptReturn(bool willAllow) => TbxMain.AcceptsReturn = willAllow;
     public void WrapText(bool willWrap) => TbxMain.TextWrapping = willWrap ? TextWrapping.Wrap : TextWrapping.NoWrap;
 
-    public List<QuoteData> GetQuoteDatas() => StoryApi.Utils.GetQuoteDataFromString(TbxMain.Text);
+    public List<QuoteData> GetQuoteDatas() => Api.Story.Utils.GetQuoteDataFromString(TbxMain.Text);
     private void ShowNameSuggestion(string name)
     {
         var friendListControl = PuDropdown.Child as FriendListControl;

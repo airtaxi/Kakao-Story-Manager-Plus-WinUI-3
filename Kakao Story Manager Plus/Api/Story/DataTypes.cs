@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace StoryApi;
+namespace KSMP;
 
 [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "<Pending>")]
 public partial class ApiHandler

@@ -4,11 +4,12 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using KSMP.Extension;
-using static StoryApi.ApiHandler.DataType.CommentData;
+using static KSMP.ApiHandler.DataType.CommentData;
 using KSMP.Pages;
 using static KSMP.ClassManager;
-using StoryApi;
+using KSMP;
 using System.Threading.Tasks;
+using KSMP.Utils;
 
 namespace KSMP.Controls;
 
@@ -18,6 +19,7 @@ public sealed partial class CommentControl : UserControl
     public delegate void Deleted();
     public ReplyClick OnReplyClicked;
     public Deleted OnDeleted;
+    public TaskCompletionSource LoadCommentCompletionSource { get; } = new();
     private Comment _comment;
     private readonly string _postId;
     private readonly bool _isOverlay;
@@ -39,7 +41,7 @@ public sealed partial class CommentControl : UserControl
     {
         RtbContent.Blocks.Clear();
         TbName.Text = comment.writer.display_name;
-        TbTime.Text = StoryApi.Utils.GetTimeString(comment.created_at) + (comment.updated_at.Year > 1 ? " (수정됨)" : "");
+        TbTime.Text = Api.Story.Utils.GetTimeString(comment.created_at) + (comment.updated_at.Year > 1 ? " (수정됨)" : "");
         Utility.SetPersonPictureUrlSource(PpUser, comment.writer.GetValidUserProfileUrl());
         Utility.LoadedPersonPictures.Add(PpUser);
 
@@ -58,7 +60,10 @@ public sealed partial class CommentControl : UserControl
         if (!string.IsNullOrEmpty(commentMedia?.media?.origin_url))
         {
             ImgMain.Visibility = Visibility.Visible;
-            Utility.SetImageUrlSource(ImgMain, commentMedia.media.thumbnail_url);
+
+            bool willUseGifInTimeline = (Configuration.GetValue("UseGifInTimeline") as bool?) ?? false;
+            var url = willUseGifInTimeline ? commentMedia.media.origin_url : commentMedia.media.thumbnail_url;
+            Utility.SetImageUrlSource(ImgMain, url);
 
             ImgMain.Tapped += (s, e) =>
             {
@@ -73,6 +78,7 @@ public sealed partial class CommentControl : UserControl
         }
         else
             ImgMain.Visibility = Visibility.Collapsed;
+        LoadCommentCompletionSource.TrySetResult();
     }
 
     private async void OnLikeButtonClick(object sender, RoutedEventArgs e)
@@ -160,7 +166,7 @@ public sealed partial class CommentControl : UserControl
         inputControl.WrapText(true);
         inputControl.SetMaxHeight(100);
         FrEditComment.Content = inputControl;
-        var text = StoryApi.Utils.GetStringFromQuoteData(_comment.decorators, true);
+        var text = Api.Story.Utils.GetStringFromQuoteData(_comment.decorators, true);
         inputControl.GetTextBox().Text = text;
         await Task.Delay(10);
         inputControl.FocusTextBox();
