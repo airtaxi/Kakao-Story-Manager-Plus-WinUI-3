@@ -17,27 +17,30 @@
 		<UseWindowsForms>False</UseWindowsForms>
 		<Nullable>disable</Nullable>
 		<PlatformTarget>AnyCPU</PlatformTarget>
-		<FileVersion>0.1.0.181</FileVersion>
-		<AssemblyVersion>0.1.0.181</AssemblyVersion>
-		<Version>0.1.0.181</Version>
+		<FileVersion>0.1.0.183</FileVersion>
+		<AssemblyVersion>0.1.0.183</AssemblyVersion>
+		<Version>0.1.0.183</Version>
 	</PropertyGroup>
 	<ItemGroup>
-	  <Content Remove="Assets\Error.png" />
-	  <Content Remove="Assets\Segoe Fluent Icons.ttf" />
-	  <Content Remove="Assets\video.png" />
-	  <Content Remove="Assets\VideoThumbnail.png" />
+		<Content Remove="Assets\Error.png" />
+		<Content Remove="Assets\mandu.png" />
+		<Content Remove="Assets\Segoe Fluent Icons.ttf" />
+		<Content Remove="Assets\video.png" />
+		<Content Remove="Assets\VideoThumbnail.png" />
 	</ItemGroup>
 	<ItemGroup>
-	  <None Remove="Controls\EmoticonListControl.xaml" />
-	  <None Remove="Controls\EmotionsListControl.xaml" />
-	  <None Remove="Controls\Emotions\CheerUpControl.xaml" />
-	  <None Remove="Controls\Emotions\CoolControl.xaml" />
-	  <None Remove="Controls\Emotions\LikeControl.xaml" />
-	  <None Remove="Controls\Emotions\PleasureControl.xaml" />
-	  <None Remove="Controls\Emotions\SadControl.xaml" />
-	  <None Remove="Controls\SettingsControl.xaml" />
-	  <None Remove="Pages\BlankPage.xaml" />
-	  <None Remove="Pages\LoginPage.xaml" />
+		<None Remove="Controls\DcConListControl.xaml" />
+		<None Remove="Controls\DcConSettingsControl.xaml" />
+		<None Remove="Controls\EmoticonListControl.xaml" />
+		<None Remove="Controls\EmotionsListControl.xaml" />
+		<None Remove="Controls\Emotions\CheerUpControl.xaml" />
+		<None Remove="Controls\Emotions\CoolControl.xaml" />
+		<None Remove="Controls\Emotions\LikeControl.xaml" />
+		<None Remove="Controls\Emotions\PleasureControl.xaml" />
+		<None Remove="Controls\Emotions\SadControl.xaml" />
+		<None Remove="Controls\SettingsControl.xaml" />
+		<None Remove="Pages\BlankPage.xaml" />
+		<None Remove="Pages\LoginPage.xaml" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -56,8 +59,8 @@
 		<PackageReference Include="Microsoft.WindowsAppSDK" Version="1.2.220930.4-preview2" />
 		<PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.25227-preview" />
 		<PackageReference Include="MimeTypes" Version="2.4.0">
-		  <PrivateAssets>all</PrivateAssets>
-		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
 		<PackageReference Include="RestSharp" Version="108.0.2" />
 		<PackageReference Include="Selenium.Support" Version="4.5.1" />
@@ -76,64 +79,74 @@
 		<ProjectCapability Include="Msix" />
 	</ItemGroup>
 	<ItemGroup>
-	  <None Update="Assets\Video.png">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </None>
-	  <None Update="Assets\VideoThumbnail.png">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </None>
-	  <Page Update="Controls\EmoticonListControl.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </Page>
-	  <Page Update="Controls\Flyout\PasteClipboardImageQueryControl.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </Page>
-	  <Page Update="Pages\BlankPage.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </Page>
-	  <Page Update="Controls\SettingsControl.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </Page>
-	  <None Update="icon.ico">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </None>
-	  <Page Update="Windows\AlertWindow.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </Page>
+		<None Update="Assets\mandu.png">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Video.png">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\VideoThumbnail.png">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<Page Update="Controls\DcConSettingsControl.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</Page>
+		<Page Update="Controls\DcConListControl.xaml">
+		  <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+		  <SubType>Designer</SubType>
+		</Page>
+		<Page Update="Controls\EmoticonListControl.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</Page>
+		<Page Update="Controls\Flyout\PasteClipboardImageQueryControl.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</Page>
+		<Page Update="Pages\BlankPage.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</Page>
+		<Page Update="Controls\SettingsControl.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</Page>
+		<None Update="icon.ico">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<Page Update="Windows\AlertWindow.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</Page>
 	</ItemGroup>
 	<ItemGroup>
-	  <Page Update="Controls\EmotionsListControl.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </Page>
+		<Page Update="Controls\EmotionsListControl.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</Page>
 	</ItemGroup>
 	<ItemGroup>
-	  <Page Update="Controls\Emotions\CheerUpControl.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </Page>
+		<Page Update="Controls\Emotions\CheerUpControl.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</Page>
 	</ItemGroup>
 	<ItemGroup>
-	  <Page Update="Controls\Emotions\SadControl.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </Page>
+		<Page Update="Controls\Emotions\SadControl.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</Page>
 	</ItemGroup>
 	<ItemGroup>
-	  <Page Update="Controls\Emotions\PleasureControl.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </Page>
+		<Page Update="Controls\Emotions\PleasureControl.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</Page>
 	</ItemGroup>
 	<ItemGroup>
-	  <Page Update="Controls\Emotions\CoolControl.xaml">
-	    <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
-	    <SubType>Designer</SubType>
-	  </Page>
-	  <Page Update="Pages\LoginPage.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </Page>
+		<Page Update="Controls\Emotions\CoolControl.xaml">
+			<XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+			<SubType>Designer</SubType>
+		</Page>
+		<Page Update="Pages\LoginPage.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</Page>
 	</ItemGroup>
 	<ItemGroup>
-	  <Page Update="Controls\Emotions\LikeControl.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </Page>
+		<Page Update="Controls\Emotions\LikeControl.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</Page>
 	</ItemGroup>
 
 	<!-- 
