@@ -620,13 +620,13 @@ public sealed partial class TimelineControl : UserControl
                 text = "(Emoticon) ",
                 type = "emoticon"
             });
-            _commentMedia = null;
-            _commentEmoticon = (null, 0);
         }
         var text = string.Join(' ', quotas.Select(x => x.text));
         await ApiHandler.ReplyToPost(_post.id, text, quotas, _commentMedia ?? _commentDcCon);
         await RefreshContent();
         _commentMedia = null;
+        _commentDcCon = null;
+        _commentEmoticon = (null, 0);
 
         BtAddEmoticon.IsEnabled = true;
         FiAddEmoticon.Glyph = "\ue899";
