@@ -7,22 +7,20 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
+    xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls"
     Background="#f0f0f0" NavigationCacheMode="Disabled">
 
     <Grid>
-        <Grid x:Name="GdMain" SizeChanged="OnSizeChanged">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="auto"/>
-                <RowDefinition Height="*"/>
-            </Grid.RowDefinitions>
-            <ListView Grid.Row="1" x:Name="LvContent" SelectionMode="None" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center">
-                <ListView.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <ItemsStackPanel CacheLength="0" />
-                    </ItemsPanelTemplate>
-                </ListView.ItemsPanel>
-            </ListView>
-        </Grid>
+        <GridView x:Name="GvContent" SelectionMode="None"
+                    HorizontalAlignment="Stretch"
+                    HorizontalContentAlignment="Stretch">
+            <GridView.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <controls:StaggeredPanel DesiredColumnWidth="400"
+                                             HorizontalAlignment="Stretch"/>
+                </ItemsPanelTemplate>
+            </GridView.ItemsPanel>
+        </GridView>
         <muxc:ProgressRing x:Name="PrLoading" Foreground="#E96A49" IsIndeterminate="True" VerticalAlignment="Center" Width="100" Height="100" HorizontalAlignment="Center" Visibility="Collapsed"/>
     </Grid>
 </Page>

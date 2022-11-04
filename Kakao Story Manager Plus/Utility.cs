@@ -359,7 +359,7 @@ public static class Utility
         MainWindow.Instance.Close();
     }
 
-    public static ScrollViewer GetScrollViewerFromListView(ListView listView)
+    public static ScrollViewer GetScrollViewerFromGridView(GridView listView)
     {
         Border border = VisualTreeHelper.GetChild(listView, 0) as Border;
         if (border == null) return null;

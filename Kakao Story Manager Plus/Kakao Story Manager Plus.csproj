@@ -39,8 +39,6 @@
 		<None Remove="Controls\Emotions\PleasureControl.xaml" />
 		<None Remove="Controls\Emotions\SadControl.xaml" />
 		<None Remove="Controls\SettingsControl.xaml" />
-		<None Remove="Pages\BlankPage.xaml" />
-		<None Remove="Pages\LoginPage.xaml" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -51,6 +49,9 @@
 	<ItemGroup>
 		<PackageReference Include="ByteSize" Version="2.1.1" />
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.0.0" />
+		<PackageReference Include="CommunityToolkit.WinUI" Version="7.1.2" />
+		<PackageReference Include="CommunityToolkit.WinUI.UI" Version="7.1.2" />
+		<PackageReference Include="CommunityToolkit.WinUI.UI.Controls" Version="7.1.2" />
 		<PackageReference Include="H.NotifyIcon.WinUI" Version="2.0.63" />
 		<PackageReference Include="Magick.NET-Q16-AnyCPU" Version="12.2.0" />
 		<PackageReference Include="Magick.NET.Core" Version="12.2.0" />

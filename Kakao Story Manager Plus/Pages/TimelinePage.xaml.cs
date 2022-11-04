@@ -12,8 +12,6 @@ namespace KSMP.Pages;
 
 public sealed partial class TimelinePage : Page
 {
-    private const int TimelineControlWidth = 600;
-
     private static TimelinePage s_instance;
 
     public string Id = null;
@@ -36,7 +34,7 @@ public sealed partial class TimelinePage : Page
 
     public List<TimelineControl> GetTimelineControls()
     {
-        var list = LvContent.Items.Select(x => x as TimelineControl).ToList();
+        var list = GvContent.Items.Select(x => x as TimelineControl).ToList();
         list.RemoveAll(x => x is null);
         return list;
     }
@@ -49,18 +47,18 @@ public sealed partial class TimelinePage : Page
         s_instance = this;
         await Refresh(App.RecordedFirstFeedId);
         App.RecordedFirstFeedId = null;
-        var scrollViewer = Utility.GetScrollViewerFromListView(LvContent);
+        var scrollViewer = Utility.GetScrollViewerFromGridView(GvContent);
         scrollViewer.ViewChanged += OnScrollViewerViewChanged;
     }
 
-    public static void HidePostFromTimeline(TimelineControl control) => s_instance.LvContent.Items.Remove(control);
+    public static void HidePostFromTimeline(TimelineControl control) => s_instance.GvContent.Items.Remove(control);
 
     public void RemovePost(string postId)
     {
-        foreach (FrameworkElement item in LvContent.Items)
+        foreach (FrameworkElement item in GvContent.Items)
         {
             var timelineControl = item as TimelineControl;
-            if (timelineControl?.PostId == postId) LvContent.Items.Remove(item);
+            if (timelineControl?.PostId == postId) GvContent.Items.Remove(item);
         }
     }
 
@@ -76,7 +74,7 @@ public sealed partial class TimelinePage : Page
         PrLoading.Visibility = Visibility.Visible;
         if (from == null)
         {
-            LvContent.Items.Clear();
+            GvContent.Items.Clear();
             //foreach (object item in LvContent.Items) (item as TimelineControl)?.DisposeMedias();
             //Utility.DisposeAllMedias();
         }
@@ -89,8 +87,7 @@ public sealed partial class TimelinePage : Page
                 if (IsValidFeed(feed))
                 {
                     var control = new TimelineControl(feed);
-                    control.Width = TimelineControlWidth;
-                    LvContent.Items.Add(control);
+                    GvContent.Items.Add(control);
                 }
             }
             LastFeedId = _lastFeedId;
@@ -105,8 +102,7 @@ public sealed partial class TimelinePage : Page
                     Content = new Controls.UserProfileControl(Id),
                     Visibility = Visibility.Visible
                 };
-                profileFrame.Width = TimelineControlWidth;
-                LvContent.Items.Add(profileFrame);
+                GvContent.Items.Add(profileFrame);
             }
 
             var data = await ApiHandler.GetProfileFeed(Id, from);
@@ -115,8 +111,7 @@ public sealed partial class TimelinePage : Page
                 if (IsValidFeed(feed))
                 {
                     var control = new TimelineControl(feed);
-                    control.Width = TimelineControlWidth;
-                    LvContent.Items.Add(control);
+                    GvContent.Items.Add(control);
                 }
             }
             LastFeedId = _lastFeedId;
@@ -124,8 +119,6 @@ public sealed partial class TimelinePage : Page
             else _lastFeedId = null;
         }
 
-
-        ValidateTimeLineControlsSize(GdMain.ActualWidth);
         PrLoading.Visibility = Visibility.Collapsed;
     }
 
@@ -144,30 +137,9 @@ public sealed partial class TimelinePage : Page
         if (maxVerticalOffset < 0 || verticalOffset == maxVerticalOffset)
         {
             _isRefreshing = true;
-            LvContent.Items.Clear();
+            GvContent.Items.Clear();
             await Refresh(_lastFeedId);
             _isRefreshing = false;
         }
     }
-
-    private void ValidateTimeLineControlsSize(double width)
-    {
-        if(width < TimelineControlWidth + 20)
-            SetControlsSize(Math.Max(width - 20, 0));
-        else
-            SetControlsSize(TimelineControlWidth);
-    }
-
-    private void SetControlsSize(double width)
-    {
-        var controls = LvContent.Items.Select(x => x as Control).ToList();
-        controls.RemoveAll(x => x == null);
-        foreach (var control in controls)
-        {
-            if (control.Width == width) continue;
-            control.Width = width;
-        }
-    }
-
-    private void OnSizeChanged(object sender, SizeChangedEventArgs e) => ValidateTimeLineControlsSize(e.NewSize.Width);
 }

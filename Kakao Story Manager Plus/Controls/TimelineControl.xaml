@@ -12,7 +12,7 @@
     <UserControl.Resources>
         <SolidColorBrush x:Key="ButtonBackgroundPointerOver">#00000000</SolidColorBrush>
     </UserControl.Resources>
-    <Frame>
+    <Frame HorizontalAlignment="Stretch">
         <Grid>
             <Grid x:Name="GdMain" Margin="10" Background="White" CornerRadius="5">
                 <Grid.RowDefinitions>
@@ -27,6 +27,7 @@
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition x:Name="CdComment" Width="350" />
                 </Grid.ColumnDefinitions>
+                <Grid Grid.Row="0" Width="1200"/>
 
                 <Grid Grid.Row="0" Margin="10,10,10,-5" Padding="20,10,20,10">
                     <Grid.ColumnDefinitions>
@@ -208,3 +209,4 @@
         </Grid>
     </Frame>
 </UserControl>
+    
