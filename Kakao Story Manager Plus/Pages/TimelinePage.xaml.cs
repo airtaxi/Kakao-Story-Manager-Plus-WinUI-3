@@ -30,6 +30,8 @@ public sealed partial class TimelinePage : Page
         base.OnNavigatedTo(e);
         string id = e.Parameter as string;
         await LoadId(id);
+        var scrollViewer = Utility.GetScrollViewerFromGridView(GvContent);
+        scrollViewer.ViewChanged += OnScrollViewerViewChanged;
     }
 
     public List<TimelineControl> GetTimelineControls()
@@ -39,7 +41,7 @@ public sealed partial class TimelinePage : Page
         return list;
     }
 
-    private async Task LoadId(string id)
+    public async Task LoadId(string id)
     {
         if(!string.IsNullOrEmpty(id)) MainPage.SelectFriend(id);
 
@@ -47,8 +49,6 @@ public sealed partial class TimelinePage : Page
         s_instance = this;
         await Refresh(App.RecordedFirstFeedId);
         App.RecordedFirstFeedId = null;
-        var scrollViewer = Utility.GetScrollViewerFromGridView(GvContent);
-        scrollViewer.ViewChanged += OnScrollViewerViewChanged;
     }
 
     public static void HidePostFromTimeline(TimelineControl control) => s_instance.GvContent.Items.Remove(control);
@@ -75,8 +75,8 @@ public sealed partial class TimelinePage : Page
         if (from == null)
         {
             GvContent.Items.Clear();
-            //foreach (object item in LvContent.Items) (item as TimelineControl)?.DisposeMedias();
-            //Utility.DisposeAllMedias();
+            foreach (object item in GvContent.Items) (item as TimelineControl)?.DisposeMedias();
+            Utility.ManuallyDisposeAllMedias();
         }
 
         if (string.IsNullOrEmpty(Id))

@@ -37,18 +37,21 @@ public static class Utility
 
     public static void ManuallyDisposeAllMedias()
     {
-        LoadedPersonPictures.ForEach(image => image.DisposeImage());
+        LoadedPersonPictures.ForEach(image => image?.DisposeImage());
         LoadedPersonPictures.Clear();
 
-        LoadedImages.ForEach(image => image.DisposeImage());
+        LoadedImages.ForEach(image => image?.DisposeImage());
         LoadedImages.Clear();
 
         LoadedVideos.ForEach(video =>
         {
-            video.PointerEntered -= OnVideoPointerEntered;
-            video.PointerExited -= OnVideoPointerExited;
-            video.Tapped -= OnVideoTapped;
-            video.DisposeVideo();
+            if (video != null)
+            {
+                video.PointerEntered -= OnVideoPointerEntered;
+                video.PointerExited -= OnVideoPointerExited;
+                video.Tapped -= OnVideoTapped;
+            }
+            video?.DisposeVideo();
         });
         LoadedVideos.Clear();
     }
@@ -125,7 +128,7 @@ public static class Utility
             LoadedImages.Add(image);
             await LoadEmoticonImage(image, url);
         };
-        image.Unloaded += (s, e) => image.Source = null;
+        image.Unloaded += (s, e) => image.DisposeImage();
     }
 
     public static void SetAnimatedEmoticonImage(Image image, string url)
@@ -135,7 +138,7 @@ public static class Utility
             LoadedImages.Add(image);
             await LoadAnimatedEmoticonImage(image, url);
         };
-        image.Unloaded += (s, e) => image.Source = null;
+        image.Unloaded += (s, e) => image.DisposeImage();
     }
 
     private static void OnVideoPointerEntered(object sender, PointerRoutedEventArgs e) => (sender as MediaPlayerElement).TransportControls.Show();
@@ -149,29 +152,28 @@ public static class Utility
             DecodePixelWidth = width,
             DecodePixelHeight = height,
         };
-        bitmap.CreateOptions = BitmapCreateOptions.IgnoreImageCache;
         await bitmap.SetSourceAsync(fileStream);
         return bitmap;
     }
 
     public static void SetPersonPictureUrlSource(PersonPicture personPicture, string url, bool shouldDispose = true)
     {
-        personPicture.Loaded += async (s, e) =>
+        personPicture.Loaded += (s, e) =>
         {
             if (shouldDispose) LoadedPersonPictures.Add(personPicture);
-            await LoadPersonPicture(personPicture, url);
+            LoadPersonPicture(personPicture, url);
         };
-        personPicture.Unloaded += (s, e) => personPicture.ProfilePicture = null;
+        personPicture.Unloaded += (s, e) => personPicture.DisposeImage();
     }
 
     public static void SetImageUrlSource(Image image, string url)
     {
-        image.Loaded += async (s, e) =>
+        image.Loaded += (s, e) =>
         {
             LoadedImages.Add(image);
-            await LoadImage(image, url);
+            LoadImage(image, url);
         };
-        image.Unloaded += (s, e) => image.Source = null;
+        image.Unloaded += (s, e) => image.DisposeImage();
     }
 
     private static async Task LoadEmoticonImage(Image image, string url, int retryCount = 0)
@@ -223,56 +225,19 @@ public static class Utility
         finally { File.Delete(path); }
     }
 
-    private static async Task LoadImage(Image image, string url, int retryCount = 0)
+    private static void LoadImage(Image image, string url, int retryCount = 0)
     {
-        if (url == null) return;
-        var client = new RestClient(url);
-
-        var bytes = await client.DownloadDataAsync(new());
-        if (bytes == null && retryCount < MaxImageLoadRetryCount) await LoadImage(image, url, ++retryCount);
-        else if (bytes == null) return;
-
-        var path = Path.GetTempFileName();
-        try
-        {
-            await File.WriteAllBytesAsync(path, bytes);
-
-            var file = await StorageFile.GetFileFromPathAsync(path);
-            var stream = await file.OpenAsync(FileAccessMode.Read);
-            var bitmap = new BitmapImage();
-            bitmap.CreateOptions = BitmapCreateOptions.IgnoreImageCache;
-            image.Source = bitmap;
-            await bitmap.SetSourceAsync(stream);
-            stream.Dispose();
-        }
-        catch (ArgumentNullException) { await LoadImage(image, url, ++retryCount); }
-        finally { File.Delete(path); }
+        var bitmap = new BitmapImage();
+        bitmap.UriSource = new Uri(url);
+        image.Source = bitmap;
     }
 
-    private static async Task LoadPersonPicture(PersonPicture personPicture, string url, int retryCount = 0)
+    private static void LoadPersonPicture(PersonPicture personPicture, string url, int retryCount = 0)
     {
-        if (url == null) return;
-        var client = new RestClient(url);
 
-        var bytes = await client.DownloadDataAsync(new());
-        if (bytes == null && retryCount < MaxImageLoadRetryCount) await LoadPersonPicture(personPicture, url, ++retryCount);
-        else if (bytes == null) return;
-
-        var path = Path.GetTempFileName();
-        try
-        {
-            await File.WriteAllBytesAsync(path, bytes);
-
-            var file = await StorageFile.GetFileFromPathAsync(path);
-            var stream = await file.OpenAsync(FileAccessMode.Read);
-            var bitmap = new BitmapImage();
-            bitmap.CreateOptions = BitmapCreateOptions.IgnoreImageCache;
-            personPicture.ProfilePicture = bitmap;
-            await bitmap.SetSourceAsync(stream);
-            stream.Dispose();
-        }
-        catch (ArgumentNullException) { await LoadPersonPicture(personPicture, url, ++retryCount); }
-        finally { File.Delete(path); }
+        var bitmap = new BitmapImage();
+        bitmap.UriSource = new Uri(url);
+        personPicture.ProfilePicture = bitmap;
     }
 
     public static async Task SetTextClipboard(UIElement element, string text, string message = "복사되었습니다.")

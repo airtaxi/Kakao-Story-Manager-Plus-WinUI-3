@@ -197,10 +197,16 @@ public sealed partial class MainPage : Page
         WindowHelper.ShowWindow(MainWindow.Instance);
     }
 
-    public static void NavigateTimeline(string args = null)
+    public static async void NavigateTimeline(string args = null)
     {
         LastArgs = args;
-        //Utility.DisposeAllMedias();
+        Utility.ManuallyDisposeAllMedias();
+        var previousTimeline = s_instance.FrContent.Content as TimelinePage;
+        if(previousTimeline != null)
+        {
+            await previousTimeline.LoadId(args);
+            return;
+        }
         if (args != null) s_instance.FrContent.Navigate(typeof(TimelinePage), args);
         else s_instance.FrContent.Navigate(typeof(TimelinePage));
     }
