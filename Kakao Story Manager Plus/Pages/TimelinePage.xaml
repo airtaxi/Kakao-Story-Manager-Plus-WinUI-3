@@ -7,13 +7,15 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
+    xmlns:animations="using:CommunityToolkit.WinUI.UI.Animations"
     xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls"
     Background="#f0f0f0" NavigationCacheMode="Disabled">
 
     <Grid>
         <GridView x:Name="GvContent" SelectionMode="None"
                     HorizontalAlignment="Stretch"
-                    HorizontalContentAlignment="Stretch">
+                    HorizontalContentAlignment="Stretch"
+                    animations:ItemsReorderAnimation.Duration="00:00:00.5000000">
             <GridView.ItemsPanel>
                 <ItemsPanelTemplate>
                     <controls:StaggeredPanel DesiredColumnWidth="400"
