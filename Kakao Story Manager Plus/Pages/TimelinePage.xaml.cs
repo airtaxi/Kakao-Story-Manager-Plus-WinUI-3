@@ -19,13 +19,12 @@ public sealed partial class TimelinePage : Page
     public bool IsMyTimeline => Id == MainPage.Me.id;
     private string _lastFeedId = null;
     public static string LastFeedId = null; 
-    private readonly ObservableCollection<Control> _timeline = new();
 
     public TimelinePage()
     {
         InitializeComponent();
         LastFeedId = null;
-        GvContent.ItemsSource = _timeline;
+        GvContent.ItemsSource = GvContent.Items;
     }
 
     protected override async void OnNavigatedTo(NavigationEventArgs e)
@@ -39,7 +38,7 @@ public sealed partial class TimelinePage : Page
 
     public List<TimelineControl> GetTimelineControls()
     {
-        var list = _timeline.Select(x => x as TimelineControl).ToList();
+        var list = GvContent.Items.Select(x => x as TimelineControl).ToList();
         list.RemoveAll(x => x is null);
         return list;
     }
@@ -54,14 +53,14 @@ public sealed partial class TimelinePage : Page
         App.RecordedFirstFeedId = null;
     }
 
-    public static void HidePostFromTimeline(TimelineControl control) => s_instance._timeline.Remove(control);
+    public static void HidePostFromTimeline(TimelineControl control) => s_instance.GvContent.Items.Remove(control);
 
     public void RemovePost(string postId)
     {
-        foreach (Control item in _timeline)
+        foreach (Control item in GvContent.Items)
         {
             var timelineControl = item as TimelineControl;
-            if (timelineControl?.PostId == postId) _timeline.Remove(item);
+            if (timelineControl?.PostId == postId) GvContent.Items.Remove(item);
         }
     }
 
@@ -78,8 +77,8 @@ public sealed partial class TimelinePage : Page
         PrLoading.Visibility = Visibility.Visible;
         if (from == null)
         {
-            _timeline.Clear();
-            foreach (object item in _timeline) (item as TimelineControl)?.UnloadMedia();
+            GvContent.Items.Clear();
+            foreach (object item in GvContent.Items) (item as TimelineControl)?.UnloadMedia();
             Utility.ManuallyDisposeAllMedias();
         }
 
@@ -91,7 +90,7 @@ public sealed partial class TimelinePage : Page
                 if (IsValidFeed(feed))
                 {
                     var control = new TimelineControl(feed);
-                    _timeline.Add(control);
+                    GvContent.Items.Add(control);
                 }
             }
             LastFeedId = _lastFeedId;
@@ -106,7 +105,7 @@ public sealed partial class TimelinePage : Page
                     Content = new Controls.UserProfileControl(Id),
                     Visibility = Visibility.Visible
                 };
-                _timeline.Add(profileFrame);
+                GvContent.Items.Add(profileFrame);
             }
 
             var data = await ApiHandler.GetProfileFeed(Id, from);
@@ -115,7 +114,7 @@ public sealed partial class TimelinePage : Page
                 if (IsValidFeed(feed))
                 {
                     var control = new TimelineControl(feed);
-                    _timeline.Add(control);
+                    GvContent.Items.Add(control);
                 }
             }
             LastFeedId = _lastFeedId;
@@ -146,7 +145,7 @@ public sealed partial class TimelinePage : Page
         {
             _isRefreshing = true;
             bool willClearTimelineOnRefresh = (Utils.Configuration.GetValue("ClearTimelineOnRefresh") as bool?) ?? true;
-            if (willClearTimelineOnRefresh) _timeline.Clear();
+            if (willClearTimelineOnRefresh) GvContent.Items.Clear();
             await Refresh(_lastFeedId);
             _isRefreshing = false;
         }
@@ -155,7 +154,7 @@ public sealed partial class TimelinePage : Page
     private void ValidateTimelineContent()
     {
         var scrollViewer = Utility.GetScrollViewerFromGridView(GvContent);
-        foreach (var control in _timeline)
+        foreach (Control control in GvContent.Items)
         {
             if (control is not TimelineControl) continue;
             var timelineControl = control as TimelineControl;

@@ -201,12 +201,6 @@ public sealed partial class MainPage : Page
     {
         LastArgs = args;
         Utility.ManuallyDisposeAllMedias();
-        var previousTimeline = s_instance.FrContent.Content as TimelinePage;
-        if(previousTimeline != null)
-        {
-            await previousTimeline.LoadId(args);
-            return;
-        }
         if (args != null) s_instance.FrContent.Navigate(typeof(TimelinePage), args);
         else s_instance.FrContent.Navigate(typeof(TimelinePage));
     }
