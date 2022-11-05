@@ -2,6 +2,7 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
+using KSMP.Extension;
 using static KSMP.ApiHandler.DataType;
 
 namespace KSMP.Controls;
@@ -30,8 +31,9 @@ public sealed partial class LinkControl : UserControl
         ToolTipService.SetToolTip(TbLinkUrl, data.url);
     }
 
-    private void OnPointerEntered(object sender, PointerRoutedEventArgs e) => Utility.ChangeSystemMouseCursor(true);
+    public void UnloadMedia() => ImgLink?.DisposeImage();
 
+    private void OnPointerEntered(object sender, PointerRoutedEventArgs e) => Utility.ChangeSystemMouseCursor(true);
     private void OnPointerExited(object sender, PointerRoutedEventArgs e) => Utility.ChangeSystemMouseCursor(false);
 
     private async void OnTapped(object sender, TappedRoutedEventArgs e)

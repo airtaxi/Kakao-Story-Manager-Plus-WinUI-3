@@ -7,6 +7,7 @@ using System;
 using KSMP.Controls;
 using System.Linq;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 namespace KSMP.Pages;
 
@@ -17,12 +18,14 @@ public sealed partial class TimelinePage : Page
     public string Id = null;
     public bool IsMyTimeline => Id == MainPage.Me.id;
     private string _lastFeedId = null;
-    public static string LastFeedId = null;
+    public static string LastFeedId = null; 
+    private readonly ObservableCollection<Control> _timeline = new();
 
     public TimelinePage()
     {
         InitializeComponent();
         LastFeedId = null;
+        GvContent.ItemsSource = _timeline;
     }
 
     protected override async void OnNavigatedTo(NavigationEventArgs e)
@@ -36,7 +39,7 @@ public sealed partial class TimelinePage : Page
 
     public List<TimelineControl> GetTimelineControls()
     {
-        var list = GvContent.Items.Select(x => x as TimelineControl).ToList();
+        var list = _timeline.Select(x => x as TimelineControl).ToList();
         list.RemoveAll(x => x is null);
         return list;
     }
@@ -51,14 +54,14 @@ public sealed partial class TimelinePage : Page
         App.RecordedFirstFeedId = null;
     }
 
-    public static void HidePostFromTimeline(TimelineControl control) => s_instance.GvContent.Items.Remove(control);
+    public static void HidePostFromTimeline(TimelineControl control) => s_instance._timeline.Remove(control);
 
     public void RemovePost(string postId)
     {
-        foreach (FrameworkElement item in GvContent.Items)
+        foreach (Control item in _timeline)
         {
             var timelineControl = item as TimelineControl;
-            if (timelineControl?.PostId == postId) GvContent.Items.Remove(item);
+            if (timelineControl?.PostId == postId) _timeline.Remove(item);
         }
     }
 
@@ -74,8 +77,8 @@ public sealed partial class TimelinePage : Page
         PrLoading.Visibility = Visibility.Visible;
         if (from == null)
         {
-            GvContent.Items.Clear();
-            foreach (object item in GvContent.Items) (item as TimelineControl)?.DisposeMedias();
+            _timeline.Clear();
+            foreach (object item in _timeline) (item as TimelineControl)?.UnloadMedia();
             Utility.ManuallyDisposeAllMedias();
         }
 
@@ -87,7 +90,7 @@ public sealed partial class TimelinePage : Page
                 if (IsValidFeed(feed))
                 {
                     var control = new TimelineControl(feed);
-                    GvContent.Items.Add(control);
+                    _timeline.Add(control);
                 }
             }
             LastFeedId = _lastFeedId;
@@ -102,7 +105,7 @@ public sealed partial class TimelinePage : Page
                     Content = new Controls.UserProfileControl(Id),
                     Visibility = Visibility.Visible
                 };
-                GvContent.Items.Add(profileFrame);
+                _timeline.Add(profileFrame);
             }
 
             var data = await ApiHandler.GetProfileFeed(Id, from);
@@ -111,7 +114,7 @@ public sealed partial class TimelinePage : Page
                 if (IsValidFeed(feed))
                 {
                     var control = new TimelineControl(feed);
-                    GvContent.Items.Add(control);
+                    _timeline.Add(control);
                 }
             }
             LastFeedId = _lastFeedId;
@@ -120,6 +123,8 @@ public sealed partial class TimelinePage : Page
         }
 
         PrLoading.Visibility = Visibility.Collapsed;
+        GvContent.UpdateLayout();
+        ValidateTimelineContent();
     }
 
     private static bool IsValidFeed(ApiHandler.DataType.CommentData.PostData feed) => feed.deleted != true && (feed.@object?.deleted ?? false) != true && feed.blinded != true && (feed.@object?.blinded ?? false) != true && (feed.verb == "post" || feed.verb == "share");
@@ -133,13 +138,26 @@ public sealed partial class TimelinePage : Page
         var scrollViewer = sender as ScrollViewer;
         var verticalOffset = scrollViewer.VerticalOffset;
         var maxVerticalOffset = scrollViewer.ScrollableHeight;
-
+        ValidateTimelineContent();
         if (maxVerticalOffset < 0 || verticalOffset == maxVerticalOffset)
         {
             _isRefreshing = true;
-            //GvContent.Items.Clear();
+            bool willClearTimelineOnRefresh = (Utils.Configuration.GetValue("ClearTimelineOnRefresh") as bool?) ?? true;
+            if (willClearTimelineOnRefresh) _timeline.Clear();
             await Refresh(_lastFeedId);
             _isRefreshing = false;
+        }
+    }
+
+    private void ValidateTimelineContent()
+    {
+        var scrollViewer = Utility.GetScrollViewerFromGridView(GvContent);
+        foreach (var control in _timeline)
+        {
+            if (control is not TimelineControl) continue;
+            var timelineControl = control as TimelineControl;
+            if (Utility.IsVisibleToUser(control, scrollViewer) && !timelineControl.IsContentLoaded) _ = timelineControl.RefreshContent();
+            else if (!Utility.IsVisibleToUser(control, scrollViewer) && timelineControl.IsContentLoaded) timelineControl.UnloadMedia();
         }
     }
 }

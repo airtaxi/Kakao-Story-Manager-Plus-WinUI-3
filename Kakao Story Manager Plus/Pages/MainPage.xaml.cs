@@ -260,7 +260,7 @@ public sealed partial class MainPage : Page
         var overlay = isSecond ? s_instance.GdOverlay2 : s_instance.GdOverlay;
         var frame = isSecond ? s_instance.FrOverlay2 : s_instance.FrOverlay;
         overlay.Visibility = Visibility.Visible;
-        (frame.Content as TimelineControl)?.DisposeMedias();
+        (frame.Content as TimelineControl)?.UnloadMedia();
         frame.Content = element;
         s_instance.GdRoot.Focus(FocusState.Keyboard);
     }
@@ -281,7 +281,7 @@ public sealed partial class MainPage : Page
 
         if (!willDispose) return;
         var frame = isSecond ? s_instance.FrOverlay2 : s_instance.FrOverlay;
-        (frame.Content as TimelineControl)?.DisposeMedias();
+        (frame.Content as TimelineControl)?.UnloadMedia();
         frame.Content = null;
     }
 

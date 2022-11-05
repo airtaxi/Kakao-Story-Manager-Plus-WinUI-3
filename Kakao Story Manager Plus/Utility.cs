@@ -19,11 +19,10 @@ using KSMP.Utils;
 using Microsoft.UI.Windowing;
 using Newtonsoft.Json;
 using System.Diagnostics;
-using KSMP;
-using System.Runtime.CompilerServices;
-using ImageMagick;
+using Windows.Foundation;
 using static KSMP.ApiHandler.DataType.CommentData;
 using Newtonsoft.Json.Linq;
+using Windows.ApplicationModel.Contacts;
 
 namespace KSMP;
 
@@ -319,5 +318,19 @@ public static class Utility
     {
         var data = Configuration.GetValue("DcConList") as JArray ?? new();
         return data.ToObject<List<Api.DcCon.DataType.Package>>();
+    }
+
+    private const double VisibilityOffset = 300;
+    public static bool IsVisibleToUser(Control control, ScrollViewer scrollViewer)
+    {
+        var top = control
+            .TransformToVisual(scrollViewer)
+            .TransformPoint(new Point(0, 0));
+
+        var elementTop = top.Y;
+        var elementBottom = top.Y + control.ActualHeight;
+
+        var isVisible = elementBottom > -VisibilityOffset && elementTop < scrollViewer.ViewportHeight + VisibilityOffset;
+        return isVisible;
     }
 }

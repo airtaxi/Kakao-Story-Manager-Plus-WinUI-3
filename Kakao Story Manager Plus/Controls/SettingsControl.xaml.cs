@@ -25,6 +25,7 @@ public sealed partial class SettingsControl : UserControl
         bool willLaunchAtStartup = (Utils.Configuration.GetValue("LaunchAtStartup") as bool?) ?? false;
         bool willUseGifProfileImage = (Utils.Configuration.GetValue("UseGifProfileImage") as bool?) ?? false;
         bool willUseGifInTimeline = (Utils.Configuration.GetValue("UseGifInTimeline") as bool?) ?? false;
+        bool willClearTimelineOnRefresh = (Utils.Configuration.GetValue("ClearTimelineOnRefresh") as bool?) ?? true;
 
         TsFavoriteFriendNotification.IsOn = willReceiveFavoriteFriendNotification;
         TsEmotionalNotification.IsOn = willReceiveEmotionalNotification;
@@ -32,6 +33,7 @@ public sealed partial class SettingsControl : UserControl
         TsLaunchAtStartup.IsOn = willLaunchAtStartup;
         TsUseGifProfileImage.IsOn = willUseGifProfileImage;
         TsUseGifInTimeline.IsOn = willUseGifInTimeline;
+        TsClearTimelineOnRefresh.IsOn = willClearTimelineOnRefresh;
 
         TsFavoriteFriendNotification.Toggled += OnReceiveFavoriteFriendNotificationToggleSwitchToggled;
         TsEmotionalNotification.Toggled += OnReceiveEmotionalNotificationToggleSwitchToggled;
@@ -39,10 +41,19 @@ public sealed partial class SettingsControl : UserControl
         TsLaunchAtStartup.Toggled += OnLaunchAtStartupToggleSwitchToggled;
         TsUseGifProfileImage.Toggled += OnUseGifProfileImageToggleSwitchToggled;
         TsUseGifInTimeline.Toggled += OnUseGifInTimelineToggleSwitchToggled;
+        TsClearTimelineOnRefresh.Toggled += OnClearTimelineOnRefreshToggleSwitchToggled;
 
         int defaultPostWritingPermission = (Utils.Configuration.GetValue("DefaultPostWritingPermission") as int?) ?? 0;
         CbxDefaultPostWritingPermission.SelectedIndex = defaultPostWritingPermission;
         CbxDefaultPostWritingPermission.SelectionChanged += OnDefaultPostWritingPermissionComboBoxSelectionChanged;
+    }
+
+    private async void OnClearTimelineOnRefreshToggleSwitchToggled(object sender, RoutedEventArgs e)
+    {
+        var toggleSwitch = sender as ToggleSwitch;
+        var isOn = toggleSwitch.IsOn;
+        Utils.Configuration.SetValue("ClearTimelineOnRefresh", isOn);
+        if (!isOn) await this.ShowMessageDialogAsync("이 옵션을 비활성화 하는 경우, WinUI 프레임워크의 버그로 인하여 메모리 누수되고 프로세스 사용량이 늘어날 수 있습니다.", "경고", true);
     }
 
     private async void OnUseGifInTimelineToggleSwitchToggled(object sender, RoutedEventArgs e)

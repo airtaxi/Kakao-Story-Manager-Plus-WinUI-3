@@ -16,6 +16,7 @@
         <ToggleSwitch x:Name="TsRefreshAfterWritePost" OnContent="글쓰기 이후 타임라인 새로고침" OffContent="글쓰기 이후 타임라인 새로고침 안함" Margin="0,5,0,0"/>
         <ToggleSwitch x:Name="TsUseGifProfileImage" OnContent="GIF 프로필 이미지 사용" OffContent="GIF 프로필 이미지 사용 안함" Margin="0,5,0,0"/>
         <ToggleSwitch x:Name="TsUseGifInTimeline" OnContent="타임라인 고화질 이미지 사용" OffContent="타임라인 고화질 이미지 사용 안함" Margin="0,5,0,0"/>
+        <ToggleSwitch x:Name="TsClearTimelineOnRefresh" OnContent="포스트 추가 로드시 기존 포스트 삭제" OffContent="포스트 추가 로드시 기존 포스트 유지" Margin="0,5,0,0"/>
         
         <TextBlock Text="일반 설정" FontSize="17" FontWeight="Bold"/>
         <ToggleSwitch x:Name="TsLaunchAtStartup" OnContent="부팅시 자동 시작됨" OffContent="부팅시 자동 시작 해제됨" Margin="0,5,0,0"/>

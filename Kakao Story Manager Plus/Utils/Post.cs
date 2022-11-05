@@ -48,11 +48,12 @@ public static class Post
                     url = await ApiHandler.GetEmoticonUrl(decorator.item_id, decorator.resource_id.ToString());
                 var image = new Image();
                 if (decorator.item_id.StartsWith("4"))
-                    Utility.SetAnimatedEmoticonImage(image, url);
+                    await Utility.SetAnimatedEmoticonImage(image, url);
                 else
-                    Utility.SetEmoticonImageAsync(image, url);
+                    await Utility.SetEmoticonImageAsync(image, url);
                 image.Width = 80;
                 image.Height = 80;
+                richTextBlock.Tag = image;
                 container.Child = image;
                 paragraph.Inlines.Add(container);
                 newLineForEmoticon = new Run() { Text = "\n" };

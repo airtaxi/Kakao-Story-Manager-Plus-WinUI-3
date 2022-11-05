@@ -55,7 +55,7 @@ public sealed partial class CommentControl : UserControl
             SpLike.Visibility = Visibility.Visible;
             TbLike.Text = comment.like_count.ToString();
         }
-        Utils.Post.SetTextContent(comment.decorators, RtbContent);
+        Post.SetTextContent(comment.decorators, RtbContent);
         var commentMedia = comment.decorators.FirstOrDefault(x => x.media?.thumbnail_url != null);
         if (!string.IsNullOrEmpty(commentMedia?.media?.origin_url))
         {
@@ -79,6 +79,13 @@ public sealed partial class CommentControl : UserControl
         else
             ImgMain.Visibility = Visibility.Collapsed;
         LoadCommentCompletionSource.TrySetResult();
+    }
+
+    public void UnloadMedia()
+    {
+        ImgMain?.DisposeImage();
+        PpUser?.DisposeImage();
+        (RtbContent.Tag as Image)?.DisposeImage();
     }
 
     private async void OnLikeButtonClick(object sender, RoutedEventArgs e)

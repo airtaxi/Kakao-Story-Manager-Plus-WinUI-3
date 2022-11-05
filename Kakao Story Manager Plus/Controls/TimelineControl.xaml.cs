@@ -18,6 +18,8 @@ using Windows.ApplicationModel.DataTransfer;
 using System.Diagnostics;
 using static KSMP.ApiHandler.DataType.EmoticonItems;
 using Microsoft.UI.Xaml.Media.Imaging;
+using KSMP.Utils;
+using CommunityToolkit.WinUI.UI.Animations;
 
 namespace KSMP.Controls;
 
@@ -30,6 +32,8 @@ public sealed partial class TimelineControl : UserControl
 
     private bool _isUploading = false;
     private bool isBookmarking = false;
+
+    public bool IsContentLoaded = false;
 
     private ApiHandler.DataType.UploadedImageProp _commentMedia = null;
     private ApiHandler.DataType.UploadedImageProp _commentDcCon = null;
@@ -76,13 +80,7 @@ public sealed partial class TimelineControl : UserControl
             SvContent.Padding = new Thickness(20, 0, 20, 20);
             GdMain.Margin = new Thickness(0);
 
-            TbShareCount.Text = post.share_count.ToString();
         }
-
-        if (post.@object != null && post.@object.id != null)
-            FrShare.Content = new TimelineControl(post.@object, true);
-        if (post.scrap != null)
-            FrLink.Content = new LinkControl(post.scrap);
 
         Initialize();
         var inputControl = new InputControl("댓글을 입력하세요.");
@@ -94,24 +92,32 @@ public sealed partial class TimelineControl : UserControl
         if (isOverlay) inputControl.SetPopupDesiredPlacement(PopupPlacementMode.Top);
 
         FrComment.Content = inputControl;
-        _ = RefreshContent();
-
-        Utility.SetPersonPictureUrlSource(PpUser, post.actor?.GetValidUserProfileUrl());
-        FvMedia.ItemsSource = Utility.GenerateMedias(post?.media);
+        if (isOverlay) _ = RefreshContent();
     }
 
-    public void DisposeMedias()
+    public void UnloadMedia()
     {
-        (FrShare.Content as TimelineControl)?.DisposeMedias();
-        var medias = FvMedia.ItemsSource as List<FrameworkElement>;
-        if (medias == null) return;
-        foreach(var media in medias)
+        IsContentLoaded = false;
+        RtDummy.Visibility = Visibility.Visible;
+        RtDummy.Height = FrRoot.ActualHeight;
+        GdLoading.Visibility = Visibility.Collapsed;
+        GdOverlay.Visibility = Visibility.Collapsed;
+
+        (FrShare.Content as TimelineControl)?.UnloadMedia();
+        if (FvMedia.ItemsSource is not List<FrameworkElement> medias) return;
+
+        var controls = GetCurrentCommentControls();
+        controls.ForEach(x => x.UnloadMedia());
+        SpComments.Children.Clear();
+
+        PpUser?.DisposeImage();
+        (FrLink.Content as LinkControl)?.UnloadMedia();
+
+        foreach (var media in medias)
         {
             if (media is MediaPlayerElement video) video.DisposeVideo();
             else if (media is Image image) image.DisposeImage();
         }
-        //GC.Collect(GC.MaxGeneration);
-        //GC.WaitForPendingFinalizers();
     }
 
     private async void OnImagePasted(string temporaryImageFilePath)
@@ -259,6 +265,7 @@ public sealed partial class TimelineControl : UserControl
 
     public async Task RefreshContent(bool showLoading = true)
     {
+        IsContentLoaded = true;
         if (showLoading) GdLoading.Visibility = Visibility.Visible;
         SpPostInformation.Visibility = Visibility.Collapsed;
         if (!_isShare) _post = await ApiHandler.GetPost(_post.id);
@@ -315,11 +322,25 @@ public sealed partial class TimelineControl : UserControl
         if ((_post.media?.Count ?? 0) > 0) FvMedia.Visibility = Visibility.Visible;
         else FvMedia.Visibility = Visibility.Collapsed;
 
-        Utils.Post.SetTextContent(_post.content_decorators, RTbContent);
+        Post.SetTextContent(_post.content_decorators, RTbContent);
 
         RefreshUpButton();
         RefreshBookmarkButton();
         RefreshEmotionsButton();
+
+        Utility.SetPersonPictureUrlSource(PpUser, _post.actor?.GetValidUserProfileUrl());
+        FvMedia.ItemsSource = Utility.GenerateMedias(_post?.media);
+
+        TbShareCount.Text = _post.share_count.ToString();
+        if (_post.@object != null && _post.@object.id != null)
+            FrShare.Content = new TimelineControl(_post.@object, true);
+        if (_post.scrap != null)
+            FrLink.Content = new LinkControl(_post.scrap);
+
+        (FrShare.Content as TimelineControl)?.RefreshContent();
+
+        RtDummy.Visibility = Visibility.Collapsed;
+        this.UpdateLayout();
 
         if (showLoading) GdLoading.Visibility = Visibility.Collapsed;
     }
@@ -334,8 +355,10 @@ public sealed partial class TimelineControl : UserControl
         foreach (var comment in comments)
         {
             if (currentComments.Any(x => x.id == comment.id)) continue;
-            var control = new CommentControl(comment, _post.id, _isOverlay);
-            control.Tag = comment;
+            var control = new CommentControl(comment, _post.id, _isOverlay)
+            {
+                Tag = comment
+            };
             control.OnReplyClicked += OnCommentReplyClicked;
             control.OnDeleted += OnCommentDeleted;
             await control.LoadCommentCompletionSource.Task;
@@ -511,8 +534,10 @@ public sealed partial class TimelineControl : UserControl
         e.Handled = true;
 
         var control = new EmotionsListControl(_post.likes);
-        var flyout = new Flyout();
-        flyout.Content = control;
+        var flyout = new Flyout
+        {
+            Content = control
+        };
         flyout.ShowAt(RtbShares);
     }
     private async void OnShareCountTextBlockTapped(object sender, TappedRoutedEventArgs e)
@@ -534,11 +559,13 @@ public sealed partial class TimelineControl : UserControl
         List<FriendProfile> friendProfiles = new();
         foreach (var share in shares)
         {
-            var friendProfile = new FriendProfile();
-            friendProfile.ProfileUrl = share.actor.GetValidUserProfileUrl();
-            friendProfile.Name = share.actor.display_name;
-            friendProfile.Id = share.actor.id;
-            friendProfile.Relationship = share.actor.relationship;
+            var friendProfile = new FriendProfile
+            {
+                ProfileUrl = share.actor.GetValidUserProfileUrl(),
+                Name = share.actor.display_name,
+                Id = share.actor.id,
+                Relationship = share.actor.relationship
+            };
             friendProfile.Metadata.Tag = share.activity_id;
             friendProfile.Metadata.Control = control;
             friendProfile.Metadata.Flyout = flyout;
@@ -693,11 +720,13 @@ public sealed partial class TimelineControl : UserControl
         List<FriendProfile> friendProfiles = new();
         foreach (var share in shares)
         {
-            var friendProfile = new FriendProfile();
-            friendProfile.ProfileUrl = share.actor.GetValidUserProfileUrl();
-            friendProfile.Name = share.actor.display_name;
-            friendProfile.Id = share.actor.id;
-            friendProfile.Relationship = share.actor.relationship;
+            var friendProfile = new FriendProfile
+            {
+                ProfileUrl = share.actor.GetValidUserProfileUrl(),
+                Name = share.actor.display_name,
+                Id = share.actor.id,
+                Relationship = share.actor.relationship
+            };
             friendProfile.Metadata.Tag = share.activity_id;
             friendProfile.Metadata.Control = control;
             friendProfile.Metadata.Flyout = flyout;
@@ -737,7 +766,8 @@ public sealed partial class TimelineControl : UserControl
         }
     }
 
-    private List<Comment> GetCurrentComments() => SpComments.Children.Select(x => (x as CommentControl).Tag as Comment).ToList();
+    private List<CommentControl> GetCurrentCommentControls() => SpComments.Children.Select(x => x as CommentControl).ToList();
+    private List<Comment> GetCurrentComments() => GetCurrentCommentControls().Select(x => x.Tag as Comment).ToList();
 
     private void OnAddEmoticonButtonClicked(object sender, RoutedEventArgs e)
     {
