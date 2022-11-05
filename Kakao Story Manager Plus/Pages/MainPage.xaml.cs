@@ -197,7 +197,7 @@ public sealed partial class MainPage : Page
         WindowHelper.ShowWindow(MainWindow.Instance);
     }
 
-    public static async void NavigateTimeline(string args = null)
+    public static void NavigateTimeline(string args = null)
     {
         LastArgs = args;
         Utility.ManuallyDisposeAllMedias();

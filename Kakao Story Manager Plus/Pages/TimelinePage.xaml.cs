@@ -24,7 +24,6 @@ public sealed partial class TimelinePage : Page
     {
         InitializeComponent();
         LastFeedId = null;
-        GvContent.ItemsSource = GvContent.Items;
     }
 
     protected override async void OnNavigatedTo(NavigationEventArgs e)
