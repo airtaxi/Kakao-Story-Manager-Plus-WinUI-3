@@ -125,6 +125,9 @@ public sealed partial class TimelinePage : Page
         GvContent.UpdateLayout();
         ValidateTimelineContent();
         PrLoading.Visibility = Visibility.Collapsed;
+        bool willClearTimelineOnRefresh = (Utils.Configuration.GetValue("ClearTimelineOnRefresh") as bool?) ?? true;
+        var first = GvContent.Items.FirstOrDefault();
+        if (willClearTimelineOnRefresh && first != null) GvContent.ScrollIntoView(first);
         IsEnabled = true;
     }
 
@@ -144,7 +147,12 @@ public sealed partial class TimelinePage : Page
         {
             _isRefreshing = true;
             bool willClearTimelineOnRefresh = (Utils.Configuration.GetValue("ClearTimelineOnRefresh") as bool?) ?? true;
-            if (willClearTimelineOnRefresh) GvContent.Items.Clear();
+            if (willClearTimelineOnRefresh)
+            {
+                Utility.ManuallyDisposeAllMedias();
+                GvContent.Items.Clear();
+            }
+
             await Refresh(_lastFeedId);
             _isRefreshing = false;
         }
