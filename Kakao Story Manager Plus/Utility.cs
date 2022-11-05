@@ -320,7 +320,7 @@ public static class Utility
         return data.ToObject<List<Api.DcCon.DataType.Package>>();
     }
 
-    private const double VisibilityOffset = 300;
+    private const double VisibilityOffset = 0;
     public static bool IsVisibleToUser(Control control, ScrollViewer scrollViewer)
     {
         var top = control

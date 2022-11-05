@@ -74,6 +74,7 @@ public sealed partial class TimelinePage : Page
     public static async Task Refresh() => await s_instance.Refresh();
     private async Task Refresh(string from = null)
     {
+        IsEnabled = false;
         PrLoading.Visibility = Visibility.Visible;
         if (from == null)
         {
@@ -122,9 +123,11 @@ public sealed partial class TimelinePage : Page
             else _lastFeedId = null;
         }
 
-        PrLoading.Visibility = Visibility.Collapsed;
+        await Task.Delay(250);
         GvContent.UpdateLayout();
         ValidateTimelineContent();
+        PrLoading.Visibility = Visibility.Collapsed;
+        IsEnabled = true;
     }
 
     private static bool IsValidFeed(ApiHandler.DataType.CommentData.PostData feed) => feed.deleted != true && (feed.@object?.deleted ?? false) != true && feed.blinded != true && (feed.@object?.blinded ?? false) != true && (feed.verb == "post" || feed.verb == "share");
