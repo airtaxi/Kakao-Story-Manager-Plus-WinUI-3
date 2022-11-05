@@ -121,24 +121,16 @@ public static class Utility
         return video;
     }
 
-    public static void SetEmoticonImage(Image image, string url)
+    public static async Task SetEmoticonImageAsync(Image image, string url)
     {
-        image.Loaded += async (s, e) =>
-        {
-            LoadedImages.Add(image);
-            await LoadEmoticonImage(image, url);
-        };
-        image.Unloaded += (s, e) => image.DisposeImage();
+        LoadedImages.Add(image);
+        await LoadEmoticonImage(image, url);
     }
 
-    public static void SetAnimatedEmoticonImage(Image image, string url)
+    public static async Task SetAnimatedEmoticonImage(Image image, string url)
     {
-        image.Loaded += async (s, e) =>
-        {
-            LoadedImages.Add(image);
-            await LoadAnimatedEmoticonImage(image, url);
-        };
-        image.Unloaded += (s, e) => image.DisposeImage();
+        LoadedImages.Add(image);
+        await LoadAnimatedEmoticonImage(image, url);
     }
 
     private static void OnVideoPointerEntered(object sender, PointerRoutedEventArgs e) => (sender as MediaPlayerElement).TransportControls.Show();
@@ -158,22 +150,14 @@ public static class Utility
 
     public static void SetPersonPictureUrlSource(PersonPicture personPicture, string url, bool shouldDispose = true)
     {
-        personPicture.Loaded += (s, e) =>
-        {
-            if (shouldDispose) LoadedPersonPictures.Add(personPicture);
-            LoadPersonPicture(personPicture, url);
-        };
-        personPicture.Unloaded += (s, e) => personPicture.DisposeImage();
+        if (shouldDispose) LoadedPersonPictures.Add(personPicture);
+        LoadPersonPicture(personPicture, url);
     }
 
     public static void SetImageUrlSource(Image image, string url)
     {
-        image.Loaded += (s, e) =>
-        {
-            LoadedImages.Add(image);
-            LoadImage(image, url);
-        };
-        image.Unloaded += (s, e) => image.DisposeImage();
+        LoadedImages.Add(image);
+        LoadImage(image, url);
     }
 
     private static async Task LoadEmoticonImage(Image image, string url, int retryCount = 0)

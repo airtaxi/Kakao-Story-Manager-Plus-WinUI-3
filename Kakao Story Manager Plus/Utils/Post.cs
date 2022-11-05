@@ -50,7 +50,7 @@ public static class Post
                 if (decorator.item_id.StartsWith("4"))
                     Utility.SetAnimatedEmoticonImage(image, url);
                 else
-                    Utility.SetEmoticonImage(image, url);
+                    Utility.SetEmoticonImageAsync(image, url);
                 image.Width = 80;
                 image.Height = 80;
                 container.Child = image;

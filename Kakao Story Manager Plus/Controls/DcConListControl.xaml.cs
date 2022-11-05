@@ -78,7 +78,7 @@ public sealed partial class DcConListControl : UserControl
             };
             GvMain.Items.Add(image);
 
-            Utility.SetEmoticonImage(image, url);
+            Utility.SetEmoticonImageAsync(image, url);
             image.Tag = detail;
         }
         IsEnabled = true;
