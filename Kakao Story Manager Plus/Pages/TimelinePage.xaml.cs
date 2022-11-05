@@ -137,7 +137,7 @@ public sealed partial class TimelinePage : Page
         if (maxVerticalOffset < 0 || verticalOffset == maxVerticalOffset)
         {
             _isRefreshing = true;
-            GvContent.Items.Clear();
+            //GvContent.Items.Clear();
             await Refresh(_lastFeedId);
             _isRefreshing = false;
         }
