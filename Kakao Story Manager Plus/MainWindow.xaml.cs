@@ -15,6 +15,7 @@ using static KSMP.ClassManager;
 using static KSMP.ApiHandler;
 using Microsoft.UI;
 using WinRT.Interop;
+using Windows.ApplicationModel.Appointments;
 
 namespace KSMP;
 
@@ -106,6 +107,7 @@ public sealed partial class MainWindow : Microsoft.UI.Xaml.Window
 
     private void SetupAppWindow()
     {
+        appWindow.Title = $"카카오스토리 매니저 PLUS";
         appWindow.TitleBar.ExtendsContentIntoTitleBar = true;
         AppTitleBar.Loaded += AppTitleBarLoaded;
         AppTitleBar.SizeChanged += AppTitleBarSizeChanged;
