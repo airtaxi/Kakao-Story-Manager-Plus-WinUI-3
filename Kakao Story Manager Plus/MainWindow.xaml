@@ -9,8 +9,37 @@
     Closed="WindowClosed">
 
     <Grid PreviewKeyDown="OnPreviewKeyDown">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <Grid Background="{ThemeResource White}" x:Name="AppTitleBar" Height="32">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition x:Name="LeftPaddingColumn" Width="0"/>
+                <ColumnDefinition x:Name="IconColumn" Width="Auto"/>
+                <ColumnDefinition x:Name="TitleColumn" Width="Auto"/>
+                <ColumnDefinition x:Name="LeftDragColumn" Width="*"/>
+                <ColumnDefinition x:Name="SearchColumn" Width="Auto"/>
+                <ColumnDefinition x:Name="RightDragColumn" Width="*"/>
+                <ColumnDefinition x:Name="RightPaddingColumn" Width="0"/>
+            </Grid.ColumnDefinitions>
+            <Image x:Name="TitleBarIcon" Source="/icon.ico" 
+           Grid.Column="1"
+           Width="16" Height="16"
+           Margin="8,0,0,0"/>
+            <TextBlock x:Name="TitleTextBlock"  
+               Style="{StaticResource CaptionTextBlockStyle}"
+               Grid.Column="2"
+               VerticalAlignment="Center"
+               Margin="4,0,0,0"/>
+            <!--<AutoSuggestBox Grid.Column="4" QueryIcon="Find"
+                    PlaceholderText="Search"
+                    VerticalAlignment="Center"
+                    Width="260" Margin="4,0"/>-->
+        </Grid>
+        
         <notifyicon:TaskbarIcon x:Name="TiMain"
             TrayMouseDoubleClick="TaskbarIconTrayMouseDoubleTapped"/>
-        <Frame x:Name="FrMain"/>
+        <Frame Grid.Row="1" x:Name="FrMain"/>
     </Grid>
 </Window>

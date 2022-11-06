@@ -22,8 +22,9 @@ using System.Diagnostics;
 using Windows.Foundation;
 using static KSMP.ApiHandler.DataType.CommentData;
 using Newtonsoft.Json.Linq;
-using Windows.ApplicationModel.Contacts;
 using Microsoft.Win32;
+using static KSMP.MainWindow;
+using System.Runtime.InteropServices;
 
 namespace KSMP;
 
@@ -343,4 +344,7 @@ public static class Utility
             return isLightTheme?.ToString() == "1";
         }
     }
+
+    [DllImport("Shcore.dll", SetLastError = true)]
+    public static extern int GetDpiForMonitor(IntPtr hmonitor, Monitor_DPI_Type dpiType, out uint dpiX, out uint dpiY);
 }

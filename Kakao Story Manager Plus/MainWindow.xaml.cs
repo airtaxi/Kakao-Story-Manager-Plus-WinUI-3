@@ -13,6 +13,8 @@ using System.IO;
 using System.Threading.Tasks;
 using static KSMP.ClassManager;
 using static KSMP.ApiHandler;
+using Microsoft.UI;
+using WinRT.Interop;
 
 namespace KSMP;
 
@@ -22,18 +24,19 @@ public sealed partial class MainWindow : Microsoft.UI.Xaml.Window
     public static TaskCompletionSource ReloginTaskCompletionSource = null;
     private static List<MenuFlyoutItem> s_loginRequiredMenuFlyoutItems = new();
     private bool _shouldClose { get; set; } = false;
-    private string _lastArgs { get; set; } = null;
+    private AppWindow appWindow;
 
     public MainWindow(RestartFlag flag = null)
     {
         Instance = this;
         InitializeComponent();
 
-        FrameworkElement root = Content as FrameworkElement;
-        var themeSetting = Utils.Configuration.GetValue("ThemeSetting") as string ?? "Default";
-        if (themeSetting == "Light") root.RequestedTheme = ElementTheme.Light;
-        else if (themeSetting == "Dark") root.RequestedTheme = ElementTheme.Dark;
+        appWindow = this.GetAppWindow();
+        appWindow.Changed += AppWindowChanged;
 
+        (Content as FrameworkElement).ActualThemeChanged += OnThemeChanged;
+
+        SetupTheme();
         SetupAppWindow();
         SetupTrayIcon();
         if (flag == null) FrMain.Navigate(typeof(LoginPage));
@@ -54,6 +57,25 @@ public sealed partial class MainWindow : Microsoft.UI.Xaml.Window
             LoginManager.SeleniumDriver?.Dispose();
             LoginManager.SeleniumDriver = null;
         };
+    }
+
+    private void OnThemeChanged(FrameworkElement sender, object args) => SetupTheme();
+
+    private void SetupTheme()
+    {
+        FrameworkElement root = Content as FrameworkElement;
+        var themeSetting = Utils.Configuration.GetValue("ThemeSetting") as string ?? "Default";
+        if (themeSetting == "Light")
+        {
+            root.RequestedTheme = ElementTheme.Light;
+            appWindow.TitleBar.ButtonBackgroundColor = Colors.White;
+        }
+        else if (themeSetting == "Dark")
+        {
+            root.RequestedTheme = ElementTheme.Dark;
+            appWindow.TitleBar.ButtonBackgroundColor = Colors.Black;
+        }
+        else appWindow.TitleBar.ButtonBackgroundColor = Utility.IsSystemUsesLightTheme ? Colors.White : Colors.Black;
     }
 
     private static async void ShowPost(string postId)
@@ -84,12 +106,130 @@ public sealed partial class MainWindow : Microsoft.UI.Xaml.Window
 
     private void SetupAppWindow()
     {
-        var appWindow = this.GetAppWindow();
+        appWindow.TitleBar.ExtendsContentIntoTitleBar = true;
+        AppTitleBar.Loaded += AppTitleBarLoaded;
+        AppTitleBar.SizeChanged += AppTitleBarSizeChanged;
+
         var versionString = Utils.Common.GetVersionString() ?? "VERSION ERROR";
-        appWindow.Title = $"카카오스토리 매니저 PLUS {versionString}";
+        TitleTextBlock.Text = $"카카오스토리 매니저 PLUS {versionString}";
         appWindow.SetIcon(Path.Combine(App.BinaryDirectory, "icon.ico"));
     }
 
+    private void AppWindowChanged(AppWindow sender, AppWindowChangedEventArgs args)
+    {
+        if (args.DidPresenterChange && AppWindowTitleBar.IsCustomizationSupported())
+        {
+            switch (sender.Presenter.Kind)
+            {
+                case AppWindowPresenterKind.CompactOverlay:
+                    // Compact overlay - hide custom title bar
+                    // and use the default system title bar instead.
+                    AppTitleBar.Visibility = Visibility.Collapsed;
+                    sender.TitleBar.ResetToDefault();
+                    break;
+
+                case AppWindowPresenterKind.FullScreen:
+                    // Full screen - hide the custom title bar
+                    // and the default system title bar.
+                    AppTitleBar.Visibility = Visibility.Collapsed;
+                    sender.TitleBar.ExtendsContentIntoTitleBar = true;
+                    break;
+
+                case AppWindowPresenterKind.Overlapped:
+                    // Normal - hide the system title bar
+                    // and use the custom title bar instead.
+                    AppTitleBar.Visibility = Visibility.Visible;
+                    sender.TitleBar.ExtendsContentIntoTitleBar = true;
+                    SetDragRegionForCustomTitleBar(sender);
+                    break;
+
+                default:
+                    // Use the default system title bar.
+                    sender.TitleBar.ResetToDefault();
+                    break;
+            }
+        }
+    }
+
+    private void AppTitleBarLoaded(object sender, RoutedEventArgs e)
+    {
+        if (AppWindowTitleBar.IsCustomizationSupported())
+            SetDragRegionForCustomTitleBar(appWindow);
+    }
+
+    public enum Monitor_DPI_Type : int
+    {
+        MDT_Effective_DPI = 0,
+        MDT_Angular_DPI = 1,
+        MDT_Raw_DPI = 2,
+        MDT_Default = MDT_Effective_DPI
+    }
+
+    private double GetScaleAdjustment()
+    {
+        IntPtr hWnd = WindowNative.GetWindowHandle(this);
+        WindowId wndId = Win32Interop.GetWindowIdFromWindow(hWnd);
+        DisplayArea displayArea = DisplayArea.GetFromWindowId(wndId, DisplayAreaFallback.Primary);
+        IntPtr hMonitor = Win32Interop.GetMonitorFromDisplayId(displayArea.DisplayId);
+
+        // Get DPI.
+        int result = Utility.GetDpiForMonitor(hMonitor, Monitor_DPI_Type.MDT_Default, out uint dpiX, out uint _);
+        if (result != 0)
+            throw new Exception("Could not get DPI for monitor.");
+
+        uint scaleFactorPercent = (uint)(((long)dpiX * 100 + (96 >> 1)) / 96);
+        return scaleFactorPercent / 100.0;
+    }
+
+    private void SetDragRegionForCustomTitleBar(AppWindow appWindow)
+    {
+        // Check to see if customization is supported.
+        // Currently only supported on Windows 11.
+        if (AppWindowTitleBar.IsCustomizationSupported()
+            && appWindow.TitleBar.ExtendsContentIntoTitleBar)
+        {
+            double scaleAdjustment = GetScaleAdjustment();
+
+            RightPaddingColumn.Width = new GridLength(appWindow.TitleBar.RightInset / scaleAdjustment);
+            LeftPaddingColumn.Width = new GridLength(appWindow.TitleBar.LeftInset / scaleAdjustment);
+
+            List<Windows.Graphics.RectInt32> dragRectsList = new();
+
+            Windows.Graphics.RectInt32 dragRectL;
+            dragRectL.X = (int)((LeftPaddingColumn.ActualWidth) * scaleAdjustment);
+            dragRectL.Y = 0;
+            dragRectL.Height = (int)(AppTitleBar.ActualHeight * scaleAdjustment);
+            dragRectL.Width = (int)((IconColumn.ActualWidth
+                                    + TitleColumn.ActualWidth
+                                    + LeftDragColumn.ActualWidth) * scaleAdjustment);
+            dragRectsList.Add(dragRectL);
+
+            Windows.Graphics.RectInt32 dragRectR;
+            dragRectR.X = (int)((LeftPaddingColumn.ActualWidth
+                                + IconColumn.ActualWidth
+                                + TitleTextBlock.ActualWidth
+                                + LeftDragColumn.ActualWidth
+                                + SearchColumn.ActualWidth) * scaleAdjustment);
+            dragRectR.Y = 0;
+            dragRectR.Height = (int)(AppTitleBar.ActualHeight * scaleAdjustment);
+            dragRectR.Width = (int)(RightDragColumn.ActualWidth * scaleAdjustment);
+            dragRectsList.Add(dragRectR);
+
+            Windows.Graphics.RectInt32[] dragRects = dragRectsList.ToArray();
+
+            appWindow.TitleBar.SetDragRectangles(dragRects);
+        }
+    }
+
+    private void AppTitleBarSizeChanged(object sender, SizeChangedEventArgs e)
+    {
+        if (AppWindowTitleBar.IsCustomizationSupported()
+            && appWindow.TitleBar.ExtendsContentIntoTitleBar)
+        {
+            // Update drag region if the size of the title bar changes.
+            SetDragRegionForCustomTitleBar(appWindow);
+        }
+    }
 
     private void SetupTrayIcon()
     {
@@ -97,19 +237,19 @@ public sealed partial class MainWindow : Microsoft.UI.Xaml.Window
 
         MenuFlyout menuFlyout = new();
 
-        MenuFlyoutItem showTimeline = new() { Text="타임라인" };
+        MenuFlyoutItem showTimeline = new() { Text = "타임라인" };
         var showTimelineCommand = new XamlUICommand();
         showTimelineCommand.ExecuteRequested += (s, e) => MainPage.ShowTimeline();
         showTimeline.Command = showTimelineCommand;
         s_loginRequiredMenuFlyoutItems.Add(showTimeline);
 
-        MenuFlyoutItem showMyProfile = new() { Text="내 프로필" };
+        MenuFlyoutItem showMyProfile = new() { Text = "내 프로필" };
         var showMyProfileCommand = new XamlUICommand();
         showMyProfileCommand.ExecuteRequested += (s, e) => MainPage.ShowMyProfile();
         showMyProfile.Command = showMyProfileCommand;
         s_loginRequiredMenuFlyoutItems.Add(showMyProfile);
 
-        MenuFlyoutItem quit = new() { Text="프로그램 종료" };
+        MenuFlyoutItem quit = new() { Text = "프로그램 종료" };
         var quitCommand = new XamlUICommand();
         quitCommand.ExecuteRequested += (s, e) => Environment.Exit(0);
         quit.Command = quitCommand;
