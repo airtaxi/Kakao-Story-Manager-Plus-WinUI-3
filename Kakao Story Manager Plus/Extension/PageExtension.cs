@@ -78,6 +78,7 @@ public static class PageExtension
             dialog.SecondaryButtonText = "취소";
 
         dialog.XamlRoot = page.XamlRoot;
+        dialog.RequestedTheme = (MainWindow.Instance.Content as FrameworkElement).RequestedTheme;
         return dialog;
     }
 }
