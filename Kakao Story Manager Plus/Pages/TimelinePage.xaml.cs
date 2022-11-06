@@ -169,4 +169,7 @@ public sealed partial class TimelinePage : Page
             else if (!Utility.IsVisibleToUser(control, scrollViewer) && timelineControl.IsContentLoaded) timelineControl.UnloadMedia();
         }
     }
+
+    private void OnPageSizeChanged(object sender, SizeChangedEventArgs e) => ValidateTimelineContent();
+
 }

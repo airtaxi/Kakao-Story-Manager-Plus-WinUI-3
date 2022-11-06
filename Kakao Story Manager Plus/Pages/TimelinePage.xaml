@@ -9,7 +9,7 @@
     xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
     xmlns:animations="using:CommunityToolkit.WinUI.UI.Animations"
     xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls"
-    Background="{ThemeResource White2}" NavigationCacheMode="Disabled">
+    Background="{ThemeResource White2}" NavigationCacheMode="Disabled" SizeChanged="OnPageSizeChanged">
 
     <Grid>
         <GridView x:Name="GvContent" SelectionMode="None"
