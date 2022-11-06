@@ -6,7 +6,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:notifyicon="using:H.NotifyIcon"
     mc:Ignorable="d"
-    Closed="WindowClosed">
+    Title="카카오스토리 매니저 PLUS" Closed="WindowClosed">
 
     <Grid PreviewKeyDown="OnPreviewKeyDown">
         <Grid.RowDefinitions>
