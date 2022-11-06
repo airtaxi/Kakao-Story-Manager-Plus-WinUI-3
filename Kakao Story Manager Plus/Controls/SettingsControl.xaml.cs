@@ -3,6 +3,7 @@ using KSMP.Pages;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.Win32;
+using OpenQA.Selenium.DevTools.V104.DOM;
 using System;
 using System.Threading.Tasks;
 using static KSMP.ClassManager;
@@ -83,7 +84,7 @@ public sealed partial class SettingsControl : UserControl
         var toggleSwitch = sender as ToggleSwitch;
         var isOn = toggleSwitch.IsOn;
         Utils.Configuration.SetValue("ClearTimelineOnRefresh", isOn);
-        if (!isOn) await this.ShowMessageDialogAsync("이 옵션을 비활성화 하는 경우, WinUI 프레임워크의 버그로 인하여 메모리 누수되고 프로세스 사용량이 늘어날 수 있습니다.", "경고", true);
+        if (!isOn) await this.ShowMessageDialogAsync("이 옵션을 비활성화 하는 경우, WinUI 프레임워크의 버그로 인하여 메모리 누수되고 프로세스 사용량이 늘어날 수 있습니다.", "경고", false);
     }
 
     private void OnUseGifInTimelineToggleSwitchToggled(object sender, RoutedEventArgs e)
