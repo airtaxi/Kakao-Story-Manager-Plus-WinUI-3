@@ -4,6 +4,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.Win32;
 using System;
+using System.Threading.Tasks;
 using static KSMP.ClassManager;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -46,6 +47,35 @@ public sealed partial class SettingsControl : UserControl
         int defaultPostWritingPermission = (Utils.Configuration.GetValue("DefaultPostWritingPermission") as int?) ?? 0;
         CbxDefaultPostWritingPermission.SelectedIndex = defaultPostWritingPermission;
         CbxDefaultPostWritingPermission.SelectionChanged += OnDefaultPostWritingPermissionComboBoxSelectionChanged;
+
+        ValidateThemeSetting();
+        CbxThemeSetting.SelectionChanged += OnThemeSettingComboBoxSelectionChanged;
+    }
+
+    private void OnThemeSettingComboBoxSelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        var comboBox = sender as ComboBox;
+
+        string themeSetting;
+        if (comboBox.SelectedIndex == 0) themeSetting = "Default";
+        else if (comboBox.SelectedIndex == 1) themeSetting = "Light";
+        else themeSetting = "Dark";
+        Utils.Configuration.SetValue("ThemeSetting", themeSetting);
+        RequestProgramRestart();
+    }
+
+    private async void RequestProgramRestart()
+    {
+        var result = await this.ShowMessageDialogAsync("옵션을 완전히 적용하기 위해서는 프로그램 재시작이 필요합니다.\n확인을 누르면 프로그램을 재시작합니다.", "안내", true);
+        if (result == ContentDialogResult.Primary) Utility.SaveCurrentStateAndRestartProgram();
+    }
+
+    private void ValidateThemeSetting()
+    {
+        var themeSetting = Utils.Configuration.GetValue("ThemeSetting") as string ?? "Default";
+        if(themeSetting == "Default") CbxThemeSetting.SelectedIndex = 0;
+        else if(themeSetting == "Light") CbxThemeSetting.SelectedIndex = 1;
+        else CbxThemeSetting.SelectedIndex = 2;
     }
 
     private async void OnClearTimelineOnRefreshToggleSwitchToggled(object sender, RoutedEventArgs e)
@@ -56,22 +86,20 @@ public sealed partial class SettingsControl : UserControl
         if (!isOn) await this.ShowMessageDialogAsync("이 옵션을 비활성화 하는 경우, WinUI 프레임워크의 버그로 인하여 메모리 누수되고 프로세스 사용량이 늘어날 수 있습니다.", "경고", true);
     }
 
-    private async void OnUseGifInTimelineToggleSwitchToggled(object sender, RoutedEventArgs e)
+    private void OnUseGifInTimelineToggleSwitchToggled(object sender, RoutedEventArgs e)
     {
         var toggleSwitch = sender as ToggleSwitch;
         var isOn = toggleSwitch.IsOn;
         Utils.Configuration.SetValue("UseGifInTimeline", isOn);
-        var result = await this.ShowMessageDialogAsync("옵션을 완전히 적용하기 위해서는 프로그램 재시작이 필요합니다.\n확인을 누르면 프로그램을 재시작합니다.", "안내", true);
-        if (result == ContentDialogResult.Primary) Utility.SaveCurrentStateAndRestartProgram();
+        RequestProgramRestart();
     }
 
-    private async void OnUseGifProfileImageToggleSwitchToggled(object sender, RoutedEventArgs e)
+    private void OnUseGifProfileImageToggleSwitchToggled(object sender, RoutedEventArgs e)
     {
         var toggleSwitch = sender as ToggleSwitch;
         var isOn = toggleSwitch.IsOn;
         Utils.Configuration.SetValue("UseGifProfileImage", isOn);
-        var result = await this.ShowMessageDialogAsync("옵션을 완전히 적용하기 위해서는 프로그램 재시작이 필요합니다.\n확인을 누르면 프로그램을 재시작합니다.", "안내", true);
-        if (result == ContentDialogResult.Primary) Utility.SaveCurrentStateAndRestartProgram();
+        RequestProgramRestart();
     }
 
     private void OnRefreshAfterWritePostToggleSwitchToggled(object sender, RoutedEventArgs e)

@@ -28,6 +28,12 @@ public sealed partial class MainWindow : Microsoft.UI.Xaml.Window
     {
         Instance = this;
         InitializeComponent();
+
+        FrameworkElement root = Content as FrameworkElement;
+        var themeSetting = Utils.Configuration.GetValue("ThemeSetting") as string ?? "Default";
+        if (themeSetting == "Light") root.RequestedTheme = ElementTheme.Light;
+        else if (themeSetting == "Dark") root.RequestedTheme = ElementTheme.Dark;
+
         SetupAppWindow();
         SetupTrayIcon();
         if (flag == null) FrMain.Navigate(typeof(LoginPage));

@@ -4,7 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:controls="using:KSMP.Controls"
-    mc:Ignorable="d" SizeChanged="OnPageSizeChanged">
+    mc:Ignorable="d" SizeChanged="OnPageSizeChanged" Background="{ThemeResource White}">
 
     <Grid x:Name="GdRoot">
         <Grid.RowDefinitions>
@@ -89,7 +89,7 @@
         </Grid>
         <Border BorderBrush="LightGray" BorderThickness="0.5" VerticalAlignment="Bottom" HorizontalAlignment="Stretch" Grid.ColumnSpan="2"/>
         <Frame x:Name="FrContent" Grid.Row="1"/>
-        <Grid Grid.Column="1" Grid.Row="1">
+        <Grid Background="{ThemeResource White}" Grid.Column="1" Grid.Row="1">
             <Grid.RowDefinitions>
                 <RowDefinition Height="auto"/>
                 <RowDefinition Height="*"/>
@@ -101,7 +101,7 @@
                     </Viewbox>
                     <Button.Flyout>
                         <Flyout>
-                            <controls:SettingsControl/>
+                            <controls:SettingsControl x:Name="ScMain"/>
                         </Flyout>
                     </Button.Flyout>
                 </Button>

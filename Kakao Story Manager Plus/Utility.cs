@@ -23,6 +23,7 @@ using Windows.Foundation;
 using static KSMP.ApiHandler.DataType.CommentData;
 using Newtonsoft.Json.Linq;
 using Windows.ApplicationModel.Contacts;
+using Microsoft.Win32;
 
 namespace KSMP;
 
@@ -332,5 +333,14 @@ public static class Utility
 
         var isVisible = elementBottom > -VisibilityOffset && elementTop < scrollViewer.ViewportHeight + VisibilityOffset;
         return isVisible;
+    }
+
+    public static bool IsSystemUsesLightTheme
+    {
+        get
+        {
+            var isLightTheme = Registry.GetValue(@"HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize", "AppsUseLightTheme", "1");
+            return isLightTheme?.ToString() == "1";
+        }
     }
 }
