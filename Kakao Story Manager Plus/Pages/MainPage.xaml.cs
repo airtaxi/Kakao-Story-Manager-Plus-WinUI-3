@@ -416,7 +416,7 @@ public sealed partial class MainPage : Page
 
     private async void OnExitButtonClicked(object sender, RoutedEventArgs e)
     {
-        var dialogResult = await this.ShowMessageDialogAsync("정말로 프로그램을 종료하시곘습니까?", "경고", true);
+        var dialogResult = await this.ShowMessageDialogAsync("정말로 프로그램을 종료하시겠습니까?", "경고", true);
         if (dialogResult == ContentDialogResult.Primary) Environment.Exit(0);
     }
 
