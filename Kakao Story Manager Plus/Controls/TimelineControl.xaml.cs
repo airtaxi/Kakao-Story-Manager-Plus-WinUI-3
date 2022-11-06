@@ -99,9 +99,14 @@ public sealed partial class TimelineControl : UserControl
         ActualThemeChanged += OnThemeChanged;
     }
 
-    private void OnThemeChanged(FrameworkElement sender, object args)
+    private void OnThemeChanged(FrameworkElement sender, object args) => SetButtonColorByTheme();
+
+    private void SetButtonColorByTheme()
     {
-        if (Application.Current.RequestedTheme == ApplicationTheme.Light)
+        var requestedTheme = (MainWindow.Instance.Content as FrameworkElement).RequestedTheme;
+        if (requestedTheme == ElementTheme.Default) requestedTheme = Utility.IsSystemUsesLightTheme ? ElementTheme.Light : ElementTheme.Dark;
+
+        if (requestedTheme == ElementTheme.Light)
         {
             if (!_post.sympathized)
                 BtUp.Background = Application.Current.Resources["FixedWhite"] as SolidColorBrush;
@@ -194,6 +199,7 @@ public sealed partial class TimelineControl : UserControl
             FiEmotions.Foreground = Application.Current.Resources["Gray3"] as SolidColorBrush;
             FiEmotions.Glyph = "\ueb52";
         }
+        SetButtonColorByTheme();
     }
     private void RefreshUpButton()
     {
@@ -207,6 +213,7 @@ public sealed partial class TimelineControl : UserControl
             BtUp.Background = Application.Current.Resources["White"] as SolidColorBrush;
             FaUp.Foreground = Application.Current.Resources["Gray3"] as SolidColorBrush;
         }
+        SetButtonColorByTheme();
     }
     private void Initialize()
     {
