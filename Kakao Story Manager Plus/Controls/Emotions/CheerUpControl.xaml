@@ -9,7 +9,7 @@
 
     <Frame Width="30" Height="30" CornerRadius="25" Background="#9C62AE" Tag="CheerUp">
         <Viewbox Width="15" Height="15" VerticalAlignment="Center" HorizontalAlignment="Center">
-            <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe945;" Foreground="White"/>
+            <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe945;" Foreground="{ThemeResource White}"/>
         </Viewbox>
     </Frame>
 </UserControl>

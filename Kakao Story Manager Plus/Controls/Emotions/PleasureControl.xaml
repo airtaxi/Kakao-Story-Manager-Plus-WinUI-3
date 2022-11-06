@@ -9,7 +9,7 @@
 
     <Frame Width="30" Height="30" CornerRadius="25" Background="#EFBD30" Tag="Pleasure">
         <Viewbox Width="15" Height="15" VerticalAlignment="Center" HorizontalAlignment="Center">
-            <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xed54;" Foreground="White"/>
+            <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xed54;" Foreground="{ThemeResource White}"/>
         </Viewbox>
     </Frame>
 </UserControl>

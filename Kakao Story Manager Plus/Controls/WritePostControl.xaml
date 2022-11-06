@@ -52,7 +52,7 @@
                     <ColumnDefinition Width="auto"/>
                 </Grid.ColumnDefinitions>
                 <TextBox x:Name="TbxLink" HorizontalAlignment="Stretch" Grid.Column="0" Margin="0,0,5,0" KeyDown="OnLinkTextBoxKeyDown"/>
-                <Button Background="#f8f8f8" Click="OnGetScrapDataButtonClicked" Grid.Column="1">
+                <Button Background="{ThemeResource White5}" Click="OnGetScrapDataButtonClicked" Grid.Column="1">
                     <FontIcon x:Name="FiLink" FontFamily="{StaticResource Fluent Icons}" Glyph="&#xf6fa;"/>
                 </Button>
             </Grid>
@@ -77,8 +77,8 @@
         </Grid>
         <Grid Grid.Row="3" Margin="5">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                <Button x:Name="BtWritePost" Background="#E96A49" Click="OnWriteButtonClicked">
-                    <TextBlock x:Name="TbWritePost" Text="글 작성하기" FontSize="15" FontWeight="Bold" Foreground="White"/>
+                <Button x:Name="BtWritePost" Background="{ThemeResource Orange}" Click="OnWriteButtonClicked">
+                    <TextBlock x:Name="TbWritePost" Text="글 작성하기" FontSize="15" FontWeight="Bold" Foreground="{ThemeResource FixedWhite}"/>
                 </Button>
                 <Button x:Name="BtWriteClose" Content="닫기" Click="OnCloseButtonClicked" Margin="5,0,0,0"/>
             </StackPanel>
@@ -90,7 +90,7 @@
                     <ComboBoxItem x:Name="CbiShareAll" Tag="A">
                         <StackPanel Orientation="Horizontal">
                             <Viewbox>
-                                <FontIcon FontFamily="{StaticResource Fluent Icons}" Margin="5" Foreground="#AAAAAA" Width="30" Glyph="&#xe774;"/>
+                                <FontIcon FontFamily="{StaticResource Fluent Icons}" Margin="5" Foreground="{ThemeResource FixedGray6}" Width="30" Glyph="&#xe774;"/>
                             </Viewbox>
                             <TextBlock Text="전체 공개" Margin="5" FontWeight="Bold"/>
                         </StackPanel>
@@ -98,7 +98,7 @@
                     <ComboBoxItem x:Name="CbiShareFriend" Tag="F">
                         <StackPanel Orientation="Horizontal">
                             <Viewbox>
-                                <FontIcon FontFamily="{StaticResource Fluent Icons}" Margin="5" Foreground="#AAAAAA" Width="30" Glyph="&#xe716;"/>
+                                <FontIcon FontFamily="{StaticResource Fluent Icons}" Margin="5" Foreground="{ThemeResource FixedGray6}" Width="30" Glyph="&#xe716;"/>
                             </Viewbox>
                             <TextBlock Text="친구 공개" Margin="5" FontWeight="Bold"/>
                         </StackPanel>
@@ -106,7 +106,7 @@
                     <ComboBoxItem Tag="M">
                         <StackPanel Orientation="Horizontal">
                             <Viewbox>
-                                <FontIcon FontFamily="{StaticResource Fluent Icons}" Margin="5" Foreground="#AAAAAA" Width="30" Glyph="&#xe72e;"/>
+                                <FontIcon FontFamily="{StaticResource Fluent Icons}" Margin="5" Foreground="{ThemeResource FixedGray6}" Width="30" Glyph="&#xe72e;"/>
                             </Viewbox>
                             <TextBlock Text="나만 보기" Margin="5" FontWeight="Bold"/>
                         </StackPanel>

@@ -2,16 +2,96 @@
     x:Class="KSMP.App"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:KSMP" RequestedTheme="Light">
+    xmlns:local="using:KSMP">
     <Application.Resources>
         <ResourceDictionary>
-            
             <ResourceDictionary.MergedDictionaries>
                 <XamlControlsResources xmlns="using:Microsoft.UI.Xaml.Controls" />
                 <!-- Other merged dictionaries here -->
             </ResourceDictionary.MergedDictionaries>
+            
             <FontFamily x:Key="Fluent Icons">ms-appx:///Fonts/Icons.ttf#Segoe Fluent Icons</FontFamily>
-            <!-- Other app resources here -->
+            
+            <ResourceDictionary.ThemeDictionaries>
+                <ResourceDictionary x:Key="Light">
+                    <SolidColorBrush x:Key="FixedWhite" Color="#FFFFFF"/>
+                    <SolidColorBrush x:Key="FixedBlack" Color="#000000"/>
+
+                    <SolidColorBrush x:Key="White" Color="#FFFFFF"/>
+                    <SolidColorBrush x:Key="White2" Color="#F0F0F0"/>
+                    <SolidColorBrush x:Key="White3" Color="#FCFCFC"/>
+                    <SolidColorBrush x:Key="White4" Color="#F2F2F2"/>
+                    <SolidColorBrush x:Key="White5" Color="#F8F8F8"/>
+                    <SolidColorBrush x:Key="White6" Color="#D3D3D3"/>
+
+                    <SolidColorBrush x:Key="Orange" Color="#E96A49"/>
+
+                    <SolidColorBrush x:Key="Gray1" Color="#ADB0B8"/>
+                    <SolidColorBrush x:Key="Gray2" Color="#ACACAC"/>
+                    <SolidColorBrush x:Key="Gray3" Color="#888D94"/>
+                    <SolidColorBrush x:Key="Gray4" Color="#717171"/>
+                    <SolidColorBrush x:Key="FixedGray4" Color="#717171"/>
+                    <SolidColorBrush x:Key="Gray5" Color="#999999"/>
+                    <SolidColorBrush x:Key="Gray6" Color="#AAAAAA"/>
+                    <SolidColorBrush x:Key="FixedGray6" Color="#AAAAAA"/>
+                    <SolidColorBrush x:Key="Gray7" Color="#808080"/>
+
+                    <SolidColorBrush x:Key="Black" Color="#000000"/>
+                </ResourceDictionary>
+
+                <ResourceDictionary x:Key="Dark">
+                    <SolidColorBrush x:Key="FixedWhite" Color="#FFFFFF"/>
+                    <SolidColorBrush x:Key="FixedBlack" Color="#000000"/>
+
+                    <SolidColorBrush x:Key="White" Color="#000000"/>
+                    <SolidColorBrush x:Key="White2" Color="#0F0F0F"/>
+                    <SolidColorBrush x:Key="White3" Color="#030303"/>
+                    <SolidColorBrush x:Key="White4" Color="#0D0D0D"/>
+                    <SolidColorBrush x:Key="White5" Color="#070707"/>
+                    <SolidColorBrush x:Key="White6" Color="#2C2C2C"/>
+                    
+                    <SolidColorBrush x:Key="Orange" Color="#E96A49"/>
+                    
+                    <SolidColorBrush x:Key="Gray1" Color="#524F47"/>
+                    <SolidColorBrush x:Key="Gray2" Color="#535353"/>
+                    <SolidColorBrush x:Key="Gray3" Color="#77726B"/>
+                    <SolidColorBrush x:Key="Gray4" Color="#8E8E8E"/>
+                    <SolidColorBrush x:Key="FixedGray4" Color="#717171"/>
+                    <SolidColorBrush x:Key="Gray5" Color="#666666"/>
+                    <SolidColorBrush x:Key="Gray6" Color="#555555"/>
+                    <SolidColorBrush x:Key="FixedGray6" Color="#AAAAAA"/>
+                    <SolidColorBrush x:Key="Gray7" Color="#808080"/>
+
+                    <SolidColorBrush x:Key="Black" Color="#FFFFFF"/>
+                </ResourceDictionary>
+
+                <ResourceDictionary x:Key="HighContrast">
+                    <SolidColorBrush x:Key="FixedWhite" Color="#FFFFFF"/>
+                    <SolidColorBrush x:Key="FixedBlack" Color="#000000"/>
+
+                    <SolidColorBrush x:Key="White" Color="#000000"/>
+                    <SolidColorBrush x:Key="White2" Color="#0F0F0F"/>
+                    <SolidColorBrush x:Key="White3" Color="#030303"/>
+                    <SolidColorBrush x:Key="White4" Color="#0D0D0D"/>
+                    <SolidColorBrush x:Key="White5" Color="#070707"/>
+                    <SolidColorBrush x:Key="White6" Color="#2C2C2C"/>
+
+                    <SolidColorBrush x:Key="Orange" Color="#E96A49"/>
+
+                    <SolidColorBrush x:Key="Gray1" Color="#524F47"/>
+                    <SolidColorBrush x:Key="Gray2" Color="#535353"/>
+                    <SolidColorBrush x:Key="Gray3" Color="#77726B"/>
+                    <SolidColorBrush x:Key="Gray4" Color="#8E8E8E"/>
+                    <SolidColorBrush x:Key="FixedGray4" Color="#717171"/>
+                    <SolidColorBrush x:Key="Gray5" Color="#666666"/>
+                    <SolidColorBrush x:Key="Gray6" Color="#555555"/>
+                    <SolidColorBrush x:Key="FixedGray6" Color="#AAAAAA"/>
+                    <SolidColorBrush x:Key="Gray7" Color="#808080"/>
+
+                    <SolidColorBrush x:Key="Black" Color="#FFFFFF"/>
+                </ResourceDictionary>
+            </ResourceDictionary.ThemeDictionaries>
+
         </ResourceDictionary>
     </Application.Resources>
 </Application>

@@ -9,7 +9,7 @@
     d:DesignHeight="300"
     d:DesignWidth="400">
 
-    <Grid Visibility="Collapsed" Background="White" CornerRadius="10" Width="250">
+    <Grid Visibility="Collapsed" Background="{ThemeResource White}" CornerRadius="10" Width="250">
         <ListView x:Name="LvFriends" SelectionChanged="SelectionChanged">
             <ListView.ItemTemplate>
                 <DataTemplate>
@@ -21,7 +21,7 @@
             </ListView.ItemTemplate>
         </ListView>
         <Grid x:Name="GdLoading" Visibility="Collapsed">
-            <Rectangle Fill="Black" Opacity="0.85"/>
+            <Rectangle Fill="{ThemeResource Black}" Opacity="0.85"/>
             <ProgressRing IsIndeterminate="True" IsActive="True"/>
         </Grid>
     </Grid>

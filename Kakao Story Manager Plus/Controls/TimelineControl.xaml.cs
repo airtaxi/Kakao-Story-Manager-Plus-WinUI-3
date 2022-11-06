@@ -20,6 +20,8 @@ using static KSMP.ApiHandler.DataType.EmoticonItems;
 using Microsoft.UI.Xaml.Media.Imaging;
 using KSMP.Utils;
 using CommunityToolkit.WinUI.UI.Animations;
+using Microsoft.UI.Xaml.Media;
+using CommunityToolkit.WinUI.UI.Helpers;
 
 namespace KSMP.Controls;
 
@@ -93,6 +95,26 @@ public sealed partial class TimelineControl : UserControl
 
         FrComment.Content = inputControl;
         if (isOverlay) _ = RefreshContent();
+
+        ActualThemeChanged += OnThemeChanged;
+    }
+
+    private void OnThemeChanged(FrameworkElement sender, object args)
+    {
+        if (Application.Current.RequestedTheme == ApplicationTheme.Light)
+        {
+            if (!_post.sympathized)
+                BtUp.Background = Application.Current.Resources["FixedWhite"] as SolidColorBrush;
+            if (!_post.liked)
+                BtEmotions.Background = Application.Current.Resources["FixedWhite"] as SolidColorBrush;
+        }
+        else
+        {
+            if (!_post.sympathized)
+                BtUp.Background = Application.Current.Resources["FixedBlack"] as SolidColorBrush;
+            if (!_post.liked)
+                BtEmotions.Background = Application.Current.Resources["FixedBlack"] as SolidColorBrush;
+        }
     }
 
     public void UnloadMedia()
@@ -138,38 +160,38 @@ public sealed partial class TimelineControl : UserControl
             if (emotion == "like")
             {
                 BtEmotions.Background = Utils.Common.GetColorFromHexa("#FFE25434");
-                FiEmotions.Foreground = Utils.Common.GetColorFromHexa("#FFFFFFFF");
+                FiEmotions.Foreground = Application.Current.Resources["White"] as SolidColorBrush;
                 FiEmotions.Glyph = "\xeb52";
             }
             else if (emotion == "good")
             {
                 BtEmotions.Background = Utils.Common.GetColorFromHexa("#FFBCCB3C");
-                FiEmotions.Foreground = Utils.Common.GetColorFromHexa("#FFFFFFFF");
+                FiEmotions.Foreground = Application.Current.Resources["White"] as SolidColorBrush;
                 FiEmotions.Glyph = "\ue735";
             }
             else if (emotion == "pleasure")
             {
                 BtEmotions.Background = Utils.Common.GetColorFromHexa("#FFEFBD30");
-                FiEmotions.Foreground = Utils.Common.GetColorFromHexa("#FFFFFFFF");
+                FiEmotions.Foreground = Application.Current.Resources["White"] as SolidColorBrush;
                 FiEmotions.Glyph = "\ued54";
             }
             else if (emotion == "sad")
             {
                 BtEmotions.Background = Utils.Common.GetColorFromHexa("#FF359FB0");
-                FiEmotions.Foreground = Utils.Common.GetColorFromHexa("#FFFFFFFF");
+                FiEmotions.Foreground = Application.Current.Resources["White"] as SolidColorBrush;
                 FiEmotions.Glyph = "\ueb42";
             }
             else if (emotion == "cheerup")
             {
                 BtEmotions.Background = Utils.Common.GetColorFromHexa("#FF9C62AE");
-                FiEmotions.Foreground = Utils.Common.GetColorFromHexa("#FFFFFFFF");
+                FiEmotions.Foreground = Application.Current.Resources["White"] as SolidColorBrush;
                 FiEmotions.Glyph = "\ue945";
             }
         }
         else
         {
-            BtEmotions.Background = Utils.Common.GetColorFromHexa("#00000000");
-            FiEmotions.Foreground = Utils.Common.GetColorFromHexa("#FF888D94");
+            BtEmotions.Background = Application.Current.Resources["White"] as SolidColorBrush;
+            FiEmotions.Foreground = Application.Current.Resources["Gray3"] as SolidColorBrush;
             FiEmotions.Glyph = "\ueb52";
         }
     }
@@ -177,13 +199,13 @@ public sealed partial class TimelineControl : UserControl
     {
         if (_post.sympathized)
         {
-            BtUp.Background = Utils.Common.GetColorFromHexa("#FF838383");
-            FaUp.Foreground = Utils.Common.GetColorFromHexa("#FFFFFFFF");
+            BtUp.Background = Application.Current.Resources["Gray6"] as SolidColorBrush;
+            FaUp.Foreground = Application.Current.Resources["White"] as SolidColorBrush;
         }
         else
         {
-            BtUp.Background = Utils.Common.GetColorFromHexa("#00000000");
-            FaUp.Foreground = Utils.Common.GetColorFromHexa("#FF888D94");
+            BtUp.Background = Application.Current.Resources["White"] as SolidColorBrush;
+            FaUp.Foreground = Application.Current.Resources["Gray3"] as SolidColorBrush;
         }
     }
     private void Initialize()

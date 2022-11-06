@@ -21,7 +21,7 @@
                     <StackPanel Margin="10" Grid.Column="1" VerticalAlignment="Center">
                         <TextBlock x:Name="TbTitle" Text="{Binding Title}" FontWeight="Bold" TextTrimming="CharacterEllipsis" MaxLines="1"/>
                         <TextBlock x:Name="TbDescription" Text="{Binding Description}" TextTrimming="WordEllipsis" MaxLines="1"/>
-                        <TextBlock x:Name="TbTime" FontSize="10" Text="{Binding Time}" Foreground="Gray" TextTrimming="WordEllipsis" MaxLines="1"/>
+                        <TextBlock x:Name="TbTime" FontSize="10" Text="{Binding Time}" Foreground="{ThemeResource FixedGray6}" TextTrimming="WordEllipsis" MaxLines="1"/>
                     </StackPanel>
                     <Rectangle x:Name="RtUnread" Grid.Column="1" Width="5" Height="auto" Margin="0,5,0,5" VerticalAlignment="Stretch" HorizontalAlignment="Right" Fill="LightBlue" Visibility="{Binding UnreadBarVisiblity}"/>
                 </Grid>

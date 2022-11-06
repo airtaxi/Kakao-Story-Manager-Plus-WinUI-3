@@ -26,7 +26,7 @@
                 <StackPanel HorizontalAlignment="Stretch">
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch" Tapped="OnReplyTapped">
                         <TextBlock x:Name="TbName" Text="로딩중..." FontSize="15" FontWeight="Bold" TextWrapping="Wrap"/>
-                        <TextBlock x:Name="TbTime" Text="방금 전 (수정됨)" Foreground="#adb0b8" Margin="5,0,0,0" FontSize="12.5" FontWeight="Bold" TextWrapping="Wrap" VerticalAlignment="Bottom"/>
+                        <TextBlock x:Name="TbTime" Text="방금 전 (수정됨)" Foreground="{ThemeResource Gray1}" Margin="5,0,0,0" FontSize="12.5" FontWeight="Bold" TextWrapping="Wrap" VerticalAlignment="Bottom"/>
                         <StackPanel x:Name="SpLike"  Orientation="Horizontal" Margin="5,0,0,0" Tapped="LikeListTapped">
                             <Viewbox Width="10" Height="10">
                                 <FontIcon Foreground="#e57764" FontFamily="{StaticResource Fluent Icons}" Glyph="&#xeb52;"/>
@@ -34,7 +34,7 @@
                             <TextBlock x:Name="TbLike" Text="0" Margin="2,0,0,0" Padding="0,0,0,1.5" FontWeight="Bold" Foreground="#e57764" FontSize="10" VerticalAlignment="Center"/>
                         </StackPanel>
                         <Viewbox Width="10" Height="10" Margin="5,0,0,0">
-                            <FontIcon Foreground="#adb0b8" FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe97a;"/>
+                            <FontIcon Foreground="{ThemeResource Gray1}" FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe97a;"/>
                         </Viewbox>
                     </StackPanel>
                     <RichTextBlock x:Name="RtbContent" FontSize="15" Margin="0,1,0,0" IsTapEnabled="False"/>
@@ -63,14 +63,14 @@
 
             <Frame x:Name="FrEditCommentParent" Visibility="Collapsed" Grid.Column="0" Grid.ColumnSpan="2" CornerRadius="5">
                 <Grid>
-                    <Rectangle Fill="Black" Opacity="0.4"/>
+                    <Rectangle Fill="{ThemeResource Black}" Opacity="0.4"/>
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="auto"/>
                         </Grid.ColumnDefinitions>
                         <Frame x:Name="FrEditComment" Grid.Column="0" VerticalAlignment="Center" Margin="5"/>
-                        <Button Content="수정" Background="#E96A49" Foreground="White" Padding="10,5,10,5" VerticalAlignment="Bottom" Grid.Column="1" Margin="5" Click="OnPublishEditCommentButtonClicked"/>
+                        <Button Content="수정" Background="{ThemeResource Orange}" Foreground="{ThemeResource White}" Padding="10,5,10,5" VerticalAlignment="Bottom" Grid.Column="1" Margin="5" Click="OnPublishEditCommentButtonClicked"/>
                     </Grid>
                     <ProgressRing x:Name="PrrEditComment" IsActive="True" IsIndeterminate="True" Visibility="Collapsed"/>
                 </Grid>

@@ -15,7 +15,7 @@
     <Frame x:Name="FrRoot" HorizontalAlignment="Stretch">
         <Grid>
             <Rectangle x:Name="RtDummy" Fill="Transparent"/>
-            <Grid x:Name="GdMain" Margin="10" Background="White" CornerRadius="5">
+            <Grid x:Name="GdMain" Margin="10" Background="{ThemeResource White}" CornerRadius="5">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="auto"/>
                     <RowDefinition Height="*"/>
@@ -38,27 +38,27 @@
                     <PersonPicture x:Name="PpUser" Width="50" Tapped="OnUserProfilePictureTapped" PointerEntered="PointerEnteredShowHand" PointerExited="PointerExitedShowHand"/>
                     <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="10">
                         <TextBlock x:Name="TbName" Text="" FontWeight="Bold"/>
-                        <TextBlock x:Name="TbTime" Text="" Foreground="#ADB0B8" Tapped="OnTimeTapped" PointerEntered="PointerEnteredShowHand" PointerExited="PointerExitedShowHand" HorizontalAlignment="Left"/>
+                        <TextBlock x:Name="TbTime" Text="" Foreground="{ThemeResource Gray1}" Tapped="OnTimeTapped" PointerEntered="PointerEnteredShowHand" PointerExited="PointerExitedShowHand" HorizontalAlignment="Left"/>
                     </StackPanel>
                     <Grid Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Top">
                         <StackPanel x:Name="SpShare" Orientation="Horizontal" Visibility="Collapsed">
-                            <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe8eb;" Foreground="#ACACAC" FontSize="15"/>
-                            <TextBlock x:Name="TbShareCount" Foreground="#ACACAC" Margin="5,0,0,0" FontSize="15"/>
+                            <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe8eb;" Foreground="{ThemeResource Gray2}" FontSize="15"/>
+                            <TextBlock x:Name="TbShareCount" Foreground="{ThemeResource Gray2}" Margin="5,0,0,0" FontSize="15"/>
                         </StackPanel>
                     </Grid>
                     <Rectangle Fill="Transparent" Grid.Column="1" IsHitTestVisible="True" HorizontalAlignment="Right" VerticalAlignment="Top" Tapped="OnSharedPostShareCountTapped" Width="50" Height="50" Margin="-10"/>
                     <StackPanel x:Name="SpMenu" Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Top" Orientation="Horizontal">
                         <Viewbox>
-                            <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe72c;" Foreground="#ACACAC" FontSize="20" Tapped="OnRefreshTapped" Margin="5,0,10,0" PointerEntered="PointerEnteredShowHand" PointerExited="PointerExitedShowHand"/>
+                            <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe72c;" Foreground="{ThemeResource Gray2}" FontSize="20" Tapped="OnRefreshTapped" Margin="5,0,10,0" PointerEntered="PointerEnteredShowHand" PointerExited="PointerExitedShowHand"/>
                         </Viewbox>
                         <Viewbox>
-                            <FontIcon x:Name="FiFavorite" FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe735;" Foreground="#ACACAC" FontSize="20" Tapped="OnAddBookmarkTapped" Margin="5,0,10,0" PointerEntered="PointerEnteredShowHand" PointerExited="PointerExitedShowHand"/>
+                            <FontIcon x:Name="FiFavorite" FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe735;" Foreground="{ThemeResource Gray2}" FontSize="20" Tapped="OnAddBookmarkTapped" Margin="5,0,10,0" PointerEntered="PointerEnteredShowHand" PointerExited="PointerExitedShowHand"/>
                         </Viewbox>
                         <Viewbox>
-                            <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe712;" Foreground="#ACACAC" FontSize="20" Tapped="OnDotMenuTapped" Margin="5,0,0,0" PointerEntered="PointerEnteredShowHand" PointerExited="PointerExitedShowHand"/>
+                            <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe712;" Foreground="{ThemeResource Gray2}" FontSize="20" Tapped="OnDotMenuTapped" Margin="5,0,0,0" PointerEntered="PointerEnteredShowHand" PointerExited="PointerExitedShowHand"/>
                         </Viewbox>
                         <Viewbox>
-                            <FontIcon x:Name="FaClose" FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe711;" Foreground="#ACACAC" FontSize="20" Tapped="CloseButtonClicked" Margin="15,0,0,0" Visibility="Collapsed" PointerEntered="PointerEnteredShowHand" PointerExited="PointerExitedShowHand"/>
+                            <FontIcon x:Name="FaClose" FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe711;" Foreground="{ThemeResource Gray2}" FontSize="20" Tapped="CloseButtonClicked" Margin="15,0,0,0" Visibility="Collapsed" PointerEntered="PointerEnteredShowHand" PointerExited="PointerExitedShowHand"/>
                         </Viewbox>
                     </StackPanel>
                 </Grid>
@@ -84,25 +84,25 @@
                     </StackPanel>
                 </ScrollViewer>
                 <StackPanel x:Name="SpEmotions" Orientation="Horizontal" Grid.Row="2" Margin="5,5,5,0" Padding="20,0,20,0" Visibility="Visible">
-                    <Button x:Name="BtEmotions" Background="Transparent" Width="40" Height="40" CornerRadius="25" Margin="5">
+                    <Button x:Name="BtEmotions" Background="{ThemeResource White}" Width="40" Height="40" CornerRadius="25" Margin="5">
                         <Viewbox>
-                            <FontIcon x:Name="FiEmotions" FontFamily="{StaticResource Fluent Icons}" FontSize="15" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="#888D94" Glyph="&#xeb52;"/>
+                            <FontIcon x:Name="FiEmotions" FontFamily="{StaticResource Fluent Icons}" FontSize="15" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="{ThemeResource Gray6}" Glyph="&#xeb52;"/>
                         </Viewbox>
                     </Button>
-                    <Button x:Name="BtShare" Background="Transparent" Width="40" Height="40" CornerRadius="25" Margin="5">
+                    <Button x:Name="BtShare" Background="{ThemeResource White}" Width="40" Height="40" CornerRadius="25" Margin="5">
                         <Viewbox>
-                            <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe72d;" FontSize="15" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="#888D94"/>
+                            <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe72d;" FontSize="15" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="{ThemeResource Gray6}"/>
                         </Viewbox>
                     </Button>
-                    <Button x:Name="BtUp" Background="Transparent" Width="40" Height="40" CornerRadius="25" Margin="5,5,5,0" Click="OnUpButtonClicked">
+                    <Button x:Name="BtUp" Background="{ThemeResource White}" Width="40" Height="40" CornerRadius="25" Margin="5,5,5,0" Click="OnUpButtonClicked">
                         <Viewbox>
-                            <FontIcon x:Name="FaUp" FontFamily="{StaticResource Fluent Icons}" Glyph="&#xedd7;" FontSize="15" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="#888D94"/>
+                            <FontIcon x:Name="FaUp" FontFamily="{StaticResource Fluent Icons}" Glyph="&#xedd7;" FontSize="15" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="{ThemeResource Gray6}"/>
                         </Viewbox>
                     </Button>
                 </StackPanel>
                 <Grid Grid.Row="3" Margin="0,5,0,0">
                     <StackPanel>
-                        <Border BorderBrush="#F2F2F2" VerticalAlignment="Top" HorizontalAlignment="Stretch" BorderThickness="0.5"/>
+                        <Border BorderBrush="{ThemeResource White4}" VerticalAlignment="Top" HorizontalAlignment="Stretch" BorderThickness="0.5"/>
                         <StackPanel Visibility="Collapsed" x:Name="SpPostInformation" Orientation="Horizontal" Margin="30,5,0,5">
                             <RichTextBlock x:Name="RtbComments" IsTextSelectionEnabled="False">
                                 <Paragraph>
@@ -141,10 +141,10 @@
                         <RowDefinition x:Name="RdComment" Height="auto"/>
                         <RowDefinition Height="auto"/>
                     </Grid.RowDefinitions>
-                    <ScrollViewer Grid.Row="1" x:Name="SvComments" MaxHeight="200" Background="#FFFFFF" Padding="30,5,30,5" Visibility="Collapsed" ViewChanged="OnCommentsScrollViewerViewChanged">
+                    <ScrollViewer Grid.Row="1" x:Name="SvComments" MaxHeight="200" Background="{ThemeResource White}" Padding="30,5,30,5" Visibility="Collapsed" ViewChanged="OnCommentsScrollViewerViewChanged">
                         <StackPanel x:Name="SpComments"/>
                     </ScrollViewer>
-                    <Grid Grid.Row="2" Background="#FCFCFC" Visibility="Visible">
+                    <Grid Grid.Row="2" Background="{ThemeResource White3}" Visibility="Visible">
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*"/>
@@ -154,7 +154,7 @@
                             <Frame x:Name="FrComment" Grid.Column="0" VerticalAlignment="Bottom" HorizontalAlignment="Stretch" Margin="30,10,5,10"/>
                             <Button x:Name="BtCommentMore" Grid.Column="1" Height="30" VerticalAlignment="Bottom" HorizontalAlignment="Stretch" Margin="5,0,5,10">
                                 <Viewbox>
-                                    <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe712;" FontSize="17" Foreground="#717171"/>
+                                    <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe712;" FontSize="17" Foreground="{ThemeResource Gray4}"/>
                                 </Viewbox>
                                 <Button.Flyout>
                                     <Flyout>
@@ -183,28 +183,28 @@
                                     </Flyout>
                                 </Button.Flyout>
                             </Button>
-                            <Button x:Name="BtSendComment" Grid.Column="2" Margin="5,0,30,10" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Background="#E96A49" Click="OnSendCommentButtonClicked">
-                                <TextBlock Text="전송" Foreground="White"/>
+                            <Button x:Name="BtSendComment" Grid.Column="2" Margin="5,0,30,10" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Background="{ThemeResource Orange}" Click="OnSendCommentButtonClicked">
+                                <TextBlock Text="전송" Foreground="{ThemeResource FixedWhite}"/>
                             </Button>
                         </Grid>
-                        <Border BorderBrush="#F2F2F2" VerticalAlignment="Top" HorizontalAlignment="Stretch" BorderThickness="0.5"/>
+                        <Border BorderBrush="{ThemeResource White4}" VerticalAlignment="Top" HorizontalAlignment="Stretch" BorderThickness="0.5"/>
                     </Grid>
-                    <Border Grid.Row="0" x:Name="BdComments" BorderBrush="#F2F2F2" VerticalAlignment="Top" HorizontalAlignment="Stretch" BorderThickness="0.5"/>
-                    <Border Grid.Row="0" x:Name="BdCommentsHorizontal" Grid.RowSpan="3" BorderBrush="#F2F2F2" VerticalAlignment="Stretch" HorizontalAlignment="Left" Visibility="Collapsed" BorderThickness="0.5"/>
+                    <Border Grid.Row="0" x:Name="BdComments" BorderBrush="{ThemeResource White4}" VerticalAlignment="Top" HorizontalAlignment="Stretch" BorderThickness="0.5"/>
+                    <Border Grid.Row="0" x:Name="BdCommentsHorizontal" Grid.RowSpan="3" BorderBrush="{ThemeResource White4}" VerticalAlignment="Stretch" HorizontalAlignment="Left" Visibility="Collapsed" BorderThickness="0.5"/>
                 </Grid>
                 <Border x:Name="BdShare" CornerRadius="5" BorderBrush="LightGray" Grid.RowSpan="4" BorderThickness="1" Visibility="Collapsed"/>
             </Grid>
             <Grid x:Name="GdOverlay" Margin="10" CornerRadius="5" Visibility="Collapsed">
-                <Rectangle Fill="Black" Opacity="0.85"/>
-                <Frame x:Name="FrOverlay" Background="White" Padding="10" CornerRadius="5" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                <Rectangle Fill="{ThemeResource Black}" Opacity="0.85"/>
+                <Frame x:Name="FrOverlay" Background="{ThemeResource White}" Padding="10" CornerRadius="5" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                 <Button Background="Transparent" BorderThickness="0" Click="OnOverlayCloseButtonClicked" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="10">
                     <Viewbox Width="20" Height="20">
-                        <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe711;" Foreground="White"/>
+                        <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe711;" Foreground="{ThemeResource White}"/>
                     </Viewbox>
                 </Button>
             </Grid>
             <Grid x:Name="GdLoading" Margin="10" CornerRadius="5" Visibility="Collapsed">
-                <Rectangle Fill="Black" Opacity="0.85"/>
+                <Rectangle Fill="{ThemeResource Black}" Opacity="0.85"/>
                 <ProgressRing IsIndeterminate="True" IsActive="True" Width="150" Height="150"/>
             </Grid>
         </Grid>

@@ -5,6 +5,7 @@ using KSMP.Pages;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
+using Microsoft.UI.Xaml.Media;
 
 namespace KSMP.Controls;
 
@@ -23,8 +24,8 @@ public sealed partial class UserProfileControl : UserControl
     {
         if (!isFavorite)
         {
-            RtFavorite.Fill = Utility.GetSolidColorBrushFromHexString("#FF808080");
-            FaFavorite.Foreground = Utility.GetSolidColorBrushFromHexString("#FFD3D3D3");
+            RtFavorite.Fill = Application.Current.Resources["Gray7"] as SolidColorBrush;
+            FaFavorite.Foreground = Application.Current.Resources["White6"] as SolidColorBrush;
         }
         else
         {

@@ -15,7 +15,7 @@
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="300"/>
         </Grid.ColumnDefinitions>
-        <Grid Background="White" Grid.ColumnSpan="2">
+        <Grid Background="{ThemeResource White}" Grid.ColumnSpan="2">
             <StackPanel VerticalAlignment="Center" HorizontalAlignment="Left" Margin="20,0,0,0" Orientation="Horizontal">
                 <TextBlock Text="카카오스토리 매니저 PLUS" FontSize="20" FontWeight="Bold" PointerEntered="ProfilePointerEntered" PointerExited="FriendPointerExited" Tapped="TitleTapped"/>
                 <AutoSuggestBox Width="200" PlaceholderText="친구 검색" QueryIcon="Zoom" Margin="10,0,0,0" VerticalAlignment="Center" TextChanged="SearchFriendTextChanged" SuggestionChosen="SearchFriendSelected" QuerySubmitted="SearchFriendQuerySubmitted">
@@ -36,39 +36,39 @@
             <StackPanel VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,10,0" Orientation="Horizontal">
                 <Button x:Name="BtWrite" Width="40" Height="40" CornerRadius="10" ToolTipService.ToolTip="포스트 작성" Click="OnWritePostButtonClicked">
                     <Viewbox>
-                        <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe70f;" FontSize="17" Foreground="#717171"/>
+                        <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe70f;" FontSize="17" Foreground="{ThemeResource FixedGray6}"/>
                     </Viewbox>
                 </Button>
                 <Button x:Name="BtNotifications" Width="40" Height="40" CornerRadius="10" ToolTipService.ToolTip="최근 알림" Margin="10,0,0,0" Click="OnNotificationsButtonClicked">
                     <Viewbox>
-                        <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe7e7;" FontSize="17" Foreground="#717171"/>
+                        <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe7e7;" FontSize="17" Foreground="{ThemeResource FixedGray6}"/>
                     </Viewbox>
                 </Button>
                 <Button Width="40" Height="40" CornerRadius="10" Margin="10,0,0,0" Click="OnMoreButtonClicked">
                     <Viewbox>
-                        <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe712;" FontSize="17" Foreground="#717171"/>
+                        <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe712;" FontSize="17" Foreground="{ThemeResource FixedGray6}"/>
                     </Viewbox>
                     <Button.Flyout>
                         <Flyout>
                             <StackPanel Orientation="Horizontal">
                                 <Button Width="40" Height="40" CornerRadius="10" ToolTipService.ToolTip="로그아웃" Click="OnLogoutButtonClicked">
                                     <Viewbox>
-                                        <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xf3b1;" FontSize="17" Foreground="#717171"/>
+                                        <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xf3b1;" FontSize="17" Foreground="{ThemeResource FixedGray6}"/>
                                     </Viewbox>
                                 </Button>
                                 <Button Width="40" Height="40" CornerRadius="10" ToolTipService.ToolTip="이미지 언로드" Margin="10,0,0,0" Click="OnImageUnloadButtonClicked">
                                     <Viewbox>
-                                        <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe75c;" FontSize="17" Foreground="#717171"/>
+                                        <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe75c;" FontSize="17" Foreground="{ThemeResource FixedGray6}"/>
                                     </Viewbox>
                                 </Button>
                                 <Button Width="40" Height="40" CornerRadius="10" ToolTipService.ToolTip="메모리 정리" Margin="10,0,0,0" Click="OnRestartButtonClicked">
                                     <Viewbox>
-                                        <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe964;" FontSize="17" Foreground="#717171"/>
+                                        <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe964;" FontSize="17" Foreground="{ThemeResource FixedGray6}"/>
                                     </Viewbox>
                                 </Button>
                                 <Button Width="40" Height="40" CornerRadius="10" ToolTipService.ToolTip="프로그램 종료" Margin="10,0,0,0" Click="OnExitButtonClicked">
                                     <Viewbox>
-                                        <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe711;" FontSize="17" Foreground="#717171"/>
+                                        <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe711;" FontSize="17" Foreground="{ThemeResource FixedGray6}"/>
                                     </Viewbox>
                                 </Button>
                             </StackPanel>
@@ -119,7 +119,7 @@
                             <RowDefinition Height="auto"/>
                             <RowDefinition Height="*"/>
                         </Grid.RowDefinitions>
-                        <TextBlock x:Name="TbFriendCount" Text="로딩중..." Foreground="#999999" Margin="5"/>
+                        <TextBlock x:Name="TbFriendCount" Text="로딩중..." Foreground="{ThemeResource Gray5}" Margin="5"/>
                         <ListView x:Name="LvFriends" SelectionChanged="OnFriendListSelectionChanged" Grid.Row="1">
                             <ListView.ItemTemplate>
                                 <DataTemplate>
@@ -141,11 +141,11 @@
             </Pivot>
         </Grid>
         <Grid x:Name="GdOverlay" Grid.Row="1" Grid.ColumnSpan="2" Visibility="Collapsed">
-            <Border Background="Black" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Opacity="0.25"/>
+            <Border Background="{ThemeResource Black}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Opacity="0.25"/>
             <Frame x:Name="FrOverlay" Grid.Row="1"/>
         </Grid>
         <Grid x:Name="GdOverlay2" Grid.Row="1" Grid.ColumnSpan="2" Visibility="Collapsed">
-            <Border Background="Black" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Opacity="0.25"/>
+            <Border Background="{ThemeResource Black}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Opacity="0.25"/>
             <Frame x:Name="FrOverlay2" Grid.Row="1"/>
         </Grid>
     </Grid>
