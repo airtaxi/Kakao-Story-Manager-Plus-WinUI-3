@@ -642,9 +642,13 @@ public partial class ApiHandler
         }
         catch (WebException e)
         {
-            if ((int)(e.Response as HttpWebResponse).StatusCode == 403) return null;
-            else if ((int)(e.Response as HttpWebResponse).StatusCode == 404) return null;
-            else if ((int)(e.Response as HttpWebResponse).StatusCode == 401)
+            int statusCode = -1;
+            var statusCodeObject = e.Response as HttpWebResponse;
+            if (statusCodeObject?.StatusCode != null) statusCode = (int)statusCodeObject.StatusCode;
+
+            if (statusCode == 403) return null;
+            else if (statusCode == 404) return null;
+            else if (statusCode == 401)
             {
                 var success = await OnReloginRequired?.Invoke();
                 if (!success) return null;
@@ -904,9 +908,13 @@ public partial class ApiHandler
         }
         catch (WebException e)
         {
-            if ((int)(e.Response as HttpWebResponse).StatusCode == 403) return false;
-            else if ((int)(e.Response as HttpWebResponse).StatusCode == 404) return false;
-            else if ((int)(e.Response as HttpWebResponse).StatusCode == 401)
+            int statusCode = -1;
+            var statusCodeObject = e.Response as HttpWebResponse;
+            if (statusCodeObject?.StatusCode != null) statusCode = (int)statusCodeObject.StatusCode;
+
+            if (statusCode == 403) return false;
+            else if (statusCode == 404) return false;
+            else if (statusCode == 401)
             {
                 var success = await OnReloginRequired?.Invoke();
                 if (!success) return false;
@@ -966,9 +974,13 @@ public partial class ApiHandler
         }
         catch (WebException e)
         {
-            if ((int)(e.Response as HttpWebResponse).StatusCode == 403) return null;
-            else if ((int)(e.Response as HttpWebResponse).StatusCode == 404) return null;
-            else if ((int)(e.Response as HttpWebResponse).StatusCode == 401)
+            int statusCode = -1;
+            var statusCodeObject = e.Response as HttpWebResponse;
+            if (statusCodeObject?.StatusCode != null) statusCode = (int)statusCodeObject.StatusCode;
+
+            if (statusCode == 403) return null;
+            else if (statusCode == 404) return null;
+            else if (statusCode == 401)
             {
                 var success = await OnReloginRequired?.Invoke();
                 if (!success) return null;
@@ -1023,9 +1035,13 @@ public partial class ApiHandler
         }
         catch (WebException e)
         {
-            if ((int)(e.Response as HttpWebResponse).StatusCode == 403) return false;
-            else if ((int)(e.Response as HttpWebResponse).StatusCode == 404) return false;
-            else if ((int)(e.Response as HttpWebResponse).StatusCode == 401) return await WaitForMetaVideoFinish(access_key, ++retryCount);
+            int statusCode = -1;
+            var statusCodeObject = e.Response as HttpWebResponse;
+            if (statusCodeObject?.StatusCode != null) statusCode = (int)statusCodeObject.StatusCode;
+
+            if (statusCode == 403) return false;
+            else if (statusCode == 404) return false;
+            else if (statusCode == 401) return await WaitForMetaVideoFinish(access_key, ++retryCount);
             else
             {
                 if (retryCount < MaxRetryCount)
@@ -1079,9 +1095,13 @@ public partial class ApiHandler
         }
         catch (WebException e)
         {
-            if ((int)(e.Response as HttpWebResponse).StatusCode == 403) return false;
-            else if ((int)(e.Response as HttpWebResponse).StatusCode == 404) return false;
-            else if ((int)(e.Response as HttpWebResponse).StatusCode == 401) return await WaitForVideoUploadFinish(access_key, ++retryCount);
+            int statusCode = -1;
+            var statusCodeObject = e.Response as HttpWebResponse;
+            if (statusCodeObject?.StatusCode != null) statusCode = (int)statusCodeObject.StatusCode;
+
+            if (statusCode == 403) return false;
+            else if (statusCode == 404) return false;
+            else if (statusCode == 401) return await WaitForVideoUploadFinish(access_key, ++retryCount);
             else
             {
                 if (retryCount < MaxRetryCount)
