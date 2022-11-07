@@ -28,6 +28,7 @@ public sealed partial class SettingsControl : UserControl
         bool willUseGifProfileImage = (Utils.Configuration.GetValue("UseGifProfileImage") as bool?) ?? false;
         bool willUseGifInTimeline = (Utils.Configuration.GetValue("UseGifInTimeline") as bool?) ?? false;
         bool willClearTimelineOnRefresh = (Utils.Configuration.GetValue("ClearTimelineOnRefresh") as bool?) ?? true;
+        bool willWarnOnHighMemoryUsage = (Utils.Configuration.GetValue("WarnOnHighMemoryUsage") as bool?) ?? true;
 
         TsFavoriteFriendNotification.IsOn = willReceiveFavoriteFriendNotification;
         TsEmotionalNotification.IsOn = willReceiveEmotionalNotification;
@@ -36,6 +37,7 @@ public sealed partial class SettingsControl : UserControl
         TsUseGifProfileImage.IsOn = willUseGifProfileImage;
         TsUseGifInTimeline.IsOn = willUseGifInTimeline;
         TsClearTimelineOnRefresh.IsOn = willClearTimelineOnRefresh;
+        TsWarnOnHighMemoryUsage.IsOn = willWarnOnHighMemoryUsage;
 
         TsFavoriteFriendNotification.Toggled += OnReceiveFavoriteFriendNotificationToggleSwitchToggled;
         TsEmotionalNotification.Toggled += OnReceiveEmotionalNotificationToggleSwitchToggled;
@@ -44,6 +46,7 @@ public sealed partial class SettingsControl : UserControl
         TsUseGifProfileImage.Toggled += OnUseGifProfileImageToggleSwitchToggled;
         TsUseGifInTimeline.Toggled += OnUseGifInTimelineToggleSwitchToggled;
         TsClearTimelineOnRefresh.Toggled += OnClearTimelineOnRefreshToggleSwitchToggled;
+        TsWarnOnHighMemoryUsage.Toggled += OnWarnOnHighMemoryUsageToggleSwitchToggled;
 
         int defaultPostWritingPermission = (Utils.Configuration.GetValue("DefaultPostWritingPermission") as int?) ?? 0;
         CbxDefaultPostWritingPermission.SelectedIndex = defaultPostWritingPermission;
@@ -51,6 +54,13 @@ public sealed partial class SettingsControl : UserControl
 
         ValidateThemeSetting();
         CbxThemeSetting.SelectionChanged += OnThemeSettingComboBoxSelectionChanged;
+    }
+
+    private void OnWarnOnHighMemoryUsageToggleSwitchToggled(object sender, RoutedEventArgs e)
+    {
+        var toggleSwitch = sender as ToggleSwitch;
+        var isOn = toggleSwitch.IsOn;
+        Utils.Configuration.SetValue("WarnOnHighMemoryUsage", isOn);
     }
 
     private void OnThemeSettingComboBoxSelectionChanged(object sender, SelectionChangedEventArgs e)

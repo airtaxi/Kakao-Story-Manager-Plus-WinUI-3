@@ -16,6 +16,8 @@ using static KSMP.ApiHandler;
 using Microsoft.UI;
 using WinRT.Interop;
 using Windows.ApplicationModel.Appointments;
+using System.Diagnostics;
+using Windows.Security.Authentication.OnlineId;
 
 namespace KSMP;
 
@@ -26,6 +28,7 @@ public sealed partial class MainWindow : Microsoft.UI.Xaml.Window
     private static List<MenuFlyoutItem> s_loginRequiredMenuFlyoutItems = new();
     private bool _shouldClose { get; set; } = false;
     private AppWindow appWindow;
+    private static Process _process;
 
     public MainWindow(RestartFlag flag = null)
     {
@@ -37,6 +40,7 @@ public sealed partial class MainWindow : Microsoft.UI.Xaml.Window
 
         (Content as FrameworkElement).ActualThemeChanged += OnThemeChanged;
 
+        SetupTitleBarMemoryWatcherTimer();
         SetupTheme();
         SetupAppWindow();
         SetupTrayIcon();
@@ -58,6 +62,36 @@ public sealed partial class MainWindow : Microsoft.UI.Xaml.Window
             LoginManager.SeleniumDriver?.Dispose();
             LoginManager.SeleniumDriver = null;
         };
+    }
+
+    private void SetupTitleBarMemoryWatcherTimer()
+    {
+        _process ??= Process.GetCurrentProcess();
+        DispatcherTimer memoryWatcherTimer = new()
+        {
+            Interval = TimeSpan.FromSeconds(1)
+        };
+        memoryWatcherTimer.Tick += OnMemoryWatcherTimerTick;
+        memoryWatcherTimer.Start();
+        UpdateMemoryUsageTextBlock();
+    }
+
+    private void OnMemoryWatcherTimerTick(object sender, object e) => UpdateMemoryUsageTextBlock();
+
+    private bool _isMemoryWarningDialogShown = false;
+    private async void UpdateMemoryUsageTextBlock()
+    {
+        _process.Refresh();
+        var memoryUsageInBytes = _process.PrivateMemorySize64;
+        var memoryUsageInMegabytes = memoryUsageInBytes / 1024 / 1024;
+        TbxMemoryUsage.Text = $"메모리 사용량: {memoryUsageInMegabytes:N0}MiB";
+        if (memoryUsageInMegabytes < 1024 || _isMemoryWarningDialogShown) return;
+
+        bool willWarnOnHighMemoryUsage = (Utils.Configuration.GetValue("WarnOnHighMemoryUsage") as bool?) ?? true;
+        if (!willWarnOnHighMemoryUsage) return;
+        _isMemoryWarningDialogShown = true;
+        var result = await MainPage.GetInstance()?.ShowMessageDialogAsync("WinUI 프레임워크 버그로 인하여 누수된 메모리가 다량(1GiB)으로 누적되었습니다.\n이 경우, 시스템 성능을 저해할 수 있습니다.\n프로그램을 재실행하여 메모리를 정리하시겠습니까?\n이 메시지 표시 설정은 프로필 우측 상단 옵션에서 변경할 수 있습니다.", "경고", true);
+        if (result == ContentDialogResult.Primary) Utility.SaveCurrentStateAndRestartProgram();
     }
 
     private void OnThemeChanged(FrameworkElement sender, object args) => SetupTheme();

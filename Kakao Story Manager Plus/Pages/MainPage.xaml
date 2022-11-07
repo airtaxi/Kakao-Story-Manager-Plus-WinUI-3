@@ -95,15 +95,10 @@
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
             <Grid MinHeight="200">
-                <Button x:Name="BtSettings" Background="Transparent" BorderThickness="0" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,5,0,0" Foreground="Gray">
+                <Button x:Name="BtSettings" Background="Transparent" BorderThickness="0" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,5,0,0" Foreground="Gray" Click="OnSettingsButtonClicked">
                     <Viewbox Width="20" Height="20">
                         <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe713;"/>
                     </Viewbox>
-                    <Button.Flyout>
-                        <Flyout>
-                            <controls:SettingsControl x:Name="ScMain"/>
-                        </Flyout>
-                    </Button.Flyout>
                 </Button>
                 <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" PointerEntered="ProfilePointerEntered" PointerExited="ProfilePointerExited" Tapped="ProfileTapped">
                     <PersonPicture x:Name="PpMyProfile" Width="80" Height="80" VerticalAlignment="Center"/>

@@ -17,6 +17,7 @@ using Windows.ApplicationModel.DataTransfer;
 using static KSMP.ClassManager;
 using static KSMP.ApiHandler.DataType.FriendData;
 using OpenQA.Selenium.DevTools.V104.DOM;
+using Windows.Services.Maps;
 
 namespace KSMP.Pages;
 
@@ -428,4 +429,13 @@ public sealed partial class MainPage : Page
 
     private void OnRestartButtonClicked(object sender, RoutedEventArgs e) => Utility.SaveCurrentStateAndRestartProgram();
     private void OnImageUnloadButtonClicked(object sender, RoutedEventArgs e) => Utility.ManuallyDisposeAllMedias();
+
+    private void OnSettingsButtonClicked(object sender, RoutedEventArgs e)
+    {
+        var button = sender as Button;
+        var settingsControl = new SettingsControl();
+        var flyout = new Flyout();
+        flyout.Content = settingsControl;
+        flyout.ShowAt(button);
+    }
 }

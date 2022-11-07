@@ -17,6 +17,7 @@
         <ToggleSwitch x:Name="TsUseGifProfileImage" OnContent="GIF 프로필 이미지 사용" OffContent="GIF 프로필 이미지 사용 안함" Margin="0,5,0,0"/>
         <ToggleSwitch x:Name="TsUseGifInTimeline" OnContent="타임라인 고화질 이미지 사용" OffContent="타임라인 고화질 이미지 사용 안함" Margin="0,5,0,0"/>
         <ToggleSwitch x:Name="TsClearTimelineOnRefresh" OnContent="무한 스크롤 사용 안함" OffContent="무한 스크롤 사용" Margin="0,5,0,0"/>
+        <ToggleSwitch x:Name="TsWarnOnHighMemoryUsage" OnContent="메모리 사용량 경고 메시지 사용" OffContent="메모리 사용량 경고 메시지 사용 안함" Margin="0,5,0,0"/>
         
         <TextBlock Text="일반 설정" FontSize="17" FontWeight="Bold"/>
         <ToggleSwitch x:Name="TsLaunchAtStartup" OnContent="부팅시 자동 시작됨" OffContent="부팅시 자동 시작 해제됨" Margin="0,5,0,0"/>
