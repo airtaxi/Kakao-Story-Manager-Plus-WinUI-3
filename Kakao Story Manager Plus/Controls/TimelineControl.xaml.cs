@@ -22,6 +22,7 @@ using KSMP.Utils;
 using CommunityToolkit.WinUI.UI.Animations;
 using Microsoft.UI.Xaml.Media;
 using CommunityToolkit.WinUI.UI.Helpers;
+using ImageMagick;
 
 namespace KSMP.Controls;
 
@@ -873,8 +874,19 @@ public sealed partial class TimelineControl : UserControl
                 var path = Path.Combine(Path.GetTempPath(), $"{item.PackageIndex}_{item.Index}.{item.Extension}");
                 try
                 {
+
                     var data = await Api.DcCon.ApiHandler.GetDcDonImage(item.Path);
-                    await File.WriteAllBytesAsync(path, data);
+
+                    if (item.Extension != "gif")
+                    {
+                        await Task.Run(() =>
+                        {
+                            using var image = new MagickImageCollection(data);
+                            image[0].Resize(400, 400);
+                            image.Write(path, MagickFormat.Png);
+                        });
+                    }
+                    else await File.WriteAllBytesAsync(path, data);
                     _isUploading = true;
                     _commentDcCon = await ApiHandler.UploadImage(path);
                 }
