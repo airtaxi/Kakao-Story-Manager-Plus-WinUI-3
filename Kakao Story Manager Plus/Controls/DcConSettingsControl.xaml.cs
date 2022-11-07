@@ -1,4 +1,5 @@
-﻿using KSMP.Api.DcCon;
+﻿using CommunityToolkit.WinUI.UI.Controls.TextToolbarSymbols;
+using KSMP.Api.DcCon;
 using KSMP.Extension;
 using KSMP.Pages;
 using KSMP.Utils;
@@ -13,6 +14,8 @@ using Newtonsoft.Json.Linq;
 using RestSharp;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -34,7 +37,9 @@ namespace KSMP.Controls
         {
             this.InitializeComponent();
             var list = Utility.GetCurrentDcConList();
-            LvMain.ItemsSource = list;
+            var collection = new ObservableCollection<DataType.Package>(list);
+            collection.CollectionChanged += OnDcConListCollectionChanged;
+            LvMain.ItemsSource = collection;
         }
 
         private void OnShowDcConListButtonClicked(object sender, RoutedEventArgs e) => Process.Start(new ProcessStartInfo("https://dccon.dcinside.com/") { UseShellExecute = true });
@@ -60,15 +65,22 @@ namespace KSMP.Controls
             }
 
             var data = Configuration.GetValue("DcConList") as JArray ?? new();
-            var list = data.ToObject<List<DataType.Package>>();
-            if (list.Any(x => x.PackageInfo.PackageIndex == detail.PackageInfo.PackageIndex))
+            var collection = data.ToObject<ObservableCollection<DataType.Package>>();
+            if (collection.Any(x => x.PackageInfo.PackageIndex == detail.PackageInfo.PackageIndex))
             {
                 await this.ShowMessageDialogAsync("이미 추가된 디시콘입니다.", "오류");
                 return;
             }
-            list.Add(detail);
-            LvMain.ItemsSource = list;
-            Configuration.SetValue("DcConList", list);
+            collection.Add(detail);
+            collection.CollectionChanged += OnDcConListCollectionChanged;
+            LvMain.ItemsSource = collection;
+            Configuration.SetValue("DcConList", collection);
+        }
+
+        private void OnDcConListCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            var collection = sender as ObservableCollection<DataType.Package>;
+            Configuration.SetValue("DcConList", collection);
         }
 
         private void OnListViewSelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -84,8 +96,10 @@ namespace KSMP.Controls
             var current = LvMain.SelectedItem as DataType.Package;
             if (current == null) return;
             list.RemoveAll(x => x.PackageInfo.PackageIndex == current.PackageInfo.PackageIndex);
-            LvMain.ItemsSource = list;
-            Configuration.SetValue("DcConList", list);
+            var collection = new ObservableCollection<DataType.Package>(list);
+            collection.CollectionChanged += OnDcConListCollectionChanged;
+            LvMain.ItemsSource = collection;
+            Configuration.SetValue("DcConList", collection);
         }
 
         private void OnExitButtonClicked(object sender, TappedRoutedEventArgs e) => MainPage.HideOverlay(false);
