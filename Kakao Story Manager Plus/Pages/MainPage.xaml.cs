@@ -56,7 +56,7 @@ public sealed partial class MainPage : Page
         else NavigateTimeline();
     }
 
-    public static void HideSettingsFlyout() => (s_instance.BtSettings.Flyout as Flyout).Hide();
+    public static void HideSettingsFlyout() => (s_instance.BtSettings.Tag as Flyout)?.Hide();
 
     private void InitializeWritePostFlyout()
     {
@@ -437,5 +437,6 @@ public sealed partial class MainPage : Page
         var flyout = new Flyout();
         flyout.Content = settingsControl;
         flyout.ShowAt(button);
+        button.Tag = flyout;
     }
 }
