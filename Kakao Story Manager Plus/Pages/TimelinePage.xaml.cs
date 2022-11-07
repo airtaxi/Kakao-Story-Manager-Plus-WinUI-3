@@ -136,13 +136,13 @@ public sealed partial class TimelinePage : Page
     private bool _isRefreshing = false;
     private async void OnScrollViewerViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
     {
-        if (_lastFeedId == null) return;
         if (_isRefreshing) return;
+        ValidateTimelineContent();
+        if (_lastFeedId == null) return;
 
         var scrollViewer = sender as ScrollViewer;
         var verticalOffset = scrollViewer.VerticalOffset;
         var maxVerticalOffset = scrollViewer.ScrollableHeight;
-        ValidateTimelineContent();
         if (maxVerticalOffset < 0 || verticalOffset == maxVerticalOffset)
         {
             _isRefreshing = true;
