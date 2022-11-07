@@ -226,6 +226,8 @@ public sealed partial class MainWindow : Microsoft.UI.Xaml.Window
         {
             double scaleAdjustment = GetScaleAdjustment();
 
+            if (appWindow.TitleBar.RightInset < 0 || appWindow.TitleBar.LeftInset < 0) return;
+
             RightPaddingColumn.Width = new GridLength(appWindow.TitleBar.RightInset / scaleAdjustment);
             LeftPaddingColumn.Width = new GridLength(appWindow.TitleBar.LeftInset / scaleAdjustment);
 
