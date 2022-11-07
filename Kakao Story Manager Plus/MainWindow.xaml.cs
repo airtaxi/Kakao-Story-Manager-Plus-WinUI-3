@@ -79,13 +79,20 @@ public sealed partial class MainWindow : Microsoft.UI.Xaml.Window
     private void OnMemoryWatcherTimerTick(object sender, object e) => UpdateMemoryUsageTextBlock();
 
     private bool _isMemoryWarningDialogShown = false;
+    private int _warnCount = 0;
     private async void UpdateMemoryUsageTextBlock()
     {
         _process.Refresh();
         var memoryUsageInBytes = _process.PrivateMemorySize64;
         var memoryUsageInMegabytes = memoryUsageInBytes / 1024 / 1024;
         TbxMemoryUsage.Text = $"메모리 사용량: {memoryUsageInMegabytes:N0}MiB";
-        if (memoryUsageInMegabytes < 1024 || _isMemoryWarningDialogShown) return;
+        if (memoryUsageInMegabytes < 1024 || _isMemoryWarningDialogShown)
+        {
+            _warnCount = 0;
+            return;
+        }
+        _warnCount++;
+        if (_warnCount <= 3) return;
 
         bool willWarnOnHighMemoryUsage = (Utils.Configuration.GetValue("WarnOnHighMemoryUsage") as bool?) ?? true;
         if (!willWarnOnHighMemoryUsage) return;
