@@ -20,7 +20,7 @@
                     <SolidColorBrush x:Key="White" Color="#FFFFFF"/>
                     <SolidColorBrush x:Key="White2" Color="#F0F0F0"/>
                     <SolidColorBrush x:Key="White3" Color="#FCFCFC"/>
-                    <SolidColorBrush x:Key="White4" Color="#F2F2F2"/>
+                    <SolidColorBrush x:Key="White4" Color="#E0E0E0"/>
                     <SolidColorBrush x:Key="White5" Color="#F8F8F8"/>
                     <SolidColorBrush x:Key="White6" Color="#D3D3D3"/>
 
@@ -43,12 +43,12 @@
                     <SolidColorBrush x:Key="FixedWhite" Color="#FFFFFF"/>
                     <SolidColorBrush x:Key="FixedBlack" Color="#000000"/>
 
-                    <SolidColorBrush x:Key="White" Color="#000000"/>
-                    <SolidColorBrush x:Key="White2" Color="#0F0F0F"/>
-                    <SolidColorBrush x:Key="White3" Color="#030303"/>
-                    <SolidColorBrush x:Key="White4" Color="#0D0D0D"/>
-                    <SolidColorBrush x:Key="White5" Color="#070707"/>
-                    <SolidColorBrush x:Key="White6" Color="#2C2C2C"/>
+                    <SolidColorBrush x:Key="White" Color="#343434"/>
+                    <SolidColorBrush x:Key="White2" Color="#464646"/>
+                    <SolidColorBrush x:Key="White3" Color="#282828"/>
+                    <SolidColorBrush x:Key="White4" Color="#949494"/>
+                    <SolidColorBrush x:Key="White5" Color="#272727"/>
+                    <SolidColorBrush x:Key="White6" Color="#888888"/>
                     
                     <SolidColorBrush x:Key="Orange" Color="#E96A49"/>
                     
@@ -58,7 +58,7 @@
                     <SolidColorBrush x:Key="Gray4" Color="#8E8E8E"/>
                     <SolidColorBrush x:Key="FixedGray4" Color="#717171"/>
                     <SolidColorBrush x:Key="Gray5" Color="#666666"/>
-                    <SolidColorBrush x:Key="Gray6" Color="#555555"/>
+                    <SolidColorBrush x:Key="Gray6" Color="#949494"/>
                     <SolidColorBrush x:Key="FixedGray6" Color="#AAAAAA"/>
                     <SolidColorBrush x:Key="Gray7" Color="#808080"/>
 
@@ -69,12 +69,12 @@
                     <SolidColorBrush x:Key="FixedWhite" Color="#FFFFFF"/>
                     <SolidColorBrush x:Key="FixedBlack" Color="#000000"/>
 
-                    <SolidColorBrush x:Key="White" Color="#000000"/>
+                    <SolidColorBrush x:Key="White" Color="#303136"/>
                     <SolidColorBrush x:Key="White2" Color="#0F0F0F"/>
                     <SolidColorBrush x:Key="White3" Color="#030303"/>
                     <SolidColorBrush x:Key="White4" Color="#0D0D0D"/>
                     <SolidColorBrush x:Key="White5" Color="#070707"/>
-                    <SolidColorBrush x:Key="White6" Color="#2C2C2C"/>
+                    <SolidColorBrush x:Key="White6" Color="#535353"/>
 
                     <SolidColorBrush x:Key="Orange" Color="#E96A49"/>
 

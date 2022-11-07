@@ -9,7 +9,7 @@
     d:DesignHeight="300"
     d:DesignWidth="400">
 
-    <Grid>
+    <Grid Background="{ThemeResource White}">
         <Grid Margin="5">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="45"/>
@@ -26,7 +26,7 @@
                 <StackPanel HorizontalAlignment="Stretch">
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch" Tapped="OnReplyTapped">
                         <TextBlock x:Name="TbName" Text="로딩중..." FontSize="15" FontWeight="Bold" TextWrapping="Wrap"/>
-                        <TextBlock x:Name="TbTime" Text="방금 전 (수정됨)" Foreground="{ThemeResource Gray1}" Margin="5,0,0,0" FontSize="12.5" FontWeight="Bold" TextWrapping="Wrap" VerticalAlignment="Bottom"/>
+                        <TextBlock x:Name="TbTime" Text="방금 전 (수정됨)" Foreground="{ThemeResource Gray6}" Margin="5,0,0,0" FontSize="12.5" FontWeight="Bold" TextWrapping="Wrap" VerticalAlignment="Bottom"/>
                         <StackPanel x:Name="SpLike"  Orientation="Horizontal" Margin="5,0,0,0" Tapped="LikeListTapped">
                             <Viewbox Width="10" Height="10">
                                 <FontIcon Foreground="#e57764" FontFamily="{StaticResource Fluent Icons}" Glyph="&#xeb52;"/>
@@ -46,7 +46,7 @@
                         <Image x:Name="ImgMain" Visibility="Collapsed" Margin="10" MaxWidth="100" MaxHeight="100" HorizontalAlignment="Left"/>
                     </Grid>
                 </StackPanel>
-                <Button x:Name="BtCommentMenu" Grid.Column="1" BorderThickness="0" Padding="5" Margin="5,0,0,0" Tapped="OnCommentMenuTapped">
+                <Button x:Name="BtCommentMenu" Grid.Column="1" BorderThickness="0" Padding="5" Margin="5,0,0,0" Tapped="OnCommentMenuTapped" Background="Transparent">
                     <Viewbox>
                         <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe712;" Foreground="LightGray"/>
                     </Viewbox>

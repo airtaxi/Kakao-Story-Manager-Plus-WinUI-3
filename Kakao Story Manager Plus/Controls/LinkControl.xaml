@@ -9,7 +9,7 @@
     d:DesignHeight="300"
     d:DesignWidth="400">
 
-    <Grid Height="240" CornerRadius="10" PointerEntered="OnPointerEntered" PointerExited="OnPointerExited" Tapped="OnTapped">
+    <Grid Height="240" CornerRadius="5" PointerEntered="OnPointerEntered" PointerExited="OnPointerExited" Tapped="OnTapped">
         <Image x:Name="ImgLink" Stretch="UniformToFill"/>
         <Frame Background="Black" Opacity="0.35"/>
         <StackPanel Margin="10" VerticalAlignment="Bottom" HorizontalAlignment="Left">

@@ -110,7 +110,7 @@ public sealed partial class MainWindow : Microsoft.UI.Xaml.Window
             root.RequestedTheme = ElementTheme.Dark;
             appWindow.TitleBar.ButtonBackgroundColor = Colors.Black;
         }
-        else appWindow.TitleBar.ButtonBackgroundColor = Utility.IsSystemUsesLightTheme ? Colors.White : Colors.Black;
+        else appWindow.TitleBar.ButtonBackgroundColor = Utility.IsSystemUsesLightTheme ? Colors.White : Windows.UI.Color.FromArgb(255, 20, 20, 20);
     }
 
     private static async void ShowPost(string postId)

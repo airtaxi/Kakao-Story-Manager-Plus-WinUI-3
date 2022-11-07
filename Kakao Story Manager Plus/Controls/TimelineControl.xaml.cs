@@ -116,9 +116,9 @@ public sealed partial class TimelineControl : UserControl
         else
         {
             if (!_post.sympathized)
-                BtUp.Background = Application.Current.Resources["FixedBlack"] as SolidColorBrush;
+                BtUp.Background = Application.Current.Resources["White"] as SolidColorBrush;
             if (!_post.liked)
-                BtEmotions.Background = Application.Current.Resources["FixedBlack"] as SolidColorBrush;
+                BtEmotions.Background = Application.Current.Resources["White"] as SolidColorBrush;
         }
     }
 
