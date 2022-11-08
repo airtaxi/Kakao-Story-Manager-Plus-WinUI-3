@@ -67,6 +67,7 @@ public static class Utility
             bool willUseGifInTimeline = (Configuration.GetValue("UseGifInTimeline") as bool?) ?? false;
             var defaultUrl = willUseGifInTimeline ? medium?.origin_url : medium.thumbnail_url;
             var url = defaultUrl ?? medium?.url_hq;
+            if (medium?.url_hq != null) url = medium?.url_hq;
             if (url == null) continue;
             else if (url.Contains(".mp4"))
             {

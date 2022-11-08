@@ -520,7 +520,8 @@ public sealed partial class TimelineControl : UserControl
         var media = FvMedia.SelectedItem as Image;
         if (media == null) return;
         var url = media.Tag as string;
-        if (url.Contains(".mp4"))
+        if (url == null) return;
+        else if (url.Contains(".mp4"))
         {
             Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
             return;
