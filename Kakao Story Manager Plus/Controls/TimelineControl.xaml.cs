@@ -23,6 +23,8 @@ using CommunityToolkit.WinUI.UI.Animations;
 using Microsoft.UI.Xaml.Media;
 using CommunityToolkit.WinUI.UI.Helpers;
 using ImageMagick;
+using Windows.Security.Authentication.OnlineId;
+using Windows.UI;
 
 namespace KSMP.Controls;
 
@@ -104,8 +106,7 @@ public sealed partial class TimelineControl : UserControl
 
     private void SetButtonColorByTheme()
     {
-        var requestedTheme = (MainWindow.Instance.Content as FrameworkElement).RequestedTheme;
-        if (requestedTheme == ElementTheme.Default) requestedTheme = Utility.IsSystemUsesLightTheme ? ElementTheme.Light : ElementTheme.Dark;
+        var requestedTheme = Utility.GetRequestedTheme();
 
         if (requestedTheme == ElementTheme.Light)
         {
@@ -117,9 +118,9 @@ public sealed partial class TimelineControl : UserControl
         else
         {
             if (!_post.sympathized)
-                BtUp.Background = Application.Current.Resources["White"] as SolidColorBrush;
+                BtUp.Background = Utility.GetSolidColorBrushFromHexString("#FF343434");
             if (!_post.liked)
-                BtEmotions.Background = Application.Current.Resources["White"] as SolidColorBrush;
+                BtEmotions.Background = Utility.GetSolidColorBrushFromHexString("#FF343434");
         }
     }
 
@@ -160,59 +161,81 @@ public sealed partial class TimelineControl : UserControl
     public void HideEmotionsButtonFlyout() => BtEmotions.Flyout.Hide();
     public void RefreshEmotionsButton()
     {
+        var white = Utility.GetSolidColorBrushFromHexString("#FFFFFFFF");
         if (_post.liked)
         {
             var emotion = _post.liked_emotion;
             if (emotion == "like")
             {
-                BtEmotions.Background = Utils.Common.GetColorFromHexa("#FFE25434");
-                FiEmotions.Foreground = Application.Current.Resources["White"] as SolidColorBrush;
+                BtEmotions.Background = Common.GetColorFromHexa("#FFE25434");
+                FiEmotions.Foreground = white;
                 FiEmotions.Glyph = "\xeb52";
             }
             else if (emotion == "good")
             {
-                BtEmotions.Background = Utils.Common.GetColorFromHexa("#FFBCCB3C");
-                FiEmotions.Foreground = Application.Current.Resources["White"] as SolidColorBrush;
+                BtEmotions.Background = Common.GetColorFromHexa("#FFBCCB3C");
+                FiEmotions.Foreground = white;
                 FiEmotions.Glyph = "\ue735";
             }
             else if (emotion == "pleasure")
             {
-                BtEmotions.Background = Utils.Common.GetColorFromHexa("#FFEFBD30");
-                FiEmotions.Foreground = Application.Current.Resources["White"] as SolidColorBrush;
+                BtEmotions.Background = Common.GetColorFromHexa("#FFEFBD30");
+                FiEmotions.Foreground = white;
                 FiEmotions.Glyph = "\ued54";
             }
             else if (emotion == "sad")
             {
-                BtEmotions.Background = Utils.Common.GetColorFromHexa("#FF359FB0");
-                FiEmotions.Foreground = Application.Current.Resources["White"] as SolidColorBrush;
+                BtEmotions.Background = Common.GetColorFromHexa("#FF359FB0");
+                FiEmotions.Foreground = white;
                 FiEmotions.Glyph = "\ueb42";
             }
             else if (emotion == "cheerup")
             {
-                BtEmotions.Background = Utils.Common.GetColorFromHexa("#FF9C62AE");
-                FiEmotions.Foreground = Application.Current.Resources["White"] as SolidColorBrush;
+                BtEmotions.Background = Common.GetColorFromHexa("#FF9C62AE");
+                FiEmotions.Foreground = white;
                 FiEmotions.Glyph = "\ue945";
             }
         }
         else
         {
-            BtEmotions.Background = Application.Current.Resources["White"] as SolidColorBrush;
-            FiEmotions.Foreground = Application.Current.Resources["Gray3"] as SolidColorBrush;
+            var requestedTheme = Utility.GetRequestedTheme();
+            SolidColorBrush gray3;
+            if (requestedTheme == ElementTheme.Light) gray3 = Utility.GetSolidColorBrushFromHexString("#FF888D94");
+            else gray3 = Utility.GetSolidColorBrushFromHexString("#FF77726B");
+
+            FiEmotions.Foreground = gray3;
             FiEmotions.Glyph = "\ueb52";
         }
         SetButtonColorByTheme();
     }
     private void RefreshUpButton()
     {
-        if (_post.sympathized)
+        SolidColorBrush white;
+        SolidColorBrush gray3;
+        SolidColorBrush gray6;
+        var requestedTheme = Utility.GetRequestedTheme();
+        if(requestedTheme == ElementTheme.Light)
         {
-            BtUp.Background = Application.Current.Resources["Gray6"] as SolidColorBrush;
-            FaUp.Foreground = Application.Current.Resources["White"] as SolidColorBrush;
+            white = Utility.GetSolidColorBrushFromHexString("#FFFFFFFF");
+            gray3 = Utility.GetSolidColorBrushFromHexString("#FF888D94");
+            gray6 = Utility.GetSolidColorBrushFromHexString("#FFAAAAAA");
         }
         else
         {
-            BtUp.Background = Application.Current.Resources["White"] as SolidColorBrush;
-            FaUp.Foreground = Application.Current.Resources["Gray3"] as SolidColorBrush;
+            white = Utility.GetSolidColorBrushFromHexString("#FF343434");
+            gray3 = Utility.GetSolidColorBrushFromHexString("#FF77726B");
+            gray6 = Utility.GetSolidColorBrushFromHexString("#FF949494");
+
+        }
+        if (_post.sympathized)
+        {
+            BtUp.Background = gray6;
+            FaUp.Foreground = white;
+        }
+        else
+        {
+            BtUp.Background = white;
+            FaUp.Foreground = gray3;
         }
         SetButtonColorByTheme();
     }
@@ -541,7 +564,7 @@ public sealed partial class TimelineControl : UserControl
 
         if (!(_post.actor.relationship == "F" || _post.actor.relationship == "S" || _post.permission == "A"))
         {
-            await Utils.Dialog.ShowPermissionRequiredMessageDialog(this, _post.actor.id);
+            await Dialog.ShowPermissionRequiredMessageDialog(this, _post.actor.id);
             return;
         }
 
@@ -613,7 +636,7 @@ public sealed partial class TimelineControl : UserControl
     {
         if (!(profile.Relationship == "F" || profile.Relationship == "S" || _post.permission == "A"))
         {
-            await Utils.Dialog.ShowPermissionRequiredMessageDialog(this, profile.Id);
+            await Dialog.ShowPermissionRequiredMessageDialog(this, profile.Id);
             return;
         }
         profile.Metadata?.Flyout?.Hide();
@@ -644,7 +667,7 @@ public sealed partial class TimelineControl : UserControl
 
         if (!(_post.@object.actor.relationship == "F" || _post.@object.actor.relationship == "S" || _post.@object.permission == "A"))
         {
-            await Utils.Dialog.ShowPermissionRequiredMessageDialog(this, _post.@object.actor.id);
+            await Dialog.ShowPermissionRequiredMessageDialog(this, _post.@object.actor.id);
             return;
         }
         e.Handled = true;
@@ -732,7 +755,7 @@ public sealed partial class TimelineControl : UserControl
         var relationship = _post.actor.relationship;
         if (!(relationship == "F" || relationship == "S" || _post.permission == "A"))
         {
-            await Utils.Dialog.ShowPermissionRequiredMessageDialog(this, _post.actor.id, "해당 사용자와 친구를 맺어야 공유 리스트를 확인할 수 있습니다.");
+            await Dialog.ShowPermissionRequiredMessageDialog(this, _post.actor.id, "해당 사용자와 친구를 맺어야 공유 리스트를 확인할 수 있습니다.");
             return;
         }
 
@@ -805,7 +828,7 @@ public sealed partial class TimelineControl : UserControl
         var button = sender as Button;
         if (_commentEmoticon.Item1 == null)
         {
-            var emoticonListControl = Utils.Post.ShowEmoticonListToButton(button);
+            var emoticonListControl = Post.ShowEmoticonListToButton(button);
             emoticonListControl.OnSelected += (item, index) =>
             {
                 _commentEmoticon.Item1 = item;

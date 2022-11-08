@@ -17,7 +17,7 @@
                             <Frame Content="{Binding EmotionControl}"/>
                         </Viewbox>
                     </Grid>
-                    <TextBlock Text="{Binding Name}" Margin="10,0,0,0" VerticalAlignment="Center"/>
+                    <TextBlock Text="{Binding Name}" Margin="10,0,0,0" VerticalAlignment="Center" Foreground="{ThemeResource FixedWhite}"/>
                 </StackPanel>
             </DataTemplate>
         </ListView.ItemTemplate>

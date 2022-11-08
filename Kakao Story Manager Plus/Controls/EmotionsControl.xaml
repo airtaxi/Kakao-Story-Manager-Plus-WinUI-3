@@ -18,41 +18,41 @@
                 <Button Background="#E25434" Width="50" Height="50" CornerRadius="15" Margin="0,0,5,0" Click="OnEmotionButtonClick" Tag="like">
                     <StackPanel>
                         <Viewbox Width="auto" Height="auto" Margin="5">
-                            <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xeb52;" Foreground="{ThemeResource White}"/>
+                            <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xeb52;" Foreground="{ThemeResource FixedWhite}"/>
                         </Viewbox>
-                        <TextBlock Text="좋아요" FontSize="8" FontWeight="Bold" Foreground="{ThemeResource White}" HorizontalAlignment="Center"/>
+                        <TextBlock Text="좋아요" FontSize="8" FontWeight="Bold" Foreground="{ThemeResource FixedWhite}" HorizontalAlignment="Center"/>
                     </StackPanel>
                 </Button>
                 <Button Background="#BCCB3C" Width="50" Height="50" CornerRadius="15" Margin="0,0,5,0" Click="OnEmotionButtonClick" Tag="good">
                     <StackPanel>
                         <Viewbox Width="auto" Height="auto" Margin="5">
-                            <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe735;" Foreground="{ThemeResource White}"/>
+                            <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe735;" Foreground="{ThemeResource FixedWhite}"/>
                         </Viewbox>
-                        <TextBlock Text="멋져요" FontSize="8" FontWeight="Bold" Foreground="{ThemeResource White}" HorizontalAlignment="Center"/>
+                        <TextBlock Text="멋져요" FontSize="8" FontWeight="Bold" Foreground="{ThemeResource FixedWhite}" HorizontalAlignment="Center"/>
                     </StackPanel>
                 </Button>
                 <Button Background="#EFBD30" Width="50" Height="50" CornerRadius="15" Margin="0,0,5,0" Click="OnEmotionButtonClick" Tag="pleasure">
                     <StackPanel>
                         <Viewbox Width="auto" Height="auto" Margin="5">
-                            <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xed54;" Foreground="{ThemeResource White}"/>
+                            <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xed54;" Foreground="{ThemeResource FixedWhite}"/>
                         </Viewbox>
-                        <TextBlock Text="기뻐요" FontSize="8" FontWeight="Bold" Foreground="{ThemeResource White}" HorizontalAlignment="Center"/>
+                        <TextBlock Text="기뻐요" FontSize="8" FontWeight="Bold" Foreground="{ThemeResource FixedWhite}" HorizontalAlignment="Center"/>
                     </StackPanel>
                 </Button>
                 <Button Background="#359FB0" Width="50" Height="50" CornerRadius="15" Margin="0,0,5,0" Click="OnEmotionButtonClick" Tag="sad">
                     <StackPanel>
                         <Viewbox Width="auto" Height="auto" Margin="5">
-                            <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xeb42;" Foreground="{ThemeResource White}"/>
+                            <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xeb42;" Foreground="{ThemeResource FixedWhite}"/>
                         </Viewbox>
-                        <TextBlock Text="슬퍼요" FontSize="8" FontWeight="Bold" Foreground="{ThemeResource White}" HorizontalAlignment="Center"/>
+                        <TextBlock Text="슬퍼요" FontSize="8" FontWeight="Bold" Foreground="{ThemeResource FixedWhite}" HorizontalAlignment="Center"/>
                     </StackPanel>
                 </Button>
                 <Button Background="#9C62AE" Width="50" Height="50" CornerRadius="15" Margin="0,0,0,0" Click="OnEmotionButtonClick" Tag="cheerup">
                     <StackPanel>
                         <Viewbox Width="auto" Height="auto" Margin="5">
-                            <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe945;" Foreground="{ThemeResource White}"/>
+                            <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe945;" Foreground="{ThemeResource FixedWhite}"/>
                         </Viewbox>
-                        <TextBlock Text="힘내요" FontSize="8" FontWeight="Bold" Foreground="{ThemeResource White}" HorizontalAlignment="Center"/>
+                        <TextBlock Text="힘내요" FontSize="8" FontWeight="Bold" Foreground="{ThemeResource FixedWhite}" HorizontalAlignment="Center"/>
                     </StackPanel>
                 </Button>
             </StackPanel>

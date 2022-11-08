@@ -348,4 +348,17 @@ public static class Utility
 
     [DllImport("Shcore.dll", SetLastError = true)]
     public static extern int GetDpiForMonitor(IntPtr hmonitor, Monitor_DPI_Type dpiType, out uint dpiX, out uint dpiY);
+
+    public static ElementTheme GetRequestedTheme()
+    {
+        var requestedTheme = (Instance.Content as FrameworkElement).RequestedTheme;
+        ElementTheme theme;
+        if (requestedTheme != ElementTheme.Default) theme = requestedTheme;
+        else
+        {
+            if (IsSystemUsesLightTheme) theme = ElementTheme.Light;
+            else theme = ElementTheme.Dark;
+        }
+        return theme;
+    }
 }

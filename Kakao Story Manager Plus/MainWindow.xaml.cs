@@ -105,17 +105,22 @@ public sealed partial class MainWindow : Microsoft.UI.Xaml.Window
     {
         FrameworkElement root = Content as FrameworkElement;
         var themeSetting = Utils.Configuration.GetValue("ThemeSetting") as string ?? "Default";
+
+        Windows.UI.Color white;
         if (themeSetting == "Light")
         {
             root.RequestedTheme = ElementTheme.Light;
-            appWindow.TitleBar.ButtonBackgroundColor = Colors.White;
+            white = Colors.White;
         }
         else if (themeSetting == "Dark")
         {
             root.RequestedTheme = ElementTheme.Dark;
-            appWindow.TitleBar.ButtonBackgroundColor = Windows.UI.Color.FromArgb(255, 52, 52, 52);
+            white = Windows.UI.Color.FromArgb(255, 52, 52, 52);
         }
-        else appWindow.TitleBar.ButtonBackgroundColor = Utility.IsSystemUsesLightTheme ? Colors.White : Windows.UI.Color.FromArgb(255, 52, 52, 52);
+        else white = Utility.IsSystemUsesLightTheme ? Colors.White : Windows.UI.Color.FromArgb(255, 52, 52, 52);
+
+        appWindow.TitleBar.ButtonBackgroundColor = white;
+        appWindow.TitleBar.ButtonInactiveBackgroundColor = white;
     }
 
     private static async void ShowPost(string postId)

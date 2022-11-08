@@ -22,10 +22,17 @@ public sealed partial class UserProfileControl : UserControl
 
     public void IndicateFavorite(bool isFavorite)
     {
+        SolidColorBrush gray7 = Utility.GetSolidColorBrushFromHexString("#FF808080");
+
+        SolidColorBrush white6;
+        var requestedTheme = Utility.GetRequestedTheme();
+        if (requestedTheme == ElementTheme.Light) white6 = Utility.GetSolidColorBrushFromHexString("#FFD3D3D3");
+        else white6 = Utility.GetSolidColorBrushFromHexString("#FF888888");
+
         if (!isFavorite)
         {
-            RtFavorite.Fill = Application.Current.Resources["Gray7"] as SolidColorBrush;
-            FaFavorite.Foreground = Application.Current.Resources["White6"] as SolidColorBrush;
+            RtFavorite.Fill = gray7;
+            FaFavorite.Foreground = white6;
         }
         else
         {
