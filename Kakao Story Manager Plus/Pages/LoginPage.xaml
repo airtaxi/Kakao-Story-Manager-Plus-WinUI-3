@@ -19,10 +19,10 @@
         </StackPanel>
 
         <Grid x:Name="GdLoading" Visibility="Collapsed">
-            <Rectangle Fill="{ThemeResource Black}" Opacity="0.85"/>
+            <Rectangle Fill="{ThemeResource FixedBlack}" Opacity="0.85"/>
             <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-                <ProgressRing x:Name="PrLoading" IsActive="True" Width="100" Height="100" Maximum="100" Minimum="0"/>
-                <TextBlock x:Name="TbLoading" Margin="0,10,0,0" FontWeight="Bold" Foreground="{ThemeResource White}"/>
+                <ProgressRing x:Name="PrLoading" IsActive="True" Width="100" Height="100" Maximum="100" Minimum="0" Foreground="{ThemeResource Orange}"/>
+                <TextBlock x:Name="TbLoading" Margin="0,10,0,0" FontWeight="Bold" Foreground="{ThemeResource FixedWhite}"/>
             </StackPanel>
         </Grid>
     </Grid>
