@@ -15,9 +15,7 @@ using static KSMP.ClassManager;
 using static KSMP.ApiHandler;
 using Microsoft.UI;
 using WinRT.Interop;
-using Windows.ApplicationModel.Appointments;
 using System.Diagnostics;
-using Windows.Security.Authentication.OnlineId;
 
 namespace KSMP;
 
@@ -115,9 +113,9 @@ public sealed partial class MainWindow : Microsoft.UI.Xaml.Window
         else if (themeSetting == "Dark")
         {
             root.RequestedTheme = ElementTheme.Dark;
-            appWindow.TitleBar.ButtonBackgroundColor = Colors.Black;
+            appWindow.TitleBar.ButtonBackgroundColor = Windows.UI.Color.FromArgb(255, 52, 52, 52);
         }
-        else appWindow.TitleBar.ButtonBackgroundColor = Utility.IsSystemUsesLightTheme ? Colors.White : Windows.UI.Color.FromArgb(255, 20, 20, 20);
+        else appWindow.TitleBar.ButtonBackgroundColor = Utility.IsSystemUsesLightTheme ? Colors.White : Windows.UI.Color.FromArgb(255, 52, 52, 52);
     }
 
     private static async void ShowPost(string postId)
