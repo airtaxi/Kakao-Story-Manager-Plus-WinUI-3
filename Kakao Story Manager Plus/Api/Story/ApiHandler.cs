@@ -733,7 +733,7 @@ public partial class ApiHandler
     {
         s.Write(bytes, 0, bytes.Length);
     }
-    public static async Task<UploadedImageProp> UploadImage(string filepath)
+    public static async Task<UploadedImageProp> UploadImage(string filepath, int retryCount = 0)
     {
         string filename = Path.GetFileName(filepath);
         using StreamReader fileStream = new StreamReader(filepath);
@@ -769,15 +769,39 @@ public partial class ApiHandler
 
         WriteMultipartForm(writeStream, boundary, null, filename, MimeTypes.GetMimeType(filename), fileStream.BaseStream);
 
-        var readStream = await request.GetResponseAsync();
-        var respReader = readStream.GetResponseStream();
+        try
+        {
+            var readStream = await request.GetResponseAsync();
+            var respReader = readStream.GetResponseStream();
 
-        using var reader = new StreamReader(respReader, Encoding.UTF8);
-        string respResult = await reader.ReadToEndAsync();
-        respReader.Close();
+            using var reader = new StreamReader(respReader, Encoding.UTF8);
+            string respResult = await reader.ReadToEndAsync();
+            respReader.Close();
 
-        UploadedImageProp result = JsonConvert.DeserializeObject<UploadedImageProp>(respResult);
-        return result;
+            UploadedImageProp result = JsonConvert.DeserializeObject<UploadedImageProp>(respResult);
+            return result;
+        }
+        catch (WebException e)
+        {
+            int statusCode = -1;
+            var statusCodeObject = e.Response as HttpWebResponse;
+            if (statusCodeObject?.StatusCode != null) statusCode = (int)statusCodeObject.StatusCode;
+
+            if (statusCode == 403) return null;
+            else if (statusCode == 404) return null;
+            else if (statusCode == 401)
+            {
+                var success = await OnReloginRequired?.Invoke();
+                if (!success) return null;
+                return await UploadImage(filepath, ++retryCount);
+            }
+            else
+            {
+                if (retryCount < MaxRetryCount)
+                    return await UploadImage(filepath, ++retryCount);
+            }
+        }
+        return null;
     }
     public static async Task<string> UploadVideo(AssetData asset)
     {
