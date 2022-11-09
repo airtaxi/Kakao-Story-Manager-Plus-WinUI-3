@@ -27,12 +27,52 @@
                 </Grid>
             </Grid>
             <StackPanel Margin="10" VerticalAlignment="Center">
-                <TextBlock x:Name="TbName" Text="로딩중..." FontSize="20" FontWeight="Bold" Foreground="{ThemeResource FixedWhite}"/>
-                <TextBlock x:Name="TbDescription" Text="로딩중..." FontSize="15" Foreground="{ThemeResource FixedWhite}" Margin="0,5,0,0"/>
+                    <TextBlock Grid.Column="0" x:Name="TbName" Text="로딩중..." FontSize="20" FontWeight="Bold" Foreground="{ThemeResource FixedWhite}" TextTrimming="CharacterEllipsis" MaxLines="1" TextWrapping="Wrap" />
+                    <TextBlock x:Name="TbDescription" Text="로딩중..." FontSize="15" Foreground="{ThemeResource FixedWhite}" Margin="0,5,0,0" TextTrimming="CharacterEllipsis" TextWrapping="Wrap" MaxLines="2"/>
             </StackPanel>
         </StackPanel>
-        <Button x:Name="BtFriend" VerticalAlignment="Bottom" HorizontalAlignment="Right" Background="{ThemeResource Orange}" Margin="20" Click="FriendButtonClicked">
-            <TextBlock x:Name="TbFriendStatus" Foreground="{ThemeResource FixedWhite}"/>
-        </Button>
+        <StackPanel x:Name="SpUserTag" Orientation="Horizontal" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="20">
+            <Button Grid.Column="1" Background="Transparent" BorderThickness="0" ToolTipService.ToolTip="사용자 별명">
+                <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe8ac;" Foreground="{ThemeResource FixedWhite}"/>
+                <Button.Flyout>
+                    <Flyout x:Name="FlCustomNickname">
+                        <Grid Width="300" Margin="-5">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="auto"/>
+                            </Grid.RowDefinitions>
+                            <TextBox Grid.Row="0" x:Name="TbxCustomNickname" AcceptsReturn="False" PlaceholderText="사용자 별명"/>
+                            <Button Grid.Row="1" Content="사용자 별명 저장" HorizontalAlignment="Stretch" Click="OnSetCustomUserNicknameButtonClicked" Margin="0,5,0,0"/>
+                        </Grid>
+                    </Flyout>
+                </Button.Flyout>
+            </Button>
+            <Button Background="Transparent" BorderThickness="0" ToolTipService.ToolTip="닉네임 기록" Margin="5,0,0,0">
+                <FontIcon FontFamily="{StaticResource Fluent Icons}" Foreground="{ThemeResource FixedWhite}" Glyph="&#xe81c;"/>
+                <Button.Flyout>
+                    <Flyout>
+                        <ListView x:Name="LvNicknameHistory" SelectionMode="None" Margin="-15"/>
+                    </Flyout>
+                </Button.Flyout>
+            </Button>
+            <Button Background="Transparent" BorderThickness="0" ToolTipService.ToolTip="메모" Margin="5,0,0,0">
+                <FontIcon FontFamily="{StaticResource Fluent Icons}" Foreground="{ThemeResource FixedWhite}" Glyph="&#xe77c;"/>
+                <Button.Flyout>
+                    <Flyout x:Name="FlMemo">
+                        <Grid Width="300" Margin="-5">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="auto"/>
+                            </Grid.RowDefinitions>
+                            <TextBox Grid.Row="0" x:Name="TbxMemo" AcceptsReturn="True" PlaceholderText="사용자 메모"/>
+                            <Button Grid.Row="1" Content="메모 저장" HorizontalAlignment="Stretch" Click="OnSaveMemoButtonClicked" Margin="0,5,0,0"/>
+                        </Grid>
+                    </Flyout>
+                </Button.Flyout>
+            </Button>
+            <Button x:Name="BtFriend" Background="{ThemeResource Orange}" Margin="5,0,0,0" Click="FriendButtonClicked">
+                <TextBlock x:Name="TbFriendStatus" Foreground="{ThemeResource FixedWhite}"/>
+            </Button>
+        </StackPanel>
     </Grid>
 </UserControl>

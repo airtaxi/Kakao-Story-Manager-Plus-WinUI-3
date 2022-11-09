@@ -183,8 +183,9 @@
                                     </Flyout>
                                 </Button.Flyout>
                             </Button>
-                            <Button x:Name="BtSendComment" Content="전송" Foreground="{ThemeResource FixedWhite}" Height="30" Grid.Column="2" Margin="5,0,30,10" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Background="{ThemeResource Orange}" Click="OnSendCommentButtonClicked"/>
-
+                            <Button x:Name="BtSendComment" Height="30" Grid.Column="2" Margin="5,0,30,10" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Background="{ThemeResource Orange}" Click="OnSendCommentButtonClicked">
+                                <TextBlock Text="전송" Foreground="{ThemeResource FixedWhite}"/>
+                            </Button>
                         </Grid>
                         <Border BorderBrush="{ThemeResource White4}" VerticalAlignment="Top" HorizontalAlignment="Stretch" BorderThickness="0.5"/>
                     </Grid>

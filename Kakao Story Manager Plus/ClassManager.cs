@@ -7,6 +7,14 @@ namespace KSMP;
 
 public class ClassManager
 {
+    public class UserTag
+    {
+        public string UserId { get; set; } // From KakaoStory
+        public List<string> NicknameHistory { get; set; } = new();
+        public string CustomNickname { get; set; }
+        public string Memo { get; set; }
+    }
+
     public class RestartFlag
     {
         public List<Cookie> Cookies { get; set; }

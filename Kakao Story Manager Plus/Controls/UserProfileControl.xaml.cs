@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 using KSMP.Extension;
 using KSMP.Pages;
 using Microsoft.UI.Xaml;
@@ -12,12 +13,28 @@ namespace KSMP.Controls;
 public sealed partial class UserProfileControl : UserControl
 {
     private readonly string _id;
+    private string _name;
 
-    public UserProfileControl(string id)
+    public UserProfileControl(string id, bool isOverlay = false)
     {
         InitializeComponent();
         _id = id;
         _ = Refresh();
+
+        var manager = UserTagManager.GetUserTagManager(_id);
+
+        var history = manager.GetNicknameHistory();
+        if (history.Count == 0) history.Add("닉네임 기록 없음");
+        LvNicknameHistory.ItemsSource = history;
+
+        TbxMemo.Text = manager.GetMemo();
+        TbxCustomNickname.Text = manager.GetCustomNickname();
+
+        if (isOverlay)
+        {
+            TbName.MaxWidth = 180;
+            TbDescription.MaxWidth = 180;
+        }
     }
 
     public void IndicateFavorite(bool isFavorite)
@@ -60,7 +77,8 @@ public sealed partial class UserProfileControl : UserControl
         Utility.LoadedImages.Add(ImgProfileBackground);
         Utility.LoadedPersonPictures.Add(PpProfilePicture);
 
-        TbName.Text = profile.display_name;
+        _name = profile.display_name;
+        RefreshUserName();
 
         string profileMessage = "";
         if ((profile.status_objects?.Count ?? 0) > 0)
@@ -85,9 +103,21 @@ public sealed partial class UserProfileControl : UserControl
             IndicateFavorite(profile.is_favorite);
 
         if (isMe)
+        {
             BtFriend.Visibility = Visibility.Collapsed;
+            SpUserTag.Visibility = Visibility.Collapsed;
+        }
 
         RefreshFriendStatus(profile.relationship);
+    }
+
+    private void RefreshUserName()
+    {
+        var manager = UserTagManager.GetUserTagManager(_id);
+        var customNickname = manager.GetCustomNickname();
+
+        if (!string.IsNullOrEmpty(customNickname)) TbName.Text = $"{_name} ({customNickname})";
+        else TbName.Text = _name;
     }
 
     private void RefreshFriendStatus(string relationship)
@@ -169,5 +199,25 @@ public sealed partial class UserProfileControl : UserControl
         button.IsEnabled = true;
     }
 
-    private void OnProfilePictureTapped(object sender, TappedRoutedEventArgs e) => MainPage.ShowProfile(_id);
+    private async void OnProfilePictureTapped(object sender, TappedRoutedEventArgs e)
+    {
+        (Parent as Flyout)?.Hide();
+        await Task.Delay(100);
+        MainPage.ShowProfile(_id);
+    }
+
+    private void OnSaveMemoButtonClicked(object sender, RoutedEventArgs e)
+    {
+        var manager = UserTagManager.GetUserTagManager(_id);
+        manager.SetMemo(TbxMemo.Text);
+        FlMemo.Hide();
+    }
+
+    private void OnSetCustomUserNicknameButtonClicked(object sender, RoutedEventArgs e)
+    {
+        var manager = UserTagManager.GetUserTagManager(_id);
+        manager.SetCustomNickname(TbxCustomNickname.Text);
+        RefreshUserName();
+        FlCustomNickname.Hide();
+    }
 }

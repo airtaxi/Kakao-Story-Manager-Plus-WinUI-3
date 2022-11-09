@@ -247,6 +247,7 @@ public sealed partial class MainPage : Page
     private static async Task RefreshFriends()
     {
         Friends = await ApiHandler.GetFriends();
+        await UserTagManager.InitializeAsync(Friends.profiles);
     }
 
     public static TimelineControl GetOverlayTimeLineControl() => s_instance?.FrOverlay?.Content as TimelineControl;
@@ -283,10 +284,9 @@ public sealed partial class MainPage : Page
     private async Task Refresh()
     {
         await RefreshFriends();
-        var friends = await ApiHandler.GetFriends();
-        TbFriendCount.Text = $"내 친구 {friends.profiles.Count}";
+        TbFriendCount.Text = $"내 친구 {Friends.profiles.Count}";
         var friendProfiles = new List<FriendProfile>();
-        foreach(var profile in friends.profiles)
+        foreach(var profile in Friends.profiles)
         {
             var friendProfile = new FriendProfile
             {

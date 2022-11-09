@@ -580,7 +580,7 @@ public sealed partial class TimelineControl : UserControl
     private void OnUserProfilePictureTapped(object sender, TappedRoutedEventArgs e)
     {
         e.Handled = true;
-        MainPage.ShowProfile(_post.actor.id);
+        new Flyout() { Content = new UserProfileControl(_post.actor.id, true) { Width = 400 } }.ShowAt(sender as FrameworkElement);
     }
 
     private void OnEmotionsTextBlockTapped(object sender, TappedRoutedEventArgs e)
