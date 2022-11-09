@@ -156,6 +156,11 @@ public sealed partial class CommentControl : UserControl
         var inputControl = FrEditComment.Content as InputControl;
         var quotas = inputControl.GetQuoteDatas();
         var text = string.Join(' ', quotas.Select(x => x.text));
+        if (string.IsNullOrWhiteSpace(text))
+        {
+            await this.ShowMessageDialogAsync("내용을 입력해주세요.", "오류");
+            return;
+        }
         var comment = await ApiHandler.EditComment(_comment, _postId, quotas, text);
         _comment = comment;
         Refresh(_comment);

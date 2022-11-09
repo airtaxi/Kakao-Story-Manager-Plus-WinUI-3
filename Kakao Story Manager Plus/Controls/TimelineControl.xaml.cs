@@ -84,7 +84,6 @@ public sealed partial class TimelineControl : UserControl
             BdShare.Visibility = Visibility.Visible;
             SvContent.Padding = new Thickness(20, 0, 20, 20);
             GdMain.Margin = new Thickness(0);
-
         }
 
         Initialize();
@@ -703,6 +702,13 @@ public sealed partial class TimelineControl : UserControl
             });
         }
         var text = string.Join(' ', quotas.Select(x => x.text));
+
+        if (string.IsNullOrWhiteSpace(text))
+        {
+            await this.ShowMessageDialogAsync("댓글 내용을 입력해주세요.", "오류");
+            return;
+        }
+
         await ApiHandler.ReplyToPost(_post.id, text, quotas, _commentMedia ?? _commentDcCon);
         await RefreshContent();
         _commentMedia = null;
