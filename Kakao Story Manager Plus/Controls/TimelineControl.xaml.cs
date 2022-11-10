@@ -703,7 +703,7 @@ public sealed partial class TimelineControl : UserControl
         }
         var text = string.Join(' ', quotas.Select(x => x.text));
 
-        if (string.IsNullOrWhiteSpace(text))
+        if (string.IsNullOrWhiteSpace(text) && _commentMedia == null && _commentDcCon == null && _commentEmoticon == null)
         {
             await this.ShowMessageDialogAsync("댓글 내용을 입력해주세요.", "오류");
             return;
