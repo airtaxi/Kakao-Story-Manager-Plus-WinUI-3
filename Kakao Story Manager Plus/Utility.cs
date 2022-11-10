@@ -25,6 +25,9 @@ using Newtonsoft.Json.Linq;
 using Microsoft.Win32;
 using static KSMP.MainWindow;
 using System.Runtime.InteropServices;
+using System.Net;
+using Windows.Storage.Pickers;
+using WinRT.Interop;
 
 namespace KSMP;
 
@@ -41,7 +44,11 @@ public static class Utility
         LoadedPersonPictures.ForEach(image => image?.DisposeImage());
         LoadedPersonPictures.Clear();
 
-        LoadedImages.ForEach(image => image?.DisposeImage());
+        LoadedImages.ForEach(image =>
+        {
+            image.RightTapped -= OnImageRightTapped;
+            image?.DisposeImage();
+        });
         LoadedImages.Clear();
 
         LoadedVideos.ForEach(video =>
@@ -50,6 +57,7 @@ public static class Utility
             {
                 video.PointerEntered -= OnVideoPointerEntered;
                 video.PointerExited -= OnVideoPointerExited;
+                video.RightTapped -= OnVideoRightTapped;
                 video.Tapped -= OnVideoTapped;
             }
             video?.DisposeVideo();
@@ -96,13 +104,32 @@ public static class Utility
 
         image.Tag = medium.origin_url;
         image.Stretch = Stretch.Uniform;
+        image.RightTapped += OnImageRightTapped;
 
         return image;
+    }
+
+    private static async void OnImageRightTapped(object sender, RightTappedRoutedEventArgs e)
+    {
+        var image = sender as Image;
+        var url = image.Tag as string;
+        if (url.Contains(".gif"))
+        {
+            var file = await ShowImageFileSaveDialogAsync(url);
+            if (file == null) return;
+            var path = file.Path;
+
+            WebClient webClient = new();
+            await new WebClient().DownloadFileTaskAsync(url, path);
+        }
+        else await SetImageClipboardFromUrl(image, url);
     }
 
     private static MediaPlayerElement GenerateVideoMediaPlayerElementFromUrl(string url)
     {
         var video = new MediaPlayerElement();
+
+        video.Tag = url;
 
         video.Source = MediaSource.CreateFromUri(new Uri(url));
 
@@ -118,9 +145,21 @@ public static class Utility
 
         video.PointerEntered += OnVideoPointerEntered;
         video.PointerExited += OnVideoPointerExited;
+        video.RightTapped += OnVideoRightTapped;
         video.Tapped += OnVideoTapped;
 
         return video;
+    }
+
+    private static async void OnVideoRightTapped(object sender, RightTappedRoutedEventArgs e)
+    {
+        var element = sender as FrameworkElement;
+        var url = element.Tag as string;
+        var dataPackage = new DataPackage();
+        dataPackage.SetText(url);
+        dataPackage.RequestedOperation = DataPackageOperation.Copy;
+        Clipboard.SetContent(dataPackage);
+        await element.ShowMessageDialogAsync("동영상 URL이 클립보드에 저장되었습니다,", "안내");
     }
 
     public static async Task SetEmoticonImageAsync(Image image, string url)
@@ -360,5 +399,18 @@ public static class Utility
             else theme = ElementTheme.Dark;
         }
         return theme;
+    }
+
+
+    public static async Task<StorageFile> ShowImageFileSaveDialogAsync(string url)
+    {
+        var fileSavePicker = new FileSavePicker();
+        InitializeWithWindow.Initialize(fileSavePicker, WindowNative.GetWindowHandle(MainWindow.Instance));
+        var extension = Path.GetExtension(url).Split("?")[0];
+        fileSavePicker.SuggestedStartLocation = PickerLocationId.PicturesLibrary;
+        fileSavePicker.FileTypeChoices.Add("Image File", new List<string>() { extension });
+        fileSavePicker.SuggestedFileName = "Image";
+        var file = await fileSavePicker.PickSaveFileAsync();
+        return file;
     }
 }

@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
+using System.Threading.Tasks;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
+using Windows.Storage;
 using Windows.Storage.Pickers;
 using WinRT.Interop;
 using static KSMP.ApiHandler.DataType.CommentData;
@@ -64,14 +66,7 @@ public sealed partial class ImageViewerControl : UserControl
     {
         var medium = FvImages.SelectedItem as Medium;
         var url = medium.origin_url;
-
-        var fileSavePicker = new FileSavePicker();
-        InitializeWithWindow.Initialize(fileSavePicker, WindowNative.GetWindowHandle(MainWindow.Instance));
-        var extension = Path.GetExtension(url).Split("?")[0];
-        fileSavePicker.SuggestedStartLocation = PickerLocationId.PicturesLibrary;
-        fileSavePicker.FileTypeChoices.Add("Image File", new List<string>() { extension });
-        fileSavePicker.SuggestedFileName = "Image";
-        var file = await fileSavePicker.PickSaveFileAsync();
+        var file = await Utility.ShowImageFileSaveDialogAsync(url);
         if (file == null) return;
         GdLoading.Visibility = Visibility.Visible;
         var path = file.Path;
