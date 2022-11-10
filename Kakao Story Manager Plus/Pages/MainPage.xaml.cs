@@ -347,6 +347,7 @@ public sealed partial class MainPage : Page
     private void TitleTapped(object sender, TappedRoutedEventArgs e)
     {
         HideOverlay();
+        HideOverlay();
         NavigateTimeline();
     }
 
