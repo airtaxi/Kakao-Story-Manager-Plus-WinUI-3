@@ -16,6 +16,11 @@ using static KSMP.ApiHandler;
 using Microsoft.UI;
 using WinRT.Interop;
 using System.Diagnostics;
+using System.Linq;
+using Microsoft.UI.Xaml.Controls.Primitives;
+using Windows.ApplicationModel.DataTransfer;
+using static KSMP.Controls.WritePostControl;
+using KSMP.Utils;
 
 namespace KSMP;
 
@@ -23,15 +28,21 @@ public sealed partial class MainWindow : Microsoft.UI.Xaml.Window
 {
     public static MainWindow Instance { get; private set; }
     public static TaskCompletionSource ReloginTaskCompletionSource = null;
+
+    public static bool IsWritePostFlyoutOpened = false;
+
     private static List<MenuFlyoutItem> s_loginRequiredMenuFlyoutItems = new();
+    private static Process _process;
+
     private bool _shouldClose { get; set; } = false;
     private AppWindow appWindow;
-    private static Process _process;
+
 
     public MainWindow(RestartFlag flag = null)
     {
         Instance = this;
         InitializeComponent();
+        InitializeWritePostFlyout();
 
         appWindow = this.GetAppWindow();
         appWindow.Changed += AppWindowChanged;
@@ -83,7 +94,7 @@ public sealed partial class MainWindow : Microsoft.UI.Xaml.Window
         _process.Refresh();
         var memoryUsageInBytes = _process.PrivateMemorySize64;
         var memoryUsageInMegabytes = memoryUsageInBytes / 1024 / 1024;
-        TbxMemoryUsage.Text = $"메모리 사용량: {memoryUsageInMegabytes:N0}MiB";
+        TitleTextBlock.Text = $"카카오스토리 매니저 PLUS ({memoryUsageInMegabytes:N0}MiB)";
         if (memoryUsageInMegabytes < 1024 || _isMemoryWarningDialogShown)
         {
             _warnCount = 0;
@@ -252,17 +263,6 @@ public sealed partial class MainWindow : Microsoft.UI.Xaml.Window
                                     + LeftDragColumn.ActualWidth) * scaleAdjustment);
             dragRectsList.Add(dragRectL);
 
-            Windows.Graphics.RectInt32 dragRectR;
-            dragRectR.X = (int)((LeftPaddingColumn.ActualWidth
-                                + IconColumn.ActualWidth
-                                + TitleTextBlock.ActualWidth
-                                + LeftDragColumn.ActualWidth
-                                + SearchColumn.ActualWidth) * scaleAdjustment);
-            dragRectR.Y = 0;
-            dragRectR.Height = (int)(AppTitleBar.ActualHeight * scaleAdjustment);
-            dragRectR.Width = (int)(RightDragColumn.ActualWidth * scaleAdjustment);
-            dragRectsList.Add(dragRectR);
-
             Windows.Graphics.RectInt32[] dragRects = dragRectsList.ToArray();
 
             appWindow.TitleBar.SetDragRectangles(dragRects);
@@ -360,5 +360,151 @@ public sealed partial class MainWindow : Microsoft.UI.Xaml.Window
         else if (isControlDown && e.Key == Windows.System.VirtualKey.W)
             Utility.ManuallyDisposeAllMedias();
         else if (isControlDown && e.Key == Windows.System.VirtualKey.Q) Utility.SaveCurrentStateAndRestartProgram();
+    }
+
+    public static void ShowMenus()
+    {
+        Instance.AsbSearchFriend.Visibility = Visibility.Visible;
+        Instance.SpButtons.Visibility = Visibility.Visible;
+    }
+
+    private static void SearchFriend(AutoSuggestBox sender)
+    {
+        var text = sender.Text.ToLower();
+        if (!string.IsNullOrEmpty(text))
+        {
+            var newFriends = MainPage.Friends.profiles.Where(x => x.display_name.ToLower().Contains(text)).Select(x => new FriendProfile { Name = x.display_name, ProfileUrl = x.GetValidUserProfileUrl(), Id = x.id }).ToList();
+            sender.ItemsSource = newFriends;
+        }
+        else
+            sender.ItemsSource = null;
+    }
+    
+    private void SearchFriendQuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args) => SearchFriend(sender);
+    private void SearchFriendTextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args) => SearchFriend(sender);
+
+    private void SearchFriendSelected(AutoSuggestBox sender, AutoSuggestBoxSuggestionChosenEventArgs args)
+    {
+        var friend = args.SelectedItem as FriendProfile;
+        var id = friend.Id;
+        MainPage.NavigateTimeline(id);
+        sender.Text = "";
+        sender.ItemsSource = null;
+    }
+
+    private async void OnExitButtonClicked(object sender, RoutedEventArgs e)
+    {
+        var dialogResult = await MainPage.GetInstance().ShowMessageDialogAsync("정말로 프로그램을 종료하시겠습니까?", "경고", true);
+        if (dialogResult == ContentDialogResult.Primary) Environment.Exit(0);
+    }
+
+    private void OnMoreButtonClicked(object sender, RoutedEventArgs e)
+    {
+        GC.Collect(GC.MaxGeneration);
+        GC.WaitForPendingFinalizers();
+    }
+
+    private void OnRestartButtonClicked(object sender, RoutedEventArgs e) => Utility.SaveCurrentStateAndRestartProgram();
+    private void OnImageUnloadButtonClicked(object sender, RoutedEventArgs e) => Utility.ManuallyDisposeAllMedias();
+
+    private void OnNotificationsButtonClicked(object sender, RoutedEventArgs e)
+    {
+        var button = sender as Button;
+        var flyout = new Flyout
+        {
+            Content = new Controls.NotificationControl(),
+            Placement = FlyoutPlacementMode.BottomEdgeAlignedLeft
+        };
+        flyout.ShowAt(button);
+    }
+
+    public static Button GetWritePostButton() => Instance.BtWrite;
+
+    private async void OnWritePostButtonClicked(object sender, RoutedEventArgs e)
+    {
+        var button = sender as Button;
+        var flyout = button.Flyout as Flyout;
+        var control = flyout.Content as WritePostControl;
+        control.AdjustDefaultPostWritingPermission();
+
+        DataPackageView dataPackageView = Clipboard.GetContent();
+        var hasImage = dataPackageView.Contains(StandardDataFormats.Bitmap);
+        if (hasImage)
+        {
+            await Task.Delay(400);
+            var result = await MainPage.GetInstance().ShowMessageDialogAsync("클립보드에 이미지가 있습니다.\n이미지를 추가할까요?", "안내", true);
+            if (result != ContentDialogResult.Primary) return;
+
+            var filePath = await Utility.GenerateClipboardImagePathAsync(dataPackageView);
+            await control.AddImageFromPath(filePath);
+        }
+    }
+
+    private async void OnLogoutButtonClicked(object sender, RoutedEventArgs e)
+    {
+        var dialogResult = await MainPage.GetInstance().ShowMessageDialogAsync("정말로 로그아웃 하시겠습니까?", "경고", true);
+        if (dialogResult == ContentDialogResult.Primary)
+        {
+            Configuration.SetValue("willRememberCredentials", false);
+            await MainPage.GetInstance().ShowMessageDialogAsync("로그아웃되었습니다.\n프로그램을 재실행해주세요.", "안내");
+            Environment.Exit(0);
+        }
+    }
+
+
+    private async void OnSizeChanged(object sender, SizeChangedEventArgs e)
+    {
+        if (IsWritePostFlyoutOpened)
+        {
+            await Task.Delay(250);
+            var flyout = BtWrite?.Flyout as Flyout;
+            flyout?.ShowAt(BtWrite);
+        }
+    }
+
+    private void OnWritePostFlyoutClosed(object sender, object e) => IsWritePostFlyoutOpened = false;
+
+    private void OnPostCompleted() => InitializeWritePostFlyout();
+
+    private void InitializeWritePostFlyout()
+    {
+        IsWritePostFlyoutOpened = false;
+        var previousFlyout = BtWrite.Flyout as Flyout;
+        if (previousFlyout != null)
+        {
+            previousFlyout.Opened -= OnWritePostFlyoutOpened;
+            previousFlyout.Closed -= OnWritePostFlyoutClosed;
+            var previousControl = previousFlyout.Content as WritePostControl;
+            if (previousControl != null) previousControl.OnPostCompleted -= OnPostCompleted;
+        }
+
+        var flyout = new Flyout();
+        flyout.Opened += OnWritePostFlyoutOpened;
+        flyout.Closed += OnWritePostFlyoutClosed;
+        BtWrite.Flyout = flyout;
+        var control = new WritePostControl(BtWrite);
+        flyout.Content = control;
+        control.OnPostCompleted += OnPostCompleted;
+    }
+
+    private void OnWritePostFlyoutOpened(object sender, object e)
+    {
+        ((BtWrite.Flyout as Flyout).Content as WritePostControl).PreventClose = true;
+        IsWritePostFlyoutOpened = true;
+    }
+
+    private void OnTitleTextTapped(object sender, TappedRoutedEventArgs e)
+    {
+        if (LoginPage.IsLoggedIn)
+        {
+            MainPage.HideOverlay();
+            MainPage.HideOverlay();
+            MainPage.NavigateTimeline();
+        }
+    }
+
+    private void OnShowTimelineButtonClicked(object sender, RoutedEventArgs e)
+    {
+
     }
 }

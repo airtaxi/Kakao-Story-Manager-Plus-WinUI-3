@@ -8,31 +8,95 @@
     mc:Ignorable="d"
     Closed="WindowClosed">
 
-    <Grid PreviewKeyDown="OnPreviewKeyDown">
+    <Grid PreviewKeyDown="OnPreviewKeyDown" SizeChanged="OnSizeChanged">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition />
         </Grid.RowDefinitions>
-        <Grid Background="{ThemeResource White}" x:Name="AppTitleBar" Height="32">
+        <Grid Background="{ThemeResource White}" x:Name="AppTitleBar" Height="45">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition x:Name="LeftPaddingColumn" Width="0"/>
                 <ColumnDefinition x:Name="IconColumn" Width="Auto"/>
                 <ColumnDefinition x:Name="TitleColumn" Width="Auto"/>
-                <ColumnDefinition x:Name="LeftDragColumn" Width="*"/>
-                <ColumnDefinition x:Name="SearchColumn" Width="Auto"/>
-                <ColumnDefinition x:Name="RightDragColumn" Width="*"/>
-                <ColumnDefinition x:Name="RightPaddingColumn" Width="0"/>
+                <ColumnDefinition x:Name="LeftDragColumn" Width="5"/>
+                <ColumnDefinition x:Name="SearchColumn" Width="*"/>
+                <ColumnDefinition x:Name="RightDragColumn" Width="170"/>
+                <ColumnDefinition x:Name="RightPaddingColumn" Width="auto"/>
             </Grid.ColumnDefinitions>
+            <AutoSuggestBox Grid.Column="4" Margin="0,0,0,0" x:Name="AsbSearchFriend" Visibility="Collapsed"  HorizontalAlignment="Stretch" VerticalAlignment="Center" PlaceholderText="친구 검색" QueryIcon="Zoom" TextChanged="SearchFriendTextChanged" SuggestionChosen="SearchFriendSelected" QuerySubmitted="SearchFriendQuerySubmitted">
+                <AutoSuggestBox.ItemTemplate>
+                    <DataTemplate>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="20"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <PersonPicture Width="20" Height="20" ProfilePicture="{Binding ProfileUrl}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                            <TextBlock Grid.Column="1" Text="{Binding Name}" FontWeight="Bold" Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="10,0,0,0"/>
+                        </Grid>
+                    </DataTemplate>
+                </AutoSuggestBox.ItemTemplate>
+            </AutoSuggestBox>
             <Image x:Name="TitleBarIcon" Source="/icon.ico" 
            Grid.Column="1"
            Width="16" Height="16"
            Margin="12,0,0,0"/>
+            
             <TextBlock x:Name="TitleTextBlock"  
             Style="{StaticResource CaptionTextBlockStyle}"
             Grid.Column="2"
             VerticalAlignment="Center"
-            Margin="10,0,0,0"/>
-            <TextBlock x:Name="TbxMemoryUsage" Text="" Grid.Column="5" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+            Margin="10,0,0,0"
+            Tapped="OnTitleTextTapped"/>
+
+            <StackPanel x:Name="SpButtons" Grid.Column="5" Visibility="Collapsed" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,-12.5,10,5" Orientation="Horizontal">
+                <Button x:Name="BtTimeline" Width="35" Height="35" Padding="10" CornerRadius="10" ToolTipService.ToolTip="타임라인 조회" Click="OnShowTimelineButtonClicked">
+                    <Viewbox>
+                        <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe7bc;" FontSize="17" Foreground="{ThemeResource Gray4}"/>
+                    </Viewbox>
+                </Button>
+                <Button x:Name="BtWrite" Width="35" Height="35" Padding="10" CornerRadius="10" Margin="5,0,0,0" ToolTipService.ToolTip="포스트 작성" Click="OnWritePostButtonClicked">
+                    <Viewbox>
+                        <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe70f;" FontSize="17" Foreground="{ThemeResource Gray4}"/>
+                    </Viewbox>
+                </Button>
+                <Button x:Name="BtNotifications" Width="35" Height="35" Padding="10" CornerRadius="10" ToolTipService.ToolTip="최근 알림" Margin="5,0,0,0" Click="OnNotificationsButtonClicked">
+                    <Viewbox>
+                        <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe7e7;" FontSize="17" Foreground="{ThemeResource Gray4}"/>
+                    </Viewbox>
+                </Button>
+                <Button Width="35" Height="35" Padding="10" CornerRadius="10" Margin="5,0,0,0" Click="OnMoreButtonClicked">
+                    <Viewbox>
+                        <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe712;" FontSize="17" Foreground="{ThemeResource Gray4}"/>
+                    </Viewbox>
+                    <Button.Flyout>
+                        <Flyout>
+                            <StackPanel Orientation="Horizontal">
+                                <Button Width="35" Height="35" Padding="10" CornerRadius="10" ToolTipService.ToolTip="로그아웃" Click="OnLogoutButtonClicked">
+                                    <Viewbox>
+                                        <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xf3b1;" FontSize="17" Foreground="{ThemeResource Gray4}"/>
+                                    </Viewbox>
+                                </Button>
+                                <Button Width="35" Height="35" Padding="10" CornerRadius="10" ToolTipService.ToolTip="이미지 언로드" Margin="5,0,0,0" Click="OnImageUnloadButtonClicked">
+                                    <Viewbox>
+                                        <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe75c;" FontSize="17" Foreground="{ThemeResource Gray4}"/>
+                                    </Viewbox>
+                                </Button>
+                                <Button Width="35" Height="35" Padding="10" CornerRadius="10" ToolTipService.ToolTip="메모리 정리" Margin="5,0,0,0" Click="OnRestartButtonClicked">
+                                    <Viewbox>
+                                        <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe964;" FontSize="17" Foreground="{ThemeResource Gray4}"/>
+                                    </Viewbox>
+                                </Button>
+                                <Button Width="35" Height="35" Padding="10" CornerRadius="10" ToolTipService.ToolTip="프로그램 종료" Margin="5,0,0,0" Click="OnExitButtonClicked">
+                                    <Viewbox>
+                                        <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe711;" FontSize="17" Foreground="{ThemeResource Gray4}"/>
+                                    </Viewbox>
+                                </Button>
+                            </StackPanel>
+                        </Flyout>
+                    </Button.Flyout>
+                </Button>
+            </StackPanel>
         </Grid>
 
         <notifyicon:TaskbarIcon x:Name="TiMain"

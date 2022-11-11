@@ -5,92 +5,15 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:controls="using:KSMP.Controls"
-    mc:Ignorable="d" SizeChanged="OnPageSizeChanged" Background="{ThemeResource White}">
+    mc:Ignorable="d" Background="{ThemeResource White}">
 
     <Grid x:Name="GdRoot">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="60"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="300"/>
         </Grid.ColumnDefinitions>
-        <Grid Background="{ThemeResource White}" Grid.ColumnSpan="2">
-            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Left" Margin="20,0,0,0" Orientation="Horizontal">
-                <TextBlock Text="카카오스토리 매니저 PLUS" FontSize="20" FontWeight="Bold" PointerEntered="ProfilePointerEntered" PointerExited="FriendPointerExited" Tapped="TitleTapped"/>
-                <AutoSuggestBox Width="200" PlaceholderText="친구 검색" QueryIcon="Zoom" Margin="10,0,0,0" VerticalAlignment="Center" TextChanged="SearchFriendTextChanged" SuggestionChosen="SearchFriendSelected" QuerySubmitted="SearchFriendQuerySubmitted">
-                    <AutoSuggestBox.ItemTemplate>
-                        <DataTemplate>
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="20"/>
-                                    <ColumnDefinition Width="*"/>
-                                </Grid.ColumnDefinitions>
-                                <PersonPicture Width="20" Height="20" ProfilePicture="{Binding ProfileUrl}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                                <TextBlock Grid.Column="1" Text="{Binding Name}" FontWeight="Bold" Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="10,0,0,0"/>
-                            </Grid>
-                        </DataTemplate>
-                    </AutoSuggestBox.ItemTemplate>
-                </AutoSuggestBox>
-            </StackPanel>
-            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,10,0" Orientation="Horizontal">
-                <Button x:Name="BtWrite" Width="40" Height="40" CornerRadius="10" ToolTipService.ToolTip="포스트 작성" Click="OnWritePostButtonClicked">
-                    <Viewbox>
-                        <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe70f;" FontSize="17" Foreground="{ThemeResource FixedGray6}"/>
-                    </Viewbox>
-                </Button>
-                <Button x:Name="BtNotifications" Width="40" Height="40" CornerRadius="10" ToolTipService.ToolTip="최근 알림" Margin="10,0,0,0" Click="OnNotificationsButtonClicked">
-                    <Viewbox>
-                        <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe7e7;" FontSize="17" Foreground="{ThemeResource FixedGray6}"/>
-                    </Viewbox>
-                </Button>
-                <Button Width="40" Height="40" CornerRadius="10" Margin="10,0,0,0" Click="OnMoreButtonClicked">
-                    <Viewbox>
-                        <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe712;" FontSize="17" Foreground="{ThemeResource FixedGray6}"/>
-                    </Viewbox>
-                    <Button.Flyout>
-                        <Flyout>
-                            <StackPanel Orientation="Horizontal">
-                                <Button Width="40" Height="40" CornerRadius="10" ToolTipService.ToolTip="로그아웃" Click="OnLogoutButtonClicked">
-                                    <Viewbox>
-                                        <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xf3b1;" FontSize="17" Foreground="{ThemeResource FixedGray6}"/>
-                                    </Viewbox>
-                                </Button>
-                                <Button Width="40" Height="40" CornerRadius="10" ToolTipService.ToolTip="이미지 언로드" Margin="10,0,0,0" Click="OnImageUnloadButtonClicked">
-                                    <Viewbox>
-                                        <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe75c;" FontSize="17" Foreground="{ThemeResource FixedGray6}"/>
-                                    </Viewbox>
-                                </Button>
-                                <Button Width="40" Height="40" CornerRadius="10" ToolTipService.ToolTip="메모리 정리" Margin="10,0,0,0" Click="OnRestartButtonClicked">
-                                    <Viewbox>
-                                        <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe964;" FontSize="17" Foreground="{ThemeResource FixedGray6}"/>
-                                    </Viewbox>
-                                </Button>
-                                <Button Width="40" Height="40" CornerRadius="10" ToolTipService.ToolTip="프로그램 종료" Margin="10,0,0,0" Click="OnExitButtonClicked">
-                                    <Viewbox>
-                                        <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe711;" FontSize="17" Foreground="{ThemeResource FixedGray6}"/>
-                                    </Viewbox>
-                                </Button>
-                            </StackPanel>
-                        </Flyout>
-                    </Button.Flyout>
-                </Button>
-                <!--<TextBlock x:Name="TbMemory" Margin="10,0,0,0" VerticalAlignment="Center" Tapped="OnMemoryUsageTextBlockTapped"/>
-                <TeachingTip
-                    Target="{x:Bind TbMemory}"
-                    Title="왜 이 메뉴가 표시되나요?"
-                    Subtitle="WinUI3 프레임워크의 버그로 인해 누수되는 메모리를 개발자가 알파 테스팅 기간동안 확인하고 최적화 하기 위해 표시됩니다."
-                    IsOpen="True">
-                    <TeachingTip.IconSource>
-                        <FontIconSource FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe950;"/>
-                    </TeachingTip.IconSource>
-                </TeachingTip>-->
-            </StackPanel>
-        </Grid>
-        <Border BorderBrush="{ThemeResource Gray7}" BorderThickness="0.5" VerticalAlignment="Bottom" HorizontalAlignment="Stretch" Grid.ColumnSpan="2"/>
-        <Frame x:Name="FrContent" Grid.Row="1"/>
-        <Grid Background="{ThemeResource White}" Grid.Column="1" Grid.Row="1">
+        <Frame x:Name="FrContent"/>
+        <Grid Background="{ThemeResource White}" Grid.Column="1">
             <Grid.RowDefinitions>
                 <RowDefinition Height="auto"/>
                 <RowDefinition Height="*"/>
@@ -136,11 +59,12 @@
                 </PivotItem>
             </Pivot>
         </Grid>
-        <Grid x:Name="GdOverlay" Grid.Row="1" Grid.ColumnSpan="2" Visibility="Collapsed">
+        <Border BorderBrush="{ThemeResource Gray7}" BorderThickness="0.5" VerticalAlignment="Top" HorizontalAlignment="Stretch" Grid.ColumnSpan="2" Margin="0,0,0,0"/>
+        <Grid x:Name="GdOverlay" Grid.ColumnSpan="2" Visibility="Collapsed">
             <Border Background="{ThemeResource Black}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Opacity="0.25"/>
             <Frame x:Name="FrOverlay" Grid.Row="1"/>
         </Grid>
-        <Grid x:Name="GdOverlay2" Grid.Row="1" Grid.ColumnSpan="2" Visibility="Collapsed">
+        <Grid x:Name="GdOverlay2" Grid.ColumnSpan="2" Visibility="Collapsed">
             <Border Background="{ThemeResource Black}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Opacity="0.25"/>
             <Frame x:Name="FrOverlay2" Grid.Row="1"/>
         </Grid>
