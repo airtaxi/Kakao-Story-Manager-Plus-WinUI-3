@@ -101,10 +101,11 @@ public sealed partial class TimelinePage : Page
             {
                 var profileFrame = new Frame
                 {
-                    Content = new Controls.UserProfileControl(Id),
+                    Content = new UserProfileControl(Id),
                     Visibility = Visibility.Visible
                 };
                 GvContent.Items.Add(profileFrame);
+                await Task.Delay(500);
             }
 
             var data = await ApiHandler.GetProfileFeed(Id, from);
