@@ -35,6 +35,7 @@ public sealed partial class MainWindow : Microsoft.UI.Xaml.Window
     private static Process _process;
 
     private bool _shouldClose { get; set; } = false;
+    private string _versionString = string.Empty;
     private AppWindow appWindow;
 
 
@@ -42,6 +43,7 @@ public sealed partial class MainWindow : Microsoft.UI.Xaml.Window
     {
         Instance = this;
         InitializeComponent();
+        _versionString = Common.GetVersionString() ?? "VERSION ERROR";
         InitializeWritePostFlyout();
 
         appWindow = this.GetAppWindow();
@@ -94,7 +96,7 @@ public sealed partial class MainWindow : Microsoft.UI.Xaml.Window
         _process.Refresh();
         var memoryUsageInBytes = _process.PrivateMemorySize64;
         var memoryUsageInMegabytes = memoryUsageInBytes / 1024 / 1024;
-        TitleTextBlock.Text = $"카카오스토리 매니저 PLUS ({memoryUsageInMegabytes:N0}MiB)";
+        TitleTextBlock.Text = $"카카오스토리 매니저 PLUS {_versionString} ({memoryUsageInMegabytes:N0}MiB)";
         if (memoryUsageInMegabytes < 1024 || _isMemoryWarningDialogShown)
         {
             _warnCount = 0;
@@ -167,8 +169,6 @@ public sealed partial class MainWindow : Microsoft.UI.Xaml.Window
         AppTitleBar.Loaded += AppTitleBarLoaded;
         AppTitleBar.SizeChanged += AppTitleBarSizeChanged;
 
-        var versionString = Utils.Common.GetVersionString() ?? "VERSION ERROR";
-        TitleTextBlock.Text = $"카카오스토리 매니저 PLUS {versionString}";
         appWindow.SetIcon(Path.Combine(App.BinaryDirectory, "icon.ico"));
     }
 
@@ -493,18 +493,10 @@ public sealed partial class MainWindow : Microsoft.UI.Xaml.Window
         IsWritePostFlyoutOpened = true;
     }
 
-    private void OnTitleTextTapped(object sender, TappedRoutedEventArgs e)
-    {
-        if (LoginPage.IsLoggedIn)
-        {
-            MainPage.HideOverlay();
-            MainPage.HideOverlay();
-            MainPage.NavigateTimeline();
-        }
-    }
-
     private void OnShowTimelineButtonClicked(object sender, RoutedEventArgs e)
     {
-
+        MainPage.HideOverlay();
+        MainPage.HideOverlay();
+        MainPage.NavigateTimeline();
     }
 }

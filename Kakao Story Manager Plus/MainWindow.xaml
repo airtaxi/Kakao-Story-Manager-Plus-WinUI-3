@@ -13,17 +13,17 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition />
         </Grid.RowDefinitions>
-        <Grid Background="{ThemeResource White}" x:Name="AppTitleBar" Height="45">
+        <Grid Background="{ThemeResource White}" x:Name="AppTitleBar" Height="50">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition x:Name="LeftPaddingColumn" Width="0"/>
                 <ColumnDefinition x:Name="IconColumn" Width="Auto"/>
                 <ColumnDefinition x:Name="TitleColumn" Width="Auto"/>
                 <ColumnDefinition x:Name="LeftDragColumn" Width="5"/>
                 <ColumnDefinition x:Name="SearchColumn" Width="*"/>
-                <ColumnDefinition x:Name="RightDragColumn" Width="170"/>
+                <ColumnDefinition x:Name="RightDragColumn" Width="165"/>
                 <ColumnDefinition x:Name="RightPaddingColumn" Width="auto"/>
             </Grid.ColumnDefinitions>
-            <AutoSuggestBox Grid.Column="4" Margin="0,0,0,0" x:Name="AsbSearchFriend" Visibility="Collapsed"  HorizontalAlignment="Stretch" VerticalAlignment="Center" PlaceholderText="친구 검색" QueryIcon="Zoom" TextChanged="SearchFriendTextChanged" SuggestionChosen="SearchFriendSelected" QuerySubmitted="SearchFriendQuerySubmitted">
+            <AutoSuggestBox Grid.Column="4" Margin="10,0,10,0" x:Name="AsbSearchFriend" Visibility="Collapsed"  HorizontalAlignment="Stretch" VerticalAlignment="Center" PlaceholderText="친구 검색" QueryIcon="Zoom" TextChanged="SearchFriendTextChanged" SuggestionChosen="SearchFriendSelected" QuerySubmitted="SearchFriendQuerySubmitted">
                 <AutoSuggestBox.ItemTemplate>
                     <DataTemplate>
                         <Grid>
@@ -46,10 +46,9 @@
             Style="{StaticResource CaptionTextBlockStyle}"
             Grid.Column="2"
             VerticalAlignment="Center"
-            Margin="10,0,0,0"
-            Tapped="OnTitleTextTapped"/>
+            Margin="10,0,0,0"/>
 
-            <StackPanel x:Name="SpButtons" Grid.Column="5" Visibility="Collapsed" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,-12.5,10,5" Orientation="Horizontal">
+            <StackPanel x:Name="SpButtons" Grid.Column="5" Visibility="Collapsed" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,5,0" Orientation="Horizontal">
                 <Button x:Name="BtTimeline" Width="35" Height="35" Padding="10" CornerRadius="10" ToolTipService.ToolTip="타임라인 조회" Click="OnShowTimelineButtonClicked">
                     <Viewbox>
                         <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe7bc;" FontSize="17" Foreground="{ThemeResource Gray4}"/>
