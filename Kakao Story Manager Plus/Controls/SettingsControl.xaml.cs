@@ -3,9 +3,7 @@ using KSMP.Pages;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.Win32;
-using OpenQA.Selenium.DevTools.V104.DOM;
 using System;
-using System.Threading.Tasks;
 using static KSMP.ClassManager;
 
 // To learn more about WinUI, the WinUI project structure,

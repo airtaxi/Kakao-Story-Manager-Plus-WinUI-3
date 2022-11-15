@@ -16,8 +16,6 @@ using KSMP;
 using Windows.ApplicationModel.DataTransfer;
 using static KSMP.ClassManager;
 using static KSMP.ApiHandler.DataType.FriendData;
-using OpenQA.Selenium.DevTools.V104.DOM;
-using Windows.Services.Maps;
 
 namespace KSMP.Pages;
 

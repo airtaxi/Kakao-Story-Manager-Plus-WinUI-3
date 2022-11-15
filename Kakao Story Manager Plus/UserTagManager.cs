@@ -1,18 +1,10 @@
 ﻿using KSMP.Utils;
 using Newtonsoft.Json.Linq;
-using OpenQA.Selenium.DevTools;
-using OpenQA.Selenium.DevTools.V104.DOM;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Drawing.Text;
 using System.Linq;
-using System.Runtime.Serialization;
-using System.Text;
 using System.Threading.Tasks;
-using Windows.Foundation.Collections;
-using Windows.Graphics.Printing.Workflow;
-using Windows.Security.Authentication.OnlineId;
 using static KSMP.ApiHandler.DataType.FriendData;
 using static KSMP.ClassManager;
 
