@@ -107,7 +107,7 @@ public sealed partial class TimelineControl : UserControl
         bool willUseDynamicTimelineLoading = (Configuration.GetValue("UseDynamicTimelineLoading") as bool?) ?? false;
         if (isOverlay || !willUseDynamicTimelineLoading) _ = RefreshContent();
 
-        if(!isShare) FrRoot.MaxWidth = 600;
+        if(!isOverlay) FrRoot.MaxWidth = 600;
 
         ActualThemeChanged += OnThemeChanged;
     }
