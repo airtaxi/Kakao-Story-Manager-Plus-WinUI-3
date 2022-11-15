@@ -17,9 +17,9 @@
 		<UseWindowsForms>False</UseWindowsForms>
 		<Nullable>disable</Nullable>
 		<PlatformTarget>AnyCPU</PlatformTarget>
-		<FileVersion>0.1.0.211</FileVersion>
-		<AssemblyVersion>0.1.0.211</AssemblyVersion>
-		<Version>0.1.0.211</Version>
+		<FileVersion>0.1.0.212</FileVersion>
+		<AssemblyVersion>0.1.0.212</AssemblyVersion>
+		<Version>0.1.0.212</Version>
 	</PropertyGroup>
 	<ItemGroup>
 		<Content Remove="Assets\Error.png" />
@@ -54,19 +54,19 @@
 		<PackageReference Include="CommunityToolkit.WinUI.UI.Animations" Version="7.1.2" />
 		<PackageReference Include="CommunityToolkit.WinUI.UI.Controls" Version="7.1.2" />
 		<PackageReference Include="H.NotifyIcon.WinUI" Version="2.0.63" />
-		<PackageReference Include="Magick.NET-Q16-AnyCPU" Version="12.2.0" />
-		<PackageReference Include="Magick.NET.Core" Version="12.2.0" />
-		<PackageReference Include="Microsoft.Toolkit.Uwp.Notifications" Version="7.1.3-rc" />
+		<PackageReference Include="Magick.NET-Q16-AnyCPU" Version="12.2.1" />
+		<PackageReference Include="Magick.NET.Core" Version="12.2.1" />
+		<PackageReference Include="Microsoft.Toolkit.Uwp.Notifications" Version="7.1.3" />
 		<PackageReference Include="Microsoft.Windows.CsWinRT" Version="2.0.0" />
-		<PackageReference Include="Microsoft.WindowsAppSDK" Version="1.2.220930.4-preview2" />
+		<PackageReference Include="Microsoft.WindowsAppSDK" Version="1.2.221109.1" />
 		<PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.25227-preview" />
 		<PackageReference Include="MimeTypes" Version="2.4.0">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
 		<PackageReference Include="RestSharp" Version="108.0.2" />
-		<PackageReference Include="Selenium.Support" Version="4.5.1" />
-		<PackageReference Include="Selenium.WebDriver" Version="4.5.1" />
+		<PackageReference Include="Selenium.Support" Version="4.6.0" />
+		<PackageReference Include="Selenium.WebDriver" Version="4.6.0" />
 		<PackageReference Include="SeleniumExtras.WaitHelpers" Version="1.0.2" />
 		<PackageReference Include="WebDriverManager" Version="2.16.0" />
 		<Manifest Include="$(ApplicationManifest)" />
