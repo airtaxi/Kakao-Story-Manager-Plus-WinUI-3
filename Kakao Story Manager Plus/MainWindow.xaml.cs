@@ -373,7 +373,7 @@ public sealed partial class MainWindow : Microsoft.UI.Xaml.Window
         var text = sender.Text.ToLower();
         if (!string.IsNullOrEmpty(text))
         {
-            var newFriends = MainPage.Friends.profiles.Where(x => x.display_name.ToLower().Contains(text)).Select(x => new FriendProfile { Name = x.display_name, ProfileUrl = x.GetValidUserProfileUrl(), Id = x.id }).ToList();
+            var newFriends = MainPage.Friends.profiles.Where(x => x.display_name.ToLower().Contains(text) || x.id.ToLower().Contains(text)).Select(x => new FriendProfile { Name = x.display_name, ProfileUrl = x.GetValidUserProfileUrl(), Id = x.id }).ToList();
             sender.ItemsSource = newFriends;
         }
         else
