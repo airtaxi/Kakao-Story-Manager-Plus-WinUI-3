@@ -5,7 +5,7 @@ Third-party client of Kakao Story for Windows 10/11 made with Windows App SDK\
 
 Known Bugs
 ----
-Videos in ListView are not garbage collected due to the bug of the Windows App SDK (Memory Leak)
+Medias in ListView are not garbage collected due to the bug of the Windows App SDK (Memory Leak)
 
 Developer
 ----
