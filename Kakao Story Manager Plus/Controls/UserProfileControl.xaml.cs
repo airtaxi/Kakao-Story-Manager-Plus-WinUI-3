@@ -61,15 +61,15 @@ public sealed partial class UserProfileControl : UserControl
 
     public async Task SetFavorite()
     {
-        var relationship = await KSMP.ApiHandler.GetProfileRelationship(_id);
-        await KSMP.ApiHandler.RequestFavorite(_id, relationship.is_favorite);
-        relationship = await KSMP.ApiHandler.GetProfileRelationship(_id);
+        var relationship = await ApiHandler.GetProfileRelationship(_id);
+        await ApiHandler.RequestFavorite(_id, relationship.is_favorite);
+        relationship = await ApiHandler.GetProfileRelationship(_id);
         IndicateFavorite(relationship.is_favorite);
     }
     public async Task Refresh()
     {
         var isMe = _id == MainPage.Me.id;
-        var user = await KSMP.ApiHandler.GetProfileFeed(_id, null, true);
+        var user = await ApiHandler.GetProfileFeed(_id, null, true);
         var profile = user.profile;
         if (profile.blocked)
         {
@@ -135,7 +135,7 @@ public sealed partial class UserProfileControl : UserControl
         else if (relationship == "R")
             TbFriendStatus.Text = "친구 신청 취소";
         else if (relationship == "C")
-            TbFriendStatus.Text = "친구 신청 수락";
+            TbFriendStatus.Text = "친구 신청 수락/거절";
         else if (relationship == "N")
             TbFriendStatus.Text = "친구 신청";
         else
@@ -154,7 +154,7 @@ public sealed partial class UserProfileControl : UserControl
         var button = sender as Button;
         button.IsEnabled = false;
 
-        var profileRelationship = await KSMP.ApiHandler.GetProfileRelationship(_id);
+        var profileRelationship = await ApiHandler.GetProfileRelationship(_id);
         bool shouldRefresh = false;
         if (profileRelationship.relationship == "F")
         {
@@ -162,7 +162,7 @@ public sealed partial class UserProfileControl : UserControl
             var result = await dialog.ShowAsync();
             if (result == ContentDialogResult.Primary)
             {
-                await KSMP.ApiHandler.DeleteFriend(profileRelationship.id);
+                await ApiHandler.DeleteFriend(profileRelationship.id);
                 shouldRefresh = true;
             }
         }
@@ -172,7 +172,7 @@ public sealed partial class UserProfileControl : UserControl
             var result = await dialog.ShowAsync();
             if (result == ContentDialogResult.Primary)
             {
-                await KSMP.ApiHandler.RequestFriend(profileRelationship.id, true);
+                await ApiHandler.RequestFriend(profileRelationship.id, true);
                 shouldRefresh = true;
             }
         }
@@ -182,7 +182,12 @@ public sealed partial class UserProfileControl : UserControl
             var result = await dialog.ShowAsync();
             if (result == ContentDialogResult.Primary)
             {
-                await KSMP.ApiHandler.AcceptFriendRequest(profileRelationship.id, false);
+                await ApiHandler.AcceptFriendRequest(profileRelationship.id, false);
+                shouldRefresh = true;
+            }
+            else
+            {
+                await ApiHandler.AcceptFriendRequest(profileRelationship.id, true);
                 shouldRefresh = true;
             }
         }
@@ -192,14 +197,14 @@ public sealed partial class UserProfileControl : UserControl
             var result = await dialog.ShowAsync();
             if (result == ContentDialogResult.Primary)
             {
-                await KSMP.ApiHandler.RequestFriend(profileRelationship.id, false);
+                await ApiHandler.RequestFriend(profileRelationship.id, false);
                 shouldRefresh = true;
             }
         }
 
         if (shouldRefresh)
         {
-            profileRelationship = await KSMP.ApiHandler.GetProfileRelationship(_id);
+            profileRelationship = await ApiHandler.GetProfileRelationship(_id);
             RefreshFriendStatus(profileRelationship.relationship);
             MainPage.ShowProfile(_id);
         }
