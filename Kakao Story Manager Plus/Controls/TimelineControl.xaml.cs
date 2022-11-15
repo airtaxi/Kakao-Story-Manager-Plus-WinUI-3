@@ -96,7 +96,8 @@ public sealed partial class TimelineControl : UserControl
         if (isOverlay) inputControl.SetPopupDesiredPlacement(PopupPlacementMode.Top);
 
         FrComment.Content = inputControl;
-        if (isOverlay) _ = RefreshContent();
+        bool willUseDynamicTimelineLoading = (Configuration.GetValue("UseDynamicTimelineLoading") as bool?) ?? false;
+        if (isOverlay || !willUseDynamicTimelineLoading) _ = RefreshContent();
         else if(!isShare) FrRoot.MaxWidth = 600;
 
         ActualThemeChanged += OnThemeChanged;

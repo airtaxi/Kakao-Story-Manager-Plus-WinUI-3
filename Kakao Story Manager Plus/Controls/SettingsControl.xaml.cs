@@ -28,6 +28,7 @@ public sealed partial class SettingsControl : UserControl
         bool willClearTimelineOnRefresh = (Utils.Configuration.GetValue("ClearTimelineOnRefresh") as bool?) ?? true;
         bool willWarnOnHighMemoryUsage = (Utils.Configuration.GetValue("WarnOnHighMemoryUsage") as bool?) ?? true;
         bool willUseResponsiveTimeline = (Utils.Configuration.GetValue("UseResponsiveTimeline") as bool?) ?? true;
+        bool willUseDynamicTimelineLoading = (Utils.Configuration.GetValue("UseDynamicTimelineLoading") as bool?) ?? false;
 
         TsFavoriteFriendNotification.IsOn = willReceiveFavoriteFriendNotification;
         TsEmotionalNotification.IsOn = willReceiveEmotionalNotification;
@@ -38,6 +39,7 @@ public sealed partial class SettingsControl : UserControl
         TsClearTimelineOnRefresh.IsOn = willClearTimelineOnRefresh;
         TsWarnOnHighMemoryUsage.IsOn = willWarnOnHighMemoryUsage;
         TsUseResponsiveTimeline.IsOn = willUseResponsiveTimeline;
+        TsUseDynamicTimelineLoading.IsOn = willUseDynamicTimelineLoading;
 
         TsFavoriteFriendNotification.Toggled += OnReceiveFavoriteFriendNotificationToggleSwitchToggled;
         TsEmotionalNotification.Toggled += OnReceiveEmotionalNotificationToggleSwitchToggled;
@@ -48,6 +50,7 @@ public sealed partial class SettingsControl : UserControl
         TsClearTimelineOnRefresh.Toggled += OnClearTimelineOnRefreshToggleSwitchToggled;
         TsWarnOnHighMemoryUsage.Toggled += OnWarnOnHighMemoryUsageToggleSwitchToggled;
         TsUseResponsiveTimeline.Toggled += OnUseResponsiveTimelineToggleSwitchToggled;
+        TsUseDynamicTimelineLoading.Toggled += OnUseDynamicTimelineLoadingToggleSwitchToggled;
 
         int defaultPostWritingPermission = (Utils.Configuration.GetValue("DefaultPostWritingPermission") as int?) ?? 0;
         CbxDefaultPostWritingPermission.SelectedIndex = defaultPostWritingPermission;
@@ -55,6 +58,13 @@ public sealed partial class SettingsControl : UserControl
 
         ValidateThemeSetting();
         CbxThemeSetting.SelectionChanged += OnThemeSettingComboBoxSelectionChanged;
+    }
+
+    private void OnUseDynamicTimelineLoadingToggleSwitchToggled(object sender, RoutedEventArgs e)
+    {
+        var toggleSwitch = sender as ToggleSwitch;
+        var isOn = toggleSwitch.IsOn;
+        Utils.Configuration.SetValue("UseDynamicTimelineLoading", isOn);
     }
 
     private void OnUseResponsiveTimelineToggleSwitchToggled(object sender, RoutedEventArgs e)

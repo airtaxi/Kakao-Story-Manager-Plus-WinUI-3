@@ -176,6 +176,9 @@ public sealed partial class TimelinePage : Page
 
     private void ValidateTimelineContent()
     {
+        bool willUseDynamicTimelineLoading = (Utils.Configuration.GetValue("UseDynamicTimelineLoading") as bool?) ?? false;
+        if (!willUseDynamicTimelineLoading) return;
+
         var scrollViewer = Utility.GetScrollViewerFromBaseListView(BaseListView);
         foreach (Control control in BaseListView.Items)
         {
