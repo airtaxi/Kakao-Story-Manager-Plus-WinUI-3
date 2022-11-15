@@ -11,18 +11,18 @@
         <TextBlock Text="알림 설정" FontSize="17" FontWeight="Bold"/>
         
         <ToggleSwitch x:Name="TsFavoriteFriendNotification" OnContent="관심 친구 알림 받음" OffContent="관심 친구 알림 받지 않음"
-                      ToolTipService.ToolTip="관심 친구 푸시 알림의 수신 여부를 결정할 수 있습니다."/>
+                      ToolTipService.ToolTip="본 옵션을 활성화 하는 경우, 관심 친구가 글을 작성할 때 푸시 알림을 수신합니다."/>
         
         <ToggleSwitch x:Name="TsEmotionalNotification" OnContent="느낌 알림 받음" OffContent="느낌 알림 받지 않음" Margin="0,5,0,0"
-                      ToolTipService.ToolTip="느낌 알림의 수신 여부를 결정할 수 있습니다. 댓글 좋아요 알림에는 영향을 끼치지 않습니다."/>
+                      ToolTipService.ToolTip="본 옵션을 활성화 하는 경우, 느낌 알림에 대한 푸시 알림을 수신합니다. 댓글 좋아요 알림에는 영향을 끼치지 않습니다."/>
 
         <TextBlock Text="성능 설정" FontSize="17" FontWeight="Bold"/>
         
         <ToggleSwitch x:Name="TsUseGifProfileImage" OnContent="GIF 프로필 이미지 사용" OffContent="GIF 프로필 이미지 사용 안함" Margin="0,5,0,0"
-                      ToolTipService.ToolTip="사용자가 움직이는 프로필 사진을 사용하는 경우, 움직이는 프로필을 보여줍니다. 본 옵션을 활성화하는 경우, 유휴 상태에서도 CPU 자원을 사용합니다."/>
+                      ToolTipService.ToolTip="본 옵션을 활성화하는 경우, 사용자가 움직이는 프로필 사진을 사용하는 경우에 움직이는 프로필을 보여주나, 유휴 상태에서도 소량의 CPU 자원을 사용합니다."/>
         
         <ToggleSwitch x:Name="TsUseGifInTimeline" OnContent="타임라인 고화질 이미지 사용" OffContent="타임라인 고화질 이미지 사용 안함" Margin="0,5,0,0"
-                      ToolTipService.ToolTip="타임라인에서 원본 이미지를 보여줍니다. 본 옵션을 활성화 하는 경우, WinUI의 버그로 인한 메모리 누수양이 크게 늘어납니다."/>
+                      ToolTipService.ToolTip="본 옵션을 활성화 하는 경우, 타임라인에서 원본 이미지를 보여주나,  WinUI의 버그로 인한 메모리 누수양이 크게 늘어납니다."/>
         
         <ToggleSwitch x:Name="TsClearTimelineOnRefresh" OnContent="무한 스크롤 사용 안함" OffContent="무한 스크롤 사용" Margin="0,5,0,0"
                             ToolTipService.ToolTip="본 옵션을 활성화 하는 경우, 타임라인의 마지막에 도달할 때, 타임라인의 기존 게시물을 지워 유휴 상태에서의 CPU 자원 사용량을 줄입니다."/>
