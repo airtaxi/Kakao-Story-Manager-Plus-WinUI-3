@@ -222,7 +222,6 @@ public sealed partial class MainPage : Page
         overlay.Visibility = Visibility.Visible;
         (frame.Content as TimelineControl)?.UnloadMedia();
         frame.Content = element;
-        s_instance.GdRoot.Focus(FocusState.Keyboard);
     }
 
     public static void HideOverlay(bool willDispose = true)
