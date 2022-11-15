@@ -1,13 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using KSMP.Extension;
+using KSMP.Pages;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Input;
+using OpenQA.Selenium.DevTools.V105.DOM;
 using Windows.Media.Devices;
+using Windows.UI.Notifications;
 
 namespace KSMP.Controls;
 
@@ -18,6 +22,7 @@ public sealed partial class NotificationControl : UserControl
         [ObservableProperty]
         private Visibility unreadBarVisiblity = Visibility.Collapsed;
 
+        public string NotificationId { get; set; }
         public string ProfilePictureUrl { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }
@@ -25,17 +30,24 @@ public sealed partial class NotificationControl : UserControl
         public string Scheme { get; set; }
         public string ActorId { get; set; }
     }
+
+    private static List<NotificationData> s_notificationDatas = new();
     public NotificationControl()
     {
         InitializeComponent();
-        _ = Refresh();
+        (Content as ListView).ItemsSource = s_notificationDatas;
     }
 
-    private async Task Refresh()
+    private bool _isRefreshing = false;
+    public async Task Refresh()
     {
+        if (_isRefreshing) return;
+        _isRefreshing = true;
         var notificationDatas = new List<NotificationData>();
-        var notifications = await KSMP.ApiHandler.GetNotifications();
-        foreach(var notification in notifications)
+        var notifications = await ApiHandler.GetNotifications();
+        MainPage.LatestNotificationId = notifications.FirstOrDefault()?.id;
+
+        foreach (var notification in notifications)
         {
             string contentMessage = notification.content;
             if (string.IsNullOrEmpty(contentMessage)) contentMessage = "내용 없음";
@@ -49,12 +61,17 @@ public sealed partial class NotificationControl : UserControl
                 Time = Api.Story.Utils.GetTimeString(notification.created_at),
                 UnreadBarVisiblity = notification.is_new ? Visibility.Visible : Visibility.Collapsed,
                 Scheme = notification.scheme,
-                ActorId = notification.actor.id
+                ActorId = notification.actor.id,
+                NotificationId = notification.id
             };
             notificationDatas.Add(notificationData);
         }
-        (Content as ListView).ItemsSource = notificationDatas;
+        s_notificationDatas = notificationDatas;
+        (Content as ListView).ItemsSource = s_notificationDatas;
+        _isRefreshing = false;
     }
+
+    public static string LatestNotificationId => s_notificationDatas?.FirstOrDefault()?.NotificationId;
 
     private void ProfileImageTapped(object sender, TappedRoutedEventArgs e)
     {

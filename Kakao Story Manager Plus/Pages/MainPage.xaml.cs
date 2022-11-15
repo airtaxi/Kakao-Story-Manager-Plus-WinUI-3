@@ -24,6 +24,7 @@ public sealed partial class MainPage : Page
     public static ApiHandler.DataType.UserProfile.ProfileData Me;
     public static Friends Friends = null;
     public static string LastArgs = null;
+    public static string LatestNotificationId = null;
 
     private static MainPage s_instance;
     private static Timer s_notificationTimer = null;
@@ -36,7 +37,7 @@ public sealed partial class MainPage : Page
         if (s_notificationTimer == null)
         {
             s_notificationTimer = new();
-            s_notificationTimer.Interval = 2250;
+            s_notificationTimer.Interval = 1000;
             s_notificationTimer.Elapsed += OnNotificationTimerElapsed;
             s_notificationTimer.Start();
         }
@@ -63,7 +64,14 @@ public sealed partial class MainPage : Page
         {
             s_notificationTimer.Stop();
 
+            var status = await ApiHandler.GetNotificationStatus();
+            if (status.NotificationCount == 0 && LatestNotificationId != null) return;
+
             var notifications = await ApiHandler.GetNotifications();
+
+            var first = notifications.FirstOrDefault();
+            LatestNotificationId = first.id;
+
             for (int i = 0; i < notifications.Count; i++)
             {
                 ApiHandler.DataType.Notification notification = notifications[i];
@@ -72,7 +80,6 @@ public sealed partial class MainPage : Page
                 else break;
             }
 
-            var first = notifications.FirstOrDefault();
             _lastNotificationTimestamp = first?.created_at;
         }
         catch (Exception) { } //Ignore
@@ -185,18 +192,6 @@ public sealed partial class MainPage : Page
         HideOverlay();
         NavigateTimeline(Me.id);
     }
-
-    public static void ShowNotifications()
-    {
-        ShowWindow();
-        var flyout = new Flyout
-        {
-            Content = new Controls.NotificationControl(),
-            Placement = FlyoutPlacementMode.BottomEdgeAlignedLeft
-        };
-        flyout.ShowAt(s_instance);
-    }
-
 
     public static void SelectFriend(string id)
     {

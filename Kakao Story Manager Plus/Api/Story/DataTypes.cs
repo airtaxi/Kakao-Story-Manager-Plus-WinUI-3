@@ -19,8 +19,56 @@ public partial class ApiHandler
 
         public class NotificationStatus
         {
+            [JsonProperty("feed_count")]
+            public int FeedCount { get; set; }
+
+            [JsonProperty("has_new_feed")]
+            public bool HasNewFeed { get; set; }
+
+            [JsonProperty("story_channel_updated")]
+            public long StoryChannelUpdated { get; set; }
+
+            [JsonProperty("received_count")]
+            public int ReceivedCount { get; set; }
+
+            [JsonProperty("print_app_badge_flag")]
+            public bool PrintAppBadgeFlag { get; set; }
+
+            [JsonProperty("available")]
+            public int Available { get; set; }
+
+            [JsonProperty("last_notice_id")]
+            public int LastNoticeId { get; set; }
+
+            [JsonProperty("notification_count")]
+            public int NotificationCount { get; set; }
+
+            [JsonProperty("has_new_tagged_activity")]
+            public bool HasNewTaggedActivity { get; set; }
+
+            [JsonProperty("notice_count")]
+            public int NoticeCount { get; set; }
+
+            [JsonProperty("message_count")]
+            public int MessageCount { get; set; }
+
+            [JsonProperty("alert")]
+            public bool Alert { get; set; }
+
+            [JsonProperty("storyplus_badge_flag")]
+            public bool StoryplusBadgeFlag { get; set; }
+
+            [JsonProperty("friend_count")]
+            public int FriendCount { get; set; }
+
             [JsonProperty("has_new_notification")]
             public bool HasNewNotification { get; set; }
+
+            [JsonProperty("promoted_app_count")]
+            public int PromotedAppCount { get; set; }
+
+            [JsonProperty("session_timeout")]
+            public int SessionTimeout { get; set; }
         }
 
         public class EmoticonAuth

@@ -19,7 +19,6 @@ using System.Diagnostics;
 using System.Linq;
 using Microsoft.UI.Xaml.Controls.Primitives;
 using Windows.ApplicationModel.DataTransfer;
-using static KSMP.Controls.WritePostControl;
 using KSMP.Utils;
 
 namespace KSMP;
@@ -407,16 +406,23 @@ public sealed partial class MainWindow : Microsoft.UI.Xaml.Window
     private void OnRestartButtonClicked(object sender, RoutedEventArgs e) => Utility.SaveCurrentStateAndRestartProgram();
     private void OnImageUnloadButtonClicked(object sender, RoutedEventArgs e) => Utility.ManuallyDisposeAllMedias();
 
-    private void OnNotificationsButtonClicked(object sender, RoutedEventArgs e)
+    private async Task ShowNotification(Button button)
     {
-        var button = sender as Button;
         var flyout = new Flyout
         {
-            Content = new Controls.NotificationControl(),
             Placement = FlyoutPlacementMode.BottomEdgeAlignedLeft
         };
         flyout.ShowAt(button);
+
+        var notificationControl = new NotificationControl();
+        if (MainPage.LatestNotificationId != NotificationControl.LatestNotificationId)
+        {
+            flyout.Content  = new ProgressRing { IsIndeterminate = true, HorizontalAlignment = HorizontalAlignment.Center, VerticalAlignment = VerticalAlignment.Center, Width = 50, Height = 50 };
+            await notificationControl.Refresh();
+        }
+        flyout.Content = notificationControl;
     }
+    private async void OnNotificationsButtonClicked(object sender, RoutedEventArgs e) => await ShowNotification(sender as Button);
 
     public static Button GetWritePostButton() => Instance.BtWrite;
 
