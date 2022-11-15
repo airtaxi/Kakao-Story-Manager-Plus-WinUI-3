@@ -65,6 +65,7 @@ public sealed partial class SettingsControl : UserControl
         var toggleSwitch = sender as ToggleSwitch;
         var isOn = toggleSwitch.IsOn;
         Utils.Configuration.SetValue("UseDynamicTimelineLoading", isOn);
+        RequestProgramRestart();
     }
 
     private void OnUseResponsiveTimelineToggleSwitchToggled(object sender, RoutedEventArgs e)
