@@ -71,6 +71,13 @@ public sealed partial class UserProfileControl : UserControl
         var isMe = _id == MainPage.Me.id;
         var user = await KSMP.ApiHandler.GetProfileFeed(_id, null, true);
         var profile = user.profile;
+        if (profile.blocked)
+        {
+            TbName.Text = $"제한된 사용자";
+            TbDescription.Text = $"사용자 ID: {_id}";
+            BtFriend.Visibility = Visibility.Collapsed;
+            return;
+        }
 
         Utility.SetPersonPictureUrlSource(PpProfilePicture, user.profile.GetValidUserProfileUrl());
         Utility.SetImageUrlSource(ImgProfileBackground, user.profile.bg_image_url);

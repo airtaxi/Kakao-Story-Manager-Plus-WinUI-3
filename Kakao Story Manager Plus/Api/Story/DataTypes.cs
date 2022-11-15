@@ -1215,6 +1215,7 @@ public partial class ApiHandler
                 public string permalink { get; set; }
                 public bool is_default_profile_image { get; set; }
                 public bool is_feed_blocked { get; set; }
+                public bool blocked { get; set; }
             }
 
             public class MutualFriend
