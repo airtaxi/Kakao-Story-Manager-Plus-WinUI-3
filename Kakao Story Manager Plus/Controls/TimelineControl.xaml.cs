@@ -25,6 +25,14 @@ using CommunityToolkit.WinUI.UI.Helpers;
 using ImageMagick;
 using Windows.Security.Authentication.OnlineId;
 using Windows.UI;
+using Windows.Graphics.Imaging;
+using Windows.Storage.Streams;
+using Windows.Services.Maps;
+using OpenQA.Selenium.DevTools.V105.DOM;
+using System.Runtime.InteropServices.WindowsRuntime;
+using H.NotifyIcon;
+using Microsoft.Graphics.Display;
+using Microsoft.UI;
 
 namespace KSMP.Controls;
 
@@ -98,7 +106,8 @@ public sealed partial class TimelineControl : UserControl
         FrComment.Content = inputControl;
         bool willUseDynamicTimelineLoading = (Configuration.GetValue("UseDynamicTimelineLoading") as bool?) ?? false;
         if (isOverlay || !willUseDynamicTimelineLoading) _ = RefreshContent();
-        else if(!isShare) FrRoot.MaxWidth = 600;
+
+        if(!isShare) FrRoot.MaxWidth = 600;
 
         ActualThemeChanged += OnThemeChanged;
     }
@@ -160,7 +169,7 @@ public sealed partial class TimelineControl : UserControl
 
     private void RefreshBookmarkButton() => FiFavorite.Glyph = _post.bookmarked ? "\ue735" : "\ue734";
     public void HideEmotionsButtonFlyout() => BtEmotions.Flyout.Hide();
-    public void RefreshEmotionsButton()
+    private void RefreshEmotionsButton()
     {
         var white = Utility.GetSolidColorBrushFromHexString("#FFFFFFFF");
         if (_post.liked)
@@ -463,6 +472,7 @@ public sealed partial class TimelineControl : UserControl
             menuEditPost.Click += OnEditPost;
             flyout.Items.Add(menuEditPost);
         }
+
         var menuBlockProfile = new MenuFlyoutItem() { Text = _post.actor.is_feed_blocked ? $"'{_post.actor.display_name}' 글 받기" : $"'{_post.actor.display_name}' 글 안받기" };
         menuBlockProfile.Click += async (o, e2) =>
         {
@@ -470,6 +480,7 @@ public sealed partial class TimelineControl : UserControl
             await RefreshContent();
         };
         flyout.Items.Add(menuBlockProfile);
+
         var menuMutePost = new MenuFlyoutItem() { Text = _post.push_mute ? "이 글 알림 받기" : "이 글 알림 받지 않기" };
         menuMutePost.Click += async (o, e2) =>
         {
@@ -477,7 +488,68 @@ public sealed partial class TimelineControl : UserControl
             await RefreshContent();
         };
         flyout.Items.Add(menuMutePost);
+
+        var menuExportPost = new MenuFlyoutItem() { Text = "글 이미지로 내보내기" };
+        menuExportPost.Click += OnExportPost;
+        flyout.Items.Add(menuExportPost);
+
         flyout.ShowAt(icon);
+    }
+
+    private static async Task SaveToBitmapImageAsync(string path, RenderTargetBitmap rtb)
+    {
+        using var fileStream = new FileStream(path, FileMode.Create);
+        using var stream = fileStream.AsRandomAccessStream();
+
+        var pixels = await rtb.GetPixelsAsync();
+        var encoder = await BitmapEncoder.CreateAsync(BitmapEncoder.JpegEncoderId, stream);
+        var bytes = pixels.ToArray();
+
+        var hWnd = WindowNative.GetWindowHandle(MainWindow.Instance);
+        var dpi = PInvoke.User32.GetDpiForWindow(hWnd);
+
+        encoder.SetPixelData(BitmapPixelFormat.Bgra8, BitmapAlphaMode.Ignore, (uint)rtb.PixelWidth, (uint)rtb.PixelHeight, dpi, dpi, bytes);
+
+        await encoder.FlushAsync();
+    }
+
+    private async void OnExportPost(object sender, RoutedEventArgs e)
+    {
+        GdLoading.Visibility = Visibility.Visible;
+        IsEnabled = false;
+
+        var canvas = new Canvas();
+        var control = new TimelineControl(_post);
+        canvas.Children.Add(control);
+        var window = new Window();
+        window.Activate();
+        window.Hide();
+        window.Content = canvas;
+        control.Width = 600;
+        control.GdMain.CornerRadius = new CornerRadius(0);
+        control.GdComment.Visibility = Visibility.Collapsed;
+        control.SpPostInformation.Visibility = Visibility.Collapsed;
+        control.UpdateLayout();
+        await control.RefreshContent(false);
+        await Task.Delay(1000);
+
+        RenderTargetBitmap renderTarget = new RenderTargetBitmap();
+
+        await renderTarget.RenderAsync(canvas);
+
+        var path = Path.GetTempFileName();
+        await SaveToBitmapImageAsync(path, renderTarget);
+        window.Close();
+
+        var dataPackage = new DataPackage();
+        var file = await StorageFile.GetFileFromPathAsync(path);
+        dataPackage.SetBitmap(RandomAccessStreamReference.CreateFromFile(file));
+        dataPackage.RequestedOperation = DataPackageOperation.Copy;
+        Clipboard.SetContent(dataPackage);
+
+        IsEnabled = true;
+        GdLoading.Visibility = Visibility.Collapsed;
+        await this.ShowMessageDialogAsync("포스트의 이미지가 클립보드에 저장되었습니다.", "안내");
     }
 
     private async void OnDeletePost(object sender, RoutedEventArgs e) => await DeletePost();
