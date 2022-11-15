@@ -191,6 +191,7 @@ public static class Utility
 
     public static void SetPersonPictureUrlSource(PersonPicture personPicture, string url, bool shouldDispose = true)
     {
+        if (string.IsNullOrWhiteSpace(url)) return;
         if (shouldDispose) LoadedPersonPictures.Add(personPicture);
         LoadPersonPicture(personPicture, url);
     }
