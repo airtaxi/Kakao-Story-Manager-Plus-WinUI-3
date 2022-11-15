@@ -5,7 +5,9 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using KSMP.Extension;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Input;
+using Windows.Media.Devices;
 
 namespace KSMP.Controls;
 
@@ -82,5 +84,7 @@ public sealed partial class NotificationControl : UserControl
             Pages.MainPage.HideOverlay();
             Pages.MainPage.ShowProfile(id);
         }
+        var popup = (Parent as FlyoutPresenter)?.Parent as Popup;
+        if (popup != null) popup.IsOpen = false;
     }
 }
