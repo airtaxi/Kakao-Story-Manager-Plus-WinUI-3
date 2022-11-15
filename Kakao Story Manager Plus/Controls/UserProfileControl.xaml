@@ -13,7 +13,7 @@
         <Grid Height="300">
             <Image x:Name="ImgProfileBackground" Stretch="UniformToFill" HorizontalAlignment="Stretch" VerticalAlignment="Center"/>
         </Grid>
-        <Rectangle Fill="{ThemeResource FixedBlack}" Opacity="0.3"/>
+        <Rectangle Fill="{ThemeResource FixedBlack}" Opacity="0.3" Width="2000"/>
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="20">
             <Grid>
                 <PersonPicture x:Name="PpProfilePicture" Tapped="OnProfilePictureTapped"/>
@@ -71,7 +71,7 @@
                 </Button.Flyout>
             </Button>
             <Button x:Name="BtFriend" Background="{ThemeResource Orange}" Margin="5,0,0,0" Click="FriendButtonClicked">
-                <TextBlock x:Name="TbFriendStatus" Foreground="{ThemeResource FixedWhite}"/>
+                <TextBlock x:Name="TbFriendStatus" Text="무언가의 버튼" Foreground="{ThemeResource FixedWhite}"/>
             </Button>
         </StackPanel>
     </Grid>

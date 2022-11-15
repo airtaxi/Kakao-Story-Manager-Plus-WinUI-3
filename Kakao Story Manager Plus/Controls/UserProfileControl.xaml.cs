@@ -5,6 +5,7 @@ using KSMP.Extension;
 using KSMP.Pages;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 
@@ -201,7 +202,8 @@ public sealed partial class UserProfileControl : UserControl
 
     private async void OnProfilePictureTapped(object sender, TappedRoutedEventArgs e)
     {
-        (Parent as Flyout)?.Hide();
+        var popup = (Parent as FlyoutPresenter)?.Parent as Popup;
+        if (popup != null) popup.IsOpen = false;
         await Task.Delay(100);
         MainPage.ShowProfile(_id);
     }
