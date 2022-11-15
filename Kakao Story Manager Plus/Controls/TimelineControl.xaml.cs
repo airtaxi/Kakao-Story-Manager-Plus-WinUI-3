@@ -488,8 +488,9 @@ public sealed partial class TimelineControl : UserControl
             await RefreshContent();
         };
         flyout.Items.Add(menuMutePost);
-
-        var menuExportPost = new MenuFlyoutItem() { Text = "글 이미지로 내보내기" };
+;
+        flyout.Items.Add(new MenuFlyoutSeparator());
+        var menuExportPost = new MenuFlyoutItem() { Text = "이미지로 내보내기" };
         menuExportPost.Click += OnExportPost;
         flyout.Items.Add(menuExportPost);
 
@@ -549,7 +550,7 @@ public sealed partial class TimelineControl : UserControl
 
         IsEnabled = true;
         GdLoading.Visibility = Visibility.Collapsed;
-        await this.ShowMessageDialogAsync("포스트의 이미지가 클립보드에 저장되었습니다.", "안내");
+        await this.ShowMessageDialogAsync("내보내진 이미지가 클립보드에 저장되었습니다.", "안내");
     }
 
     private async void OnDeletePost(object sender, RoutedEventArgs e) => await DeletePost();
