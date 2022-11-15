@@ -9,36 +9,48 @@
 
     <StackPanel Width="300">
         <TextBlock Text="알림 설정" FontSize="17" FontWeight="Bold"/>
+        
         <ToggleSwitch x:Name="TsFavoriteFriendNotification" OnContent="관심 친구 알림 받음" OffContent="관심 친구 알림 받지 않음"
                       ToolTipService.ToolTip="관심 친구 푸시 알림의 수신 여부를 결정할 수 있습니다."/>
+        
         <ToggleSwitch x:Name="TsEmotionalNotification" OnContent="느낌 알림 받음" OffContent="느낌 알림 받지 않음" Margin="0,5,0,0"
                       ToolTipService.ToolTip="느낌 알림의 수신 여부를 결정할 수 있습니다. 댓글 좋아요 알림에는 영향을 끼치지 않습니다."/>
 
         <TextBlock Text="성능 설정" FontSize="17" FontWeight="Bold"/>
+        
         <ToggleSwitch x:Name="TsUseGifProfileImage" OnContent="GIF 프로필 이미지 사용" OffContent="GIF 프로필 이미지 사용 안함" Margin="0,5,0,0"
                       ToolTipService.ToolTip="사용자가 움직이는 프로필 사진을 사용하는 경우, 움직이는 프로필을 보여줍니다. 본 옵션을 활성화하는 경우, 유휴 상태에서도 CPU 자원을 사용합니다."/>
+        
         <ToggleSwitch x:Name="TsUseGifInTimeline" OnContent="타임라인 고화질 이미지 사용" OffContent="타임라인 고화질 이미지 사용 안함" Margin="0,5,0,0"
                       ToolTipService.ToolTip="타임라인에서 원본 이미지를 보여줍니다. 본 옵션을 활성화 하는 경우, WinUI의 버그로 인한 메모리 누수양이 크게 늘어납니다."/>
+        
         <ToggleSwitch x:Name="TsClearTimelineOnRefresh" OnContent="무한 스크롤 사용 안함" OffContent="무한 스크롤 사용" Margin="0,5,0,0"
                             ToolTipService.ToolTip="본 옵션을 활성화 하는 경우, 타임라인의 마지막에 도달할 때, 타임라인의 기존 게시물을 지워 유휴 상태에서의 CPU 자원 사용량을 줄입니다."/>
-        <ToggleSwitch x:Name="TsUseDynamicTimelineLoading" OnContent="타임라인 동적 로딩 사용 안함" OffContent="타임라인 동적 로딩 사용" Margin="0,5,0,0"
+        
+        <ToggleSwitch x:Name="TsUseDynamicTimelineLoading" OnContent="타임라인 동적 로딩 사용" OffContent="타임라인 동적 로딩 사용 안함" Margin="0,5,0,0"
                       ToolTipService.ToolTip="본 옵션을 활성화 하는 경우, 메모리 누수 양을 줄이기 위해 스크롤 범위 밖으로 벗어난 게시물의 리소스를 해제하지 않으나, 스크롤이 부드러워집니다."/>
+        
         <ToggleSwitch x:Name="TsWarnOnHighMemoryUsage" OnContent="메모리 사용량 경고 메시지 사용" OffContent="메모리 사용량 경고 메시지 사용 안함" Margin="0,5,0,0"
                       ToolTipService.ToolTip="본 옵션을 활성화 하는 경우, 프로그램의 메모리 사용량이 1GiB를 넘을 때, 메모리 정리를 할지 물어보는 메시지를 띄워줍니다."/>
 
         <TextBlock Text="일반 설정" FontSize="17" FontWeight="Bold"/>
+        
         <ToggleSwitch x:Name="TsRefreshAfterWritePost" OnContent="글쓰기 이후 타임라인 새로고침" OffContent="글쓰기 이후 타임라인 새로고침 안함" Margin="0,5,0,0"
                       ToolTipService.ToolTip="본 옵션을 활성화 하는 경우, 글을 쓰거나 공유한 경우에 새 글을 보기 위해 타임라인을 초기화합니다."/>
+        
         <ToggleSwitch x:Name="TsUseResponsiveTimeline" OnContent="반응형 타임라인 UI 사용" OffContent="반응형 타임라인 UI 사용 안함" Margin="0,5,0,0"
                       ToolTipService.ToolTip="본 옵션을 활성화 하는 경우, 타임라인에서 화면 크기에 맞추어 게시글의 위치와 크기가 재조정됩니다."/>
+        
         <ToggleSwitch x:Name="TsLaunchAtStartup" OnContent="부팅시 자동 시작됨" OffContent="부팅시 자동 시작 해제됨" Margin="0,5,0,0"
                       ToolTipService.ToolTip="본 옵션을 활성화 하는 경우, 윈도우에서 사용자가 새로 로그인 할 때 프로그램을 자동으로 실행합니다."/>
+        
         <ComboBox x:Name="CbxThemeSetting" Header="테마" Margin="0,10,0,0"
                   ToolTipService.ToolTip="본 애플리케이션의 테마를 설정합니다.">
             <ComboBoxItem Content="시스템 테마"/>
             <ComboBoxItem Content="밝은 테마"/>
             <ComboBoxItem Content="어두운 테마"/>
         </ComboBox>
+        
         <ComboBox x:Name="CbxDefaultPostWritingPermission" Header="기본 게시글 공개 범위" Margin="0,10,0,0"
                   ToolTipService.ToolTip="여기서 선택된 공개 범위가 글을 작성 할 때의 기본 공개 범위로 설정됩니다.">
             <ComboBoxItem Content="친구 공개"/>
@@ -47,6 +59,7 @@
         </ComboBox>
 
         <TextBlock Text="편의 기능 설정" Margin="0,10,0,0" FontSize="17" FontWeight="Bold"/>
+        
         <Button Content="디시콘 설정" Tapped="OnShowDcConSettingsButtonClicked" Margin="0,5,0,0"
                 ToolTipService.ToolTip="버튼을 눌러 디시콘을 추가/제거/순서변경 할 수 있습니다."/>
     </StackPanel>
