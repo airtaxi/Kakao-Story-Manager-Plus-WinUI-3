@@ -180,7 +180,7 @@ public sealed partial class UserProfileControl : UserControl
         {
             var dialog = this.GenerateMessageDialog("친구 신청을 수락하시겠습니까?", "안내", true);
             dialog.PrimaryButtonText = "수락";
-            dialog.PrimaryButtonText = "거절";
+            dialog.SecondaryButtonText = "거절";
 
             var result = await dialog.ShowAsync();
             if (result == ContentDialogResult.Primary)

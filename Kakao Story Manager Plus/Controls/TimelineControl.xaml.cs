@@ -97,7 +97,7 @@ public sealed partial class TimelineControl : UserControl
 
         FrComment.Content = inputControl;
         if (isOverlay) _ = RefreshContent();
-        else FrRoot.MaxWidth = 600;
+        else if(!isShare) FrRoot.MaxWidth = 600;
 
         ActualThemeChanged += OnThemeChanged;
     }
