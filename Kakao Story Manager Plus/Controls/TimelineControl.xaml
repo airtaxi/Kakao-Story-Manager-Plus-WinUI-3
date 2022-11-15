@@ -12,7 +12,7 @@
     <UserControl.Resources>
         <SolidColorBrush x:Key="ButtonBackgroundPointerOver">#00000000</SolidColorBrush>
     </UserControl.Resources>
-    <Frame x:Name="FrRoot" HorizontalAlignment="Stretch">
+    <Frame x:Name="FrRoot" HorizontalAlignment="Stretch" MaxWidth="600">
         <Grid>
             <Rectangle x:Name="RtDummy" Fill="Transparent"/>
             <Grid x:Name="GdMain" Margin="10" Background="{ThemeResource White}" CornerRadius="5">

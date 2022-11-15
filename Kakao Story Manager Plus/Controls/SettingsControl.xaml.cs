@@ -27,6 +27,7 @@ public sealed partial class SettingsControl : UserControl
         bool willUseGifInTimeline = (Utils.Configuration.GetValue("UseGifInTimeline") as bool?) ?? false;
         bool willClearTimelineOnRefresh = (Utils.Configuration.GetValue("ClearTimelineOnRefresh") as bool?) ?? true;
         bool willWarnOnHighMemoryUsage = (Utils.Configuration.GetValue("WarnOnHighMemoryUsage") as bool?) ?? true;
+        bool willUseResponsiveTimeline = (Utils.Configuration.GetValue("UseResponsiveTimeline") as bool?) ?? true;
 
         TsFavoriteFriendNotification.IsOn = willReceiveFavoriteFriendNotification;
         TsEmotionalNotification.IsOn = willReceiveEmotionalNotification;
@@ -36,6 +37,7 @@ public sealed partial class SettingsControl : UserControl
         TsUseGifInTimeline.IsOn = willUseGifInTimeline;
         TsClearTimelineOnRefresh.IsOn = willClearTimelineOnRefresh;
         TsWarnOnHighMemoryUsage.IsOn = willWarnOnHighMemoryUsage;
+        TsUseResponsiveTimeline.IsOn = willUseResponsiveTimeline;
 
         TsFavoriteFriendNotification.Toggled += OnReceiveFavoriteFriendNotificationToggleSwitchToggled;
         TsEmotionalNotification.Toggled += OnReceiveEmotionalNotificationToggleSwitchToggled;
@@ -45,6 +47,7 @@ public sealed partial class SettingsControl : UserControl
         TsUseGifInTimeline.Toggled += OnUseGifInTimelineToggleSwitchToggled;
         TsClearTimelineOnRefresh.Toggled += OnClearTimelineOnRefreshToggleSwitchToggled;
         TsWarnOnHighMemoryUsage.Toggled += OnWarnOnHighMemoryUsageToggleSwitchToggled;
+        TsUseResponsiveTimeline.Toggled += OnUseResponsiveTimelineToggleSwitchToggled;
 
         int defaultPostWritingPermission = (Utils.Configuration.GetValue("DefaultPostWritingPermission") as int?) ?? 0;
         CbxDefaultPostWritingPermission.SelectedIndex = defaultPostWritingPermission;
@@ -52,6 +55,15 @@ public sealed partial class SettingsControl : UserControl
 
         ValidateThemeSetting();
         CbxThemeSetting.SelectionChanged += OnThemeSettingComboBoxSelectionChanged;
+    }
+
+    private void OnUseResponsiveTimelineToggleSwitchToggled(object sender, RoutedEventArgs e)
+    {
+        var toggleSwitch = sender as ToggleSwitch;
+        var isOn = toggleSwitch.IsOn;
+        Utils.Configuration.SetValue("UseResponsiveTimeline", isOn);
+        App.RecordedFirstFeedId = TimelinePage.LastFeedId;
+        MainPage.NavigateTimeline(MainPage.LastArgs);
     }
 
     private void OnWarnOnHighMemoryUsageToggleSwitchToggled(object sender, RoutedEventArgs e)

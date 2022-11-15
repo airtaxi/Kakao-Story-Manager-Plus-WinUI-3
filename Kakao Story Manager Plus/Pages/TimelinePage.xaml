@@ -12,6 +12,10 @@
     Background="{ThemeResource White2}" NavigationCacheMode="Disabled" SizeChanged="OnPageSizeChanged">
 
     <Grid>
+        <ListView x:Name="LvContent" SelectionMode="None"
+                    HorizontalAlignment="Stretch"
+                    HorizontalContentAlignment="Center"/>
+
         <GridView x:Name="GvContent" SelectionMode="None"
                     HorizontalAlignment="Stretch"
                     HorizontalContentAlignment="Stretch"

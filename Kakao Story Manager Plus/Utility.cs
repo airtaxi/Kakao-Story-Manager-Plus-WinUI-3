@@ -349,9 +349,9 @@ public static class Utility
         MainWindow.Instance.Close();
     }
 
-    public static ScrollViewer GetScrollViewerFromGridView(GridView listView)
+    public static ScrollViewer GetScrollViewerFromBaseListView(ListViewBase listViewBase)
     {
-        Border border = VisualTreeHelper.GetChild(listView, 0) as Border;
+        Border border = VisualTreeHelper.GetChild(listViewBase, 0) as Border;
         if (border == null) return null;
         return VisualTreeHelper.GetChild(border, 0) as ScrollViewer;
     }
@@ -400,7 +400,6 @@ public static class Utility
         }
         return theme;
     }
-
 
     public static async Task<StorageFile> ShowImageFileSaveDialogAsync(string url)
     {

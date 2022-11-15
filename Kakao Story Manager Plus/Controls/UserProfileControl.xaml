@@ -9,11 +9,11 @@
     d:DesignHeight="300"
     d:DesignWidth="600">
 
-    <Grid Margin="10" CornerRadius="5">
+    <Grid Margin="10" CornerRadius="5" MaxWidth="580">
         <Grid Height="300">
             <Image x:Name="ImgProfileBackground" Stretch="UniformToFill" HorizontalAlignment="Stretch" VerticalAlignment="Center"/>
         </Grid>
-        <Rectangle Fill="{ThemeResource FixedBlack}" Opacity="0.3" Width="2000"/>
+        <Rectangle Fill="{ThemeResource FixedBlack}" Opacity="0.3" Width="600"/>
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="20">
             <Grid>
                 <PersonPicture x:Name="PpProfilePicture" Tapped="OnProfilePictureTapped"/>
