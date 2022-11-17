@@ -100,7 +100,7 @@
                         </Viewbox>
                     </Button>
                 </StackPanel>
-                <Grid Grid.Row="3" Margin="0,5,0,0">
+                <Grid x:Name="GdPostInformation" Grid.Row="3" Margin="0,5,0,0">
                     <StackPanel>
                         <Border BorderBrush="{ThemeResource White4}" VerticalAlignment="Top" HorizontalAlignment="Stretch" BorderThickness="0.5"/>
                         <StackPanel Visibility="Collapsed" x:Name="SpPostInformation" Orientation="Horizontal" Margin="30,5,0,5">

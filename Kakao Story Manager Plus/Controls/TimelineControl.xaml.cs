@@ -527,9 +527,13 @@ public sealed partial class TimelineControl : UserControl
         window.Hide();
         window.Content = canvas;
         control.Width = 600;
+        control.Height = double.NaN;
+        control.SvContent.MaxHeight = double.MaxValue;
         control.GdMain.CornerRadius = new CornerRadius(0);
         control.GdComment.Visibility = Visibility.Collapsed;
-        control.SpPostInformation.Visibility = Visibility.Collapsed;
+        control.SpEmotions.Visibility = Visibility.Collapsed;
+        control.GdPostInformation.Visibility = Visibility.Collapsed;
+        control.SvContent.Margin = new Thickness(5, 5, 5, 15);
         control.UpdateLayout();
         await control.RefreshContent(false);
         await Task.Delay(1000);
