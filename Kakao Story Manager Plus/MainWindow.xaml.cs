@@ -26,7 +26,6 @@ namespace KSMP;
 public sealed partial class MainWindow : Microsoft.UI.Xaml.Window
 {
     public static MainWindow Instance { get; private set; }
-    public static TaskCompletionSource ReloginTaskCompletionSource = null;
 
     public static bool IsWritePostFlyoutOpened = false;
 
