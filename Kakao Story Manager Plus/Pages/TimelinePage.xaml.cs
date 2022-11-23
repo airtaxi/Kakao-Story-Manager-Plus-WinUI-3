@@ -174,18 +174,20 @@ public sealed partial class TimelinePage : Page
         }
     }
 
+    public static bool WillUseDynamicTimelineLoading = (Utils.Configuration.GetValue("UseDynamicTimelineLoading") as bool?) ?? false;
     private void ValidateTimelineContent()
     {
-        bool willUseDynamicTimelineLoading = (Utils.Configuration.GetValue("UseDynamicTimelineLoading") as bool?) ?? false;
-        if (!willUseDynamicTimelineLoading) return;
+        double margin;
+        if (!WillUseDynamicTimelineLoading) margin = 1280;
+        else margin = 0;
 
         var scrollViewer = Utility.GetScrollViewerFromBaseListView(BaseListView);
         foreach (Control control in BaseListView.Items)
         {
             if (control is not TimelineControl) continue;
             var timelineControl = control as TimelineControl;
-            if (Utility.IsVisibleToUser(control, scrollViewer) && !timelineControl.IsContentLoaded) _ = timelineControl.RefreshContent();
-            else if (!Utility.IsVisibleToUser(control, scrollViewer) && timelineControl.IsContentLoaded) timelineControl.UnloadMedia();
+            if (Utility.IsVisibleToUser(control, scrollViewer, margin) && !timelineControl.IsContentLoaded) _ = timelineControl.RefreshContent();
+            else if (!Utility.IsVisibleToUser(control, scrollViewer, margin) && timelineControl.IsContentLoaded) timelineControl.UnloadMedia();
         }
     }
 

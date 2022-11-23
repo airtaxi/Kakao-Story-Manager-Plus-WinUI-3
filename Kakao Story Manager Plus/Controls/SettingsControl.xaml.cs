@@ -60,12 +60,13 @@ public sealed partial class SettingsControl : UserControl
         CbxThemeSetting.SelectionChanged += OnThemeSettingComboBoxSelectionChanged;
     }
 
-    private void OnUseDynamicTimelineLoadingToggleSwitchToggled(object sender, RoutedEventArgs e)
+    private async void OnUseDynamicTimelineLoadingToggleSwitchToggled(object sender, RoutedEventArgs e)
     {
         var toggleSwitch = sender as ToggleSwitch;
         var isOn = toggleSwitch.IsOn;
         Utils.Configuration.SetValue("UseDynamicTimelineLoading", isOn);
-        RequestProgramRestart();
+        TimelinePage.WillUseDynamicTimelineLoading = isOn;
+        await TimelinePage.Refresh();
     }
 
     private void OnUseResponsiveTimelineToggleSwitchToggled(object sender, RoutedEventArgs e)

@@ -14,7 +14,8 @@
     <Grid>
         <ListView x:Name="LvContent" SelectionMode="None"
                     HorizontalAlignment="Stretch"
-                    HorizontalContentAlignment="Center"/>
+                    HorizontalContentAlignment="Center"
+                    animations:ItemsReorderAnimation.Duration="00:00:00.5000000"/>
 
         <GridView x:Name="GvContent" SelectionMode="None"
                     HorizontalAlignment="Stretch"
