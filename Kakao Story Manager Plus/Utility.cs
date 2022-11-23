@@ -119,7 +119,6 @@ public static class Utility
             if (file == null) return;
             var path = file.Path;
 
-            WebClient webClient = new();
             await new WebClient().DownloadFileTaskAsync(url, path);
         }
         else await SetImageClipboardFromUrl(image, url);
@@ -251,14 +250,14 @@ public static class Utility
         finally { File.Delete(path); }
     }
 
-    private static void LoadImage(Image image, string url, int retryCount = 0)
+    private static void LoadImage(Image image, string url)
     {
         var bitmap = new BitmapImage();
         bitmap.UriSource = new Uri(url);
         image.Source = bitmap;
     }
 
-    private static void LoadPersonPicture(PersonPicture personPicture, string url, int retryCount = 0)
+    private static void LoadPersonPicture(PersonPicture personPicture, string url)
     {
 
         var bitmap = new BitmapImage();
@@ -363,8 +362,7 @@ public static class Utility
         return data.ToObject<List<Api.DcCon.DataType.Package>>();
     }
 
-    private const double VisibilityOffset = 0;
-    public static bool IsVisibleToUser(Control control, ScrollViewer scrollViewer)
+    public static bool IsVisibleToUser(Control control, ScrollViewer scrollViewer, double margin = 0)
     {
         var top = control
             .TransformToVisual(scrollViewer)
@@ -373,7 +371,7 @@ public static class Utility
         var elementTop = top.Y;
         var elementBottom = top.Y + control.ActualHeight;
 
-        var isVisible = elementBottom > -VisibilityOffset && elementTop < scrollViewer.ViewportHeight + VisibilityOffset;
+        var isVisible = elementBottom > -margin && elementTop < scrollViewer.ViewportHeight + margin;
         return isVisible;
     }
 
