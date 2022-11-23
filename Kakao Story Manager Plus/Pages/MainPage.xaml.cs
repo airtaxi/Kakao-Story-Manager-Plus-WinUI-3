@@ -41,13 +41,13 @@ public sealed partial class MainPage : Page
             s_notificationTimer.Elapsed += OnNotificationTimerElapsed;
             s_notificationTimer.Start();
         }
+        _ = Refresh();
     }
 
-    protected override async void OnNavigatedTo(NavigationEventArgs e)
+    protected override void OnNavigatedTo(NavigationEventArgs e)
     {
         base.OnNavigatedTo(e);
         string id = e.Parameter as string;
-        await Refresh();
         if (!string.IsNullOrEmpty(id)) NavigateTimeline(id);
         else NavigateTimeline();
     }
