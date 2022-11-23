@@ -253,12 +253,10 @@ public sealed partial class MainWindow : Microsoft.UI.Xaml.Window
             List<Windows.Graphics.RectInt32> dragRectsList = new();
 
             Windows.Graphics.RectInt32 dragRectL;
-            dragRectL.X = (int)((LeftPaddingColumn.ActualWidth) * scaleAdjustment);
+            dragRectL.X = (int)((LeftPaddingColumn.ActualWidth + IconColumn.ActualWidth) * scaleAdjustment);
             dragRectL.Y = 0;
             dragRectL.Height = (int)(AppTitleBar.ActualHeight * scaleAdjustment);
-            dragRectL.Width = (int)((IconColumn.ActualWidth
-                                    + TitleColumn.ActualWidth
-                                    + LeftDragColumn.ActualWidth) * scaleAdjustment);
+            dragRectL.Width = (int)((TitleColumn.ActualWidth + LeftDragColumn.ActualWidth) * scaleAdjustment);
             dragRectsList.Add(dragRectL);
 
             Windows.Graphics.RectInt32[] dragRects = dragRectsList.ToArray();
@@ -360,10 +358,13 @@ public sealed partial class MainWindow : Microsoft.UI.Xaml.Window
         else if (isControlDown && e.Key == Windows.System.VirtualKey.Q) Utility.SaveCurrentStateAndRestartProgram();
     }
 
-    public static void ShowMenus()
+    public static async void ShowMenus()
     {
+        Instance.BtProgramIcon.IsEnabled = true;
         Instance.AsbSearchFriend.Visibility = Visibility.Visible;
         Instance.SpButtons.Visibility = Visibility.Visible;
+        await Task.Delay(500);
+        Instance.TtTimelineGuide.IsOpen = true;
     }
 
     private static void SearchFriend(AutoSuggestBox sender)
@@ -498,7 +499,7 @@ public sealed partial class MainWindow : Microsoft.UI.Xaml.Window
         IsWritePostFlyoutOpened = true;
     }
 
-    private void OnShowTimelineButtonClicked(object sender, RoutedEventArgs e)
+    private void OnProgramIconClicked(object sender, RoutedEventArgs e)
     {
         MainPage.HideOverlay();
         MainPage.HideOverlay();

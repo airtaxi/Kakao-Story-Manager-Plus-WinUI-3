@@ -20,9 +20,10 @@
                 <ColumnDefinition x:Name="TitleColumn" Width="Auto"/>
                 <ColumnDefinition x:Name="LeftDragColumn" Width="5"/>
                 <ColumnDefinition x:Name="SearchColumn" Width="*"/>
-                <ColumnDefinition x:Name="RightDragColumn" Width="165"/>
+                <ColumnDefinition x:Name="RightDragColumn" Width="120"/>
                 <ColumnDefinition x:Name="RightPaddingColumn" Width="auto"/>
             </Grid.ColumnDefinitions>
+            
             <AutoSuggestBox Grid.Column="4" Margin="10,0,10,0" x:Name="AsbSearchFriend" Visibility="Collapsed"  HorizontalAlignment="Stretch" VerticalAlignment="Center" PlaceholderText="친구 검색" QueryIcon="Zoom" TextChanged="SearchFriendTextChanged" SuggestionChosen="SearchFriendSelected" QuerySubmitted="SearchFriendQuerySubmitted">
                 <AutoSuggestBox.ItemTemplate>
                     <DataTemplate>
@@ -37,23 +38,34 @@
                     </DataTemplate>
                 </AutoSuggestBox.ItemTemplate>
             </AutoSuggestBox>
-            <Image x:Name="TitleBarIcon" Source="/icon.ico" 
-           Grid.Column="1"
-           Width="16" Height="16"
-           Margin="12,0,0,0"/>
             
-            <TextBlock x:Name="TitleTextBlock"  
-            Style="{StaticResource CaptionTextBlockStyle}"
-            Grid.Column="2"
-            VerticalAlignment="Center"
-            Margin="10,0,0,0"/>
+            <Button x:Name="BtProgramIcon"
+                    Grid.Column="1"
+                    IsEnabled="False"
+                    Margin="0,0,0,0"
+                    Background="Transparent"
+                    BorderThickness="0"
+                    Click="OnProgramIconClicked">
+                <Image x:Name="TitleBarIcon" Source="/icon.ico" 
+                    Width="25" Height="25"/>
+            </Button>
+            
+            <TeachingTip x:Name="TtTimelineGuide"
+                         Target="{x:Bind BtProgramIcon}"
+                         IsLightDismissEnabled="True"
+                         IsOpen="False"
+                         Title="새로운 타임라인 탐색 방식을 확인하세요"
+                         Subtitle="이 버전부터 상단바의 프로그램 아이콘을 클릭하여 타임라인을 조회할 수 있습니다!">
+            </TeachingTip>
+            
+            <TextBlock x:Name="TitleTextBlock"
+                       Style="{StaticResource CaptionTextBlockStyle}"
+                       Grid.Column="2"
+                       FontSize="14"
+                       FontWeight="Bold"
+                       VerticalAlignment="Center"/>
 
             <StackPanel x:Name="SpButtons" Grid.Column="5" Visibility="Collapsed" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,5,0" Orientation="Horizontal">
-                <Button x:Name="BtTimeline" Width="35" Height="35" Padding="10" CornerRadius="10" ToolTipService.ToolTip="타임라인 조회" Click="OnShowTimelineButtonClicked">
-                    <Viewbox>
-                        <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe7bc;" FontSize="17" Foreground="{ThemeResource Gray4}"/>
-                    </Viewbox>
-                </Button>
                 <Button x:Name="BtWrite" Width="35" Height="35" Padding="10" CornerRadius="10" Margin="5,0,0,0" ToolTipService.ToolTip="포스트 작성" Click="OnWritePostButtonClicked">
                     <Viewbox>
                         <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe70f;" FontSize="17" Foreground="{ThemeResource Gray4}"/>
