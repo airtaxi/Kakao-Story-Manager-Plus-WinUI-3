@@ -17,9 +17,9 @@
 		<UseWindowsForms>False</UseWindowsForms>
 		<Nullable>disable</Nullable>
 		<PlatformTarget>AnyCPU</PlatformTarget>
-		<FileVersion>0.1.0.223</FileVersion>
-		<AssemblyVersion>0.1.0.223</AssemblyVersion>
-		<Version>0.1.0.223</Version>
+		<FileVersion>0.1.0.224</FileVersion>
+		<AssemblyVersion>0.1.0.224</AssemblyVersion>
+		<Version>0.1.0.224</Version>
 	</PropertyGroup>
 	<ItemGroup>
 		<Content Remove="Assets\Error.png" />
@@ -66,10 +66,10 @@
 		</PackageReference>
 		<PackageReference Include="PInvoke.Win32" Version="0.7.124" />
 		<PackageReference Include="RestSharp" Version="108.0.3" />
-		<PackageReference Include="Selenium.Support" Version="4.6.0" />
-		<PackageReference Include="Selenium.WebDriver" Version="4.6.0" />
+		<PackageReference Include="Selenium.Support" Version="4.7.0" />
+		<PackageReference Include="Selenium.WebDriver" Version="4.7.0" />
 		<PackageReference Include="SeleniumExtras.WaitHelpers" Version="1.0.2" />
-		<PackageReference Include="WebDriverManager" Version="2.16.1" />
+		<PackageReference Include="WebDriverManager" Version="2.16.2" />
 		<Manifest Include="$(ApplicationManifest)" />
 	</ItemGroup>
 
