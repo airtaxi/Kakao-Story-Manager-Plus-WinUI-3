@@ -19,20 +19,12 @@ using System.Diagnostics;
 using static KSMP.ApiHandler.DataType.EmoticonItems;
 using Microsoft.UI.Xaml.Media.Imaging;
 using KSMP.Utils;
-using CommunityToolkit.WinUI.UI.Animations;
 using Microsoft.UI.Xaml.Media;
-using CommunityToolkit.WinUI.UI.Helpers;
 using ImageMagick;
-using Windows.Security.Authentication.OnlineId;
-using Windows.UI;
 using Windows.Graphics.Imaging;
 using Windows.Storage.Streams;
-using Windows.Services.Maps;
-using OpenQA.Selenium.DevTools.V105.DOM;
 using System.Runtime.InteropServices.WindowsRuntime;
 using H.NotifyIcon;
-using Microsoft.Graphics.Display;
-using Microsoft.UI;
 
 namespace KSMP.Controls;
 
