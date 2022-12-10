@@ -70,8 +70,8 @@ public static class Utility
         if (mediums == null) return null;
 
         var medias = new List<FrameworkElement>();
-        var rawWillUseGifInTimeline = (Configuration.GetValue("UseGifInTimeline") as bool?) ?? false;
-        bool willUseGifInTimeline = rawWillUseGifInTimeline;
+        bool willUseEmbeddedVideoPlayer = (Configuration.GetValue("UseEmbeddedVideoPlayer") as bool?) ?? false;
+        bool willUseGifInTimeline = (Configuration.GetValue("UseGifInTimeline") as bool?) ?? false; ;
         willUseGifInTimeline = willUseGifInTimeline || overrideQuality;
         
         foreach (var medium in mediums)
@@ -82,7 +82,7 @@ public static class Utility
             if (url == null) continue;
             else if (url.Contains(".mp4"))
             {
-                if (rawWillUseGifInTimeline)
+                if (willUseEmbeddedVideoPlayer)
                 {
                     MediaPlayerElement video = GenerateVideoMediaPlayerElementFromUrl(url);
                     LoadedVideos.Add(video);
