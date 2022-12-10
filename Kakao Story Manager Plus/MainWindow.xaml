@@ -38,7 +38,7 @@
                     </DataTemplate>
                 </AutoSuggestBox.ItemTemplate>
             </AutoSuggestBox>
-            
+
             <Button x:Name="BtProgramIcon"
                     Grid.Column="1"
                     IsEnabled="False"
@@ -49,15 +49,7 @@
                 <Image x:Name="TitleBarIcon" Source="/icon.ico" 
                     Width="25" Height="25"/>
             </Button>
-            
-            <TeachingTip x:Name="TtTimelineGuide"
-                         Target="{x:Bind BtProgramIcon}"
-                         IsLightDismissEnabled="True"
-                         IsOpen="False"
-                         Title="새로운 타임라인 탐색 방식을 확인하세요"
-                         Subtitle="이 버전부터 상단바의 프로그램 아이콘을 클릭하여 타임라인을 조회할 수 있습니다!">
-            </TeachingTip>
-            
+
             <TextBlock x:Name="TitleTextBlock"
                        Style="{StaticResource CaptionTextBlockStyle}"
                        Grid.Column="2"

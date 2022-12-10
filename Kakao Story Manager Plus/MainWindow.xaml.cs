@@ -364,7 +364,6 @@ public sealed partial class MainWindow : Microsoft.UI.Xaml.Window
         Instance.AsbSearchFriend.Visibility = Visibility.Visible;
         Instance.SpButtons.Visibility = Visibility.Visible;
         await Task.Delay(500);
-        Instance.TtTimelineGuide.IsOpen = true;
     }
 
     private static void SearchFriend(AutoSuggestBox sender)
