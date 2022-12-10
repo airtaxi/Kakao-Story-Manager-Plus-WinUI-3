@@ -9,9 +9,6 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Input;
-using OpenQA.Selenium.DevTools.V105.DOM;
-using Windows.Media.Devices;
-using Windows.UI.Notifications;
 
 namespace KSMP.Controls;
 
