@@ -41,13 +41,18 @@ public sealed partial class MainPage : Page
             s_notificationTimer.Elapsed += OnNotificationTimerElapsed;
             s_notificationTimer.Start();
         }
-        _ = Refresh();
     }
 
-    protected override void OnNavigatedTo(NavigationEventArgs e)
+    private bool _isRefreshed = false;
+    protected override async void OnNavigatedTo(NavigationEventArgs e)
     {
         base.OnNavigatedTo(e);
         string id = e.Parameter as string;
+        if (!_isRefreshed)
+        {
+            await Refresh();
+            _isRefreshed = true;
+        }
         if (!string.IsNullOrEmpty(id)) NavigateTimeline(id);
         else NavigateTimeline();
     }
@@ -192,6 +197,8 @@ public sealed partial class MainPage : Page
         HideOverlay();
         NavigateTimeline(Me.id);
     }
+
+    public static bool IsFriendListViewLoaded => (s_instance.LvFriends.ItemsSource as List<FriendProfile>) != null;
 
     public static void SelectFriend(string id)
     {
