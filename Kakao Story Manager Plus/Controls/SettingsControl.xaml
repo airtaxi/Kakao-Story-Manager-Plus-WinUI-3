@@ -22,10 +22,10 @@
                       ToolTipService.ToolTip="본 옵션을 활성화하는 경우, 사용자가 움직이는 프로필 사진을 사용하는 경우에 움직이는 프로필을 보여주나, 유휴 상태에서도 소량의 CPU 자원을 사용합니다."/>
         
         <ToggleSwitch x:Name="TsUseEmbeddedVideoPlayer" OnContent="내장 비디오 플레이어 사용" OffContent="내장 비디오 플레이어 사용 안함" Margin="0,5,0,0"
-                      ToolTipService.ToolTip="본 옵션을 활성화 하는 경우, 영상을 내장 비디오 플레이어로 보여주나,  WinUI의 버그로 인한 메모리 누수양이 크게 늘어납니다."/>
+                      ToolTipService.ToolTip="본 옵션을 활성화 하는 경우, 영상을 내장 비디오 플레이어로 보여주나,  WinUI의 버그로 인한 메모리 누수량이 크게 늘어납니다."/>
         
         <ToggleSwitch x:Name="TsUseGifInTimeline" OnContent="타임라인 고화질 이미지 사용" OffContent="타임라인 고화질 이미지 사용 안함" Margin="0,5,0,0"
-                      ToolTipService.ToolTip="본 옵션을 활성화 하는 경우, 타임라인에서 원본 이미지를 보여주나,  WinUI의 버그로 인한 메모리 누수양이 크게 늘어납니다."/>
+                      ToolTipService.ToolTip="본 옵션을 활성화 하는 경우, 타임라인에서 원본 이미지를 보여주나,  WinUI의 버그로 인한 메모리 누수량이 크게 늘어납니다."/>
         
         <ToggleSwitch x:Name="TsClearTimelineOnRefresh" OnContent="무한 스크롤 사용 안함" OffContent="무한 스크롤 사용" Margin="0,5,0,0"
                             ToolTipService.ToolTip="본 옵션을 활성화 하는 경우, 타임라인의 마지막에 도달할 때, 타임라인의 기존 게시물을 지워 유휴 상태에서의 CPU 자원 사용량을 줄입니다."/>
