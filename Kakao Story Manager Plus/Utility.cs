@@ -65,48 +65,58 @@ public static class Utility
         LoadedVideos.Clear();
     }
 
-    public static List<FrameworkElement> GenerateMedias(IEnumerable<Medium> mediums)
+    public static List<FrameworkElement> GenerateMedias(IEnumerable<Medium> mediums, bool overrideQuality = false)
     {
         if (mediums == null) return null;
 
         var medias = new List<FrameworkElement>();
+        var rawWillUseGifInTimeline = (Configuration.GetValue("UseGifInTimeline") as bool?) ?? false;
+        bool willUseGifInTimeline = rawWillUseGifInTimeline;
+        willUseGifInTimeline = willUseGifInTimeline || overrideQuality;
+        
         foreach (var medium in mediums)
         {
-            bool willUseGifInTimeline = (Configuration.GetValue("UseGifInTimeline") as bool?) ?? false;
             var defaultUrl = willUseGifInTimeline ? medium?.origin_url : medium.thumbnail_url;
             var url = defaultUrl ?? medium?.url_hq;
             if (medium?.url_hq != null) url = medium?.url_hq;
             if (url == null) continue;
             else if (url.Contains(".mp4"))
             {
-                MediaPlayerElement video = GenerateVideoMediaPlayerElementFromUrl(url);
-                LoadedVideos.Add(video);
-                medias.Add(video);
+                if (rawWillUseGifInTimeline)
+                {
+                    MediaPlayerElement video = GenerateVideoMediaPlayerElementFromUrl(url);
+                    LoadedVideos.Add(video);
+                    medias.Add(video);
+                }
+                else
+                {
+                    Image image = new() { Tag = url };
+
+                    var bitmap = new BitmapImage();
+                    bitmap.UriSource = new Uri("ms-appx:///Assets/Video.png");
+                    bitmap.CreateOptions = BitmapCreateOptions.IgnoreImageCache;
+                    image.Source = bitmap;
+
+                    LoadedImages.Add(image);
+                    medias.Add(image);
+                }
             }
             else
             {
-                Image image = GenerateImageFromUrl(medium);
+                Image image = new()
+                {
+                    Tag = medium.origin_url,
+                    Stretch = Stretch.Uniform
+                };
+                image.RightTapped += OnImageRightTapped;
+                SetImageUrlSource(image, url);
+                
                 LoadedImages.Add(image);
                 medias.Add(image);
             }
         }
 
         return medias;
-    }
-
-    private static Image GenerateImageFromUrl(Medium medium)
-    {
-        var image = new Image();
-
-        bool willUseGifInTimeline = (Configuration.GetValue("UseGifInTimeline") as bool?) ?? false;
-        var url = willUseGifInTimeline ? medium?.origin_url : medium.thumbnail_url;
-        SetImageUrlSource(image, url);
-
-        image.Tag = medium.origin_url;
-        image.Stretch = Stretch.Uniform;
-        image.RightTapped += OnImageRightTapped;
-
-        return image;
     }
 
     private static async void OnImageRightTapped(object sender, RightTappedRoutedEventArgs e)

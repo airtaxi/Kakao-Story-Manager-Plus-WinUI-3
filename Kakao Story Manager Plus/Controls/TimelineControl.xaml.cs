@@ -52,14 +52,16 @@ public sealed partial class TimelineControl : UserControl
         _post = post;
         _isOverlay = isOverlay;
         _isShare = isShare;
-        if (isOverlay)
+        if (isOverlay && !isShare)
         {
             FaClose.Visibility = Visibility.Visible;
             BdCommentsHorizontal.Visibility = Visibility.Visible;
             RdComment.Height = new GridLength(1, GridUnitType.Star);
+
             Grid.SetRow(GdComment, 0);
             Grid.SetRowSpan(GdComment, 5);
             Grid.SetColumn(GdComment, 1);
+
             SvComments.Padding = new Thickness(5);
             SvComments.MaxHeight = double.MaxValue;
             SvComments.VerticalAlignment = VerticalAlignment.Stretch;
@@ -387,11 +389,11 @@ public sealed partial class TimelineControl : UserControl
         RefreshEmotionsButton();
 
         Utility.SetPersonPictureUrlSource(PpUser, _post.actor?.GetValidUserProfileUrl());
-        FvMedia.ItemsSource = Utility.GenerateMedias(_post?.media);
+        FvMedia.ItemsSource = Utility.GenerateMedias(_post?.media, _isOverlay);
 
         TbShareCount.Text = _post.share_count.ToString();
         if (_post.@object != null && _post.@object.id != null)
-            FrShare.Content = new TimelineControl(_post.@object, true);
+            FrShare.Content = new TimelineControl(_post.@object, true, _isOverlay);
         if (_post.scrap != null)
             FrLink.Content = new LinkControl(_post.scrap);
 
