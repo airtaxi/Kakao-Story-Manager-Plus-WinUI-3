@@ -10,6 +10,7 @@ using static KSMP.ClassManager;
 using KSMP;
 using System.Threading.Tasks;
 using KSMP.Utils;
+using System;
 
 namespace KSMP.Controls;
 
@@ -41,7 +42,14 @@ public sealed partial class CommentControl : UserControl
     {
         RtbContent.Blocks.Clear();
         TbName.Text = comment.writer.display_name;
-        TbTime.Text = Api.Story.Utils.GetTimeString(comment.created_at) + (comment.updated_at.Year > 1 ? " (수정됨)" : "");
+
+        RefreshTimestamp();
+
+        var timer = new DispatcherTimer();
+        timer.Interval = TimeSpan.FromMinutes(1);
+        timer.Tick += (s, e) => RefreshTimestamp();
+        timer.Start();
+
         Utility.SetPersonPictureUrlSource(PpUser, comment.writer.GetValidUserProfileUrl());
         Utility.LoadedPersonPictures.Add(PpUser);
 
@@ -80,6 +88,8 @@ public sealed partial class CommentControl : UserControl
             ImgMain.Visibility = Visibility.Collapsed;
         LoadCommentCompletionSource.TrySetResult();
     }
+
+    private void RefreshTimestamp() => TbTime.Text = Api.Story.Utils.GetTimeString(_comment.created_at) + (_comment.updated_at.Year > 1 ? " (수정됨)" : "");
 
     public void UnloadMedia()
     {
