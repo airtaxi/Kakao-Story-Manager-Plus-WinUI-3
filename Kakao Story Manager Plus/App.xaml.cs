@@ -39,8 +39,8 @@ public partial class App : Application
 
             if (!checkProcess)
             {
-                var cookieDataString = File.ReadAllText(restartFlagPath);
-                var restartFlag = JsonConvert.DeserializeObject<RestartFlag>(cookieDataString);
+                var restartFlagString = File.ReadAllText(restartFlagPath);
+                var restartFlag = JsonConvert.DeserializeObject<RestartFlag>(restartFlagString);
                 RecordedFirstFeedId = restartFlag.LastFeedId;
 
                 var cookies = new List<Cookie>();
@@ -59,7 +59,7 @@ public partial class App : Application
                     cookies.Add(cookie);
                 }
 
-                KSMP.ApiHandler.Init(cookieContainer, cookies, null);
+                ApiHandler.Init(cookieContainer, cookies, null);
                 s_restartFlag = restartFlag;
                 LoginPage.IsLoggedIn = true;
             }
