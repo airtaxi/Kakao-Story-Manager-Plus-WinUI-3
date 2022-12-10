@@ -71,7 +71,7 @@ public static class Utility
 
         var medias = new List<FrameworkElement>();
         bool willUseEmbeddedVideoPlayer = (Configuration.GetValue("UseEmbeddedVideoPlayer") as bool?) ?? false;
-        bool willUseGifInTimeline = (Configuration.GetValue("UseGifInTimeline") as bool?) ?? false; ;
+        bool willUseGifInTimeline = (Configuration.GetValue("UseGifInTimeline") as bool?) ?? false;
         willUseGifInTimeline = willUseGifInTimeline || overrideQuality;
         
         foreach (var medium in mediums)
