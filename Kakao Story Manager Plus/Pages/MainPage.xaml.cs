@@ -37,7 +37,7 @@ public sealed partial class MainPage : Page
         if (s_notificationTimer == null)
         {
             s_notificationTimer = new();
-            s_notificationTimer.Interval = 1000;
+            s_notificationTimer.Interval = 2500;
             s_notificationTimer.Elapsed += OnNotificationTimerElapsed;
             s_notificationTimer.Start();
         }
