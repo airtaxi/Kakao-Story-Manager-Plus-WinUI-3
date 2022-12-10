@@ -334,10 +334,13 @@ public sealed partial class TimelineControl : UserControl
         if (!_isShare) _post = await ApiHandler.GetPost(_post.id);
 
         TbName.Text = _post.actor.display_name;
-        var timestampString = Api.Story.Utils.GetTimeString(_post.created_at);
-        TbTime.Text = timestampString;
-        if (_post.content_updated_at != DateTime.MinValue)
-            TbTime.Text += " (수정됨)";
+
+        RefreshTimestamp();
+
+        var timestampRefreshTimer = new DispatcherTimer();
+        timestampRefreshTimer.Interval = TimeSpan.FromMinutes(1);
+        timestampRefreshTimer.Tick += (s, e) => RefreshTimestamp();
+        timestampRefreshTimer.Start();
 
         RtbEmotions.Visibility = Visibility.Visible;
         RtbShares.Visibility = Visibility.Visible;
@@ -406,6 +409,14 @@ public sealed partial class TimelineControl : UserControl
         this.UpdateLayout();
 
         if (showLoading) GdLoading.Visibility = Visibility.Collapsed;
+    }
+
+    private void RefreshTimestamp()
+    {
+        var timestampString = Api.Story.Utils.GetTimeString(_post.created_at);
+        TbTime.Text = timestampString;
+        if (_post.content_updated_at != DateTime.MinValue)
+            TbTime.Text += " (수정됨)";
     }
 
     private async Task LoadComments(string since = null)
