@@ -82,6 +82,7 @@ public sealed partial class TimelineControl : UserControl
             SpEmotions.Visibility = Visibility.Collapsed;
             SpMenu.Visibility = Visibility.Collapsed;
             SpShare.Visibility = Visibility.Visible;
+            RtShare.Visibility = Visibility.Visible;
             FrShareMargin.Visibility = Visibility.Visible;
             BdShare.Visibility = Visibility.Visible;
             LvContent.Padding = new Thickness(0, 0, 0, 20);
