@@ -41,7 +41,7 @@
                         <TextBlock x:Name="TbTime" Text="" Foreground="{ThemeResource Gray6}" Tapped="OnTimeTapped" PointerEntered="OnPointerEntered" PointerExited="OnPointerExited" HorizontalAlignment="Left"/>
                     </StackPanel>
                     <Grid Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Top">
-                        <StackPanel x:Name="SpShare" Orientation="Horizontal" Visibility="Collapsed">
+                        <StackPanel x:Name="SpShare" Orientation="Horizontal" Visibility="Collapsed" PointerEntered="OnPointerEntered" PointerExited="OnPointerExited">
                             <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe8eb;" Foreground="{ThemeResource Gray6}" FontSize="15"/>
                             <TextBlock x:Name="TbShareCount" Foreground="{ThemeResource Gray6}" Margin="5,0,0,0" FontSize="15"/>
                         </StackPanel>
