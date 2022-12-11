@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Threading.Tasks;
-using System.Xml.Linq;
 using KSMP.Extension;
 using KSMP.Pages;
 using Microsoft.UI.Xaml;
@@ -145,9 +144,8 @@ public sealed partial class UserProfileControl : UserControl
 
     private async void OnFavoriteTapped(object sender, TappedRoutedEventArgs e) => await SetFavorite();
 
-    private void FavoritePointerEntered(object sender, PointerRoutedEventArgs e) => Utility.ChangeSystemMouseCursor(true);
-
-    private void FavoritePointerExited(object sender, PointerRoutedEventArgs e) => Utility.ChangeSystemMouseCursor(false);
+    private void OnPointerEntered(object sender, PointerRoutedEventArgs e) => Utility.ChangeSystemMouseCursor(true);
+    private void OnPointerExited(object sender, PointerRoutedEventArgs e) => Utility.ChangeSystemMouseCursor(false);
 
     private async void FriendButtonClicked(object sender, RoutedEventArgs e)
     {

@@ -1,5 +1,4 @@
-﻿using KSMP;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using RestSharp;
 using System;
 using System.Collections.Generic;
@@ -837,7 +836,7 @@ public partial class ApiHandler
 
         Stream writeStream = await request.GetRequestStreamAsync();
 
-        WriteMultipartForm(writeStream, boundary, null, System.IO.Path.GetFileName(asset.Path), MimeTypes.GetMimeType(asset.Path), fileStream.BaseStream);
+        WriteMultipartForm(writeStream, boundary, null, Path.GetFileName(asset.Path), MimeTypes.GetMimeType(asset.Path), fileStream.BaseStream);
         fileStream.Close();
 
         var readStream = await request.GetResponseAsync();

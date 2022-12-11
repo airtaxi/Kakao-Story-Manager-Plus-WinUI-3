@@ -69,14 +69,7 @@ public sealed partial class NotificationControl : UserControl
     }
 
     public static string LatestNotificationId => s_notificationDatas?.FirstOrDefault()?.NotificationId;
-
-    private void ProfileImageTapped(object sender, TappedRoutedEventArgs e)
-    {
-        var id = (sender as PersonPicture).Tag as string;
-        Pages.MainPage.ShowProfile(id);
-        e.Handled = true;
-    }
-
+    
     private async void NotificationSelected(object sender, SelectionChangedEventArgs e)
     {
         var listView = sender as ListView;
@@ -88,15 +81,15 @@ public sealed partial class NotificationControl : UserControl
         {
             var objectStringStr = scheme.Split(new string[] { "?profile_id=" }, StringSplitOptions.None);
             var id = objectStringStr[0].Split(new string[] { "activities/" }, StringSplitOptions.None)[1];
-            var post = await KSMP.ApiHandler.GetPost(id);
-            Pages.MainPage.HideOverlay();
-            Pages.MainPage.ShowOverlay(new TimelineControl(post, false, true));
+            var post = await ApiHandler.GetPost(id);
+            MainPage.HideOverlay();
+            MainPage.ShowOverlay(new TimelineControl(post, false, true));
         }
         else if (scheme.Contains("kakaostory://profiles/"))
         {
             string id = scheme.Replace("kakaostory://profiles/", "");
-            Pages.MainPage.HideOverlay();
-            Pages.MainPage.ShowProfile(id);
+            MainPage.HideOverlay();
+            MainPage.ShowProfile(id);
         }
         var popup = (Parent as FlyoutPresenter)?.Parent as Popup;
         if (popup != null) popup.IsOpen = false;

@@ -62,9 +62,9 @@ public sealed partial class TimelineControl : UserControl
             Grid.SetRowSpan(GdComment, 5);
             Grid.SetColumn(GdComment, 1);
 
-            SvComments.Padding = new Thickness(5);
-            SvComments.MaxHeight = double.MaxValue;
-            SvComments.VerticalAlignment = VerticalAlignment.Stretch;
+            LvComments.Padding = new Thickness(5);
+            LvComments.MaxHeight = double.MaxValue;
+            LvComments.VerticalAlignment = VerticalAlignment.Stretch;
 
             var commentFrameMargin = FrComment.Margin;
             commentFrameMargin.Left = 10;
@@ -84,7 +84,7 @@ public sealed partial class TimelineControl : UserControl
             SpShare.Visibility = Visibility.Visible;
             FrShareMargin.Visibility = Visibility.Visible;
             BdShare.Visibility = Visibility.Visible;
-            SvContent.Padding = new Thickness(20, 0, 20, 20);
+            LvContent.Padding = new Thickness(0, 0, 0, 20);
             GdMain.Margin = new Thickness(0);
         }
 
@@ -141,7 +141,7 @@ public sealed partial class TimelineControl : UserControl
 
         var controls = GetCurrentCommentControls();
         controls.ForEach(x => x.UnloadMedia());
-        SpComments.Children.Clear();
+        LvComments.Items.Clear();
 
         PpUser?.DisposeImage();
         (FrLink.Content as LinkControl)?.UnloadMedia();
@@ -277,7 +277,6 @@ public sealed partial class TimelineControl : UserControl
         copyUrlPostMenuFlyoutItem.Command = copyUrlCommand;
         shareFlyout.Items.Add(copyUrlPostMenuFlyoutItem);
         BtShare.Flyout = shareFlyout;
-
     }
 
     private async void OnSharePost(XamlUICommand sender, ExecuteRequestedEventArgs args) => await SharePost();
@@ -328,7 +327,7 @@ public sealed partial class TimelineControl : UserControl
         if (!_isShare) _post = await ApiHandler.GetPost(_post.id);
 
         TbName.Text = _post.actor.display_name;
-
+        
         RefreshTimestamp();
 
         var timestampRefreshTimer = new DispatcherTimer();
@@ -344,20 +343,19 @@ public sealed partial class TimelineControl : UserControl
         if (commentCount > 0)
         {
             RtbComments.Visibility = Visibility.Visible;
-            SvComments.Visibility = Visibility.Visible;
+            LvComments.Visibility = Visibility.Visible;
+            await LoadComments();
+
             BdComments.Visibility = Visibility.Visible;
             RnComments.Text = _post.comment_count.ToString();
 
-            SvComments.Visibility = Visibility.Visible;
+            LvComments.Visibility = Visibility.Visible;
             BdComments.Visibility = Visibility.Visible;
-            await LoadComments();
-            SvComments.UpdateLayout();
-            SvComments.ChangeView(0, double.MaxValue, 1);
         }
         else
         {
             RtbComments.Visibility = Visibility.Collapsed;
-            SvComments.Visibility = Visibility.Collapsed;
+            LvComments.Visibility = Visibility.Collapsed;
             BdComments.Visibility = Visibility.Collapsed;
         }
 
@@ -379,8 +377,8 @@ public sealed partial class TimelineControl : UserControl
         if (_isOverlay)
             SpPostInformation.Padding = new Thickness(0, 5, 0, 5);
 
-        if ((_post.media?.Count ?? 0) > 0) FvMedia.Visibility = Visibility.Visible;
-        else FvMedia.Visibility = Visibility.Collapsed;
+        if ((_post.media?.Count ?? 0) > 0) GvMedia.Visibility = Visibility.Visible;
+        else GvMedia.Visibility = Visibility.Collapsed;
 
         Post.SetTextContent(_post.content_decorators, RTbContent);
 
@@ -394,8 +392,12 @@ public sealed partial class TimelineControl : UserControl
         TbShareCount.Text = _post.share_count.ToString();
         if (_post.@object != null && _post.@object.id != null)
             FrShare.Content = new TimelineControl(_post.@object, true, _isOverlay);
+        else
+            FrShare.Visibility = Visibility.Collapsed;
         if (_post.scrap != null)
             FrLink.Content = new LinkControl(_post.scrap);
+        else
+            FrLink.Visibility = Visibility.Collapsed;
 
         (FrShare.Content as TimelineControl)?.RefreshContent();
 
@@ -403,6 +405,14 @@ public sealed partial class TimelineControl : UserControl
         this.UpdateLayout();
 
         if (showLoading) GdLoading.Visibility = Visibility.Collapsed;
+        
+        var scrollViewer = Utility.GetScrollViewerFromBaseListView(LvComments);
+        if(scrollViewer != null) scrollViewer.ViewChanged += OnCommentsScrollViewerViewChanged;
+
+        var itemsCopy = LvContent.Items.ToArray();
+        foreach (FrameworkElement item in itemsCopy)
+            if (item.Visibility == Visibility.Collapsed)
+                LvContent.Items.Remove(item);
     }
 
     private void RefreshTimestamp()
@@ -415,7 +425,7 @@ public sealed partial class TimelineControl : UserControl
 
     private async Task LoadComments(string since = null)
     {
-        if (since == null) SpComments.Children.Clear();
+        if (since == null) LvComments.Items.Clear();
         var comments = await ApiHandler.GetComments(_post.id, since);
         var currentComments = GetCurrentComments();
         if (since != null) comments.Reverse();
@@ -436,10 +446,13 @@ public sealed partial class TimelineControl : UserControl
             control.HideUnaccessableButton(isMyComment, isMyPost);
 
             if (since == null)
-                SpComments.Children.Add(control);
+                LvComments.Items.Add(control);
             else
-                SpComments.Children.Insert(0, control);
+                LvComments.Items.Insert(0, control);
         }
+        LvComments.UpdateLayout();
+        if (LvComments.Items.Count > 0)
+            LvComments.ScrollIntoView(LvComments.Items.LastOrDefault());
     }
 
     private void OnCommentReplyClicked(Comment sender)
@@ -533,12 +546,12 @@ public sealed partial class TimelineControl : UserControl
         window.Content = canvas;
         control.Width = 600;
         control.Height = double.NaN;
-        control.SvContent.MaxHeight = double.MaxValue;
+        control.LvContent.MaxHeight = double.MaxValue;
         control.GdMain.CornerRadius = new CornerRadius(0);
         control.GdComment.Visibility = Visibility.Collapsed;
         control.SpEmotions.Visibility = Visibility.Collapsed;
         control.GdPostInformation.Visibility = Visibility.Collapsed;
-        control.SvContent.Margin = new Thickness(5, 5, 5, 15);
+        control.LvContent.Margin = new Thickness(5, 5, 5, 15);
         control.UpdateLayout();
         await control.RefreshContent(false);
         await Task.Delay(1000);
@@ -654,16 +667,15 @@ public sealed partial class TimelineControl : UserControl
         if (!_isOverlay) MainPage.ShowOverlay(new TimelineControl(_post, false, true));
     }
 
-    private void PointerEnteredShowHand(object sender, PointerRoutedEventArgs e) => Utility.ChangeSystemMouseCursor(true);
-
-    private void PointerExitedShowHand(object sender, PointerRoutedEventArgs e) => Utility.ChangeSystemMouseCursor(false);
+    private void OnPointerEntered(object sender, PointerRoutedEventArgs e) => Utility.ChangeSystemMouseCursor(true);
+    private void OnPointerExited(object sender, PointerRoutedEventArgs e) => Utility.ChangeSystemMouseCursor(false);
 
     private void CloseButtonClicked(object sender, TappedRoutedEventArgs e) => MainPage.HideOverlay();
 
     private void OnUserProfilePictureTapped(object sender, TappedRoutedEventArgs e)
     {
         e.Handled = true;
-        new Flyout() { Content = new UserProfileControl(_post.actor.id, true) { Width = 400 } }.ShowAt(sender as FrameworkElement);
+        new Flyout() { Content = new UserProfileControl(_post.actor.id, true) { Width = 450, Margin = new Thickness(-27) } }.ShowAt(sender as FrameworkElement);
     }
 
     private void OnEmotionsTextBlockTapped(object sender, TappedRoutedEventArgs e)
@@ -910,7 +922,7 @@ public sealed partial class TimelineControl : UserControl
         }
     }
 
-    private List<CommentControl> GetCurrentCommentControls() => SpComments.Children.Select(x => x as CommentControl).ToList();
+    private List<CommentControl> GetCurrentCommentControls() => LvComments.Items.Select(x => x as CommentControl).ToList();
     private List<Comment> GetCurrentComments() => GetCurrentCommentControls().Select(x => x.Tag as Comment).ToList();
 
     private void OnAddEmoticonButtonClicked(object sender, RoutedEventArgs e)

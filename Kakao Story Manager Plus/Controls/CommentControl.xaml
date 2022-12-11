@@ -16,7 +16,7 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
             <Viewbox VerticalAlignment="Top" Width="45" Height="45">
-                <PersonPicture x:Name="PpUser" Tapped="UserProfilePictureTapped"/>
+                <PersonPicture x:Name="PpUser" Tapped="UserProfilePictureTapped" PointerEntered="OnPointerEntered" PointerExited="OnPointerExited"/>
             </Viewbox>
             <Grid Grid.Column="1" Margin="5,5,0,5" VerticalAlignment="Top">
                 <Grid.ColumnDefinitions>
@@ -24,7 +24,7 @@
                     <ColumnDefinition Width="auto"/>
                 </Grid.ColumnDefinitions>
                 <StackPanel HorizontalAlignment="Stretch">
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch" Tapped="OnReplyTapped">
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch" Tapped="OnReplyTapped" PointerEntered="OnPointerEntered" PointerExited="OnPointerExited">
                         <TextBlock x:Name="TbName" Text="로딩중..." FontSize="15" FontWeight="Bold" TextWrapping="Wrap"/>
                         <TextBlock x:Name="TbTime" Text="방금 전 (수정됨)" Foreground="{ThemeResource Gray6}" Margin="5,0,0,0" FontSize="12.5" FontWeight="Bold" TextWrapping="Wrap" VerticalAlignment="Bottom"/>
                         <StackPanel x:Name="SpLike"  Orientation="Horizontal" Margin="5,0,0,0" Tapped="LikeListTapped">

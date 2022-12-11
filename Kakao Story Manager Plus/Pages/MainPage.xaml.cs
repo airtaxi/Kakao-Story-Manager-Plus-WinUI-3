@@ -9,13 +9,11 @@ using KSMP.Utils;
 using Microsoft.Toolkit.Uwp.Notifications;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Navigation;
-using KSMP;
-using Windows.ApplicationModel.DataTransfer;
 using static KSMP.ClassManager;
 using static KSMP.ApiHandler.DataType.FriendData;
+using Microsoft.UI.Input;
 
 namespace KSMP.Pages;
 
@@ -26,13 +24,13 @@ public sealed partial class MainPage : Page
     public static string LastArgs = null;
     public static string LatestNotificationId = null;
 
-    private static MainPage s_instance;
+    public static MainPage Instance;
     private static Timer s_notificationTimer = null;
 
     public MainPage()
     {
         InitializeComponent();
-        s_instance = this;
+        Instance = this;
 
         if (s_notificationTimer == null)
         {
@@ -57,9 +55,7 @@ public sealed partial class MainPage : Page
         else NavigateTimeline();
     }
 
-    public static void HideSettingsFlyout() => (s_instance.BtSettings.Tag as Flyout)?.Hide();
-
-    public static MainPage GetInstance() => s_instance;
+    public static void HideSettingsFlyout() => (Instance.BtSettings.Tag as Flyout)?.Hide();
 
     private DateTime? _lastNotificationTimestamp = null;
 
@@ -109,9 +105,9 @@ public sealed partial class MainPage : Page
         string profileId = GetProfileIdFromNotification(notification);
         string activityId = GetActivityIdFromNotification(notification);
 
-        _ = s_instance.RunOnMainThreadAsync(async () =>
+        _ = Instance.RunOnMainThreadAsync(async () =>
         {
-            var timelineControl = s_instance.FrOverlay.Content as TimelineControl;
+            var timelineControl = Instance.FrOverlay.Content as TimelineControl;
             if (timelineControl == null) return;
             else if (timelineControl.PostId == activityId) await timelineControl.RefreshContent();
         });
@@ -178,8 +174,8 @@ public sealed partial class MainPage : Page
     {
         LastArgs = args;
         Utility.ManuallyDisposeAllMedias();
-        if (args != null) s_instance.FrContent.Navigate(typeof(TimelinePage), args);
-        else s_instance.FrContent.Navigate(typeof(TimelinePage));
+        if (args != null) Instance.FrContent.Navigate(typeof(TimelinePage), args);
+        else Instance.FrContent.Navigate(typeof(TimelinePage));
     }
 
     public static void ShowTimeline()
@@ -192,22 +188,22 @@ public sealed partial class MainPage : Page
 
     public static void ShowMyProfile()
     {
-        if (s_instance == null) return;
+        if (Instance == null) return;
         ShowWindow();
         HideOverlay();
         NavigateTimeline(Me.id);
     }
 
-    public static bool IsFriendListViewLoaded => (s_instance.LvFriends.ItemsSource as List<FriendProfile>) != null;
+    public static bool IsFriendListViewLoaded => (Instance.LvFriends.ItemsSource as List<FriendProfile>) != null;
 
     public static void SelectFriend(string id)
     {
-        var page = s_instance.FrContent.Content as TimelinePage;
+        var page = Instance.FrContent.Content as TimelinePage;
         if (!string.IsNullOrEmpty(id) && page?.Id == id) return;
 
-        var items = s_instance.LvFriends.ItemsSource as List<FriendProfile>;
+        var items = Instance.LvFriends.ItemsSource as List<FriendProfile>;
         var item = items.FirstOrDefault(x => x.Id == id);
-        s_instance.LvFriends.SelectedItem = item;
+        Instance.LvFriends.SelectedItem = item;
     }
 
     private static async Task RefreshFriends()
@@ -216,11 +212,11 @@ public sealed partial class MainPage : Page
         await UserTagManager.InitializeAsync(Friends.profiles);
     }
 
-    public static TimelineControl GetOverlayTimeLineControl() => s_instance?.FrOverlay?.Content as TimelineControl;
+    public static TimelineControl GetOverlayTimeLineControl() => Instance?.FrOverlay?.Content as TimelineControl;
     public static void ShowOverlay(UIElement element, bool isSecond = false)
     {
-        var overlay = isSecond ? s_instance.GdOverlay2 : s_instance.GdOverlay;
-        var frame = isSecond ? s_instance.FrOverlay2 : s_instance.FrOverlay;
+        var overlay = isSecond ? Instance.GdOverlay2 : Instance.GdOverlay;
+        var frame = isSecond ? Instance.FrOverlay2 : Instance.FrOverlay;
         overlay.Visibility = Visibility.Visible;
         (frame.Content as TimelineControl)?.UnloadMedia();
         frame.Content = element;
@@ -228,7 +224,7 @@ public sealed partial class MainPage : Page
 
     public static void HideOverlay(bool willDispose = true)
     {
-        if (s_instance == null) return;
+        if (Instance == null) return;
         var writePostButton = MainWindow.GetWritePostButton();
         var isWritePostFlyoutOpened = writePostButton?.Flyout?.IsOpen ?? false;
         if(isWritePostFlyoutOpened)
@@ -238,12 +234,12 @@ public sealed partial class MainPage : Page
             writePostButton.Flyout.Hide();
             return;
         }
-        var isSecond = s_instance.GdOverlay2.Visibility == Visibility.Visible;
-        var overlay = isSecond ? s_instance.GdOverlay2 : s_instance.GdOverlay;
+        var isSecond = Instance.GdOverlay2.Visibility == Visibility.Visible;
+        var overlay = isSecond ? Instance.GdOverlay2 : Instance.GdOverlay;
         overlay.Visibility = Visibility.Collapsed;
 
         if (!willDispose) return;
-        var frame = isSecond ? s_instance.FrOverlay2 : s_instance.FrOverlay;
+        var frame = isSecond ? Instance.FrOverlay2 : Instance.FrOverlay;
         (frame.Content as TimelineControl)?.UnloadMedia();
         frame.Content = null;
     }
@@ -279,21 +275,22 @@ public sealed partial class MainPage : Page
         NavigateTimeline(data.Id);
     }
 
-    private void ProfilePointerEntered(object sender, PointerRoutedEventArgs e) => Utility.ChangeSystemMouseCursor(true);
+    public static void SetCursor(InputSystemCursorShape shape) => Instance.ProtectedCursor = InputSystemCursor.Create(shape);
 
+    private void ProfilePointerEntered(object sender, PointerRoutedEventArgs e) => Utility.ChangeSystemMouseCursor(true);
     private void ProfilePointerExited(object sender, PointerRoutedEventArgs e) => Utility.ChangeSystemMouseCursor(false);
 
     public static void ShowProfile(string id)
     {
-        var itemsSource = s_instance.LvFriends.ItemsSource as List<FriendProfile>;
+        var itemsSource = Instance.LvFriends.ItemsSource as List<FriendProfile>;
         var item = itemsSource.Where(x => x.Id == id);
-        s_instance.LvFriends.SelectedItem = item;
+        Instance.LvFriends.SelectedItem = item;
 
         HideOverlay();
         NavigateTimeline(id);
     }
 
-    public static TimelinePage GetTimelinePage() => s_instance.FrContent.Content as TimelinePage;
+    public static TimelinePage GetTimelinePage() => Instance.FrContent.Content as TimelinePage;
 
     private void FriendPointerEntered(object sender, PointerRoutedEventArgs e) => Utility.ChangeSystemMouseCursor(true);
 

@@ -35,10 +35,10 @@
                         <ColumnDefinition Width="auto"/>
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
-                    <PersonPicture x:Name="PpUser" Width="50" Tapped="OnUserProfilePictureTapped" PointerEntered="PointerEnteredShowHand" PointerExited="PointerExitedShowHand"/>
+                    <PersonPicture x:Name="PpUser" Width="50" Tapped="OnUserProfilePictureTapped" PointerEntered="OnPointerEntered" PointerExited="OnPointerExited"/>
                     <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="10">
                         <TextBlock x:Name="TbName" Text="" FontWeight="Bold"/>
-                        <TextBlock x:Name="TbTime" Text="" Foreground="{ThemeResource Gray6}" Tapped="OnTimeTapped" PointerEntered="PointerEnteredShowHand" PointerExited="PointerExitedShowHand" HorizontalAlignment="Left"/>
+                        <TextBlock x:Name="TbTime" Text="" Foreground="{ThemeResource Gray6}" Tapped="OnTimeTapped" PointerEntered="OnPointerEntered" PointerExited="OnPointerExited" HorizontalAlignment="Left"/>
                     </StackPanel>
                     <Grid Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Top">
                         <StackPanel x:Name="SpShare" Orientation="Horizontal" Visibility="Collapsed">
@@ -49,40 +49,40 @@
                     <Rectangle Fill="Transparent" Grid.Column="1" IsHitTestVisible="True" HorizontalAlignment="Right" VerticalAlignment="Top" Tapped="OnSharedPostShareCountTapped" Width="50" Height="50" Margin="-10"/>
                     <StackPanel x:Name="SpMenu" Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Top" Orientation="Horizontal">
                         <Viewbox>
-                            <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe72c;" Foreground="{ThemeResource Gray6}" FontSize="20" Tapped="OnRefreshTapped" Margin="5,0,10,0" PointerEntered="PointerEnteredShowHand" PointerExited="PointerExitedShowHand"/>
+                            <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe72c;" Foreground="{ThemeResource Gray6}" FontSize="20" Tapped="OnRefreshTapped" Margin="5,0,10,0" PointerEntered="OnPointerEntered" PointerExited="OnPointerExited"/>
                         </Viewbox>
                         <Viewbox>
-                            <FontIcon x:Name="FiFavorite" FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe735;" Foreground="{ThemeResource Gray6}" FontSize="20" Tapped="OnAddBookmarkTapped" Margin="5,0,10,0" PointerEntered="PointerEnteredShowHand" PointerExited="PointerExitedShowHand"/>
+                            <FontIcon x:Name="FiFavorite" FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe735;" Foreground="{ThemeResource Gray6}" FontSize="20" Tapped="OnAddBookmarkTapped" Margin="5,0,10,0" PointerEntered="OnPointerEntered" PointerExited="OnPointerExited"/>
                         </Viewbox>
                         <Viewbox>
-                            <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe712;" Foreground="{ThemeResource Gray6}" FontSize="20" Tapped="OnDotMenuTapped" Margin="5,0,0,0" PointerEntered="PointerEnteredShowHand" PointerExited="PointerExitedShowHand"/>
+                            <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe712;" Foreground="{ThemeResource Gray6}" FontSize="20" Tapped="OnDotMenuTapped" Margin="5,0,0,0" PointerEntered="OnPointerEntered" PointerExited="OnPointerExited"/>
                         </Viewbox>
                         <Viewbox>
-                            <FontIcon x:Name="FaClose" FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe711;" Foreground="{ThemeResource Gray6}" FontSize="20" Tapped="CloseButtonClicked" Margin="15,0,0,0" Visibility="Collapsed" PointerEntered="PointerEnteredShowHand" PointerExited="PointerExitedShowHand"/>
+                            <FontIcon x:Name="FaClose" FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe711;" Foreground="{ThemeResource Gray6}" FontSize="20" Tapped="CloseButtonClicked" Margin="15,0,0,0" Visibility="Collapsed" PointerEntered="OnPointerEntered" PointerExited="OnPointerExited"/>
                         </Viewbox>
                     </StackPanel>
                 </Grid>
-                <ScrollViewer x:Name="SvContent" Grid.Row="1" Margin="5,0,5,0" Padding="20,0,20,0" MaxHeight="600">
-                    <StackPanel>
-                        <RichTextBlock x:Name="RTbContent" TextWrapping="Wrap" Margin="5,0,0,0" IsTextSelectionEnabled="True">
-                            <Paragraph>
-                                <InlineUIContainer/>
-                            </Paragraph>
-                        </RichTextBlock>
-                        <Grid Margin="5,10,5,0" HorizontalAlignment="Stretch">
-                            <Rectangle Stroke="{ThemeResource Gray6}"/>
-                            <FlipView x:Name="FvMedia" Visibility="Collapsed" HorizontalAlignment="Stretch" VerticalAlignment="Center" MaxHeight="400" Margin="1" Tapped="OnMediaTapped" SelectionChanged="OnMediaFlipViewSelectionChanged">
-                                <FlipView.ItemTemplate>
-                                    <DataTemplate>
-                                        <Frame Content="{Binding}"/>
-                                    </DataTemplate>
-                                </FlipView.ItemTemplate>
-                            </FlipView>
-                        </Grid>
-                        <Frame x:Name="FrShare" Tapped="OnSharePostTapped"/>
-                        <Frame x:Name="FrLink"/>
-                    </StackPanel>
-                </ScrollViewer>
+                <ListView x:Name="LvContent" Grid.Row="1"
+                          Margin="5,0,5,0" MaxHeight="600"
+                          Padding="0,0,0,0" SelectionMode="None">
+                    <RichTextBlock x:Name="RTbContent" TextWrapping="Wrap" Margin="5,0,0,10" IsTextSelectionEnabled="True">
+                        <Paragraph>
+                            <InlineUIContainer/>
+                        </Paragraph>
+                    </RichTextBlock>
+                    <Grid x:Name="GvMedia" Margin="5,0,5,0" HorizontalAlignment="Stretch">
+                        <Rectangle Stroke="{ThemeResource Gray6}"/>
+                        <FlipView x:Name="FvMedia" HorizontalAlignment="Stretch" VerticalAlignment="Center" MaxHeight="400" Margin="1" Tapped="OnMediaTapped" SelectionChanged="OnMediaFlipViewSelectionChanged">
+                            <FlipView.ItemTemplate>
+                                <DataTemplate>
+                                    <Frame Content="{Binding}"/>
+                                </DataTemplate>
+                            </FlipView.ItemTemplate>
+                        </FlipView>
+                    </Grid>
+                    <Frame x:Name="FrShare" Tapped="OnSharePostTapped"/>
+                    <Frame x:Name="FrLink"/>
+                </ListView>
                 <StackPanel x:Name="SpEmotions" Orientation="Horizontal" Grid.Row="2" Margin="5,5,5,0" Padding="20,0,20,0" Visibility="Visible">
                     <Button x:Name="BtEmotions" Background="{ThemeResource White}" Width="40" Height="40" CornerRadius="25" Margin="5">
                         <Viewbox>
@@ -111,21 +111,21 @@
                                 </Paragraph>
                             </RichTextBlock>
 
-                            <RichTextBlock x:Name="RtbEmotions" Margin="10,0,0,0" Tapped="OnEmotionsTextBlockTapped" IsTextSelectionEnabled="False">
+                            <RichTextBlock x:Name="RtbEmotions" Margin="10,0,0,0" Tapped="OnEmotionsTextBlockTapped" IsTextSelectionEnabled="False" PointerEntered="OnPointerEntered" PointerExited="OnPointerExited">
                                 <Paragraph>
                                     <Run Text="느낌"/>
                                     <Run x:Name="RnEmotions" Text="0" FontWeight="Bold"/>
                                 </Paragraph>
                             </RichTextBlock>
 
-                            <RichTextBlock x:Name="RtbShares" Margin="10,0,0,0" Tag="Share" Tapped="OnShareCountTextBlockTapped" IsTextSelectionEnabled="False">
+                            <RichTextBlock x:Name="RtbShares" Margin="10,0,0,0" Tag="Share" Tapped="OnShareCountTextBlockTapped" IsTextSelectionEnabled="False" PointerEntered="OnPointerEntered" PointerExited="OnPointerExited">
                                 <Paragraph>
                                     <Run Text="공유"/>
                                     <Run x:Name="RnShares" Text="0" FontWeight="Bold"/>
                                 </Paragraph>
                             </RichTextBlock>
 
-                            <RichTextBlock x:Name="RtbUps" Margin="10,0,0,0" Tag="Up" Tapped="OnShareCountTextBlockTapped" IsTextSelectionEnabled="False">
+                            <RichTextBlock x:Name="RtbUps" Margin="10,0,0,0" Tag="Up" Tapped="OnShareCountTextBlockTapped" IsTextSelectionEnabled="False" PointerEntered="OnPointerEntered" PointerExited="OnPointerExited">
                                 <Paragraph>
                                     <Run Text="UP"/>
                                     <Run x:Name="RnUps" Text="0" FontWeight="Bold"/>
@@ -134,16 +134,20 @@
                         </StackPanel>
                     </StackPanel>
                 </Grid>
-                <Frame x:Name="FrShareMargin" Grid.Row="4" Visibility="Collapsed"/>
+                <Frame x:Name="FrShareMargin" Grid.Row="4" Visibility="Collapsed" PointerEntered="OnPointerEntered" PointerExited="OnPointerExited"/>
                 <Grid x:Name="GdComment" Grid.Row="4" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="auto"/>
                         <RowDefinition x:Name="RdComment" Height="auto"/>
                         <RowDefinition Height="auto"/>
                     </Grid.RowDefinitions>
-                    <ScrollViewer Grid.Row="1" x:Name="SvComments" MaxHeight="200" Background="{ThemeResource White}" Padding="30,5,30,5" Visibility="Collapsed" ViewChanged="OnCommentsScrollViewerViewChanged">
-                        <StackPanel x:Name="SpComments"/>
-                    </ScrollViewer>
+
+                    <ListView Grid.Row="1" x:Name="LvComments"
+                              SelectionMode="None"
+                              MaxHeight="200" Background="{ThemeResource White}"
+                              Padding="0,5,0,5"
+                              Visibility="Collapsed"/>
+
                     <Grid Grid.Row="2" Background="{ThemeResource White3}" Visibility="Visible">
                         <Grid>
                             <Grid.ColumnDefinitions>

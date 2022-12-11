@@ -7,7 +7,6 @@ using KSMP.Extension;
 using static KSMP.ApiHandler.DataType.CommentData;
 using KSMP.Pages;
 using static KSMP.ClassManager;
-using KSMP;
 using System.Threading.Tasks;
 using KSMP.Utils;
 using System;
@@ -206,4 +205,7 @@ public sealed partial class CommentControl : UserControl
     private void OnReplyUserCommentButtonClicked(object sender, RoutedEventArgs e) => OnReplyClicked.Invoke(_comment);
 
     private void OnCommentMenuTapped(object sender, TappedRoutedEventArgs e) => e.Handled = true;
+
+    private void OnPointerEntered(object sender, PointerRoutedEventArgs e) => Utility.ChangeSystemMouseCursor(true);
+    private void OnPointerExited(object sender, PointerRoutedEventArgs e) => Utility.ChangeSystemMouseCursor(false);
 }

@@ -1,14 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Net;
-using System.Threading.Tasks;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
-using Windows.Storage;
-using Windows.Storage.Pickers;
-using WinRT.Interop;
 using static KSMP.ApiHandler.DataType.CommentData;
 
 namespace KSMP.Controls;

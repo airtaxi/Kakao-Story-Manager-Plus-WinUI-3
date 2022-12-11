@@ -18,7 +18,7 @@ public sealed partial class EmotionsControl : UserControl
     private async void OnEmotionButtonClick(object sender, RoutedEventArgs e)
     {
         var emotion = (sender as Button).Tag as string;
-        await KSMP.ApiHandler.LikePost(_post.id, emotion);
+        await ApiHandler.LikePost(_post.id, emotion);
         await _timeline.RefreshContent();
         _timeline.HideEmotionsButtonFlyout();
     }

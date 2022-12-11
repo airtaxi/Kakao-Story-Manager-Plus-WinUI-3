@@ -17,7 +17,7 @@
                         <ColumnDefinition Width="50"/>
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
-                    <PersonPicture x:Name="PpProfileImage" Width="50" ProfilePicture="{Binding ProfilePictureUrl}" Tag="{Binding ActorId}" Tapped="ProfileImageTapped"/>
+                    <PersonPicture x:Name="PpProfileImage" Width="50" ProfilePicture="{Binding ProfilePictureUrl}" Tag="{Binding ActorId}"/>
                     <StackPanel Margin="10" Grid.Column="1" VerticalAlignment="Center">
                         <TextBlock x:Name="TbTitle" Text="{Binding Title}" FontWeight="Bold" TextTrimming="CharacterEllipsis" MaxLines="1"/>
                         <TextBlock x:Name="TbDescription" Text="{Binding Description}" TextTrimming="WordEllipsis" MaxLines="1"/>

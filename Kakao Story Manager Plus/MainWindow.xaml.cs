@@ -103,10 +103,10 @@ public sealed partial class MainWindow : Microsoft.UI.Xaml.Window
         _warnCount++;
         if (_warnCount <= 3) return;
 
-        bool willWarnOnHighMemoryUsage = (Utils.Configuration.GetValue("WarnOnHighMemoryUsage") as bool?) ?? true;
+        bool willWarnOnHighMemoryUsage = (Configuration.GetValue("WarnOnHighMemoryUsage") as bool?) ?? true;
         if (!willWarnOnHighMemoryUsage) return;
         _isMemoryWarningDialogShown = true;
-        var result = await MainPage.GetInstance()?.ShowMessageDialogAsync("WinUI 프레임워크 버그로 인하여 누수된 메모리가 다량(1GiB)으로 누적되었습니다.\n이 경우, 시스템 성능을 저해할 수 있습니다.\n프로그램을 재실행하여 메모리를 정리하시겠습니까?\n이 메시지 표시 설정은 프로필 우측 상단 옵션에서 변경할 수 있습니다.", "경고", true);
+        var result = await MainPage.Instance?.ShowMessageDialogAsync("WinUI 프레임워크 버그로 인하여 누수된 메모리가 다량(1GiB)으로 누적되었습니다.\n이 경우, 시스템 성능을 저해할 수 있습니다.\n프로그램을 재실행하여 메모리를 정리하시겠습니까?\n이 메시지 표시 설정은 프로필 우측 상단 옵션에서 변경할 수 있습니다.", "경고", true);
         if (result == ContentDialogResult.Primary) Utility.SaveCurrentStateAndRestartProgram();
     }
 
@@ -115,7 +115,7 @@ public sealed partial class MainWindow : Microsoft.UI.Xaml.Window
     private void SetupTheme()
     {
         FrameworkElement root = Content as FrameworkElement;
-        var themeSetting = Utils.Configuration.GetValue("ThemeSetting") as string ?? "Default";
+        var themeSetting = Configuration.GetValue("ThemeSetting") as string ?? "Default";
 
         Windows.UI.Color white;
         if (themeSetting == "Light")
@@ -146,8 +146,8 @@ public sealed partial class MainWindow : Microsoft.UI.Xaml.Window
     private async Task<bool> OnReloginRequiredHandler()
     {
         FrMain.IsEnabled = false;
-        var email = Utils.Configuration.GetValue("email") as string;
-        var password = Utils.Configuration.GetValue("password") as string;
+        var email = Configuration.GetValue("email") as string;
+        var password = Configuration.GetValue("password") as string;
         var success = LoginManager.LoginWithSelenium(email, password);
         if (!success) await FrMain.ShowMessageDialogAsync("재로그인 도중 문제가 발생하였습니다.", "오류");
         FrMain.IsEnabled = true;
@@ -341,7 +341,7 @@ public sealed partial class MainWindow : Microsoft.UI.Xaml.Window
 
     private async void OnPreviewKeyDown(object sender, KeyRoutedEventArgs e)
     {
-        var isControlDown = Utils.Common.IsModifierDown();
+        var isControlDown = Common.IsModifierDown();
 
         if (e.Key == Windows.System.VirtualKey.Escape)
             MainPage.HideOverlay();
@@ -392,7 +392,7 @@ public sealed partial class MainWindow : Microsoft.UI.Xaml.Window
 
     private async void OnExitButtonClicked(object sender, RoutedEventArgs e)
     {
-        var dialogResult = await MainPage.GetInstance().ShowMessageDialogAsync("정말로 프로그램을 종료하시겠습니까?", "경고", true);
+        var dialogResult = await MainPage.Instance.ShowMessageDialogAsync("정말로 프로그램을 종료하시겠습니까?", "경고", true);
         if (dialogResult == ContentDialogResult.Primary) Environment.Exit(0);
     }
 
@@ -437,7 +437,7 @@ public sealed partial class MainWindow : Microsoft.UI.Xaml.Window
         if (hasImage)
         {
             await Task.Delay(400);
-            var result = await MainPage.GetInstance().ShowMessageDialogAsync("클립보드에 이미지가 있습니다.\n이미지를 추가할까요?", "안내", true);
+            var result = await MainPage.Instance.ShowMessageDialogAsync("클립보드에 이미지가 있습니다.\n이미지를 추가할까요?", "안내", true);
             if (result != ContentDialogResult.Primary) return;
 
             var filePath = await Utility.GenerateClipboardImagePathAsync(dataPackageView);
@@ -447,11 +447,11 @@ public sealed partial class MainWindow : Microsoft.UI.Xaml.Window
 
     private async void OnLogoutButtonClicked(object sender, RoutedEventArgs e)
     {
-        var dialogResult = await MainPage.GetInstance().ShowMessageDialogAsync("정말로 로그아웃 하시겠습니까?", "경고", true);
+        var dialogResult = await MainPage.Instance.ShowMessageDialogAsync("정말로 로그아웃 하시겠습니까?", "경고", true);
         if (dialogResult == ContentDialogResult.Primary)
         {
             Configuration.SetValue("willRememberCredentials", false);
-            await MainPage.GetInstance().ShowMessageDialogAsync("로그아웃되었습니다.\n프로그램을 재실행해주세요.", "안내");
+            await MainPage.Instance.ShowMessageDialogAsync("로그아웃되었습니다.\n프로그램을 재실행해주세요.", "안내");
             Environment.Exit(0);
         }
     }

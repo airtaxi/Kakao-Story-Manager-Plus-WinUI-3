@@ -46,6 +46,8 @@ public static class Utility
 
         LoadedImages.ForEach(image =>
         {
+            image.PointerEntered -= OnPointerEntered;
+            image.PointerExited -= OnPointerExited;
             image.RightTapped -= OnImageRightTapped;
             image?.DisposeImage();
         });
@@ -96,7 +98,10 @@ public static class Utility
                     bitmap.UriSource = new Uri("ms-appx:///Assets/Video.png");
                     bitmap.CreateOptions = BitmapCreateOptions.IgnoreImageCache;
                     image.Source = bitmap;
-
+                    image.PointerEntered += OnPointerEntered;
+                    image.PointerExited += OnPointerExited;
+                    image.RightTapped += OnImageRightTapped;
+                    
                     LoadedImages.Add(image);
                     medias.Add(image);
                 }
@@ -108,6 +113,8 @@ public static class Utility
                     Tag = medium.origin_url,
                     Stretch = Stretch.Uniform
                 };
+                image.PointerEntered += OnPointerEntered;
+                image.PointerExited += OnPointerExited;
                 image.RightTapped += OnImageRightTapped;
                 SetImageUrlSource(image, url);
                 
@@ -183,6 +190,9 @@ public static class Utility
         await LoadAnimatedEmoticonImage(image, url);
     }
 
+    private static void OnPointerEntered(object sender, PointerRoutedEventArgs e) => MainPage.SetCursor(Microsoft.UI.Input.InputSystemCursorShape.Hand);
+    private static void OnPointerExited(object sender, PointerRoutedEventArgs e) => MainPage.SetCursor(Microsoft.UI.Input.InputSystemCursorShape.Arrow);
+    
     private static void OnVideoPointerEntered(object sender, PointerRoutedEventArgs e) => (sender as MediaPlayerElement).TransportControls.Show();
     private static void OnVideoPointerExited(object sender, PointerRoutedEventArgs e) => (sender as MediaPlayerElement).TransportControls.Hide();
     private static void OnVideoTapped(object sender, TappedRoutedEventArgs e) => (sender as MediaPlayerElement).TransportControls.Show();
@@ -230,7 +240,7 @@ public static class Utility
             File.WriteAllBytes(path, bytes);
             var file = await StorageFile.GetFileFromPathAsync(path);
             using var stream = await file.OpenAsync(FileAccessMode.Read);
-            await MainPage.GetInstance().RunOnMainThreadAsync(async () => image.Source = await GenerateImageLocalFileStream(stream));
+            await MainPage.Instance.RunOnMainThreadAsync(async () => image.Source = await GenerateImageLocalFileStream(stream));
         }
         catch (Exception) { }
         finally { File.Delete(path); }
@@ -254,7 +264,7 @@ public static class Utility
             await Task.Run(() => EmoticonDecryptor.ConvertWebPToGif(bytes, path));
             var file = await StorageFile.GetFileFromPathAsync(path);
             using var stream = await file.OpenAsync(FileAccessMode.Read);
-            await MainPage.GetInstance().RunOnMainThreadAsync(async () => image.Source = await GenerateImageLocalFileStream(stream));
+            await MainPage.Instance.RunOnMainThreadAsync(async () => image.Source = await GenerateImageLocalFileStream(stream));
         }
         catch (Exception) { }
         finally { File.Delete(path); }
@@ -296,7 +306,10 @@ public static class Utility
 
     public static void ChangeSystemMouseCursor(bool isHand)
     {
-        //TODO: Implement
+        if (isHand)
+            MainPage.SetCursor(Microsoft.UI.Input.InputSystemCursorShape.Hand);
+        else
+            MainPage.SetCursor(Microsoft.UI.Input.InputSystemCursorShape.Arrow);
     }
 
     public static SolidColorBrush GetSolidColorBrushFromHexString(string hex)
@@ -331,7 +344,7 @@ public static class Utility
 
     public static async void SaveCurrentStateAndRestartProgram()
     {
-        var appWindow = MainWindow.Instance.GetAppWindow();
+        var appWindow = Instance.GetAppWindow();
         var presenter = appWindow.Presenter as OverlappedPresenter;
         var isMaximized = presenter.State == OverlappedPresenterState.Maximized;
         var overlay = MainPage.GetOverlayTimeLineControl();
@@ -354,14 +367,15 @@ public static class Utility
         binaryPath += ".exe";
         Process.Start(binaryPath);
 
-        MainWindow.Instance.SetClosable();
+        Instance.SetClosable();
         await Task.Delay(100);
-        MainWindow.Instance.Close();
+        Instance.Close();
     }
 
     public static ScrollViewer GetScrollViewerFromBaseListView(ListViewBase listViewBase)
     {
-        Border border = VisualTreeHelper.GetChild(listViewBase, 0) as Border;
+        var child = VisualTreeHelper.GetChild(listViewBase, 0);
+        Border border = child as Border;
         if (border == null) return null;
         return VisualTreeHelper.GetChild(border, 0) as ScrollViewer;
     }
@@ -413,7 +427,7 @@ public static class Utility
     public static async Task<StorageFile> ShowImageFileSaveDialogAsync(string url)
     {
         var fileSavePicker = new FileSavePicker();
-        InitializeWithWindow.Initialize(fileSavePicker, WindowNative.GetWindowHandle(MainWindow.Instance));
+        InitializeWithWindow.Initialize(fileSavePicker, WindowNative.GetWindowHandle(Instance));
         var extension = Path.GetExtension(url).Split("?")[0];
         fileSavePicker.SuggestedStartLocation = PickerLocationId.PicturesLibrary;
         fileSavePicker.FileTypeChoices.Add("Image File", new List<string>() { extension });

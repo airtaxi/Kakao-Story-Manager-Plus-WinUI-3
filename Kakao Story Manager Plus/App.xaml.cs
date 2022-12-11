@@ -119,7 +119,7 @@ public partial class App : Application
         {
             var message = exception.Message ?? string.Empty;
             if (message.Contains("E_FAIL")) return;
-            await MainPage.GetInstance().ShowMessageDialogAsync($"{exception.Message}/{exception.StackTrace}", "런타임 오류");
+            await MainPage.Instance.ShowMessageDialogAsync($"{exception.Message}/{exception.StackTrace}", "런타임 오류");
         }
         catch (Exception) { } //Ignore
     }
@@ -155,13 +155,13 @@ public partial class App : Application
                         MainPage.ShowProfile(profileId);
                     else if (activityId != null)
                     {
-                        var instance = MainPage.GetInstance();
+                        var instance = MainPage.Instance;
 
-                        var post = await KSMP.ApiHandler.GetPost(activityId);
+                        var post = await ApiHandler.GetPost(activityId);
                         if (post != null) MainPage.ShowOverlay(new TimelineControl(post, false, true));
                         else await instance.ShowMessageDialogAsync("글을 볼 수 없거나 나만 보기로 설정된 글입니다.", "오류");
                     }
-                    else if (action == "Like") await KSMP.ApiHandler.LikeComment(activityId, commentId, false);
+                    else if (action == "Like") await ApiHandler.LikeComment(activityId, commentId, false);
                 }
             }
             catch (Exception) { }
