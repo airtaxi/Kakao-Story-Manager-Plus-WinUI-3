@@ -5,6 +5,7 @@ using Microsoft.UI.Xaml.Navigation;
 using KSMP.Controls;
 using System.Linq;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 namespace KSMP.Pages;
 
@@ -17,6 +18,7 @@ public sealed partial class TimelinePage : Page
     public bool IsMyTimeline => Id == MainPage.Me.id;
     public readonly ListViewBase BaseListView;
 
+    private readonly ObservableCollection<FrameworkElement> _items = new();
     public static string LastFeedId = null; 
 
     public TimelinePage()
@@ -34,6 +36,7 @@ public sealed partial class TimelinePage : Page
             GvContent.Visibility = Visibility.Collapsed;
             BaseListView = LvContent;
         }
+        BaseListView.ItemsSource = _items;
 
         LastFeedId = null;
     }
@@ -49,7 +52,7 @@ public sealed partial class TimelinePage : Page
 
     public List<TimelineControl> GetTimelineControls()
     {
-        var list = BaseListView.Items.Select(x => x as TimelineControl).ToList();
+        var list = _items.Select(x => x as TimelineControl).ToList();
         list.RemoveAll(x => x is null);
         return list;
     }
@@ -64,14 +67,14 @@ public sealed partial class TimelinePage : Page
         App.RecordedFirstFeedId = null;
     }
 
-    public static void HidePostFromTimeline(TimelineControl control) => s_instance.BaseListView.Items.Remove(control);
+    public static void HidePostFromTimeline(TimelineControl control) => s_instance._items.Remove(control);
 
     public void RemovePost(string postId)
     {
-        foreach (Control item in BaseListView.Items)
+        foreach (Control item in _items)
         {
             var timelineControl = item as TimelineControl;
-            if (timelineControl?.PostId == postId) BaseListView.Items.Remove(item);
+            if (timelineControl?.PostId == postId) _items.Remove(item);
         }
     }
 
@@ -88,22 +91,24 @@ public sealed partial class TimelinePage : Page
         PrLoading.Visibility = Visibility.Visible;
         if (from == null)
         {
-            BaseListView.Items.Clear();
-            foreach (object item in BaseListView.Items) (item as TimelineControl)?.UnloadMedia();
+            _items.Clear();
+            foreach (object item in _items) (item as TimelineControl)?.UnloadMedia();
             Utility.ManuallyDisposeAllMedias();
         }
 
         if (string.IsNullOrEmpty(Id))
         {
+            var items = new List<FrameworkElement>();
             var data = await ApiHandler.GetFeed(from);
             foreach (var feed in data.feeds)
             {
                 if (IsValidFeed(feed))
                 {
                     var control = new TimelineControl(feed);
-                    BaseListView.Items.Add(control);
+                    items.Add(control);
                 }
             }
+            items.ForEach(x => _items.Add(x));
             LastFeedId = _lastFeedId;
             _lastFeedId = data.feeds.LastOrDefault()?.id;
         }
@@ -116,19 +121,22 @@ public sealed partial class TimelinePage : Page
                     Content = new UserProfileControl(Id),
                     Visibility = Visibility.Visible
                 };
-                BaseListView.Items.Add(profileFrame);
+                _items.Add(profileFrame);
                 await Task.Delay(500);
             }
 
+            var items = new List<FrameworkElement>();
             var data = await ApiHandler.GetProfileFeed(Id, from);
             foreach (var feed in data.activities)
             {
                 if (IsValidFeed(feed))
                 {
                     var control = new TimelineControl(feed);
-                    BaseListView.Items.Add(control);
+                    items.Add(control);
                 }
             }
+            items.ForEach(x => _items.Add(x));
+            
             LastFeedId = _lastFeedId;
             if (data.activities.Count > 15) _lastFeedId = data.activities.LastOrDefault().id;
             else _lastFeedId = null;
@@ -139,7 +147,7 @@ public sealed partial class TimelinePage : Page
         ValidateTimelineContent();
         PrLoading.Visibility = Visibility.Collapsed;
         bool willClearTimelineOnRefresh = (Utils.Configuration.GetValue("ClearTimelineOnRefresh") as bool?) ?? true;
-        var first = BaseListView.Items.FirstOrDefault();
+        var first = _items.FirstOrDefault();
         if (willClearTimelineOnRefresh && first != null) BaseListView.ScrollIntoView(first);
         IsEnabled = true;
     }
@@ -163,7 +171,7 @@ public sealed partial class TimelinePage : Page
             if (willClearTimelineOnRefresh)
             {
                 Utility.ManuallyDisposeAllMedias();
-                BaseListView.Items.Clear();
+                _items.Clear();
             }
 
             await Refresh(_lastFeedId);
@@ -178,7 +186,7 @@ public sealed partial class TimelinePage : Page
         double margin = 0;
 
         var scrollViewer = Utility.GetScrollViewerFromBaseListView(BaseListView);
-        foreach (Control control in BaseListView.Items)
+        foreach (Control control in _items)
         {
             if (control is not TimelineControl) continue;
             var timelineControl = control as TimelineControl;
