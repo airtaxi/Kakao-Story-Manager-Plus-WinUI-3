@@ -117,7 +117,7 @@ public sealed partial class CommentControl : UserControl
     private void UserProfilePictureTapped(object sender, TappedRoutedEventArgs e)
     {
         e.Handled = true;
-        new Flyout() { Content = new UserProfileControl(_comment.writer.id, true) { Width = 400 } }.ShowAt(sender as FrameworkElement);
+        new Flyout() { Content = new UserProfileControl(_comment.writer.id, true) { Width = 450, Margin = new Thickness(-27) } }.ShowAt(sender as FrameworkElement);
     }
 
     private async void LikeListTapped(object sender, TappedRoutedEventArgs e)
