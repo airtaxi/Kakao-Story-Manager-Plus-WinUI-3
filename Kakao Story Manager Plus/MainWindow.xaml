@@ -47,7 +47,9 @@
                     BorderThickness="0"
                     Click="OnProgramIconClicked">
                 <Image x:Name="TitleBarIcon" Source="/icon.ico" 
-                    Width="25" Height="25"/>
+                       Width="25" Height="25"
+                       PointerEntered="OnPointerEntered"
+                       PointerExited="OnPointerExited"/>
             </Button>
 
             <TextBlock x:Name="TitleTextBlock"

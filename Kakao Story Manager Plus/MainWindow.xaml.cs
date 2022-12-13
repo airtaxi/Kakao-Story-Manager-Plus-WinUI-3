@@ -491,6 +491,9 @@ public sealed partial class MainWindow : Microsoft.UI.Xaml.Window
         flyout.Content = control;
         control.OnPostCompleted += OnPostCompleted;
     }
+    
+    private void OnPointerEntered(object sender, PointerRoutedEventArgs e) => Utility.ChangeSystemMouseCursor(true);
+    private void OnPointerExited(object sender, PointerRoutedEventArgs e) => Utility.ChangeSystemMouseCursor(false);
 
     private void OnWritePostFlyoutOpened(object sender, object e)
     {
