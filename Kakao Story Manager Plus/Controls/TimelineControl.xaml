@@ -208,7 +208,7 @@
                 </Button>
             </Grid>
             <Grid x:Name="GdLoading" Margin="10" CornerRadius="5" Visibility="Collapsed">
-                <Rectangle Fill="{ThemeResource Black}" Opacity="0.85"/>
+                <Rectangle Fill="{ThemeResource White}" Opacity="0.85"/>
                 <ProgressRing IsIndeterminate="True" IsActive="True" Width="150" Height="150"/>
             </Grid>
         </Grid>
