@@ -118,7 +118,6 @@ public static class Utility
                 image.RightTapped += OnImageRightTapped;
                 SetImageUrlSource(image, url);
                 
-                LoadedImages.Add(image);
                 medias.Add(image);
             }
         }
@@ -273,16 +272,18 @@ public static class Utility
     private static void LoadImage(Image image, string url)
     {
         var bitmap = new BitmapImage();
-        bitmap.UriSource = new Uri(url);
         image.Source = bitmap;
+        bitmap.UriSource = new Uri(url);
+        bitmap.CreateOptions = BitmapCreateOptions.IgnoreImageCache;
     }
 
     private static void LoadPersonPicture(PersonPicture personPicture, string url)
     {
 
         var bitmap = new BitmapImage();
-        bitmap.UriSource = new Uri(url);
         personPicture.ProfilePicture = bitmap;
+        bitmap.UriSource = new Uri(url);
+        bitmap.CreateOptions = BitmapCreateOptions.IgnoreImageCache;
     }
 
     public static async Task SetTextClipboard(UIElement element, string text, string message = "복사되었습니다.")
