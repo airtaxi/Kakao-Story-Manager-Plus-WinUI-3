@@ -17,6 +17,7 @@ public partial class ApiHandler
 
     private static CookieContainer s_cookieContainer { get; set; } = null;
     private static string s_kakaoAppKey { get; set; } = "90c1434c4e8916a6ec5aa88109889601";
+    private static DateTime s_emoticonCredentialUpdatedTime = DateTime.MinValue;
     private static AuthController s_emoticonCredential;
 
     public delegate Task<bool> ReloginRequired();
@@ -49,7 +50,12 @@ public partial class ApiHandler
 
     public static async Task<string> GetEmoticonUrl(string id, string resourceId)
     {
-        s_emoticonCredential ??= await GetEmoticonCredential(); 
+        var hoursAfterLastEmoticonCredential = (DateTime.UtcNow - s_emoticonCredentialUpdatedTime).TotalHours;
+        if (hoursAfterLastEmoticonCredential > 1)
+        {
+            s_emoticonCredential = await GetEmoticonCredential();
+            s_emoticonCredentialUpdatedTime = DateTime.UtcNow;
+        }
         var url = EmoticonUrl;
         url += $"/{id}/thum_{resourceId.PadLeft(3, '0')}.png";
         url += $"?credential={s_emoticonCredential.Auth.Credential}";
