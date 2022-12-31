@@ -2,6 +2,7 @@
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using OpenQA.Selenium.DevTools.V106.Network;
 using System;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.DataTransfer;
@@ -59,23 +60,23 @@ public static class PageExtension
         await taskCompletionSource.Task;
     }
 
-    public static async Task<ContentDialogResult> ShowMessageDialogAsync(this UIElement page, string description, string title, bool showCancel = false)
+    public static async Task<ContentDialogResult> ShowMessageDialogAsync(this UIElement page, string description, string title, bool showCancel = false, string okString = "확인", string cancelString = "취소")
     {
-        var dialog = GenerateMessageDialog(page, description, title, showCancel);
+        var dialog = GenerateMessageDialog(page, description, title, showCancel, okString, cancelString);
         return await dialog.ShowAsync();
     }
 
-    public static ContentDialog GenerateMessageDialog(this UIElement page, string description, string title, bool showCancel = false)
+    public static ContentDialog GenerateMessageDialog(this UIElement page, string description, string title, bool showCancel = false, string okString = "확인", string cancelString = "취소")
     {
         ContentDialog dialog = new()
         {
             Title = title,
             Content = description,
 
-            PrimaryButtonText = "확인"
+            PrimaryButtonText = okString
         };
         if (showCancel)
-            dialog.SecondaryButtonText = "취소";
+            dialog.SecondaryButtonText = cancelString;
 
         dialog.XamlRoot = page.XamlRoot;
         dialog.RequestedTheme = (MainWindow.Instance.Content as FrameworkElement).RequestedTheme;
