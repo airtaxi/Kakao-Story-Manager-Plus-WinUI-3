@@ -71,7 +71,7 @@ public sealed partial class TimelinePage : Page
 
     public void RemovePost(string postId)
     {
-        foreach (Control item in _items)
+        foreach (Control item in _items.ToArray())
         {
             var timelineControl = item as TimelineControl;
             if (timelineControl?.PostId == postId) _items.Remove(item);
@@ -142,7 +142,7 @@ public sealed partial class TimelinePage : Page
             else _lastFeedId = null;
         }
 
-        await Task.Delay(250);
+        await Task.Delay(500);
         BaseListView.UpdateLayout();
         ValidateTimelineContent();
         PrLoading.Visibility = Visibility.Collapsed;
