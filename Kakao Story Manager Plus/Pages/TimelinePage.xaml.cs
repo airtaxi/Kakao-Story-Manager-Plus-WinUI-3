@@ -6,6 +6,7 @@ using KSMP.Controls;
 using System.Linq;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using static KSMP.ApiHandler.DataType.CommentData;
 
 namespace KSMP.Pages;
 
@@ -39,6 +40,20 @@ public sealed partial class TimelinePage : Page
         BaseListView.ItemsSource = _items;
 
         LastFeedId = null;
+    }
+
+    public async Task InsertPostAsync(PostData feed)
+    {
+        if (feed == null) return;
+        var first = _items.FirstOrDefault(x => x is TimelineControl) as TimelineControl;
+        if (first.PostId != feed.id)
+        {
+            var control = new TimelineControl(feed);
+            _items.Insert(_items.ToList().FindIndex(x => x is TimelineControl), control);;
+            await control.RefreshContent();
+            await Task.Delay(500);
+            ValidateTimelineContent();
+        }
     }
 
     protected override async void OnNavigatedTo(NavigationEventArgs e)

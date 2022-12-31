@@ -212,8 +212,14 @@ public sealed partial class WritePostControl : UserControl
             _button?.Flyout.Hide();
             OnPostCompleted.Invoke();
 
-            bool willRefreshAfterWritePost = (Utils.Configuration.GetValue("RefreshAfterWritePost") as bool?) ?? true;
-            if(willRefreshAfterWritePost) await MainPage.GetTimelinePage()?.Renew();
+            var timelinePage = MainPage.GetTimelinePage();
+            if (timelinePage == null) return;
+            
+            if(timelinePage.IsMyTimeline || timelinePage.Id == null)
+            {
+                var feed = await ApiHandler.GetProfileFeed(MainPage.Me.id, null);
+                await timelinePage.InsertPostAsync(feed.activities.FirstOrDefault());
+            }
         }
         finally
         {

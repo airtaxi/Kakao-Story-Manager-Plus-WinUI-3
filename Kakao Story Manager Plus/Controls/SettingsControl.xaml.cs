@@ -21,7 +21,6 @@ public sealed partial class SettingsControl : UserControl
         this.InitializeComponent();
         bool willReceiveFavoriteFriendNotification = (Utils.Configuration.GetValue("FavoriteFriendNotification") as bool?) ?? true;
         bool willReceiveEmotionalNotification = (Utils.Configuration.GetValue("EmotionalNotification") as bool?) ?? true;
-        bool willRefreshAfterWritePost = (Utils.Configuration.GetValue("RefreshAfterWritePost") as bool?) ?? true;
         bool willLaunchAtStartup = (Utils.Configuration.GetValue("LaunchAtStartup") as bool?) ?? false;
         bool willUseGifProfileImage = (Utils.Configuration.GetValue("UseGifProfileImage") as bool?) ?? false;
         bool willUseGifInTimeline = (Utils.Configuration.GetValue("UseGifInTimeline") as bool?) ?? false;
@@ -33,7 +32,6 @@ public sealed partial class SettingsControl : UserControl
 
         TsFavoriteFriendNotification.IsOn = willReceiveFavoriteFriendNotification;
         TsEmotionalNotification.IsOn = willReceiveEmotionalNotification;
-        TsRefreshAfterWritePost.IsOn = willRefreshAfterWritePost;
         TsLaunchAtStartup.IsOn = willLaunchAtStartup;
         TsUseGifProfileImage.IsOn = willUseGifProfileImage;
         TsUseGifInTimeline.IsOn = willUseGifInTimeline;
@@ -45,7 +43,6 @@ public sealed partial class SettingsControl : UserControl
 
         TsFavoriteFriendNotification.Toggled += OnReceiveFavoriteFriendNotificationToggleSwitchToggled;
         TsEmotionalNotification.Toggled += OnReceiveEmotionalNotificationToggleSwitchToggled;
-        TsRefreshAfterWritePost.Toggled += OnRefreshAfterWritePostToggleSwitchToggled;
         TsLaunchAtStartup.Toggled += OnLaunchAtStartupToggleSwitchToggled;
         TsUseGifProfileImage.Toggled += OnUseGifProfileImageToggleSwitchToggled;
         TsUseGifInTimeline.Toggled += OnUseGifInTimelineToggleSwitchToggled;
@@ -144,13 +141,6 @@ public sealed partial class SettingsControl : UserControl
         var isOn = toggleSwitch.IsOn;
         Utils.Configuration.SetValue("UseGifProfileImage", isOn);
         RequestProgramRestart();
-    }
-
-    private void OnRefreshAfterWritePostToggleSwitchToggled(object sender, RoutedEventArgs e)
-    {
-        var toggleSwitch = sender as ToggleSwitch;
-        var isOn = toggleSwitch.IsOn;
-        Utils.Configuration.SetValue("RefreshAfterWritePost", isOn);
     }
 
     private void OnDefaultPostWritingPermissionComboBoxSelectionChanged(object sender, SelectionChangedEventArgs e)

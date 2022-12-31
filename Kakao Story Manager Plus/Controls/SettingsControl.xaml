@@ -38,9 +38,6 @@
 
         <TextBlock Text="일반 설정" FontSize="17" FontWeight="Bold"/>
         
-        <ToggleSwitch x:Name="TsRefreshAfterWritePost" OnContent="글쓰기 이후 타임라인 새로고침" OffContent="글쓰기 이후 타임라인 새로고침 안함" Margin="0,5,0,0"
-                      ToolTipService.ToolTip="본 옵션을 활성화 하는 경우, 글을 쓰거나 공유한 경우에 새 글을 보기 위해 타임라인을 초기화합니다."/>
-        
         <ToggleSwitch x:Name="TsUseResponsiveTimeline" OnContent="반응형 타임라인 UI 사용" OffContent="반응형 타임라인 UI 사용 안함" Margin="0,5,0,0"
                       ToolTipService.ToolTip="본 옵션을 활성화 하는 경우, 타임라인에서 화면 크기에 맞추어 게시글의 위치와 크기가 재조정됩니다."/>
         
