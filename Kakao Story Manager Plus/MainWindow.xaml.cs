@@ -143,7 +143,7 @@ public sealed partial class MainWindow : Microsoft.UI.Xaml.Window
 
     public void SetClosable(bool shouldClose = true) => _shouldClose = shouldClose;
 
-    private async Task<bool> OnReloginRequiredHandler()
+    public static Task<bool> OnReloginRequiredHandler()
     {
         FrMain.IsEnabled = false;
         var email = Configuration.GetValue("email") as string;

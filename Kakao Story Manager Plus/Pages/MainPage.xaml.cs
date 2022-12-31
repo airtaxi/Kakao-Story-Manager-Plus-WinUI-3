@@ -61,11 +61,15 @@ public sealed partial class MainPage : Page
 
     private async void OnNotificationTimerElapsed(object sender, ElapsedEventArgs e)
     {
+        s_notificationTimer.Stop();
         try
         {
-            s_notificationTimer.Stop();
-
             var status = await ApiHandler.GetNotificationStatus();
+            if(status == null)
+            {
+                await MainWindow.OnReloginRequiredHandler();
+                return;
+            }
             if (status.NotificationCount == 0 && LatestNotificationId != null) return;
 
             var notifications = await ApiHandler.GetNotifications();
@@ -83,7 +87,7 @@ public sealed partial class MainPage : Page
 
             _lastNotificationTimestamp = first?.created_at;
         }
-        catch (Exception) { } //Ignore
+        catch (Exception) { await MainWindow.OnReloginRequiredHandler(); }
         finally { s_notificationTimer.Start(); }
     }
 
