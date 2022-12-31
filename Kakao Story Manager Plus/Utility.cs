@@ -73,14 +73,24 @@ public static class Utility
 
         var medias = new List<FrameworkElement>();
         bool willUseEmbeddedVideoPlayer = (Configuration.GetValue("UseEmbeddedVideoPlayer") as bool?) ?? false;
+        bool willUseRealGifInTimeline = (Utils.Configuration.GetValue("UseRealGifInTimeline") as bool?) ?? false;
         bool willUseGifInTimeline = (Configuration.GetValue("UseGifInTimeline") as bool?) ?? false;
         willUseGifInTimeline = willUseGifInTimeline || overrideQuality;
+        willUseRealGifInTimeline = willUseRealGifInTimeline || overrideQuality;
         
         foreach (var medium in mediums)
         {
             var defaultUrl = willUseGifInTimeline ? medium?.origin_url : medium.thumbnail_url;
+            
+            //영상인 경우
             var url = defaultUrl ?? medium?.url_hq;
             if (medium?.url_hq != null) url = medium?.url_hq;
+            
+            // gif인 경우
+            var isGifImage = medium?.origin_url?.Contains(".gif") ?? false;
+            if (isGifImage)
+                url = willUseRealGifInTimeline ? medium?.origin_url : medium.thumbnail_url;
+            
             if (url == null) continue;
             else if (url.Contains(".mp4"))
             {

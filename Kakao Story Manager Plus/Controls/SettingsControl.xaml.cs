@@ -23,6 +23,7 @@ public sealed partial class SettingsControl : UserControl
         bool willReceiveEmotionalNotification = (Utils.Configuration.GetValue("EmotionalNotification") as bool?) ?? true;
         bool willLaunchAtStartup = (Utils.Configuration.GetValue("LaunchAtStartup") as bool?) ?? false;
         bool willUseGifProfileImage = (Utils.Configuration.GetValue("UseGifProfileImage") as bool?) ?? false;
+        bool willUseRealGifInTimeline = (Utils.Configuration.GetValue("UseRealGifInTimeline") as bool?) ?? false;
         bool willUseGifInTimeline = (Utils.Configuration.GetValue("UseGifInTimeline") as bool?) ?? false;
         bool willUseEmbeddedVideoPlayer = (Utils.Configuration.GetValue("UseEmbeddedVideoPlayer") as bool?) ?? false;
         bool willClearTimelineOnRefresh = (Utils.Configuration.GetValue("ClearTimelineOnRefresh") as bool?) ?? true;
@@ -36,6 +37,7 @@ public sealed partial class SettingsControl : UserControl
         TsLaunchAtStartup.IsOn = willLaunchAtStartup;
         TsUseGifProfileImage.IsOn = willUseGifProfileImage;
         TsUseGifInTimeline.IsOn = willUseGifInTimeline;
+        TsUseRealGifInTimeline.IsOn = willUseRealGifInTimeline;
         TsUseEmbeddedVideoPlayer.IsOn = willUseEmbeddedVideoPlayer;
         TsClearTimelineOnRefresh.IsOn = willClearTimelineOnRefresh;
         TsWarnOnHighMemoryUsage.IsOn = willWarnOnHighMemoryUsage;
@@ -47,6 +49,7 @@ public sealed partial class SettingsControl : UserControl
         TsEmotionalNotification.Toggled += OnReceiveEmotionalNotificationToggleSwitchToggled;
         TsLaunchAtStartup.Toggled += OnLaunchAtStartupToggleSwitchToggled;
         TsUseGifProfileImage.Toggled += OnUseGifProfileImageToggleSwitchToggled;
+        TsUseRealGifInTimeline.Toggled += OnUseRealGifInTimelineToggleSwitchToggled;
         TsUseGifInTimeline.Toggled += OnUseGifInTimelineToggleSwitchToggled;
         TsUseEmbeddedVideoPlayer.Toggled += OnUseEmbeddedVideoPlayerToggleSwitchToggled;
         TsClearTimelineOnRefresh.Toggled += OnClearTimelineOnRefreshToggleSwitchToggled;
@@ -61,6 +64,14 @@ public sealed partial class SettingsControl : UserControl
 
         ValidateThemeSetting();
         CbxThemeSetting.SelectionChanged += OnThemeSettingComboBoxSelectionChanged;
+    }
+
+    private void OnUseRealGifInTimelineToggleSwitchToggled(object sender, RoutedEventArgs e)
+    {
+        var toggleSwitch = sender as ToggleSwitch;
+        var isOn = toggleSwitch.IsOn;
+        Utils.Configuration.SetValue("UseRealGifInTimeline", isOn);
+        RequestProgramRestart();
     }
 
     private void OnShowMyProfileOnStartupToggleSwitchToggled(object sender, RoutedEventArgs e)
