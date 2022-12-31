@@ -117,7 +117,7 @@ public sealed partial class SettingsControl : UserControl
 
     private async void RequestProgramRestart()
     {
-        var result = await this.ShowMessageDialogAsync("옵션을 완전히 적용하기 위해서는 프로그램 재시작이 필요합니다.\n확인을 누르면 프로그램을 재시작합니다.", "안내", true);
+        var result = await this.ShowMessageDialogAsync("옵션을 완전히 적용하기 위해서는 프로그램 재시작이 필요합니다.", "안내", true, "지금 재시작", "나중에 재시작");
         if (result == ContentDialogResult.Primary) Utility.SaveCurrentStateAndRestartProgram();
     }
 
