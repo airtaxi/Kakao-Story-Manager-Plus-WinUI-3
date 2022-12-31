@@ -157,8 +157,8 @@ public sealed partial class TimelinePage : Page
             else _lastFeedId = null;
         }
 
-        await Task.Delay(500);
         BaseListView.UpdateLayout();
+        await Task.Delay(1000);
         ValidateTimelineContent();
         PrLoading.Visibility = Visibility.Collapsed;
         bool willClearTimelineOnRefresh = (Utils.Configuration.GetValue("ClearTimelineOnRefresh") as bool?) ?? true;
