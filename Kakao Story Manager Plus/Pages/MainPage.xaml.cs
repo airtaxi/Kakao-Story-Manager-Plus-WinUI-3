@@ -42,6 +42,7 @@ public sealed partial class MainPage : Page
     }
 
     private bool _isRefreshed = false;
+    private bool _isStarup = true;
     protected override async void OnNavigatedTo(NavigationEventArgs e)
     {
         base.OnNavigatedTo(e);
@@ -51,8 +52,17 @@ public sealed partial class MainPage : Page
             await Refresh();
             _isRefreshed = true;
         }
+
+        if (_isStarup)
+        {
+            bool willShowMyProfileOnStartup = (Utils.Configuration.GetValue("ShowMyProfileOnStartup") as bool?) ?? false;
+            if (willShowMyProfileOnStartup && string.IsNullOrEmpty(id)) id = Me.id;
+            _isStarup = false;
+        }
+
         if (!string.IsNullOrEmpty(id)) NavigateTimeline(id);
         else NavigateTimeline();
+        
     }
 
     public static void HideSettingsFlyout() => (Instance.BtSettings.Tag as Flyout)?.Hide();

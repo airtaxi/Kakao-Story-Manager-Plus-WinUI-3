@@ -29,6 +29,7 @@ public sealed partial class SettingsControl : UserControl
         bool willWarnOnHighMemoryUsage = (Utils.Configuration.GetValue("WarnOnHighMemoryUsage") as bool?) ?? true;
         bool willUseResponsiveTimeline = (Utils.Configuration.GetValue("UseResponsiveTimeline") as bool?) ?? true;
         bool willUseDynamicTimelineLoading = (Utils.Configuration.GetValue("UseDynamicTimelineLoading") as bool?) ?? false;
+        bool willShowMyProfileOnStartup = (Utils.Configuration.GetValue("ShowMyProfileOnStartup") as bool?) ?? false;
 
         TsFavoriteFriendNotification.IsOn = willReceiveFavoriteFriendNotification;
         TsEmotionalNotification.IsOn = willReceiveEmotionalNotification;
@@ -40,6 +41,7 @@ public sealed partial class SettingsControl : UserControl
         TsWarnOnHighMemoryUsage.IsOn = willWarnOnHighMemoryUsage;
         TsUseResponsiveTimeline.IsOn = willUseResponsiveTimeline;
         TsUseDynamicTimelineLoading.IsOn = willUseDynamicTimelineLoading;
+        TsShowMyProfileOnStartup.IsOn = willShowMyProfileOnStartup;
 
         TsFavoriteFriendNotification.Toggled += OnReceiveFavoriteFriendNotificationToggleSwitchToggled;
         TsEmotionalNotification.Toggled += OnReceiveEmotionalNotificationToggleSwitchToggled;
@@ -51,6 +53,7 @@ public sealed partial class SettingsControl : UserControl
         TsWarnOnHighMemoryUsage.Toggled += OnWarnOnHighMemoryUsageToggleSwitchToggled;
         TsUseResponsiveTimeline.Toggled += OnUseResponsiveTimelineToggleSwitchToggled;
         TsUseDynamicTimelineLoading.Toggled += OnUseDynamicTimelineLoadingToggleSwitchToggled;
+        TsShowMyProfileOnStartup.Toggled += OnShowMyProfileOnStartupToggleSwitchToggled;
 
         int defaultPostWritingPermission = (Utils.Configuration.GetValue("DefaultPostWritingPermission") as int?) ?? 0;
         CbxDefaultPostWritingPermission.SelectedIndex = defaultPostWritingPermission;
@@ -58,6 +61,13 @@ public sealed partial class SettingsControl : UserControl
 
         ValidateThemeSetting();
         CbxThemeSetting.SelectionChanged += OnThemeSettingComboBoxSelectionChanged;
+    }
+
+    private void OnShowMyProfileOnStartupToggleSwitchToggled(object sender, RoutedEventArgs e)
+    {
+        var toggleSwitch = sender as ToggleSwitch;
+        var isOn = toggleSwitch.IsOn;
+        Utils.Configuration.SetValue("ShowMyProfileOnStartup", isOn);
     }
 
     private void OnUseEmbeddedVideoPlayerToggleSwitchToggled(object sender, RoutedEventArgs e)
