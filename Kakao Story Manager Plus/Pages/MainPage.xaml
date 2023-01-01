@@ -37,6 +37,14 @@
                             <RowDefinition Height="*"/>
                         </Grid.RowDefinitions>
                         <TextBlock x:Name="TbFriendCount" Text="로딩중..." Foreground="{ThemeResource Gray5}" Margin="5"/>
+                        <Button Background="Transparent" HorizontalAlignment="Right"
+                                VerticalAlignment="Center" BorderThickness="0"
+                                Click="OnRefreshFriendListButtonClicked">
+                            <FontIcon Visibility="{Binding FavoriteVisiblity}"
+                                      FontFamily="{StaticResource Fluent Icons}"
+                                      Glyph="&#xe72c;"
+                                      Foreground="Gray"/>
+                        </Button>
                         <ListView x:Name="LvFriends" SelectionChanged="OnFriendListSelectionChanged" Grid.Row="1">
                             <ListView.ItemTemplate>
                                 <DataTemplate x:DataType="ksmp:FriendProfile">

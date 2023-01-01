@@ -14,6 +14,8 @@ public class Configuration
 
     private readonly static string ConfigurationDirectoryPath= Path.Combine(BasePath, ConfigurationDirectoryName);
     private readonly static string ConfigurationFilePath= Path.Combine(ConfigurationDirectoryPath, ConfigurationFileName);
+    
+    private static Dictionary<string, object> s_configuration;
 
     private static void ValidateConfigurationFile()
     {
@@ -42,16 +44,16 @@ public class Configuration
 
     public static void SetValue(string key, object value)
     {
-        var convertedFileContent = GetConfigurationFileContent();
-        if (convertedFileContent.ContainsKey(key)) convertedFileContent[key] = value;
-        else convertedFileContent.Add(key, value);
-        var configurationFileContentStringToSave = JsonConvert.SerializeObject(convertedFileContent);
+        if (s_configuration == null) s_configuration = GetConfigurationFileContent();
+        if (s_configuration.ContainsKey(key)) s_configuration[key] = value;
+        else s_configuration.Add(key, value);
+        var configurationFileContentStringToSave = JsonConvert.SerializeObject(s_configuration);
         File.WriteAllText(ConfigurationFilePath, configurationFileContentStringToSave);
     }
     public static object GetValue(string key)
     {
-        var convertedFileContent = GetConfigurationFileContent();
-        if (convertedFileContent.ContainsKey(key)) return convertedFileContent[key];
+        if (s_configuration == null) s_configuration = GetConfigurationFileContent();
+        if (s_configuration.ContainsKey(key)) return s_configuration[key];
         return null;
     }
 }

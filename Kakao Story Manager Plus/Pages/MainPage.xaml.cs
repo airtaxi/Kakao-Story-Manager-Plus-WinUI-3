@@ -49,6 +49,7 @@ public sealed partial class MainPage : Page
         if (!_isRefreshed)
         {
             await Refresh();
+            StartRefreshFriendListTimer();
             _isRefreshed = true;
         }
 
@@ -62,6 +63,19 @@ public sealed partial class MainPage : Page
         if (!string.IsNullOrEmpty(id)) NavigateTimeline(id);
         else NavigateTimeline();
         
+    }
+
+    private static void StartRefreshFriendListTimer()
+    {
+        Timer timer = new Timer();
+        timer.Interval = TimeSpan.FromHours(1).TotalMilliseconds;
+        timer.Elapsed += async (s, e) =>
+        {
+            timer.Stop();
+            await RefreshFriendList();
+            timer.Start();
+        };
+        timer.Start();
     }
 
     public static void HideSettingsFlyout() => (Instance.BtSettings.Tag as Flyout)?.Hide();
@@ -257,22 +271,35 @@ public sealed partial class MainPage : Page
         frame.Content = null;
     }
 
+    public static async Task RefreshFriendList() => await Instance.RefreshFriendListAsync();
+    
     private async Task Refresh()
     {
-        await RefreshFriends();
-        TbFriendCount.Text = $"내 친구 {Friends.profiles.Count}";
+        await RefreshFriendListAsync();
+        MainWindow.ShowMenus();
+    }
+    
+    private async Task RefreshFriendListAsync()
+    {
+        TbFriendCount.Text = "로딩중...";
+        LvFriends.ItemsSource = null;
+        await Task.Delay(100);
         
-        var friendProfiles = new List<FriendProfile>();
-        foreach(var profile in Friends.profiles)
-            friendProfiles.Add(profile.GetFriendData());
-
-        friendProfiles = friendProfiles.OrderByDescending(x => x.IsBirthday).ThenByDescending(x => x.IsFavorite).ThenBy(x => x.Name).ToList();
-        LvFriends.ItemsSource = friendProfiles;
         Me ??= await ApiHandler.GetProfileData();
+        await RefreshFriends();
+
+        var friendProfiles = new List<FriendProfile>();
+        foreach (var profile in Friends.profiles)
+            friendProfiles.Add(profile.GetFriendData());
+        friendProfiles = friendProfiles.OrderByDescending(x => x.IsBirthday).ThenByDescending(x => x.IsFavorite).ThenBy(x => x.Name).ToList();
+
+        LvFriends.ItemsSource = friendProfiles;
         TbName.Text = Me.display_name;
+        TbFriendCount.Text = $"내 친구 {Friends.profiles.Count}";
         var profileUrl = Me.GetValidUserProfileUrl();
         if (!string.IsNullOrEmpty(profileUrl)) Utility.SetPersonPictureUrlSource(PpMyProfile, profileUrl, false);
-        MainWindow.ShowMenus();
+
+        return;
     }
 
     private void OnFriendListSelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -315,4 +342,6 @@ public sealed partial class MainPage : Page
         flyout.ShowAt(button);
         button.Tag = flyout;
     }
+
+    private async void OnRefreshFriendListButtonClicked(object sender, RoutedEventArgs e) => await RefreshFriendListAsync();
 }

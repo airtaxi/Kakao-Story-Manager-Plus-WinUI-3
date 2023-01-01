@@ -64,6 +64,7 @@ public sealed partial class UserProfileControl : UserControl
         await ApiHandler.RequestFavorite(_id, relationship.is_favorite);
         relationship = await ApiHandler.GetProfileRelationship(_id);
         IndicateFavorite(relationship.is_favorite);
+        await MainPage.RefreshFriendList();
     }
     public async Task Refresh()
     {
@@ -208,6 +209,7 @@ public sealed partial class UserProfileControl : UserControl
             profileRelationship = await ApiHandler.GetProfileRelationship(_id);
             RefreshFriendStatus(profileRelationship.relationship);
             MainPage.ShowProfile(_id);
+            await MainPage.RefreshFriendList();
         }
 
         button.IsEnabled = true;
