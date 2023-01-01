@@ -13,7 +13,14 @@ public sealed partial class LinkControl : UserControl
     public LinkControl(TimeLineData.Scrap data)
     {
         InitializeComponent();
-        if ((data.image?.Count ?? 0) > 0) Utility.SetImageUrlSource(ImgLink, data.image[0]);
+        if ((data.image?.Count ?? 0) > 0)
+        {
+            bool willUseRealGifInTimeline = (Utils.Configuration.GetValue("UseRealGifInTimeline") as bool?) ?? false;
+            
+            var link = data.image[0];
+            if (!link.Contains(".gif") || willUseRealGifInTimeline) Utility.SetImageUrlSource(ImgLink, link);
+        }
+
         TbLinkTitle.Text = data.title ?? "";
         TbLinkDesc.Text = data.description ?? "";
         TbLinkUrl.Text = data.host ?? "";
