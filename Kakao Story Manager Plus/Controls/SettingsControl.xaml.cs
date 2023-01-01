@@ -26,7 +26,7 @@ public sealed partial class SettingsControl : UserControl
         bool willUseRealGifInTimeline = (Utils.Configuration.GetValue("UseRealGifInTimeline") as bool?) ?? false;
         bool willUseGifInTimeline = (Utils.Configuration.GetValue("UseGifInTimeline") as bool?) ?? false;
         bool willUseEmbeddedVideoPlayer = (Utils.Configuration.GetValue("UseEmbeddedVideoPlayer") as bool?) ?? false;
-        bool willClearTimelineOnRefresh = (Utils.Configuration.GetValue("ClearTimelineOnRefresh") as bool?) ?? true;
+        bool willClearTimelineOnRefresh = (Utils.Configuration.GetValue("ClearTimelineOnRefresh") as bool?) ?? false;
         bool willWarnOnHighMemoryUsage = (Utils.Configuration.GetValue("WarnOnHighMemoryUsage") as bool?) ?? true;
         bool willUseResponsiveTimeline = (Utils.Configuration.GetValue("UseResponsiveTimeline") as bool?) ?? true;
         bool willUseDynamicTimelineLoading = (Utils.Configuration.GetValue("UseDynamicTimelineLoading") as bool?) ?? true;

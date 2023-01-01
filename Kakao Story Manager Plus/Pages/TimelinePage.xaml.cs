@@ -159,7 +159,7 @@ public sealed partial class TimelinePage : Page
         await Task.Delay(1000);
         ValidateTimelineContent();
         PrLoading.Visibility = Visibility.Collapsed;
-        bool willClearTimelineOnRefresh = (Utils.Configuration.GetValue("ClearTimelineOnRefresh") as bool?) ?? true;
+        bool willClearTimelineOnRefresh = (Utils.Configuration.GetValue("ClearTimelineOnRefresh") as bool?) ?? false;
         var first = _items.FirstOrDefault();
         if (willClearTimelineOnRefresh && first != null) BaseListView.ScrollIntoView(first);
         IsEnabled = true;
@@ -180,7 +180,7 @@ public sealed partial class TimelinePage : Page
         if (maxVerticalOffset < 0 || verticalOffset == maxVerticalOffset)
         {
             _isRefreshing = true;
-            bool willClearTimelineOnRefresh = (Utils.Configuration.GetValue("ClearTimelineOnRefresh") as bool?) ?? true;
+            bool willClearTimelineOnRefresh = (Utils.Configuration.GetValue("ClearTimelineOnRefresh") as bool?) ?? false;
             if (willClearTimelineOnRefresh)
             {
                 //Utility.ManuallyDisposeAllMedias();
