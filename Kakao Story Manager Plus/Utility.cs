@@ -28,6 +28,9 @@ using System.Runtime.InteropServices;
 using System.Net;
 using Windows.Storage.Pickers;
 using WinRT.Interop;
+using System.Security.Cryptography;
+using System.Text.Unicode;
+using System.Text;
 
 namespace KSMP;
 
@@ -233,50 +236,55 @@ public static class Utility
     private static async Task LoadEmoticonImage(Image image, string url, int retryCount = 0)
     {
         if (url == null) return;
+        var hash = GetStringHashFromUrl(url, "KSMP_EMT_");
+        var path = Path.Combine(Path.GetTempPath(), hash);
+        var cachedImageExist = File.Exists(path);
 
-        var path = Path.GetTempFileName();
-
-        var client = new RestClient(url);
-        var request = new RestRequest();
-        request.Method = Method.Get;
-        request.AddHeader("Referer", "https://story.kakao.com/");
-        var bytes = await client.DownloadDataAsync(request);
-        if (bytes == null && retryCount < MaxImageLoadRetryCount) await LoadEmoticonImage(image, url, ++retryCount);
-        else if (bytes == null) return;
-
-        try
+        if (!cachedImageExist)
         {
+            var client = new RestClient(url);
+            var request = new RestRequest();
+            request.Method = Method.Get;
+            request.AddHeader("Referer", "https://story.kakao.com/");
+            var bytes = await client.DownloadDataAsync(request);
+            if (bytes == null && retryCount < MaxImageLoadRetryCount) await LoadEmoticonImage(image, url, ++retryCount);
+            else if (bytes == null) return;
             File.WriteAllBytes(path, bytes);
-            var file = await StorageFile.GetFileFromPathAsync(path);
-            using var stream = await file.OpenAsync(FileAccessMode.Read);
-            await MainPage.Instance.RunOnMainThreadAsync(async () => image.Source = await GenerateImageLocalFileStream(stream));
         }
-        catch (Exception) { }
-        finally { File.Delete(path); }
+
+        var file = await StorageFile.GetFileFromPathAsync(path);
+        using var stream = await file.OpenAsync(FileAccessMode.Read);
+        await MainPage.Instance.RunOnMainThreadAsync(async () => image.Source = await GenerateImageLocalFileStream(stream));
     }
 
     private static async Task LoadAnimatedEmoticonImage(Image image, string url, int retryCount = 0)
     {
         if (url == null) return;
+        var hash = GetStringHashFromUrl(url, "KSMP_EMT_");
+        var path = Path.Combine(Path.GetTempPath(), hash);
+        var cachedImageExist = File.Exists(path);
 
-        var client = new RestClient(url);
-        var request = new RestRequest();
-        request.Method = Method.Get;
-        var bytes = await client.DownloadDataAsync(request);
-        if (bytes == null && retryCount < MaxImageLoadRetryCount) await LoadAnimatedEmoticonImage(image, url, ++retryCount);
-        else if (bytes == null) return;
-
-        var path = Path.GetTempFileName();
-        try
+        if (!cachedImageExist)
         {
+            var client = new RestClient(url);
+            var request = new RestRequest();
+            request.Method = Method.Get;
+            var bytes = await client.DownloadDataAsync(request);
+            if (bytes == null && retryCount < MaxImageLoadRetryCount) await LoadAnimatedEmoticonImage(image, url, ++retryCount);
+            else if (bytes == null) return;
             bytes = EmoticonDecryptor.DecodeImage(bytes);
             await Task.Run(() => EmoticonDecryptor.ConvertWebPToGif(bytes, path));
-            var file = await StorageFile.GetFileFromPathAsync(path);
-            using var stream = await file.OpenAsync(FileAccessMode.Read);
-            await MainPage.Instance.RunOnMainThreadAsync(async () => image.Source = await GenerateImageLocalFileStream(stream));
         }
-        catch (Exception) { }
-        finally { File.Delete(path); }
+
+        var file = await StorageFile.GetFileFromPathAsync(path);
+        using var stream = await file.OpenAsync(FileAccessMode.Read);
+        await MainPage.Instance.RunOnMainThreadAsync(async () => image.Source = await GenerateImageLocalFileStream(stream));
+    }
+
+    private static string GetStringHashFromUrl(string url, string header = "")
+    {
+        if (url.Contains("?") && !url.Contains("dcinside.com")) url = url.Substring(0, url.IndexOf('?'));
+        return header + Convert.ToBase64String(SHA256.HashData(Encoding.UTF8.GetBytes(url))).Replace("/", "").Replace("+", "").Replace("=", "");
     }
 
     private static void LoadImage(Image image, string url)
