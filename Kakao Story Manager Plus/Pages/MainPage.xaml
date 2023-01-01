@@ -4,7 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:controls="using:KSMP.Controls"
+    xmlns:controls="using:KSMP.Controls" xmlns:ksmp="using:KSMP"
     mc:Ignorable="d" Background="{ThemeResource White}">
 
     <Grid x:Name="GdRoot">
@@ -39,10 +39,20 @@
                         <TextBlock x:Name="TbFriendCount" Text="로딩중..." Foreground="{ThemeResource Gray5}" Margin="5"/>
                         <ListView x:Name="LvFriends" SelectionChanged="OnFriendListSelectionChanged" Grid.Row="1">
                             <ListView.ItemTemplate>
-                                <DataTemplate>
+                                <DataTemplate x:DataType="ksmp:FriendProfile">
                                     <StackPanel Tag="{Binding Id}" Height="30" Orientation="Horizontal" Margin="5" PointerEntered="FriendPointerEntered" PointerExited="FriendPointerExited">
                                         <PersonPicture ProfilePicture="{Binding ProfileUrl}" Width="30" Height="30"/>
                                         <TextBlock Text="{Binding Name}" Margin="10,0,0,0" VerticalAlignment="Center"/>
+                                        <FontIcon Visibility="{Binding FavoriteVisiblity}"
+                                                  Margin="5,0,0,0" FontFamily="{StaticResource Fluent Icons}"
+                                                  VerticalAlignment="Center" Glyph="&#xe735;"
+                                                  Foreground="Gray" FontSize="15"
+                                                  ToolTipService.ToolTip="관심 친구"/>
+                                        <FontIcon Visibility="{Binding BirthdayVisiblity}"
+                                                  Margin="5,0,0,0" FontFamily="{StaticResource Fluent Icons}"
+                                                  VerticalAlignment="Center" Glyph="&#xe787;"
+                                                  Foreground="Gray" FontSize="15"
+                                                  ToolTipService.ToolTip="오늘 생일인 친구"/>
                                     </StackPanel>
                                 </DataTemplate>
                             </ListView.ItemTemplate>

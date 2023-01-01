@@ -6,7 +6,6 @@ using Microsoft.UI.Xaml.Input;
 using KSMP.Extension;
 using static KSMP.ApiHandler.DataType.CommentData;
 using KSMP.Pages;
-using static KSMP.ClassManager;
 using System.Threading.Tasks;
 using KSMP.Utils;
 using System;
@@ -130,15 +129,7 @@ public sealed partial class CommentControl : UserControl
         var likes = await ApiHandler.GetCommentLikes(_postId, _comment.id);
 
         foreach(var like in likes)
-        {
-            var actor = like.actor;
-            friendProfiles.Add(new()
-            {
-                Id = actor.id,
-                Name = actor.display_name,
-                ProfileUrl = actor.GetValidUserProfileUrl()
-            });
-        }
+            friendProfiles.Add(like.actor.GetFriendData());
 
         likeList.SetSource(friendProfiles);
 

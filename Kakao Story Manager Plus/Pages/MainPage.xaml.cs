@@ -11,7 +11,6 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Navigation;
-using static KSMP.ClassManager;
 using static KSMP.ApiHandler.DataType.FriendData;
 using Microsoft.UI.Input;
 
@@ -262,17 +261,12 @@ public sealed partial class MainPage : Page
     {
         await RefreshFriends();
         TbFriendCount.Text = $"내 친구 {Friends.profiles.Count}";
+        
         var friendProfiles = new List<FriendProfile>();
         foreach(var profile in Friends.profiles)
-        {
-            var friendProfile = new FriendProfile
-            {
-                ProfileUrl = profile.GetValidUserProfileUrl(),
-                Name = profile.display_name,
-                Id = profile.id
-            };
-            friendProfiles.Add(friendProfile);
-        }
+            friendProfiles.Add(profile.GetFriendData());
+
+        friendProfiles = friendProfiles.OrderByDescending(x => x.IsBirthday).ThenByDescending(x => x.IsFavorite).ThenBy(x => x.Name).ToList();
         LvFriends.ItemsSource = friendProfiles;
         Me ??= await ApiHandler.GetProfileData();
         TbName.Text = Me.display_name;

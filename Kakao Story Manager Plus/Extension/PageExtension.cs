@@ -2,7 +2,6 @@
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using OpenQA.Selenium.DevTools.V106.Network;
 using System;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.DataTransfer;

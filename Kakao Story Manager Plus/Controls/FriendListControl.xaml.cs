@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using KSMP.Extension;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using static KSMP.ClassManager;
 
 namespace KSMP.Controls;
 
@@ -43,7 +43,7 @@ public sealed partial class FriendListControl : UserControl
         else
         {
             listView.Visibility = Visibility.Visible;
-            var source = Pages.MainPage.Friends.profiles.Where(x => x.display_name.ToLower().Contains(nameQuery.ToLower())).Select(x => new FriendProfile { Id = x.id, Name = x.display_name, ProfileUrl = x.profile_video_url_square_small ?? x.profile_thumbnail_url }).ToList();
+            var source = Pages.MainPage.Friends.profiles.Where(x => x.display_name.ToLower().Contains(nameQuery.ToLower())).Select(x => x.GetFriendData()).ToList();
             SetSource(source);
             return source.Count;
         }

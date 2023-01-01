@@ -393,6 +393,7 @@ public partial class ApiHandler
                 public bool is_default_profile_image { get; set; }
                 public bool is_talk_user { get; set; }
                 public string highlight_keywords_permission { get; set; }
+                public bool blocked { get; set; }
             }
         }
 
@@ -646,6 +647,7 @@ public partial class ApiHandler
                 public string permalink { get; set; }
                 public bool is_default_profile_image { get; set; }
                 public bool is_feed_blocked { get; set; }
+                public bool blocked { get; set; }
             }
 
             public class Share
@@ -699,6 +701,7 @@ public partial class ApiHandler
                 public string permalink { get; set; }
                 public bool is_default_profile_image { get; set; }
                 public bool is_feed_blocked { get; set; }
+                public bool blocked { get; set; }
             }
 
             public class Relation
@@ -803,6 +806,7 @@ public partial class ApiHandler
                 public string profile_video_url_square_micro_small { get; set; }
                 public string birth { get; set; }
                 public string gender_permission { get; set; }
+                public bool blocked { get; set; }
             }
 
             public class Comment
@@ -876,6 +880,7 @@ public partial class ApiHandler
                 public string permalink { get; set; }
                 public bool is_default_profile_image { get; set; }
                 public bool is_feed_blocked { get; set; }
+                public bool blocked { get; set; }
             }
 
             public class Decorator2
@@ -1160,6 +1165,7 @@ public partial class ApiHandler
             public string profile_video_url_lq { get; set; }
             public string profile_video_url_square { get; set; }
             public string profile_video_url_square_micro_small { get; set; }
+            public bool blocked { get; set; }
         }
 
         public class Decorator

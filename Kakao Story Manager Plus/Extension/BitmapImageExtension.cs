@@ -1,6 +1,5 @@
 ﻿using Microsoft.UI.Xaml.Media.Imaging;
 using System;
-using System.IO;
 
 namespace KSMP.Extension;
 

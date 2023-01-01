@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Windows.ApplicationModel.DataTransfer;
-using static KSMP.ClassManager;
 using static KSMP.ApiHandler.DataType;
 using static KSMP.ApiHandler.DataType.EmoticonItems;
 using Microsoft.UI.Xaml.Controls.Primitives;

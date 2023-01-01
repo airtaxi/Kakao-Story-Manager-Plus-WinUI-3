@@ -7,7 +7,6 @@ using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Input;
 using KSMP.Extension;
 using static KSMP.ApiHandler.DataType.CommentData;
-using static KSMP.ClassManager;
 using System;
 using KSMP.Pages;
 using Windows.Storage.Pickers;
@@ -27,7 +26,6 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using H.NotifyIcon;
 
 namespace KSMP.Controls;
-
 
 public sealed partial class TimelineControl : UserControl
 {
@@ -709,13 +707,7 @@ public sealed partial class TimelineControl : UserControl
         List<FriendProfile> friendProfiles = new();
         foreach (var share in shares)
         {
-            var friendProfile = new FriendProfile
-            {
-                ProfileUrl = share.actor.GetValidUserProfileUrl(),
-                Name = share.actor.display_name,
-                Id = share.actor.id,
-                Relationship = share.actor.relationship
-            };
+            var friendProfile = share.actor.GetFriendData();
             friendProfile.Metadata.Tag = share.activity_id;
             friendProfile.Metadata.Control = control;
             friendProfile.Metadata.Flyout = flyout;
@@ -877,13 +869,7 @@ public sealed partial class TimelineControl : UserControl
         List<FriendProfile> friendProfiles = new();
         foreach (var share in shares)
         {
-            var friendProfile = new FriendProfile
-            {
-                ProfileUrl = share.actor.GetValidUserProfileUrl(),
-                Name = share.actor.display_name,
-                Id = share.actor.id,
-                Relationship = share.actor.relationship
-            };
+            var friendProfile = share.actor.GetFriendData();
             friendProfile.Metadata.Tag = share.activity_id;
             friendProfile.Metadata.Control = control;
             friendProfile.Metadata.Flyout = flyout;
