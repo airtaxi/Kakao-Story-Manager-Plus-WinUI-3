@@ -29,7 +29,7 @@ public sealed partial class SettingsControl : UserControl
         bool willClearTimelineOnRefresh = (Utils.Configuration.GetValue("ClearTimelineOnRefresh") as bool?) ?? true;
         bool willWarnOnHighMemoryUsage = (Utils.Configuration.GetValue("WarnOnHighMemoryUsage") as bool?) ?? true;
         bool willUseResponsiveTimeline = (Utils.Configuration.GetValue("UseResponsiveTimeline") as bool?) ?? true;
-        bool willUseDynamicTimelineLoading = (Utils.Configuration.GetValue("UseDynamicTimelineLoading") as bool?) ?? false;
+        bool willUseDynamicTimelineLoading = (Utils.Configuration.GetValue("UseDynamicTimelineLoading") as bool?) ?? true;
         bool willShowMyProfileOnStartup = (Utils.Configuration.GetValue("ShowMyProfileOnStartup") as bool?) ?? false;
 
         TsFavoriteFriendNotification.IsOn = willReceiveFavoriteFriendNotification;

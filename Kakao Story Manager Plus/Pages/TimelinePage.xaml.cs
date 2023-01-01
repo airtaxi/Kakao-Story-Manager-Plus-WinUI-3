@@ -192,7 +192,7 @@ public sealed partial class TimelinePage : Page
         }
     }
 
-    public static bool WillUseDynamicTimelineLoading = (Utils.Configuration.GetValue("UseDynamicTimelineLoading") as bool?) ?? false;
+    public static bool WillUseDynamicTimelineLoading = (Utils.Configuration.GetValue("UseDynamicTimelineLoading") as bool?) ?? true;
     private void ValidateTimelineContent()
     {
         if (!WillUseDynamicTimelineLoading) return;

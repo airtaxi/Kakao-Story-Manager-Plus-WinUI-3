@@ -98,7 +98,7 @@ public sealed partial class TimelineControl : UserControl
         if (isOverlay) inputControl.SetPopupDesiredPlacement(PopupPlacementMode.Top);
 
         FrComment.Content = inputControl;
-        bool willUseDynamicTimelineLoading = (Configuration.GetValue("UseDynamicTimelineLoading") as bool?) ?? false;
+        bool willUseDynamicTimelineLoading = (Configuration.GetValue("UseDynamicTimelineLoading") as bool?) ?? true;
         if (isOverlay || !willUseDynamicTimelineLoading) _ = RefreshContent();
 
         if (!isOverlay && !isShare) GdMain.MaxWidth = 600;
