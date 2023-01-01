@@ -68,10 +68,16 @@
                     </Grid>
                 </PivotItem>
                 <PivotItem Header="신청">
-
+                    <TextBlock Text="구현중..." FontSize="20" FontWeight="Bold"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center"
+                               Foreground="Gray"/>
                 </PivotItem>
                 <PivotItem Header="쪽지">
-
+                    <TextBlock Text="구현중..." FontSize="20" FontWeight="Bold"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center"
+                               Foreground="Gray"/>
                 </PivotItem>
             </Pivot>
         </Grid>
