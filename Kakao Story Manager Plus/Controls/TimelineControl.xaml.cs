@@ -24,6 +24,7 @@ using Windows.Graphics.Imaging;
 using Windows.Storage.Streams;
 using System.Runtime.InteropServices.WindowsRuntime;
 using H.NotifyIcon;
+using Microsoft.UI.Xaml.Documents;
 
 namespace KSMP.Controls;
 
@@ -100,7 +101,7 @@ public sealed partial class TimelineControl : UserControl
         bool willUseDynamicTimelineLoading = (Configuration.GetValue("UseDynamicTimelineLoading") as bool?) ?? false;
         if (isOverlay || !willUseDynamicTimelineLoading) _ = RefreshContent();
 
-        if (!isOverlay && !isShare) FrRoot.MaxWidth = 600;
+        if (!isOverlay && !isShare) GdMain.MaxWidth = 600;
 
         ActualThemeChanged += OnThemeChanged;
     }
@@ -127,24 +128,30 @@ public sealed partial class TimelineControl : UserControl
         }
     }
 
+    
     public void UnloadMedia()
     {
         IsContentLoaded = false;
         RtDummy.Visibility = Visibility.Visible;
-        RtDummy.Height = FrRoot.ActualHeight;
+        RtDummy.Height = GdMain.ActualHeight;
         GdLoading.Visibility = Visibility.Collapsed;
         GdOverlay.Visibility = Visibility.Collapsed;
 
         (FrShare.Content as TimelineControl)?.UnloadMedia();
-        if (FvMedia.ItemsSource is not List<FrameworkElement> medias) return;
+        FrShare.Content = null;
 
+        var paragraph = RTbContent.Blocks.Where(x => x is Paragraph).FirstOrDefault() as Paragraph;
+        paragraph.Inlines?.Clear();
+        RTbContent.Blocks.Clear();
         var controls = GetCurrentCommentControls();
         controls.ForEach(x => x.UnloadMedia());
+        LvContent.Items.Clear();
         LvComments.Items.Clear();
 
         PpUser?.DisposeImage();
         (FrLink.Content as LinkControl)?.UnloadMedia();
 
+        if (FvMedia.ItemsSource is not List<FrameworkElement> medias) return;
         foreach (var media in medias)
         {
             if (media is MediaPlayerElement video) video.DisposeVideo();
@@ -343,6 +350,7 @@ public sealed partial class TimelineControl : UserControl
         {
             RtbComments.Visibility = Visibility.Visible;
             LvComments.Visibility = Visibility.Visible;
+            
             await LoadComments();
 
             BdComments.Visibility = Visibility.Visible;

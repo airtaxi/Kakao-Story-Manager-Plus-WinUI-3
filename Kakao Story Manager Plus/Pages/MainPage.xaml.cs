@@ -55,7 +55,7 @@ public sealed partial class MainPage : Page
 
         if (_isStarup)
         {
-            bool willShowMyProfileOnStartup = (Utils.Configuration.GetValue("ShowMyProfileOnStartup") as bool?) ?? false;
+            bool willShowMyProfileOnStartup = (Configuration.GetValue("ShowMyProfileOnStartup") as bool?) ?? false;
             if (willShowMyProfileOnStartup && string.IsNullOrEmpty(id)) id = Me.id;
             _isStarup = false;
         }
@@ -200,7 +200,7 @@ public sealed partial class MainPage : Page
     public static void NavigateTimeline(string args = null)
     {
         LastArgs = args;
-        Utility.ManuallyDisposeAllMedias();
+        //Utility.ManuallyDisposeAllMedias();
         if (args != null) Instance.FrContent.Navigate(typeof(TimelinePage), args);
         else Instance.FrContent.Navigate(typeof(TimelinePage));
     }

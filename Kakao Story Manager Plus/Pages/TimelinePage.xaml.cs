@@ -108,22 +108,21 @@ public sealed partial class TimelinePage : Page
         {
             _items.Clear();
             foreach (object item in _items) (item as TimelineControl)?.UnloadMedia();
-            Utility.ManuallyDisposeAllMedias();
+            //Utility.ManuallyDisposeAllMedias();
         }
 
+        LvContent.ItemsSource = null;
         if (string.IsNullOrEmpty(Id))
         {
-            var items = new List<FrameworkElement>();
             var data = await ApiHandler.GetFeed(from);
             foreach (var feed in data.feeds)
             {
                 if (IsValidFeed(feed))
                 {
                     var control = new TimelineControl(feed);
-                    items.Add(control);
+                    _items.Add(control);
                 }
             }
-            items.ForEach(x => _items.Add(x));
             LastFeedId = _lastFeedId;
             _lastFeedId = data.feeds.LastOrDefault()?.id;
         }
@@ -140,22 +139,21 @@ public sealed partial class TimelinePage : Page
                 await Task.Delay(500);
             }
 
-            var items = new List<FrameworkElement>();
             var data = await ApiHandler.GetProfileFeed(Id, from);
             foreach (var feed in data.activities)
             {
                 if (IsValidFeed(feed))
                 {
                     var control = new TimelineControl(feed);
-                    items.Add(control);
+                    _items.Add(control);
                 }
             }
-            items.ForEach(x => _items.Add(x));
             
             LastFeedId = _lastFeedId;
             if (data.activities.Count > 15) _lastFeedId = data.activities.LastOrDefault().id;
             else _lastFeedId = null;
         }
+        LvContent.ItemsSource = _items;
 
         BaseListView.UpdateLayout();
         await Task.Delay(1000);
@@ -185,7 +183,7 @@ public sealed partial class TimelinePage : Page
             bool willClearTimelineOnRefresh = (Utils.Configuration.GetValue("ClearTimelineOnRefresh") as bool?) ?? true;
             if (willClearTimelineOnRefresh)
             {
-                Utility.ManuallyDisposeAllMedias();
+                //Utility.ManuallyDisposeAllMedias();
                 _items.Clear();
             }
 
