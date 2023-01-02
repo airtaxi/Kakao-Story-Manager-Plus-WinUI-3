@@ -64,7 +64,7 @@ public sealed partial class MainWindow : Microsoft.UI.Xaml.Window
             if (!string.IsNullOrEmpty(postId)) ShowPost(postId);
         }
 
-        OnReloginRequired += OnReloginRequiredHandler;
+        OnReloginRequired += ReloginAsync;
         Closed += (s, e) =>
         {
             LoginManager.SeleniumDriver?.Close();
@@ -143,14 +143,19 @@ public sealed partial class MainWindow : Microsoft.UI.Xaml.Window
 
     public void SetClosable(bool shouldClose = true) => _shouldClose = shouldClose;
 
-    public static async Task<bool> OnReloginRequiredHandler()
+    public static async Task<bool> ReloginAsync()
     {
-        Instance.FrMain.IsEnabled = false;
-        var email = Configuration.GetValue("email") as string;
-        var password = Configuration.GetValue("password") as string;
-        var success = LoginManager.LoginWithSelenium(email, password);
-        if (!success) await Instance.FrMain.ShowMessageDialogAsync("재로그인 도중 문제가 발생하였습니다.", "오류");
-        Instance.FrMain.IsEnabled = true;
+        bool success = false;
+        await Instance.RunOnMainThreadAsync(async () =>
+        {
+
+            Instance.FrMain.IsEnabled = false;
+            var email = Configuration.GetValue("email") as string;
+            var password = Configuration.GetValue("password") as string;
+            success = LoginManager.LoginWithSelenium(email, password);
+            if (!success) await Instance.FrMain.ShowMessageDialogAsync("재로그인 도중 문제가 발생하였습니다.", "오류");
+            Instance.FrMain.IsEnabled = true;
+        });
         return success;
     }
 
@@ -316,7 +321,7 @@ public sealed partial class MainWindow : Microsoft.UI.Xaml.Window
     {
         if (_shouldClose)
         {
-            OnReloginRequired -= OnReloginRequiredHandler;
+            OnReloginRequired -= ReloginAsync;
             return;
         }
 

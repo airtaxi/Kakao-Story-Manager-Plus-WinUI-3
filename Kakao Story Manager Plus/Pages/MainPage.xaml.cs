@@ -90,7 +90,7 @@ public sealed partial class MainPage : Page
             var status = await ApiHandler.GetNotificationStatus();
             if(status == null)
             {
-                await MainWindow.OnReloginRequiredHandler();
+                await MainWindow.ReloginAsync();
                 return;
             }
             if (status.NotificationCount == 0 && LatestNotificationId != null) return;
@@ -110,7 +110,7 @@ public sealed partial class MainPage : Page
 
             _lastNotificationTimestamp = first?.created_at;
         }
-        catch (Exception) { await MainWindow.OnReloginRequiredHandler(); }
+        catch (Exception) { await MainWindow.ReloginAsync(); }
         finally { s_notificationTimer.Start(); }
     }
 

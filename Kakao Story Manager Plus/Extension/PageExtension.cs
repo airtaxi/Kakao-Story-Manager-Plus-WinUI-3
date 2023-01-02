@@ -37,12 +37,34 @@ public static class PageExtension
             await page.GenerateMessageDialog(message, "안내").ShowAsync();
     }
 
+    public static async Task RunOnMainThreadAsync(this Window window, Action method)
+    {
+        var taskCompletionSource = new TaskCompletionSource();
+        window.DispatcherQueue.TryEnqueue(() =>
+        {
+            method();
+            taskCompletionSource.SetResult();
+        });
+        await taskCompletionSource.Task;
+    }
+
     public static async Task RunOnMainThreadAsync(this Page page, Action method)
     {
         var taskCompletionSource = new TaskCompletionSource();
         page.DispatcherQueue.TryEnqueue(() =>
         {
             method();
+            taskCompletionSource.SetResult();
+        });
+        await taskCompletionSource.Task;
+    }
+
+    public static async Task RunOnMainThreadAsync(this Window window, Func<Task> method)
+    {
+        var taskCompletionSource = new TaskCompletionSource();
+        window.DispatcherQueue.TryEnqueue(async () =>
+        {
+            await method();
             taskCompletionSource.SetResult();
         });
         await taskCompletionSource.Task;
