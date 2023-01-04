@@ -72,7 +72,7 @@ public sealed partial class MainPage : Page
         timer.Elapsed += async (s, e) =>
         {
             timer.Stop();
-            await RefreshFriendList();
+            await Instance.RunOnMainThreadAsync(async () => await RefreshFriendList());
             timer.Start();
         };
         timer.Start();
