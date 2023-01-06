@@ -107,7 +107,7 @@ public sealed partial class TimelinePage : Page
         if (from == null)
         {
             _items.Clear();
-            foreach (object item in _items) (item as TimelineControl)?.UnloadMedia();
+            foreach (object item in _items) (item as TimelineControl)?.UnloadMedia(true);
             //Utility.ManuallyDisposeAllMedias();
         }
 

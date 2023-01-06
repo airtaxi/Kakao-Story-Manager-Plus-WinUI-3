@@ -129,7 +129,7 @@ public sealed partial class TimelineControl : UserControl
     }
 
     
-    public void UnloadMedia()
+    public void UnloadMedia(bool unloadContents = false)
     {
         IsContentLoaded = false;
         RtDummy.Visibility = Visibility.Visible;
@@ -145,7 +145,7 @@ public sealed partial class TimelineControl : UserControl
         RTbContent.Blocks.Clear();
         var controls = GetCurrentCommentControls();
         controls.ForEach(x => x.UnloadMedia());
-        LvContent.Items.Clear();
+        if (unloadContents) LvContent.Items.Clear();
         LvComments.Items.Clear();
 
         PpUser?.DisposeImage();
