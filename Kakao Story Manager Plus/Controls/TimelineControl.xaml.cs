@@ -141,7 +141,7 @@ public sealed partial class TimelineControl : UserControl
         FrShare.Content = null;
 
         var paragraph = RTbContent.Blocks.Where(x => x is Paragraph).FirstOrDefault() as Paragraph;
-        paragraph.Inlines?.Clear();
+        paragraph?.Inlines?.Clear();
         RTbContent.Blocks.Clear();
         var controls = GetCurrentCommentControls();
         controls.ForEach(x => x.UnloadMedia());
