@@ -148,18 +148,24 @@ public sealed partial class MainWindow : Microsoft.UI.Xaml.Window
         bool success = false;
         await Instance.RunOnMainThreadAsync(async () =>
         {
-
-            Instance.FrMain.IsEnabled = false;
-            var email = Configuration.GetValue("email") as string;
-            var password = Configuration.GetValue("password") as string;
-            success = LoginManager.LoginWithSelenium(email, password);
-            if (!success) await Instance.FrMain.ShowMessageDialogAsync("재로그인 도중 문제가 발생하였습니다.", "오류");
-            Instance.FrMain.IsEnabled = true;
-        });
+			Instance.FrMain.IsEnabled = false;
+            try
+			{
+				var email = Configuration.GetValue("email") as string;
+				var password = Configuration.GetValue("password") as string;
+				success = LoginManager.LoginWithSelenium(email, password);
+				if (!success) await ShowReloginErrorMessageAsync();
+			}
+			catch (Exception) { await ShowReloginErrorMessageAsync(); }
+			finally { Instance.FrMain.IsEnabled = true; }
+		});
         return success;
     }
 
-    public static void Navigate(Type type) => Instance.FrMain.Navigate(type);
+	private static async Task<ContentDialogResult> ShowReloginErrorMessageAsync() =>
+        await Instance.FrMain.ShowMessageDialogAsync("재로그인 도중 문제가 발생하였습니다.", "오류");
+
+	public static void Navigate(Type type) => Instance.FrMain.Navigate(type);
     public static void Navigate(Type type, object args) => Instance.FrMain.Navigate(type, args);
 
     public static void EnableLoginRequiredMenuFlyoutItems() => s_loginRequiredMenuFlyoutItems.ForEach(x => x.IsEnabled = true);

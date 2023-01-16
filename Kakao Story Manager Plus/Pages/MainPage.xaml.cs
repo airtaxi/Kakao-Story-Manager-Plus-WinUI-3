@@ -88,12 +88,8 @@ public sealed partial class MainPage : Page
         try
         {
             var status = await ApiHandler.GetNotificationStatus();
-            if(status == null)
-            {
-                await MainWindow.ReloginAsync();
+            if ((status?.NotificationCount ?? 0) == 0 && LatestNotificationId != null)
                 return;
-            }
-            if (status.NotificationCount == 0 && LatestNotificationId != null) return;
 
             var notifications = await ApiHandler.GetNotifications();
 
@@ -110,7 +106,7 @@ public sealed partial class MainPage : Page
 
             _lastNotificationTimestamp = first?.created_at;
         }
-        catch (Exception) { await MainWindow.ReloginAsync(); }
+        catch (Exception) { }
         finally { s_notificationTimer.Start(); }
     }
 
