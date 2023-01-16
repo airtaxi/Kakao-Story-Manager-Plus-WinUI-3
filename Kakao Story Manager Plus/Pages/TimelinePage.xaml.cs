@@ -111,7 +111,6 @@ public sealed partial class TimelinePage : Page
             //Utility.ManuallyDisposeAllMedias();
         }
 
-        LvContent.ItemsSource = null;
         if (string.IsNullOrEmpty(Id))
         {
             var data = await ApiHandler.GetFeed(from);
@@ -153,7 +152,6 @@ public sealed partial class TimelinePage : Page
             if (data.activities.Count > 15) _lastFeedId = data.activities.LastOrDefault().id;
             else _lastFeedId = null;
         }
-        LvContent.ItemsSource = _items;
 
         BaseListView.UpdateLayout();
         await Task.Delay(1000);
