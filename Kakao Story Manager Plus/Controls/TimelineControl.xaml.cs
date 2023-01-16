@@ -839,8 +839,12 @@ public sealed partial class TimelineControl : UserControl
         BtAddDcCon.IsEnabled = false;
 
         BtCommentMore.IsEnabled = false;
+        BtSendComment.IsEnabled = false;
+        FiCommentMore.Glyph = "\ue895";
         _commentMedia = await ApiHandler.UploadImage(file.Path);
+        FiCommentMore.Glyph = "\ue712";
         BtCommentMore.IsEnabled = true;
+        BtSendComment.IsEnabled = true;
 
         FiAddMedia.Glyph = "\ue74d";
         BtAddMedia.IsEnabled = true;
@@ -991,8 +995,9 @@ public sealed partial class TimelineControl : UserControl
 
 
                 BtCommentMore.IsEnabled = false;
+				FiCommentMore.Glyph = "\ue898";
 
-                var path = Path.Combine(Path.GetTempPath(), $"{item.PackageIndex}_{item.Index}.{item.Extension}");
+				var path = Path.Combine(Path.GetTempPath(), $"{item.PackageIndex}_{item.Index}.{item.Extension}");
                 try
                 {
 
@@ -1017,8 +1022,9 @@ public sealed partial class TimelineControl : UserControl
                     _isUploading = false;
                     File.Delete(path);
                     BtCommentMore.IsEnabled = true;
+					FiCommentMore.Glyph = "\ue712";
 
-                    BtAddDcCon.IsEnabled = true;
+					BtAddDcCon.IsEnabled = true;
                     VbMandu.Visibility = Visibility.Collapsed;
                     VbDelete.Visibility = Visibility.Visible;
                 }
