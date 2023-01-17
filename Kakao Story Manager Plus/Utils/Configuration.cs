@@ -39,7 +39,7 @@ public class Configuration
     {
         var configurationFileContentString = GetConfigurationFileContentString();
         var convertedFileContent = JsonConvert.DeserializeObject<Dictionary<string, object>>(configurationFileContentString);
-        return convertedFileContent;
+        return convertedFileContent ?? new();
     }
 
     public static void SetValue(string key, object value)
