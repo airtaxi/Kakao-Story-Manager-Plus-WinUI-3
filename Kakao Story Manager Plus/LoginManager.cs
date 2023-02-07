@@ -51,17 +51,17 @@ public static class LoginManager
 
         try
         {
-            var isNewLogin = CheckIfElementExists(SeleniumDriver, By.XPath("//*[@id=\"input-loginKey\"]"));
+            var isNewLogin = CheckIfElementExists(SeleniumDriver, By.XPath("//*[@id=\"loginKey--1\"]"));
 
             if (isNewLogin)
             {
-                var emailBox = SeleniumDriver.FindElement(By.XPath("//*[@id=\"input-loginKey\"]"));
+                var emailBox = SeleniumDriver.FindElement(By.XPath("//*[@id=\"loginKey--1\"]"));
                 emailBox.SendKeys(email);
 
-                var passwordBox = SeleniumDriver.FindElement(By.XPath("//*[@id=\"input-password\"]"));
+                var passwordBox = SeleniumDriver.FindElement(By.XPath("//*[@id=\"password--2\"]"));
                 passwordBox.SendKeys(password);
 
-                var checkBox = SeleniumDriver.FindElement(By.XPath("//*[@id=\"mainContent\"]/div/div/form/div[3]/div/label/span[1]"));
+                var checkBox = SeleniumDriver.FindElement(By.XPath("//*[@id=\"label-staySignedIn\"]"));
                 checkBox.Click();
 
                 var loginButton = SeleniumDriver.FindElement(By.XPath("//*[@id=\"mainContent\"]/div/div/form/div[4]/button[1]"));
