@@ -31,6 +31,7 @@ public sealed partial class SettingsControl : UserControl
         bool willUseResponsiveTimeline = (Utils.Configuration.GetValue("UseResponsiveTimeline") as bool?) ?? true;
         bool willUseDynamicTimelineLoading = (Utils.Configuration.GetValue("UseDynamicTimelineLoading") as bool?) ?? true;
         bool willShowMyProfileOnStartup = (Utils.Configuration.GetValue("ShowMyProfileOnStartup") as bool?) ?? false;
+        bool willSuggestAddClipboardImage = (Utils.Configuration.GetValue("SuggestAddClipboardImage") as bool?) ?? true;
 
         TsFavoriteFriendNotification.IsOn = willReceiveFavoriteFriendNotification;
         TsEmotionalNotification.IsOn = willReceiveEmotionalNotification;
@@ -44,6 +45,7 @@ public sealed partial class SettingsControl : UserControl
         TsUseResponsiveTimeline.IsOn = willUseResponsiveTimeline;
         TsUseDynamicTimelineLoading.IsOn = willUseDynamicTimelineLoading;
         TsShowMyProfileOnStartup.IsOn = willShowMyProfileOnStartup;
+        TsSuggestAddClipboardImage.IsOn = willSuggestAddClipboardImage;
 
         TsFavoriteFriendNotification.Toggled += OnReceiveFavoriteFriendNotificationToggleSwitchToggled;
         TsEmotionalNotification.Toggled += OnReceiveEmotionalNotificationToggleSwitchToggled;
@@ -57,6 +59,7 @@ public sealed partial class SettingsControl : UserControl
         TsUseResponsiveTimeline.Toggled += OnUseResponsiveTimelineToggleSwitchToggled;
         TsUseDynamicTimelineLoading.Toggled += OnUseDynamicTimelineLoadingToggleSwitchToggled;
         TsShowMyProfileOnStartup.Toggled += OnShowMyProfileOnStartupToggleSwitchToggled;
+        TsSuggestAddClipboardImage.Toggled += OnSuggestAddClipboardImageToggleSwitchToggled;
 
         int defaultPostWritingPermission = (Utils.Configuration.GetValue("DefaultPostWritingPermission") as int?) ?? 0;
         CbxDefaultPostWritingPermission.SelectedIndex = defaultPostWritingPermission;
@@ -64,6 +67,14 @@ public sealed partial class SettingsControl : UserControl
 
         ValidateThemeSetting();
         CbxThemeSetting.SelectionChanged += OnThemeSettingComboBoxSelectionChanged;
+    }
+
+    private void OnSuggestAddClipboardImageToggleSwitchToggled(object sender, RoutedEventArgs e)
+    {
+        var toggleSwitch = sender as ToggleSwitch;
+        var isOn = toggleSwitch.IsOn;
+        Utils.Configuration.SetValue("SuggestAddClipboardImage", isOn);
+        RequestProgramRestart();
     }
 
     private void OnUseRealGifInTimelineToggleSwitchToggled(object sender, RoutedEventArgs e)

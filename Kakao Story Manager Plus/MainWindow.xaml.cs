@@ -444,8 +444,11 @@ public sealed partial class MainWindow : Microsoft.UI.Xaml.Window
         control.AdjustDefaultPostWritingPermission();
 
         DataPackageView dataPackageView = Clipboard.GetContent();
+
+        bool willSuggestAddClipboardImage = (Utils.Configuration.GetValue("SuggestAddClipboardImage") as bool?) ?? true;
+        if (!willSuggestAddClipboardImage) return;
         var hasImage = dataPackageView.Contains(StandardDataFormats.Bitmap);
-        if (hasImage)
+        if (hasImage && willSuggestAddClipboardImage)
         {
             await Task.Delay(400);
             var result = await MainPage.Instance.ShowMessageDialogAsync("클립보드에 이미지가 있습니다.\n이미지를 추가할까요?", "안내", true);

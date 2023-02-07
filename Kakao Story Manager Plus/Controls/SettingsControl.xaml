@@ -49,6 +49,9 @@
 
         <ToggleSwitch x:Name="TsShowMyProfileOnStartup" OnContent="프로그램 실행 시 내 프로필 보여짐" OffContent="프로그램 실행 시 타임라인 보여짐" Margin="0,5,0,0"
                       ToolTipService.ToolTip="본 옵션을 활성화 하는 경우, 프로그램이 실행됐을 때 타임라인이 아닌 로그인된 사용자의 프로필이 보여집니다."/>
+
+        <ToggleSwitch x:Name="TsSuggestAddClipboardImage" OnContent="글 작성시 클립보드 이미지 추가 제안 켜짐" OffContent="글 작성시 클립보드 이미지 추가 제안 꺼짐" Margin="0,5,0,0"
+                      ToolTipService.ToolTip="본 옵션을 활성화 하는 경우, 글을 작성할 때 클립보드에 이미지가 있는 경우 자동으로 추가 여부를 묻는 메시지가 표시됩니다."/>
         
         <ComboBox x:Name="CbxThemeSetting" Header="테마" Margin="0,10,0,0"
                   ToolTipService.ToolTip="본 애플리케이션의 테마를 설정합니다.">
