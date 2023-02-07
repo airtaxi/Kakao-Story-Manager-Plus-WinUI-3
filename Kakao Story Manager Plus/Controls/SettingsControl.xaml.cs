@@ -74,7 +74,6 @@ public sealed partial class SettingsControl : UserControl
         var toggleSwitch = sender as ToggleSwitch;
         var isOn = toggleSwitch.IsOn;
         Utils.Configuration.SetValue("SuggestAddClipboardImage", isOn);
-        RequestProgramRestart();
     }
 
     private void OnUseRealGifInTimelineToggleSwitchToggled(object sender, RoutedEventArgs e)
