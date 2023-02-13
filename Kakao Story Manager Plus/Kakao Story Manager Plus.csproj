@@ -18,9 +18,9 @@
 		<UseWindowsForms>False</UseWindowsForms>
 		<Nullable>disable</Nullable>
 		<PlatformTarget>AnyCPU</PlatformTarget>
-		<FileVersion>0.1.0.246</FileVersion>
-		<AssemblyVersion>0.1.0.246</AssemblyVersion>
-		<Version>0.1.0.246</Version>
+		<FileVersion>0.1.0.247</FileVersion>
+		<AssemblyVersion>0.1.0.247</AssemblyVersion>
+		<Version>0.1.0.247</Version>
 	</PropertyGroup>
 	<ItemGroup>
 		<Content Remove="Assets\Error.png" />
@@ -39,6 +39,8 @@
 		<None Remove="Controls\Emotions\LikeControl.xaml" />
 		<None Remove="Controls\Emotions\PleasureControl.xaml" />
 		<None Remove="Controls\Emotions\SadControl.xaml" />
+		<None Remove="Controls\ExtrasControl.xaml" />
+		<None Remove="Controls\Extras\BatchDeleteFriendsControl.xaml" />
 		<None Remove="Controls\SettingsControl.xaml" />
 	</ItemGroup>
 
@@ -92,6 +94,9 @@
 		<None Update="Assets\VideoThumbnail.png">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
+		<Page Update="Controls\Extras\BatchDeleteFriendsControl.xaml">
+		  <Generator>MSBuild:Compile</Generator>
+		</Page>
 		<Page Update="Controls\DcConSettingsControl.xaml">
 			<Generator>MSBuild:Compile</Generator>
 		</Page>
@@ -104,6 +109,10 @@
 		</Page>
 		<Page Update="Controls\Flyout\PasteClipboardImageQueryControl.xaml">
 			<Generator>MSBuild:Compile</Generator>
+		</Page>
+		<Page Update="Controls\ExtrasControl.xaml">
+		  <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+		  <SubType>Designer</SubType>
 		</Page>
 		<Page Update="Pages\BlankPage.xaml">
 			<Generator>MSBuild:Compile</Generator>
