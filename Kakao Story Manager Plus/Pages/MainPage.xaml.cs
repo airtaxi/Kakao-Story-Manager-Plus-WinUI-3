@@ -79,6 +79,7 @@ public sealed partial class MainPage : Page
     }
 
     public static void HideSettingsFlyout() => (Instance.BtSettings.Tag as Flyout)?.Hide();
+    public static void HideExtrasFlyout() => (Instance.BtExtras.Tag as Flyout)?.Hide();
 
     private DateTime? _lastNotificationTimestamp = null;
 
@@ -333,6 +334,16 @@ public sealed partial class MainPage : Page
     {
         var button = sender as Button;
         var settingsControl = new SettingsControl();
+        var flyout = new Flyout();
+        flyout.Content = settingsControl;
+        flyout.ShowAt(button);
+        button.Tag = flyout;
+    }
+
+    private void OnExtrasButtonClicked(object sender, RoutedEventArgs e)
+    {
+        var button = sender as Button;
+        var settingsControl = new ExtrasControl();
         var flyout = new Flyout();
         flyout.Content = settingsControl;
         flyout.ShowAt(button);

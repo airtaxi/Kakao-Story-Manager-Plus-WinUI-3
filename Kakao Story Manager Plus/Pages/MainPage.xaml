@@ -24,6 +24,11 @@
                         <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe713;"/>
                     </Viewbox>
                 </Button>
+                <Button x:Name="BtExtras" Background="Transparent" BorderThickness="0" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,5,0,0" Foreground="Gray" Click="OnExtrasButtonClicked">
+                    <Viewbox Width="20" Height="20">
+                        <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe74c;"/>
+                    </Viewbox>
+                </Button>
                 <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" PointerEntered="ProfilePointerEntered" PointerExited="ProfilePointerExited" Tapped="ProfileTapped">
                     <PersonPicture x:Name="PpMyProfile" Width="80" Height="80" VerticalAlignment="Center"/>
                     <TextBlock x:Name="TbName" Text="로딩중..." HorizontalAlignment="Center" FontSize="20" FontWeight="Bold" Margin="10,10,10,0" VerticalAlignment="Center"/>
