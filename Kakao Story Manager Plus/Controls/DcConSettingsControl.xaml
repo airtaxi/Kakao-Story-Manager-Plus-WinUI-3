@@ -19,7 +19,8 @@
             <Button HorizontalAlignment="Right"
                     Background="Transparent"
                     BorderThickness="0"
-                    Tapped="OnExitButtonClicked">
+                    Tapped="OnExitButtonClicked"
+                    Margin="0,-5,-10,0">
                 <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe711;"/>
             </Button>
         </Grid>
