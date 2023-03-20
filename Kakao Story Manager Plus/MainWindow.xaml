@@ -104,8 +104,12 @@
             </StackPanel>
         </Grid>
 
-        <notifyicon:TaskbarIcon x:Name="TiMain"
-            TrayMouseDoubleClick="TaskbarIconTrayMouseDoubleTapped"/>
+        <notifyicon:TaskbarIcon
+            x:Name="TiMain">
+            <notifyicon:TaskbarIcon.DoubleClickCommand>
+                <XamlUICommand ExecuteRequested="OnTrayIconDoubleClicked"/>
+            </notifyicon:TaskbarIcon.DoubleClickCommand>
+        </notifyicon:TaskbarIcon>
         <Frame Grid.Row="1" x:Name="FrMain"/>
     </Grid>
 </Window>

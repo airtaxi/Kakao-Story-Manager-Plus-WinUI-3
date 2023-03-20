@@ -336,20 +336,6 @@ public sealed partial class MainWindow : Microsoft.UI.Xaml.Window
         appWindow.Hide();
     }
 
-    private void TaskbarIconTrayMouseDoubleTapped(object sender, RoutedEventArgs e)
-    {
-        Activate();
-        this.Show();
-
-        var appWindow = this.GetAppWindow();
-        appWindow.Show();
-
-        var presenter = appWindow.Presenter as OverlappedPresenter;
-        if (presenter.State == OverlappedPresenterState.Minimized) presenter.Restore();
-        presenter.IsAlwaysOnTop = true;
-        presenter.IsAlwaysOnTop = false;
-    }
-
     private async void OnPreviewKeyDown(object sender, KeyRoutedEventArgs e)
     {
         var isControlDown = Common.IsModifierDown();
@@ -521,4 +507,18 @@ public sealed partial class MainWindow : Microsoft.UI.Xaml.Window
         MainPage.HideOverlay();
         MainPage.NavigateTimeline();
     }
+
+	private void OnTrayIconDoubleClicked(XamlUICommand sender, ExecuteRequestedEventArgs args)
+	{
+		Activate();
+		this.Show();
+
+		var appWindow = this.GetAppWindow();
+		appWindow.Show();
+
+		var presenter = appWindow.Presenter as OverlappedPresenter;
+		if (presenter.State == OverlappedPresenterState.Minimized) presenter.Restore();
+		presenter.IsAlwaysOnTop = true;
+		presenter.IsAlwaysOnTop = false;
+	}
 }

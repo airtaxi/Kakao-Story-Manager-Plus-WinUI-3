@@ -68,9 +68,10 @@ public partial class ApiHandler
     private static async Task<AuthController> GetEmoticonCredential()
     {
         var client = new RestClient(EmoticonAuthUrl);
-        Cookies.ForEach(x => client.AddCookie(x.Name, x.Value, x.Path, x.Domain));
         var request = new RestRequest();
-        request.Method = Method.Get;
+		Cookies.ForEach(x => request.AddCookie(x.Name, x.Value, x.Path, x.Domain));
+
+		request.Method = Method.Get;
 
         request.AddHeader("authorization", $"KakaoAK {s_kakaoAppKey}");
         request.AddHeader("ka", $"sdk/1.14.0 os/javascript lang/ko-KR device/Win32 origin/https%3A%2F%2Fstory.kakao.com");
@@ -83,9 +84,10 @@ public partial class ApiHandler
     public static async Task<EmoticonItems> GetEmoticonList()
     {
         var client = new RestClient(EmoticonListUrl);
-        Cookies.ForEach(x => client.AddCookie(x.Name, x.Value, x.Path, x.Domain));
         var request = new RestRequest();
-        request.Method = Method.Get;
+		Cookies.ForEach(x => request.AddCookie(x.Name, x.Value, x.Path, x.Domain));
+
+		request.Method = Method.Get;
 
         request.AddHeader("authorization", $"KakaoAK {s_kakaoAppKey}");
         request.AddHeader("ka", "sdk/1.14.0 os/javascript lang/ko-KR device/Win32 origin/https%3A%2F%2Fstory.kakao.com");
