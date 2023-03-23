@@ -14,9 +14,9 @@
 		<StartupObject>KSMP.Program</StartupObject>
 		<ApplicationIcon>icon.ico</ApplicationIcon>
 		<Nullable>disable</Nullable>
-		<FileVersion>0.1.0.251</FileVersion>
-		<AssemblyVersion>0.1.0.251</AssemblyVersion>
-		<Version>0.1.0.251</Version>
+		<FileVersion>0.1.0.252</FileVersion>
+		<AssemblyVersion>0.1.0.252</AssemblyVersion>
+		<Version>0.1.0.252</Version>
 	</PropertyGroup>
 	<ItemGroup>
 		<Content Remove="Assets\Error.png" />
