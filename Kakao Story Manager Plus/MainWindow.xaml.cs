@@ -351,7 +351,7 @@ public sealed partial class MainWindow : Microsoft.UI.Xaml.Window
     {
         var dialogResult = await MainPage.Instance.ShowMessageDialogAsync("정말로 프로그램을 종료하시겠습니까?", "경고", true);
         if (dialogResult == ContentDialogResult.Primary) Environment.Exit(0);
-    }
+	}
 
     private void OnMoreButtonClicked(object sender, RoutedEventArgs e)
     {
@@ -412,8 +412,8 @@ public sealed partial class MainWindow : Microsoft.UI.Xaml.Window
         {
             Configuration.SetValue("willRememberCredentials", false);
             await MainPage.Instance.ShowMessageDialogAsync("로그아웃되었습니다.\n프로그램을 재실행해주세요.", "안내");
-            Environment.Exit(0);
-        }
+			Environment.Exit(0);
+		}
     }
 
 

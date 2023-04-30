@@ -388,7 +388,7 @@ public static class Utility
 
         Instance.SetClosable();
         await Task.Delay(100);
-        Instance.Close();
+        Environment.Exit(0);
     }
 
     public static ScrollViewer GetScrollViewerFromBaseListView(ListViewBase listViewBase)
