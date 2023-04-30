@@ -105,7 +105,34 @@
         </Grid>
 
         <notifyicon:TaskbarIcon
+            ContextMenuMode="SecondWindow"
+            MenuActivation="LeftOrRightClick"
+            IconSource="/icon.ico"
             x:Name="TiMain">
+            <notifyicon:TaskbarIcon.ContextFlyout>
+                <MenuFlyout>
+                    <MenuFlyoutItem 
+                        x:Name="MfiShowTimeline"
+                        Text="타임라인">
+                        <MenuFlyoutItem.Command>
+                            <XamlUICommand ExecuteRequested="OnTrayIconShowTimelineExecuteRequested"/>
+                        </MenuFlyoutItem.Command>
+                    </MenuFlyoutItem>
+                    <MenuFlyoutItem
+                        x:Name="MfiShowMyProfile"
+                        Text="내 프로필">
+                        <MenuFlyoutItem.Command>
+                            <XamlUICommand ExecuteRequested="OnTrayIconShowMyProfileExecuteRequested"/>
+                        </MenuFlyoutItem.Command>
+                    </MenuFlyoutItem>
+                    <MenuFlyoutSeparator/>
+                    <MenuFlyoutItem Text="프로그램 종료">
+                        <MenuFlyoutItem.Command>
+                            <XamlUICommand ExecuteRequested="OnTrayIconExitProgramExecuteRequested"/>
+                        </MenuFlyoutItem.Command>
+                    </MenuFlyoutItem>
+                </MenuFlyout>
+            </notifyicon:TaskbarIcon.ContextFlyout>
             <notifyicon:TaskbarIcon.DoubleClickCommand>
                 <XamlUICommand ExecuteRequested="OnTrayIconDoubleClicked"/>
             </notifyicon:TaskbarIcon.DoubleClickCommand>

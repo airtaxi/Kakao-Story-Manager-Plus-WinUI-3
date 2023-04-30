@@ -44,7 +44,6 @@ public sealed partial class LoginPage : Page
             CbxRememberCredentials.IsChecked = hasRememberedCreditionals;
             BeginLogin();
         }
-
         MainWindow.DisableLoginRequiredMenuFlyoutItems();
     }
 
@@ -184,6 +183,7 @@ public sealed partial class LoginPage : Page
             IsLoggedIn = true;
             SaveCredentials(email, password, CbxRememberCredentials.IsChecked == true);
             MainWindow.Navigate(typeof(MainPage));
+            MainWindow.EnableLoginRequiredMenuFlyoutItems();
         }
     }
 

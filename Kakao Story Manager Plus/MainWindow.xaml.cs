@@ -29,7 +29,6 @@ public sealed partial class MainWindow : Microsoft.UI.Xaml.Window
 
     public static bool IsWritePostFlyoutOpened = false;
 
-    private static List<MenuFlyoutItem> s_loginRequiredMenuFlyoutItems = new();
     private static Process _process;
 
     private bool _shouldClose { get; set; } = false;
@@ -52,7 +51,6 @@ public sealed partial class MainWindow : Microsoft.UI.Xaml.Window
         SetupTitleBarMemoryWatcherTimer();
         SetupTheme();
         SetupAppWindow();
-        SetupTrayIcon();
         if (flag == null) FrMain.Navigate(typeof(LoginPage));
         else
         {
@@ -168,9 +166,6 @@ public sealed partial class MainWindow : Microsoft.UI.Xaml.Window
 	public static void Navigate(Type type) => Instance.FrMain.Navigate(type);
     public static void Navigate(Type type, object args) => Instance.FrMain.Navigate(type, args);
 
-    public static void EnableLoginRequiredMenuFlyoutItems() => s_loginRequiredMenuFlyoutItems.ForEach(x => x.IsEnabled = true);
-    public static void DisableLoginRequiredMenuFlyoutItems() => s_loginRequiredMenuFlyoutItems.ForEach(x => x.IsEnabled = false);
-
     private void SetupAppWindow()
     {
         appWindow.Title = $"카카오스토리 매니저 PLUS";
@@ -284,41 +279,6 @@ public sealed partial class MainWindow : Microsoft.UI.Xaml.Window
             // Update drag region if the size of the title bar changes.
             SetDragRegionForCustomTitleBar(appWindow);
         }
-    }
-
-    private void SetupTrayIcon()
-    {
-        s_loginRequiredMenuFlyoutItems.Clear();
-
-        MenuFlyout menuFlyout = new();
-
-        MenuFlyoutItem showTimeline = new() { Text = "타임라인" };
-        var showTimelineCommand = new XamlUICommand();
-        showTimelineCommand.ExecuteRequested += (s, e) => MainPage.ShowTimeline();
-        showTimeline.Command = showTimelineCommand;
-        s_loginRequiredMenuFlyoutItems.Add(showTimeline);
-
-        MenuFlyoutItem showMyProfile = new() { Text = "내 프로필" };
-        var showMyProfileCommand = new XamlUICommand();
-        showMyProfileCommand.ExecuteRequested += (s, e) => MainPage.ShowMyProfile();
-        showMyProfile.Command = showMyProfileCommand;
-        s_loginRequiredMenuFlyoutItems.Add(showMyProfile);
-
-        MenuFlyoutItem quit = new() { Text = "프로그램 종료" };
-        var quitCommand = new XamlUICommand();
-        quitCommand.ExecuteRequested += (s, e) => Environment.Exit(0);
-        quit.Command = quitCommand;
-
-
-        menuFlyout.Items.Add(showTimeline);
-        menuFlyout.Items.Add(showMyProfile);
-        menuFlyout.Items.Add(new MenuFlyoutSeparator());
-        menuFlyout.Items.Add(quit);
-        TiMain.ContextFlyout = menuFlyout;
-        TiMain.MenuActivation = H.NotifyIcon.Core.PopupActivationMode.LeftOrRightClick;
-        var icon = new Icon(Path.Combine(App.BinaryDirectory, "icon.ico"));
-        TiMain.Icon = icon;
-        TiMain.ContextMenuMode = ContextMenuMode.PopupMenu;
     }
 
     public static TaskbarIcon TaskbarIcon() => Instance.TiMain;
@@ -520,5 +480,22 @@ public sealed partial class MainWindow : Microsoft.UI.Xaml.Window
 		if (presenter.State == OverlappedPresenterState.Minimized) presenter.Restore();
 		presenter.IsAlwaysOnTop = true;
 		presenter.IsAlwaysOnTop = false;
+	}
+
+	private void OnTrayIconShowMyProfileExecuteRequested(XamlUICommand sender, ExecuteRequestedEventArgs args) => MainPage.ShowMyProfile();
+	private void OnTrayIconShowTimelineExecuteRequested(XamlUICommand sender, ExecuteRequestedEventArgs args) => MainPage.ShowTimeline();
+
+	private void OnTrayIconExitProgramExecuteRequested(XamlUICommand sender, ExecuteRequestedEventArgs args) => Environment.Exit(0);
+
+	public static void EnableLoginRequiredMenuFlyoutItems()
+	{
+		Instance.MfiShowTimeline.IsEnabled = true;
+		Instance.MfiShowMyProfile.IsEnabled = true;
+	}
+
+	public static void DisableLoginRequiredMenuFlyoutItems()
+	{
+        Instance.MfiShowTimeline.IsEnabled = false;
+        Instance.MfiShowMyProfile.IsEnabled = false;
 	}
 }
