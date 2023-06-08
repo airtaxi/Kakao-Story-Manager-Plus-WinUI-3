@@ -115,12 +115,12 @@ public sealed partial class MainPage : Page
         string profileId = GetProfileIdFromNotification(notification);
         string activityId = GetActivityIdFromNotification(notification);
 
-        _ = Utility.RunOnMainThreadAsync(async () =>
-        {
-            var timelineControl = Instance.FrOverlay.Content as TimelineControl;
-            if (timelineControl == null) return;
-            else if (timelineControl.PostId == activityId) await timelineControl.RefreshContent();
-        });
+        //_ = Utility.RunOnMainThreadAsync(async () =>
+        //{
+        //    var timelineControl = Instance.FrOverlay.Content as TimelineControl;
+        //    if (timelineControl == null) return;
+        //    else if (timelineControl.PostId == activityId) await timelineControl.RefreshContent();
+        //});
 
         var builder = new ToastContentBuilder()
         .AddText(notification.message)
@@ -242,15 +242,7 @@ public sealed partial class MainPage : Page
     public static void HideOverlay(bool willDispose = true)
     {
         if (Instance == null) return;
-        var writePostButton = MainWindow.GetWritePostButton();
-        var isWritePostFlyoutOpened = writePostButton?.Flyout?.IsOpen ?? false;
-        if(isWritePostFlyoutOpened)
-        {
-            ((writePostButton.Flyout as Flyout).Content as WritePostControl).PreventClose = false;
-            MainWindow.IsWritePostFlyoutOpened = false;
-            writePostButton.Flyout.Hide();
-            return;
-        }
+
         var isSecond = Instance.GdOverlay2.Visibility == Visibility.Visible;
         var overlay = isSecond ? Instance.GdOverlay2 : Instance.GdOverlay;
         overlay.Visibility = Visibility.Collapsed;

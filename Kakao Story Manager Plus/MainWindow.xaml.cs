@@ -29,8 +29,6 @@ public sealed partial class MainWindow : Window
 {
     public static MainWindow Instance { get; private set; }
 
-    public static bool IsWritePostFlyoutOpened = false;
-
     private string _versionString = string.Empty;
     private bool _isFirst = true;
 
@@ -40,7 +38,6 @@ public sealed partial class MainWindow : Window
         Instance = this;
 
         _versionString = Common.GetVersionString() ?? "VERSION ERROR";
-        InitializeWritePostFlyout();
 
         SetupTheme();
         SetupAppWindow();
@@ -278,7 +275,6 @@ public sealed partial class MainWindow : Window
 
 		AppTitleBar.Loaded -= AppTitleBarLoaded;
 		AppTitleBar.SizeChanged -= AppTitleBarSizeChanged;
-		UnsubscribeWritePostFlyourEvent();
 	}
 
     private async void OnPreviewKeyDown(object sender, KeyRoutedEventArgs e)
@@ -365,32 +361,9 @@ public sealed partial class MainWindow : Window
     }
     private async void OnNotificationsButtonClicked(object sender, RoutedEventArgs e) => await ShowNotification(sender as Button);
 
-    public static Button GetWritePostButton() => Instance.BtWrite;
+    private void OnWritePostButtonClicked(object sender, RoutedEventArgs e) => new WritePostWindow().Activate();
 
-    private async void OnWritePostButtonClicked(object sender, RoutedEventArgs e)
-    {
-        var button = sender as Button;
-        var flyout = button.Flyout as Flyout;
-        var control = flyout.Content as WritePostControl;
-        control.AdjustDefaultPostWritingPermission();
-
-        DataPackageView dataPackageView = Clipboard.GetContent();
-
-        bool willSuggestAddClipboardImage = (Utils.Configuration.GetValue("SuggestAddClipboardImage") as bool?) ?? true;
-        if (!willSuggestAddClipboardImage) return;
-        var hasImage = dataPackageView.Contains(StandardDataFormats.Bitmap);
-        if (hasImage && willSuggestAddClipboardImage)
-        {
-            await Task.Delay(400);
-            var result = await Utility.ShowMessageDialogAsync("클립보드에 이미지가 있습니다.\n이미지를 추가할까요?", "안내", true);
-            if (result != ContentDialogResult.Primary) return;
-
-            var filePath = await Utility.GenerateClipboardImagePathAsync(dataPackageView);
-            await control.AddImageFromPath(filePath);
-        }
-    }
-
-    private async void OnLogoutButtonClicked(object sender, RoutedEventArgs e)
+	private async void OnLogoutButtonClicked(object sender, RoutedEventArgs e)
     {
         var result = await Utility.ShowMessageDialogAsync("정말로 로그아웃 하시겠습니까?", "경고", true);
         if (result == ContentDialogResult.Primary)
@@ -401,55 +374,8 @@ public sealed partial class MainWindow : Window
 		}
     }
 
-
-    private async void OnSizeChanged(object sender, SizeChangedEventArgs e)
-    {
-        if (IsWritePostFlyoutOpened)
-        {
-            await Task.Delay(250);
-            var flyout = BtWrite?.Flyout as Flyout;
-            flyout?.ShowAt(BtWrite);
-        }
-    }
-
-    private void OnWritePostFlyoutClosed(object sender, object e) => IsWritePostFlyoutOpened = false;
-
-    private void OnPostCompleted() => InitializeWritePostFlyout();
-
-    private void InitializeWritePostFlyout()
-    {
-        IsWritePostFlyoutOpened = false;
-		UnsubscribeWritePostFlyourEvent();
-
-		var flyout = new Flyout();
-        flyout.Opened += OnWritePostFlyoutOpened;
-        flyout.Closed += OnWritePostFlyoutClosed;
-        BtWrite.Flyout = flyout;
-        var control = new WritePostControl(BtWrite);
-        flyout.Content = control;
-        control.OnPostCompleted += OnPostCompleted;
-    }
-
-	private void UnsubscribeWritePostFlyourEvent()
-	{
-		var previousFlyout = BtWrite.Flyout as Flyout;
-		if (previousFlyout != null)
-		{
-		    previousFlyout.Opened -= OnWritePostFlyoutOpened;
-		    previousFlyout.Closed -= OnWritePostFlyoutClosed;
-		    var previousControl = previousFlyout.Content as WritePostControl;
-		    if (previousControl != null) previousControl.OnPostCompleted -= OnPostCompleted;
-		}
-	}
-
 	private void OnPointerEntered(object sender, PointerRoutedEventArgs e) => Utility.ChangeSystemMouseCursor(true);
     private void OnPointerExited(object sender, PointerRoutedEventArgs e) => Utility.ChangeSystemMouseCursor(false);
-
-    private void OnWritePostFlyoutOpened(object sender, object e)
-    {
-        ((BtWrite.Flyout as Flyout).Content as WritePostControl).PreventClose = true;
-        IsWritePostFlyoutOpened = true;
-    }
 
     private void OnProgramIconClicked(object sender, RoutedEventArgs e)
     {
@@ -484,11 +410,19 @@ public sealed partial class MainWindow : Window
 	{
 		Instance.MfiShowTimeline.IsEnabled = true;
 		Instance.MfiShowMyProfile.IsEnabled = true;
+		Instance.MfiWritePost.IsEnabled = true;
 	}
 
 	public static void DisableLoginRequiredMenuFlyoutItems()
 	{
         Instance.MfiShowTimeline.IsEnabled = false;
         Instance.MfiShowMyProfile.IsEnabled = false;
+        Instance.MfiWritePost.IsEnabled = false;
+	}
+
+	private void OnTrayIconWritePostExecuteRequested(XamlUICommand sender, ExecuteRequestedEventArgs args)
+	{
+        var window = new WritePostWindow();
+        window.Activate();
 	}
 }

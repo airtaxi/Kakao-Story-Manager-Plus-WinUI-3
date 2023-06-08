@@ -459,4 +459,6 @@ public sealed partial class WritePostControl : UserControl
         var button = sender as Button;
         Utils.Post.ShowEmoticonListToButton(button, _inputControl);
     }
+
+    public double GetHeight() => FrInputControl.ActualHeight + BdMedia.ActualHeight + GdMedia.ActualHeight + GdMenu.ActualHeight;
 }

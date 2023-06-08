@@ -9,11 +9,12 @@
     d:DesignHeight="300"
     d:DesignWidth="400">
 
-    <Grid>
+    <Grid x:Name="GdMain">
         <Rectangle x:Name="RtDummy" Fill="Transparent"/>
-        <Grid x:Name="GdMain" Background="{ThemeResource White}" CornerRadius="5">
+        
+        <Grid Background="{ThemeResource White}" CornerRadius="5">
             <Grid.RowDefinitions>
-                <RowDefinition Height="auto"/>
+                <RowDefinition x:Name="Rd1" Height="auto"/>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="auto"/>
                 <RowDefinition Height="auto"/>
@@ -191,15 +192,7 @@
             </Grid>
             <Border x:Name="BdShare" CornerRadius="5" BorderBrush="{ThemeResource Gray6}" Grid.RowSpan="4" BorderThickness="1" Visibility="Collapsed"/>
         </Grid>
-        <Grid x:Name="GdOverlay" Margin="10" CornerRadius="5" Visibility="Collapsed">
-            <Rectangle Fill="{ThemeResource Black}" Opacity="0.85"/>
-            <Frame x:Name="FrOverlay" Background="{ThemeResource White}" Padding="10" CornerRadius="5" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-            <Button Background="Transparent" BorderThickness="0" Click="OnOverlayCloseButtonClicked" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="10">
-                <Viewbox Width="20" Height="20">
-                    <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe711;" Foreground="{ThemeResource White}"/>
-                </Viewbox>
-            </Button>
-        </Grid>
+        
         <Grid x:Name="GdLoading" Margin="10" CornerRadius="5" Visibility="Collapsed">
             <Rectangle Fill="{ThemeResource White}" Opacity="0.85"/>
             <ProgressRing IsIndeterminate="True" IsActive="True" Width="150" Height="150"/>

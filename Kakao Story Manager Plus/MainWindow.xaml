@@ -8,7 +8,7 @@
     mc:Ignorable="d"
     Closed="WindowClosed">
 
-    <Grid PreviewKeyDown="OnPreviewKeyDown" SizeChanged="OnSizeChanged">
+    <Grid PreviewKeyDown="OnPreviewKeyDown">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition />
@@ -123,6 +123,14 @@
                         Text="내 프로필">
                         <MenuFlyoutItem.Command>
                             <XamlUICommand ExecuteRequested="OnTrayIconShowMyProfileExecuteRequested"/>
+                        </MenuFlyoutItem.Command>
+                    </MenuFlyoutItem>
+                    <MenuFlyoutSeparator/>
+                    <MenuFlyoutItem
+                        x:Name="MfiWritePost"
+                        Text="글 작성">
+                        <MenuFlyoutItem.Command>
+                            <XamlUICommand ExecuteRequested="OnTrayIconWritePostExecuteRequested"/>
                         </MenuFlyoutItem.Command>
                     </MenuFlyoutItem>
                     <MenuFlyoutSeparator/>

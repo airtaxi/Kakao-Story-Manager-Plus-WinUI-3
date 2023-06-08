@@ -176,7 +176,6 @@ public sealed partial class TimelineControl : UserControl
         RtDummy.Visibility = Visibility.Visible;
         RtDummy.Height = GdMain.ActualHeight;
         GdLoading.Visibility = Visibility.Collapsed;
-        GdOverlay.Visibility = Visibility.Collapsed;
 
         (FrShare.Content as TimelineControl)?.UnloadMedia();
         FrShare.Content = null;
@@ -346,9 +345,10 @@ public sealed partial class TimelineControl : UserControl
     {
         if (!_post.sharable || _post.@object != null) return;
 
-        GdOverlay.Visibility = Visibility.Visible;
-        var control = new WritePostControl(_post);
-        FrOverlay.Content = control;
+        var window = new WritePostWindow(_post);
+        window.Activate();
+
+        var control = window.Control;
         control.OnPostCompleted += OnPostCompleted;
         await Task.Delay(10); // Bugfix
         control.FocusTextbox();
@@ -364,19 +364,9 @@ public sealed partial class TimelineControl : UserControl
         }
 	}
 
-    private async void OnPostCompleted()
-    {
-        HideOverlay();
-        await RefreshContent();
-    }
+	private async void OnPostCompleted() => await RefreshContent();
 
-    private void HideOverlay()
-    {
-        GdOverlay.Visibility = Visibility.Collapsed;
-        FrOverlay.Content = null;
-    }
-
-    private async void CopyPostUrl(XamlUICommand sender, ExecuteRequestedEventArgs args)
+	private async void CopyPostUrl(XamlUICommand sender, ExecuteRequestedEventArgs args)
     {
         string userId = _post.actor.id;
         string postId = _post.id.Split(new string[] { "." }, StringSplitOptions.None)[1];
@@ -714,17 +704,18 @@ public sealed partial class TimelineControl : UserControl
         await ApiHandler.DeletePost(_post.id);
 
         MainPage.GetTimelinePage()?.RemovePost(_post.id);
-        _window.Close();
     }
 
     public async Task EditPost()
     {
         if (_post.actor.id != MainPage.Me.id) return;
         GdLoading.Visibility = Visibility.Visible;
-        GdOverlay.Visibility = Visibility.Visible;
-        var control = new WritePostControl();
-        await control.SetEditMedia(_post);
-        FrOverlay.Content = control;
+
+        var window = new WritePostWindow();
+        window.Activate();
+        var control = window.Control;
+		await control.SetEditMedia(_post);
+
         control.OnPostCompleted += OnPostCompleted;
         await Task.Delay(10);
         control.FocusTextbox();
@@ -995,8 +986,6 @@ public sealed partial class TimelineControl : UserControl
         BtAddDcCon.IsEnabled = true;
         _isUploading = false;
     }
-
-    private void OnOverlayCloseButtonClicked(object sender, RoutedEventArgs e) => HideOverlay();
 
     private async void OnSharedPostShareCountTapped(object sender, TappedRoutedEventArgs e)
     {

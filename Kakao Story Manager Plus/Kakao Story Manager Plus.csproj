@@ -44,6 +44,7 @@
 		<None Remove="DialogWindow.xaml" />
 		<None Remove="ImageViewerWindow.xaml" />
 		<None Remove="TimelineWindow.xaml" />
+		<None Remove="WritePostWindow.xaml" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -98,6 +99,10 @@
 		</None>
 		<Page Update="DialogWindow.xaml">
 		  <Generator>MSBuild:Compile</Generator>
+		</Page>
+		<Page Update="WritePostWindow.xaml">
+		  <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+		  <SubType>Designer</SubType>
 		</Page>
 		<Page Update="ImageViewerWindow.xaml">
 		  <Generator>MSBuild:Compile</Generator>
