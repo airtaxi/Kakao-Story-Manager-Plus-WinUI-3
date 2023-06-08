@@ -61,17 +61,20 @@ public sealed partial class CommentControl : UserControl
             SpLike.Visibility = Visibility.Visible;
             TbLike.Text = comment.like_count.ToString();
         }
-        Post.SetTextContent(comment.decorators, RtbContent);
+
+        Post.SetTextContent(comment.decorators, RtbContent, _isOverlay);
+
         var commentMedia = comment.decorators.FirstOrDefault(x => x.media?.thumbnail_url != null);
         if (!string.IsNullOrEmpty(commentMedia?.media?.origin_url))
         {
-            ImgMain.Visibility = Visibility.Visible;
+            var image = new Image();
+            FrImage.Content = image;
 
             bool willUseGifInTimeline = (Configuration.GetValue("UseGifInTimeline") as bool?) ?? false;
             var url = willUseGifInTimeline ? commentMedia.media.origin_url : commentMedia.media.thumbnail_url;
-            Utility.SetImageUrlSource(ImgMain, url);
+            Utility.SetImageUrlSource(image, url);
 
-            ImgMain.Tapped += (s, e) =>
+            image.Tapped += (s, e) =>
             {
                 e.Handled = true;
                 var medium = new Medium
@@ -82,8 +85,7 @@ public sealed partial class CommentControl : UserControl
                 MainPage.ShowOverlay(control, _isOverlay);
             };
         }
-        else
-            ImgMain.Visibility = Visibility.Collapsed;
+
         LoadCommentCompletionSource.TrySetResult();
     }
 
@@ -91,9 +93,8 @@ public sealed partial class CommentControl : UserControl
 
     public void UnloadMedia()
     {
-        ImgMain?.DisposeImage();
+        (FrImage.Content as Image)?.DisposeImage();
         PpUser?.DisposeImage();
-        (RtbContent.Tag as Image)?.DisposeImage();
     }
 
     private async void OnLikeButtonClick(object sender, RoutedEventArgs e)
@@ -152,7 +153,7 @@ public sealed partial class CommentControl : UserControl
     private async Task PublishEditedComment()
     {
         FrEditCommentParent.IsEnabled = false;
-        PrrEditComment.Visibility = Visibility.Visible;
+        PrEditComment.Visibility = Visibility.Visible;
         var inputControl = FrEditComment.Content as InputControl;
         var quotas = inputControl.GetQuoteDatas();
         var text = string.Join(' ', quotas.Select(x => x.text));
@@ -164,7 +165,7 @@ public sealed partial class CommentControl : UserControl
         var comment = await ApiHandler.EditComment(_comment, _postId, quotas, text);
         _comment = comment;
         Refresh(_comment);
-        PrrEditComment.Visibility = Visibility.Collapsed;
+        PrEditComment.Visibility = Visibility.Collapsed;
         FrEditCommentParent.Visibility = Visibility.Collapsed;
         FrEditCommentParent.IsEnabled = true;
     }

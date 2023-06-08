@@ -47,10 +47,10 @@ public sealed partial class TimelineControl : UserControl
 
     public TimelineControl(PostData post, bool isShare = false, bool isOverlay = false)
     {
-        InitializeComponent();
         _post = post;
         _isOverlay = isOverlay;
         _isShare = isShare;
+        InitializeComponent();
         if (isOverlay && !isShare)
         {
             FaClose.Visibility = Visibility.Visible;
@@ -88,22 +88,39 @@ public sealed partial class TimelineControl : UserControl
             GdMain.Margin = new Thickness(0);
         }
 
-        Initialize();
-        var inputControl = new InputControl("댓글을 입력하세요.");
-        inputControl.AcceptReturn(true);
-        inputControl.SetMaxHeight(120);
-        inputControl.WrapText(true);
-        inputControl.OnSubmitShortcutActivated += OnSubmitShortcutActivated;
-        inputControl.OnImagePasted += OnImagePasted;
-        if (isOverlay) inputControl.SetPopupDesiredPlacement(PopupPlacementMode.Top);
+        InitializeFlyout();
 
-        FrComment.Content = inputControl;
+        if (!isShare)
+        {
+            var inputControl = new InputControl("댓글을 입력하세요.");
+            inputControl.AcceptReturn(true);
+            inputControl.SetMaxHeight(120);
+            inputControl.WrapText(true);
+            inputControl.OnSubmitShortcutActivated += OnSubmitShortcutActivated;
+            inputControl.OnImagePasted += OnImagePasted;
+            if (isOverlay) inputControl.SetPopupDesiredPlacement(PopupPlacementMode.Top);
+
+            FrComment.Content = inputControl;
+        }
+
         bool willUseDynamicTimelineLoading = (Configuration.GetValue("UseDynamicTimelineLoading") as bool?) ?? true;
         if (isOverlay || !willUseDynamicTimelineLoading) _ = RefreshContent();
 
         if (!isOverlay && !isShare) GdMain.MaxWidth = 600;
 
         ActualThemeChanged += OnThemeChanged;
+        if(!isShare)
+        {
+            Task.Run(async () =>
+            {
+                await Task.Delay(500);
+                await MainWindow.Instance.RunOnMainThreadAsync(() =>
+                {
+                    var last = LvComments.Items.LastOrDefault();
+                    if (last != null) LvComments.ScrollIntoView(last);
+                });
+            });
+        }
     }
 
     private void OnThemeChanged(FrameworkElement sender, object args) => SetButtonColorByTheme();
@@ -249,7 +266,7 @@ public sealed partial class TimelineControl : UserControl
         }
         SetButtonColorByTheme();
     }
-    private void Initialize()
+    private void InitializeFlyout()
     {
         var emotionsFlyout = new Flyout
         {
@@ -346,7 +363,7 @@ public sealed partial class TimelineControl : UserControl
         RtbUps.Visibility = Visibility.Visible;
 
         int commentCount = _post.comments?.Count ?? 0;
-        if (commentCount > 0)
+        if (commentCount > 0 && !_isShare)
         {
             RtbComments.Visibility = Visibility.Visible;
             LvComments.Visibility = Visibility.Visible;
@@ -387,7 +404,7 @@ public sealed partial class TimelineControl : UserControl
         if ((_post.media?.Count ?? 0) > 0) GvMedia.Visibility = Visibility.Visible;
         else GvMedia.Visibility = Visibility.Collapsed;
 
-        Post.SetTextContent(_post.content_decorators, RTbContent);
+        Post.SetTextContent(_post.content_decorators, RTbContent, _isOverlay);
 
         RefreshUpButton();
         RefreshBookmarkButton();
@@ -420,7 +437,7 @@ public sealed partial class TimelineControl : UserControl
         foreach (FrameworkElement item in itemsCopy)
             if (item.Visibility == Visibility.Collapsed)
                 LvContent.Items.Remove(item);
-    }
+	}
 
     private void RefreshTimestamp()
     {
@@ -456,10 +473,8 @@ public sealed partial class TimelineControl : UserControl
                 LvComments.Items.Add(control);
             else
                 LvComments.Items.Insert(0, control);
-        }
-        LvComments.UpdateLayout();
-        if (LvComments.Items.Count > 0)
-            LvComments.ScrollIntoView(LvComments.Items.LastOrDefault());
+		}
+		LvComments.UpdateLayout();
     }
 
     private void OnCommentReplyClicked(Comment sender)

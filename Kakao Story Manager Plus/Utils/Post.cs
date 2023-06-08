@@ -11,7 +11,7 @@ namespace KSMP.Utils;
 
 public static class Post
 {
-    public static async void SetTextContent(List<QuoteData> contentDecorators, RichTextBlock richTextBlock)
+    public static async void SetTextContent(List<QuoteData> contentDecorators, RichTextBlock richTextBlock, bool isOverlay)
     {
         bool hasEmoticon = false;
         var wordCount = 0;
@@ -38,17 +38,22 @@ public static class Post
             else if (decorator.type.Equals("emoticon"))
             {
                 hasEmoticon = true;
+
+                var image = new Image();
                 var container = new InlineUIContainer();
                 var url = "";
-                if (decorator.item_id.StartsWith("4"))
+                var isAnimatedEmoticon = decorator.item_id.StartsWith("4");
+                if (isAnimatedEmoticon && isOverlay)
+                {
                     url = $"http://item-kr.talk.kakao.co.kr/dw/{decorator.item_id}.emot_{decorator.resource_id.ToString().PadLeft(3, '0')}.webp";
-                else
-                    url = await ApiHandler.GetEmoticonUrl(decorator.item_id, decorator.resource_id.ToString());
-                var image = new Image();
-                if (decorator.item_id.StartsWith("4"))
                     await Utility.SetAnimatedEmoticonImage(image, url);
+                }
                 else
+                {
+                    url = await ApiHandler.GetEmoticonUrl(decorator.item_id, decorator.resource_id.ToString());
                     await Utility.SetEmoticonImageAsync(image, url);
+                }
+
                 image.Width = 80;
                 image.Height = 80;
                 richTextBlock.Tag = image;

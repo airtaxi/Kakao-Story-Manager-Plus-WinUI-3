@@ -43,7 +43,7 @@
                             <ColumnDefinition Width="0.6*"/>
                             <ColumnDefinition Width="0.4*"/>
                         </Grid.ColumnDefinitions>
-                        <Image x:Name="ImgMain" Visibility="Collapsed" Margin="10" MaxWidth="100" MaxHeight="100" HorizontalAlignment="Left"/>
+                        <Frame x:Name="FrImage" Visibility="Collapsed" Margin="10" MaxWidth="100" MaxHeight="100" HorizontalAlignment="Left"/>
                     </Grid>
                 </StackPanel>
                 <Button x:Name="BtCommentMenu" Grid.Column="1" BorderThickness="0" Padding="5" Margin="5,0,0,0" Tapped="OnCommentMenuTapped" Background="Transparent">
@@ -72,7 +72,7 @@
                         <Frame x:Name="FrEditComment" Grid.Column="0" VerticalAlignment="Center" Margin="5"/>
                         <Button Content="수정" Background="{ThemeResource Orange}" Foreground="{ThemeResource White}" Padding="10,5,10,5" VerticalAlignment="Bottom" Grid.Column="1" Margin="5" Click="OnPublishEditCommentButtonClicked"/>
                     </Grid>
-                    <ProgressRing x:Name="PrrEditComment" IsActive="True" IsIndeterminate="True" Visibility="Collapsed"/>
+                    <ProgressRing x:Name="PrEditComment" IsActive="True" IsIndeterminate="True" Visibility="Collapsed"/>
                 </Grid>
             </Frame>
         </Grid>
