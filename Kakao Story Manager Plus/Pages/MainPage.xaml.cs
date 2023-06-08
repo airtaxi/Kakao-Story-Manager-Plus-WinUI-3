@@ -310,7 +310,7 @@ public sealed partial class MainPage : Page
         NavigateTimeline(id);
     }
 
-    public static TimelinePage GetTimelinePage() => Instance.FrContent.Content as TimelinePage;
+    public static TimelinePage GetTimelinePage() => Instance?.FrContent?.Content as TimelinePage;
 
     private void FriendPointerEntered(object sender, PointerRoutedEventArgs e) => Utility.ChangeSystemMouseCursor(true);
 
