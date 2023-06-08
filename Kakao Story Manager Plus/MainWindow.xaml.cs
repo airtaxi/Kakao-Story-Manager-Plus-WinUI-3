@@ -386,8 +386,9 @@ public sealed partial class MainWindow : Window
 
 	private void OnTrayIconDoubleClicked(XamlUICommand sender, ExecuteRequestedEventArgs args)
 	{
-        App.DispatcherQueue.TryEnqueue(async() =>
+        App.DispatcherQueue.TryEnqueue(() =>
         {
+            if (Instance == null) Utility.RestartProgram();
             var window = Instance ?? new MainWindow();
 			window.Activate();
 			this.Show();
