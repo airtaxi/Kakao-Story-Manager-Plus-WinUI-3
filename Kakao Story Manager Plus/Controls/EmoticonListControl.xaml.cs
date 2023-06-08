@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using static KSMP.ApiHandler.DataType.EmoticonItems;
+using static KSMP.Controls.WritePostControl;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -52,7 +53,13 @@ public sealed partial class EmoticonListControl : UserControl
             SpList.Children.Add(container);
             container.Click += OnButtonClicked;
             _containers.Add(container);
-        }
+
+			{
+				RoutedEventHandler unloaded = null;
+                unloaded = (s, e) => container.Click -= OnButtonClicked;
+				Unloaded += unloaded;
+			}
+		}
         await Select(_containers.FirstOrDefault());
         IsEnabled = true;
         PrLoading.Visibility = Visibility.Collapsed;

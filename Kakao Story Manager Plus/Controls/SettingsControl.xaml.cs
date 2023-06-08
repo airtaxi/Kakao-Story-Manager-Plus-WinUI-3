@@ -4,6 +4,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.Win32;
 using System;
+using System.ComponentModel;
 using static KSMP.ClassManager;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -67,7 +68,33 @@ public sealed partial class SettingsControl : UserControl
 
         ValidateThemeSetting();
         CbxThemeSetting.SelectionChanged += OnThemeSettingComboBoxSelectionChanged;
-    }
+
+
+		{
+			RoutedEventHandler unloaded = null;
+            unloaded = (s, e) =>
+			{
+				TsFavoriteFriendNotification.Toggled -= OnReceiveFavoriteFriendNotificationToggleSwitchToggled;
+				TsEmotionalNotification.Toggled -= OnReceiveEmotionalNotificationToggleSwitchToggled;
+				TsLaunchAtStartup.Toggled -= OnLaunchAtStartupToggleSwitchToggled;
+				TsUseGifProfileImage.Toggled -= OnUseGifProfileImageToggleSwitchToggled;
+				TsUseRealGifInTimeline.Toggled -= OnUseRealGifInTimelineToggleSwitchToggled;
+				TsUseGifInTimeline.Toggled -= OnUseGifInTimelineToggleSwitchToggled;
+				TsUseEmbeddedVideoPlayer.Toggled -= OnUseEmbeddedVideoPlayerToggleSwitchToggled;
+				TsClearTimelineOnRefresh.Toggled -= OnClearTimelineOnRefreshToggleSwitchToggled;
+				TsWarnOnHighMemoryUsage.Toggled -= OnWarnOnHighMemoryUsageToggleSwitchToggled;
+				TsUseResponsiveTimeline.Toggled -= OnUseResponsiveTimelineToggleSwitchToggled;
+				TsUseDynamicTimelineLoading.Toggled -= OnUseDynamicTimelineLoadingToggleSwitchToggled;
+				TsShowMyProfileOnStartup.Toggled -= OnShowMyProfileOnStartupToggleSwitchToggled;
+				TsSuggestAddClipboardImage.Toggled -= OnSuggestAddClipboardImageToggleSwitchToggled;
+				
+                CbxDefaultPostWritingPermission.SelectionChanged -= OnDefaultPostWritingPermissionComboBoxSelectionChanged;
+                CbxThemeSetting.SelectionChanged -= OnThemeSettingComboBoxSelectionChanged;
+                Unloaded -= unloaded;
+			};
+			Unloaded += unloaded;
+		}
+	}
 
     private void OnSuggestAddClipboardImageToggleSwitchToggled(object sender, RoutedEventArgs e)
     {

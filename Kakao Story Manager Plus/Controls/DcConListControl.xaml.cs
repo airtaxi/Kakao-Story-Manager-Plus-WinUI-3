@@ -51,7 +51,16 @@ public sealed partial class DcConListControl : UserControl
             container.Tag = package;
             SpList.Children.Add(container);
             container.Click += OnButtonClicked;
-            _containers.Add(container);
+			{
+				RoutedEventHandler unloaded = null;
+				unloaded = (s, e) =>
+				{
+					container.Click += OnButtonClicked;
+                    Unloaded -= unloaded;
+				};
+				Unloaded += unloaded;
+			}
+			_containers.Add(container);
         }
         SelectItem(_containers.FirstOrDefault());
         IsEnabled = true;

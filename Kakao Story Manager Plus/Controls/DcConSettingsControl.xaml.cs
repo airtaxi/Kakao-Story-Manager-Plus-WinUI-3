@@ -10,6 +10,7 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Linq;
+using static KSMP.Controls.InputControl;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -26,7 +27,16 @@ namespace KSMP.Controls
             var list = Utility.GetCurrentDcConList();
             var collection = new ObservableCollection<DataType.Package>(list);
             collection.CollectionChanged += OnDcConListCollectionChanged;
-            LvMain.ItemsSource = collection;
+			{
+				RoutedEventHandler unloaded = null;
+				unloaded = (s, e) =>
+				{
+					collection.CollectionChanged -= OnDcConListCollectionChanged;
+                    Unloaded -= unloaded;
+				};
+				Unloaded += unloaded;
+			}
+			LvMain.ItemsSource = collection;
         }
 
         private void OnShowDcConListButtonClicked(object sender, RoutedEventArgs e) => Process.Start(new ProcessStartInfo("https://dccon.dcinside.com/") { UseShellExecute = true });
@@ -60,7 +70,16 @@ namespace KSMP.Controls
             }
             collection.Add(detail);
             collection.CollectionChanged += OnDcConListCollectionChanged;
-            LvMain.ItemsSource = collection;
+			{
+				RoutedEventHandler unloaded = null;
+				unloaded = (s, e) =>
+				{
+					collection.CollectionChanged -= OnDcConListCollectionChanged;
+                    Unloaded -= unloaded;
+				};
+				Unloaded += unloaded;
+			}
+			LvMain.ItemsSource = collection;
             Configuration.SetValue("DcConList", collection);
         }
 
@@ -85,7 +104,16 @@ namespace KSMP.Controls
             list.RemoveAll(x => x.PackageInfo.PackageIndex == current.PackageInfo.PackageIndex);
             var collection = new ObservableCollection<DataType.Package>(list);
             collection.CollectionChanged += OnDcConListCollectionChanged;
-            LvMain.ItemsSource = collection;
+			{
+				RoutedEventHandler unloaded = null;
+				unloaded = (s, e) =>
+				{
+					collection.CollectionChanged -= OnDcConListCollectionChanged;
+                    Unloaded -= unloaded;
+				};
+				Unloaded += unloaded;
+			}
+			LvMain.ItemsSource = collection;
             Configuration.SetValue("DcConList", collection);
         }
 

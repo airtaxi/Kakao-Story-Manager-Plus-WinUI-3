@@ -6,6 +6,7 @@ using Windows.ApplicationModel.DataTransfer;
 using static KSMP.ApiHandler.DataType;
 using static KSMP.ApiHandler.DataType.EmoticonItems;
 using Microsoft.UI.Xaml.Controls.Primitives;
+using System.ComponentModel;
 
 namespace KSMP.Controls;
 
@@ -30,7 +31,18 @@ public sealed partial class InputControl : UserControl
         var control = new FriendListControl();
         PuDropdown.Child = control;
         control.OnFriendSelected += OnFriendSelected;
-        TbxMain.PlaceholderText = placeholder ?? "";
+
+		{
+			RoutedEventHandler unloaded = null;
+			unloaded = (s, e) =>
+			{
+				control.OnFriendSelected -= OnFriendSelected;
+                Unloaded -= unloaded;
+			};
+			Unloaded += unloaded;
+		}
+
+		TbxMain.PlaceholderText = placeholder ?? "";
     }
 
     public void SetPopupDesiredPlacement(PopupPlacementMode mode) => PuDropdown.DesiredPlacement = mode;

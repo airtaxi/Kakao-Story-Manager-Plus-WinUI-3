@@ -101,7 +101,18 @@ public sealed partial class TimelineControl : UserControl
             if (isOverlay) inputControl.SetPopupDesiredPlacement(PopupPlacementMode.Top);
 
             FrComment.Content = inputControl;
-        }
+
+			{
+				RoutedEventHandler unloaded = null;
+                unloaded = (s, e) =>
+                {
+                    inputControl.OnSubmitShortcutActivated -= OnSubmitShortcutActivated;
+                    inputControl.OnImagePasted -= OnImagePasted;
+                    Unloaded -= unloaded;
+                };
+				Unloaded += unloaded;
+			}
+		}
 
         bool willUseDynamicTimelineLoading = (Configuration.GetValue("UseDynamicTimelineLoading") as bool?) ?? true;
         if (isOverlay || !willUseDynamicTimelineLoading) _ = RefreshContent();
@@ -109,6 +120,16 @@ public sealed partial class TimelineControl : UserControl
         if (!isOverlay && !isShare) GdMain.MaxWidth = 600;
 
         ActualThemeChanged += OnThemeChanged;
+		{
+			RoutedEventHandler unloaded = null;
+			unloaded = (s, e) =>
+			{
+				ActualThemeChanged -= OnThemeChanged;
+				Unloaded -= unloaded;
+			};
+			Unloaded += unloaded;
+		}
+
         if(!isShare)
         {
             Task.Run(async () =>
@@ -123,7 +144,7 @@ public sealed partial class TimelineControl : UserControl
         }
     }
 
-    private void OnThemeChanged(FrameworkElement sender, object args) => SetButtonColorByTheme();
+	private void OnThemeChanged(FrameworkElement sender, object args) => SetButtonColorByTheme();
 
     private void SetButtonColorByTheme()
     {
@@ -273,7 +294,8 @@ public sealed partial class TimelineControl : UserControl
             Content = new EmotionsControl(_post, this)
         };
         BtEmotions.Flyout = emotionsFlyout;
-        BtEmotions.Flyout.Opening += async (s, e) =>
+
+        EventHandler<object> emotionsFlyoutOpeningEventHandler = async (s, e) =>
         {
             if (_post.liked)
             {
@@ -282,6 +304,7 @@ public sealed partial class TimelineControl : UserControl
                 HideEmotionsButtonFlyout();
             }
         };
+		BtEmotions.Flyout.Opening += emotionsFlyoutOpeningEventHandler;
         BtEmotions.Flyout.Placement = FlyoutPlacementMode.TopEdgeAlignedLeft;
 
         var shareFlyout = new MenuFlyout();
@@ -300,7 +323,19 @@ public sealed partial class TimelineControl : UserControl
         copyUrlPostMenuFlyoutItem.Command = copyUrlCommand;
         shareFlyout.Items.Add(copyUrlPostMenuFlyoutItem);
         BtShare.Flyout = shareFlyout;
-    }
+
+        {
+            RoutedEventHandler unloaded = null;
+            unloaded = (s, e) =>
+            {
+                BtEmotions.Flyout.Opening -= emotionsFlyoutOpeningEventHandler;
+                copyUrlCommand.ExecuteRequested -= CopyPostUrl;
+                sharePostCommand.ExecuteRequested -= OnSharePost;
+                Unloaded -= unloaded;
+            };
+            Unloaded += unloaded;
+        }
+	}
 
     private async void OnSharePost(XamlUICommand sender, ExecuteRequestedEventArgs args) => await SharePost();
 
@@ -314,7 +349,17 @@ public sealed partial class TimelineControl : UserControl
         control.OnPostCompleted += OnPostCompleted;
         await Task.Delay(10); // Bugfix
         control.FocusTextbox();
-    }
+
+        {
+		    RoutedEventHandler unloaded = null;
+		    unloaded = (s, e) =>
+		    {
+			    control.OnPostCompleted -= OnPostCompleted;
+			    Unloaded -= unloaded;
+		    };
+		    Unloaded += unloaded;
+        }
+	}
 
     private async void OnPostCompleted()
     {
@@ -355,7 +400,8 @@ public sealed partial class TimelineControl : UserControl
 
         var timestampRefreshTimer = new DispatcherTimer();
         timestampRefreshTimer.Interval = TimeSpan.FromMinutes(1);
-        timestampRefreshTimer.Tick += (s, e) => RefreshTimestamp();
+        EventHandler<object> timestampRefreshTimerTickEventHandler = (s, e) => RefreshTimestamp();
+		timestampRefreshTimer.Tick += timestampRefreshTimerTickEventHandler;
         timestampRefreshTimer.Start();
 
         RtbEmotions.Visibility = Visibility.Visible;
@@ -437,6 +483,18 @@ public sealed partial class TimelineControl : UserControl
         foreach (FrameworkElement item in itemsCopy)
             if (item.Visibility == Visibility.Collapsed)
                 LvContent.Items.Remove(item);
+
+        {
+		    RoutedEventHandler unloaded = null;
+		    unloaded = (s, e) =>
+		    {
+                timestampRefreshTimer.Stop();
+				timestampRefreshTimer.Tick -= timestampRefreshTimerTickEventHandler;
+				if(scrollViewer != null) scrollViewer.ViewChanged -= OnCommentsScrollViewerViewChanged;
+			    Unloaded -= unloaded;
+		    };
+		    Unloaded += unloaded;
+        }
 	}
 
     private void RefreshTimestamp()
@@ -465,7 +523,18 @@ public sealed partial class TimelineControl : UserControl
             control.OnDeleted += OnCommentDeleted;
             await control.LoadCommentCompletionSource.Task;
 
-            bool isMyComment = comment.writer.id == MainPage.Me.id;
+            {
+			    RoutedEventHandler unloaded = null;
+			    unloaded = (s, e) =>
+			    {
+				    control.OnReplyClicked -= OnCommentReplyClicked;
+				    control.OnDeleted -= OnCommentDeleted;
+				    Unloaded -= unloaded;
+			    };
+			    Unloaded += unloaded;
+            }
+
+			bool isMyComment = comment.writer.id == MainPage.Me.id;
             bool isMyPost = _post.actor.id == MainPage.Me.id;
             control.HideUnaccessableButton(isMyComment, isMyPost);
 
@@ -494,14 +563,26 @@ public sealed partial class TimelineControl : UserControl
         if(_post.actor.id != MainPage.Me.id)
         {
             var menuHidePost = new MenuFlyoutItem() { Text = "이 글 숨기기" };
-            menuHidePost.Click += async (o, e2) =>
-            {
-                await ApiHandler.HidePost(_post.id);
-                MainPage.HideOverlay();
-                MainPage.GetTimelinePage()?.RemovePost(_post.id);
-            };
-            flyout.Items.Add(menuHidePost);
-        }
+
+            RoutedEventHandler clickEventHandler = async (o, e2) =>
+			{
+				await ApiHandler.HidePost(_post.id);
+				MainPage.HideOverlay();
+				MainPage.GetTimelinePage()?.RemovePost(_post.id);
+			};
+            menuHidePost.Click += clickEventHandler;
+			flyout.Items.Add(menuHidePost);
+
+			{
+				RoutedEventHandler unloaded = null;
+				unloaded = (s, e) =>
+				{
+					menuHidePost.Click -= clickEventHandler;
+                    Unloaded -= unloaded;
+				};
+				Unloaded += unloaded;
+			}
+		}
         else
         {
             var menuDeletePost = new MenuFlyoutItem() { Text = "글 삭제하기" };
@@ -511,22 +592,35 @@ public sealed partial class TimelineControl : UserControl
             var menuEditPost = new MenuFlyoutItem() { Text = "글 수정하기" };
             menuEditPost.Click += OnEditPost;
             flyout.Items.Add(menuEditPost);
-        }
+
+			{
+				RoutedEventHandler unloaded = null;
+				unloaded = (s, e) =>
+				{
+					menuDeletePost.Click -= OnDeletePost;
+					menuEditPost.Click -= OnEditPost;
+                    Unloaded -= unloaded;
+				};
+				Unloaded += unloaded;
+			}
+		}
 
         var menuBlockProfile = new MenuFlyoutItem() { Text = _post.actor.is_feed_blocked ? $"'{_post.actor.display_name}' 글 받기" : $"'{_post.actor.display_name}' 글 안받기" };
-        menuBlockProfile.Click += async (o, e2) =>
-        {
-            await ApiHandler.BlockProfile(_post.actor.id, _post.actor.is_feed_blocked);
-            await RefreshContent();
-        };
+		RoutedEventHandler menuBlockProfileClicked = async (o, e2) =>
+		{
+			await ApiHandler.BlockProfile(_post.actor.id, _post.actor.is_feed_blocked);
+			await RefreshContent();
+		};
+		menuBlockProfile.Click += menuBlockProfileClicked;
         flyout.Items.Add(menuBlockProfile);
 
         var menuMutePost = new MenuFlyoutItem() { Text = _post.push_mute ? "이 글 알림 받기" : "이 글 알림 받지 않기" };
-        menuMutePost.Click += async (o, e2) =>
-        {
-            await ApiHandler.MutePost(_post.id, !_post.push_mute);
-            await RefreshContent();
-        };
+		RoutedEventHandler menuMutePostClicked = async (o, e2) =>
+		{
+			await ApiHandler.MutePost(_post.id, !_post.push_mute);
+			await RefreshContent();
+		};
+		menuMutePost.Click += menuMutePostClicked;
         flyout.Items.Add(menuMutePost);
 ;
         flyout.Items.Add(new MenuFlyoutSeparator());
@@ -535,7 +629,19 @@ public sealed partial class TimelineControl : UserControl
         flyout.Items.Add(menuExportPost);
 
         flyout.ShowAt(icon);
-    }
+
+        {
+		    RoutedEventHandler unloaded = null;
+		    unloaded = (s, e) =>
+		    {
+				menuBlockProfile.Click -= menuBlockProfileClicked;
+				menuMutePost.Click -= menuMutePostClicked;
+				menuExportPost.Click -= OnExportPost;
+                Unloaded -= unloaded;
+		    };
+		    Unloaded += unloaded;
+        }
+	}
 
     private static async Task SaveToBitmapImageAsync(string path, RenderTargetBitmap rtb)
     {
@@ -622,7 +728,17 @@ public sealed partial class TimelineControl : UserControl
         await Task.Delay(10);
         control.FocusTextbox();
         GdLoading.Visibility = Visibility.Collapsed;
-    }
+
+		{
+			RoutedEventHandler unloaded = null;
+			unloaded = (s, e) =>
+			{
+				control.OnPostCompleted -= OnPostCompleted;
+                Unloaded -= unloaded;
+			};
+			Unloaded += unloaded;
+		}
+	}
 
     private async void OnRefreshTapped(object sender, TappedRoutedEventArgs e)
     {
@@ -741,7 +857,17 @@ public sealed partial class TimelineControl : UserControl
         control.SetSource(friendProfiles);
         control.OnFriendSelected += OnSharedFriendSelected;
         flyout.Content = control;
-    }
+
+		{
+			RoutedEventHandler unloaded = null;
+			unloaded = (s, e) =>
+			{
+				control.OnFriendSelected -= OnSharedFriendSelected;
+                Unloaded -= unloaded;
+			};
+			Unloaded += unloaded;
+		}
+	}
 
     private async void OnSharedFriendSelected(FriendProfile profile)
     {
@@ -906,7 +1032,17 @@ public sealed partial class TimelineControl : UserControl
         control.MaxItems = int.MaxValue;
         control.SetSource(friendProfiles);
         control.OnFriendSelected += OnSharedFriendSelected;
-        flyout.Content = control;
+		flyout.Content = control;
+
+		{
+			RoutedEventHandler unloaded = null;
+			unloaded = (s, e) =>
+			{
+				control.OnFriendSelected -= OnSharedFriendSelected;
+                Unloaded -= unloaded;
+			};
+			Unloaded += unloaded;
+		}
     }
 
     private bool _isRefreshing = false;
@@ -945,16 +1081,27 @@ public sealed partial class TimelineControl : UserControl
         if (_commentEmoticon.Item1 == null)
         {
             var emoticonListControl = Post.ShowEmoticonListToButton(button);
-            emoticonListControl.OnSelected += (item, index) =>
-            {
-                _commentEmoticon.Item1 = item;
-                _commentEmoticon.Item2 = index;
+			EmoticonListControl.Selected emoticonListControlSelected = (item, index) =>
+			{
+				_commentEmoticon.Item1 = item;
+				_commentEmoticon.Item2 = index;
 
-                FiAddEmoticon.Glyph = "\ue74d";
-                BtAddMedia.IsEnabled = false;
-                BtAddDcCon.IsEnabled = false;
-            };
-        }
+				FiAddEmoticon.Glyph = "\ue74d";
+				BtAddMedia.IsEnabled = false;
+				BtAddDcCon.IsEnabled = false;
+			};
+			emoticonListControl.OnSelected += emoticonListControlSelected;
+
+			{
+				RoutedEventHandler unloaded = null;
+				unloaded = (s, e) =>
+				{
+					emoticonListControl.OnSelected -= emoticonListControlSelected;
+                    Unloaded -= unloaded;
+				};
+				Unloaded += unloaded;
+			}
+		}
         else
         {
             button.Flyout = null;
@@ -1000,54 +1147,64 @@ public sealed partial class TimelineControl : UserControl
             var flyout = new Flyout();
 
             var dcConListControl = new DcConListControl();
-            dcConListControl.OnSelected += async (item) =>
-            {
-                
-                BtAddDcCon.IsEnabled = false;
-                BtAddEmoticon.IsEnabled = false;
-                BtAddMedia.IsEnabled = false;
-                flyout.Hide();
+			DcConListControl.Selected dcConListControlSelected = async (item) =>
+		    {
+			    BtAddDcCon.IsEnabled = false;
+			    BtAddEmoticon.IsEnabled = false;
+			    BtAddMedia.IsEnabled = false;
+			    flyout.Hide();
 
 
-                BtCommentMore.IsEnabled = false;
-				FiCommentMore.Glyph = "\ue898";
+			    BtCommentMore.IsEnabled = false;
+			    FiCommentMore.Glyph = "\ue898";
 
-				var path = Path.Combine(Path.GetTempPath(), $"{item.PackageIndex}_{item.Index}.{item.Extension}");
-                try
-                {
+			    var path = Path.Combine(Path.GetTempPath(), $"{item.PackageIndex}_{item.Index}.{item.Extension}");
+			    try
+			    {
 
-                    var data = await Api.DcCon.ApiHandler.GetDcDonImage(item.Path);
+				    var data = await Api.DcCon.ApiHandler.GetDcDonImage(item.Path);
 
-                    if (item.Extension != "gif")
-                    {
-                        await Task.Run(() =>
-                        {
-                            using var image = new MagickImageCollection(data);
-                            image[0].Resize(400, 400);
-                            image.Write(path, MagickFormat.Png);
-                        });
-                    }
-                    else await File.WriteAllBytesAsync(path, data);
-                    _isUploading = true;
-                    _commentDcCon = await ApiHandler.UploadImage(path);
-                }
-                catch (ArgumentNullException) { } //Ignore
-                finally
-                {
-                    _isUploading = false;
-                    File.Delete(path);
-                    BtCommentMore.IsEnabled = true;
-					FiCommentMore.Glyph = "\ue712";
+				    if (item.Extension != "gif")
+				    {
+					    await Task.Run(() =>
+					    {
+						    using var image = new MagickImageCollection(data);
+						    image[0].Resize(400, 400);
+						    image.Write(path, MagickFormat.Png);
+					    });
+				    }
+				    else await File.WriteAllBytesAsync(path, data);
+				    _isUploading = true;
+				    _commentDcCon = await ApiHandler.UploadImage(path);
+			    }
+			    catch (ArgumentNullException) { } //Ignore
+			    finally
+			    {
+				    _isUploading = false;
+				    File.Delete(path);
+				    BtCommentMore.IsEnabled = true;
+				    FiCommentMore.Glyph = "\ue712";
 
-					BtAddDcCon.IsEnabled = true;
-                    VbMandu.Visibility = Visibility.Collapsed;
-                    VbDelete.Visibility = Visibility.Visible;
-                }
-            };
+				    BtAddDcCon.IsEnabled = true;
+				    VbMandu.Visibility = Visibility.Collapsed;
+				    VbDelete.Visibility = Visibility.Visible;
+			    }
+		    };
+			dcConListControl.OnSelected += dcConListControlSelected;
             flyout.Content = dcConListControl;
             flyout.ShowAt(button);
-        }
-        else
+
+			{
+				RoutedEventHandler unloaded = null;
+				unloaded = (s, e) =>
+				{
+					dcConListControl.OnSelected -= dcConListControlSelected;
+                    Unloaded -= unloaded;
+				};
+				Unloaded += unloaded;
+			}
+		}
+		else
         {
             _commentDcCon = null;
             VbMandu.Visibility = Visibility.Visible;
@@ -1072,7 +1229,22 @@ public sealed partial class TimelineControl : UserControl
             if (currentItem == item) flipView.Height = Math.Min(image.ActualHeight, 400);
         }
 
-        if (bitmap.PixelHeight == 0) bitmap.ImageOpened += (s, e) => SetHeight();
+        if (bitmap.PixelHeight == 0)
+        {
+			RoutedEventHandler imageOpenedEventHandler = (s, e) => SetHeight();
+			bitmap.ImageOpened += imageOpenedEventHandler;
+
+			{
+				RoutedEventHandler unloaded = null;
+				unloaded = (s, e) =>
+				{
+					bitmap.ImageOpened -= imageOpenedEventHandler;
+                    Unloaded += unloaded;
+				};
+				Unloaded += unloaded;
+			}
+
+		}
         else SetHeight();
     }
 }

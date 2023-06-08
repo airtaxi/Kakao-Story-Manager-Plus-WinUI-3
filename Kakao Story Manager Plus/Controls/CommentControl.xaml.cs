@@ -9,6 +9,7 @@ using KSMP.Pages;
 using System.Threading.Tasks;
 using KSMP.Utils;
 using System;
+using System.ComponentModel;
 
 namespace KSMP.Controls;
 
@@ -45,10 +46,21 @@ public sealed partial class CommentControl : UserControl
 
         var timer = new DispatcherTimer();
         timer.Interval = TimeSpan.FromMinutes(1);
-        timer.Tick += (s, e) => RefreshTimestamp();
+		EventHandler<object> onTimerTick = (s, e) => RefreshTimestamp();
+		timer.Tick += onTimerTick;
         timer.Start();
 
-        Utility.SetPersonPictureUrlSource(PpUser, comment.writer.GetValidUserProfileUrl());
+		{
+			RoutedEventHandler unloaded = null;
+            unloaded = (s, e) =>
+            {
+                timer.Tick -= onTimerTick;
+                Unloaded -= unloaded;
+            };
+			Unloaded += unloaded;
+		}
+
+		Utility.SetPersonPictureUrlSource(PpUser, comment.writer.GetValidUserProfileUrl());
         Utility.LoadedPersonPictures.Add(PpUser);
 
         if (comment.liked) MfiLike.Text = "좋아요 취소";
@@ -74,17 +86,27 @@ public sealed partial class CommentControl : UserControl
             var url = willUseGifInTimeline ? commentMedia.media.origin_url : commentMedia.media.thumbnail_url;
             Utility.SetImageUrlSource(image, url);
 
-            image.Tapped += (s, e) =>
-            {
-                e.Handled = true;
-                var medium = new Medium
-                {
-                    origin_url = commentMedia?.media?.origin_url
-                };
-                var control = new ImageViewerControl(new List<Medium> { medium }, 0);
-                MainPage.ShowOverlay(control, _isOverlay);
-            };
-        }
+			TappedEventHandler imageTapped = (s, e) =>
+		    {
+			    e.Handled = true;
+			    var medium = new Medium
+			    {
+				    origin_url = commentMedia?.media?.origin_url
+			    };
+			    var control = new ImageViewerControl(new List<Medium> { medium }, 0);
+			    MainPage.ShowOverlay(control, _isOverlay);
+		    };
+			image.Tapped += imageTapped;
+			{
+				RoutedEventHandler unloaded = null;
+				unloaded = (s, e) =>
+				{
+					image.Tapped -= imageTapped;
+                    Unloaded -= unloaded;
+				};
+				Unloaded += unloaded;
+			}
+		}
 
         LoadCommentCompletionSource.TrySetResult();
     }
@@ -134,9 +156,19 @@ public sealed partial class CommentControl : UserControl
 
         likeList.SetSource(friendProfiles);
 
-        likeList.OnFriendSelected += (profile) => MainPage.ShowProfile(profile.Id);
+		FriendListControl.OnSelected likeListOnFriendSelected = (profile) => MainPage.ShowProfile(profile.Id);
+		likeList.OnFriendSelected += likeListOnFriendSelected;
+		{
+			RoutedEventHandler unloaded = null;
+			unloaded = (s, e) =>
+			{
+				likeList.OnFriendSelected -= likeListOnFriendSelected;
+                Unloaded -= unloaded;
+			};
+			Unloaded += unloaded;
+		}
 
-        var flyout = new Flyout();
+		var flyout = new Flyout();
         flyout.Content = likeList;
         flyout.ShowAt(element);
     }
@@ -183,8 +215,18 @@ public sealed partial class CommentControl : UserControl
         inputControl.GetTextBox().Text = text;
         await Task.Delay(10);
         inputControl.FocusTextBox();
-        inputControl.OnSubmitShortcutActivated += async () => await PublishEditedComment();
-    }
+		InputControl.SubmitShortcutActivated inputControlOnSubmitShortcutActivated = async () => await PublishEditedComment();
+		inputControl.OnSubmitShortcutActivated += inputControlOnSubmitShortcutActivated;
+		{
+			RoutedEventHandler unloaded = null;
+			unloaded = (s, e) =>
+			{
+				inputControl.OnSubmitShortcutActivated -= inputControlOnSubmitShortcutActivated;
+                Unloaded -= unloaded;
+			};
+			Unloaded += unloaded;
+		}
+	}
     private async void OnDeleteCommentButtonClicked(object sender, RoutedEventArgs e)
     {
         var result = await this.ShowMessageDialogAsync("정말로 댓글을 지우시겠습니까?", "경고", true);

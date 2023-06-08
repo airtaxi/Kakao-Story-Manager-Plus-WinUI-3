@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -52,7 +53,17 @@ public sealed partial class WritePostControl : UserControl
         {
             PreventClose = true;
             _button.Flyout.Closing += OnFlyoutClosing;
-        }
+
+			{
+				RoutedEventHandler unloaded = null;
+				unloaded = (s, e) =>
+				{
+					_button.Flyout.Closing -= OnFlyoutClosing;
+                    Unloaded -= unloaded;
+				};
+				Unloaded += unloaded;
+			}
+		}
     }
 
     private void OnFlyoutClosing(FlyoutBase sender, FlyoutBaseClosingEventArgs args) => args.Cancel = PreventClose;
@@ -98,9 +109,32 @@ public sealed partial class WritePostControl : UserControl
         _inputControl.SetMaxHeight(300);
         _inputControl.AcceptReturn(true);
         _inputControl.WrapText(true);
-        if (canAddMedia) _inputControl.OnImagePasted += OnPasteImage;
+        if (canAddMedia)
+        {
+            _inputControl.OnImagePasted += OnPasteImage;
+
+			{
+				RoutedEventHandler unloaded = null;
+				unloaded = (s, e) =>
+				{
+					_inputControl.OnImagePasted -= OnPasteImage;
+                    Unloaded -= unloaded;
+				};
+				Unloaded += unloaded;
+			}
+		}
         _inputControl.OnSubmitShortcutActivated += OnSubmitShortcutActivated;
-    }
+
+		{
+			RoutedEventHandler unloaded = null;
+			unloaded = (s, e) =>
+			{
+				_inputControl.OnSubmitShortcutActivated -= OnSubmitShortcutActivated;
+                Unloaded -= unloaded;
+			};
+			Unloaded += unloaded;
+		}
+	}
 
     private async void OnSubmitShortcutActivated() => await WritePostAsync();
 
