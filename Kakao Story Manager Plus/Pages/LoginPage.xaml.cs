@@ -39,8 +39,8 @@ public sealed partial class LoginPage : Page
         var hasRememberedCreditionals = Utils.Configuration.GetValue("willRememberCredentials") as bool? ?? false;
         if (hasRememberedCreditionals)
         {
-            TbxLogin.Text = Utils.Configuration.GetValue("email") as string ?? string.Empty;
-            PbxLogin.Password = Utils.Configuration.GetValue("password") as string ?? string.Empty;
+            TbxLogin.Text = (Utils.Configuration.GetValue("email") as string) ?? string.Empty;
+            PbxLogin.Password = (Utils.Configuration.GetValue("password") as string) ?? string.Empty;
             CbxRememberCredentials.IsChecked = hasRememberedCreditionals;
             BeginLogin();
         }
