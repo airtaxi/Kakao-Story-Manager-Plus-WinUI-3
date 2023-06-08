@@ -18,7 +18,7 @@ public class WindowHelper
 
     public static void ShowWindow(Window window)
     {
-        var appWindow = window.GetAppWindow();
+        var appWindow = window.AppWindow;
         var presenter = appWindow.Presenter as OverlappedPresenter;
         var previousState = presenter.State;
 
@@ -26,7 +26,7 @@ public class WindowHelper
         ShowWindow(hwnd, 0x00000009);
         SetForegroundWindow(hwnd);
 
-        MainWindow.Instance.Show();
+        window.Show();
         appWindow.Show();
         if (presenter.State == OverlappedPresenterState.Minimized) presenter.Restore();
         presenter.IsAlwaysOnTop = true;
