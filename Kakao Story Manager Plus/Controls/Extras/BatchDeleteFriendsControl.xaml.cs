@@ -82,7 +82,7 @@ public sealed partial class BatchDeleteFriendsControl : UserControl
     private async void OnBatchDeleteFriendsButtonClicked(object sender, RoutedEventArgs e)
     {
         var friendsToDelete = _items.Where(x => x.IsChecked).ToList();
-        var result = await this.ShowMessageDialogAsync($"정말로 {friendsToDelete.Count}명의 친구를 삭제하시겠습니까?", "경고", true, "삭제");
+        var result = await Utility.ShowMessageDialogAsync($"정말로 {friendsToDelete.Count}명의 친구를 삭제하시겠습니까?", "경고", true, "삭제");
         if (result != ContentDialogResult.Primary) return;
 
 
@@ -101,7 +101,7 @@ public sealed partial class BatchDeleteFriendsControl : UserControl
             await ApiHandler.DeleteFriend(friend.UserId);
         }
         await MainPage.RefreshFriendList();
-        await this.ShowMessageDialogAsync($"{friendsToDelete.Count}명의 친구를 삭제하였습니다.", "안내");
+        await Utility.ShowMessageDialogAsync($"{friendsToDelete.Count}명의 친구를 삭제하였습니다.", "안내");
         MainPage.HideOverlay(false);
     }
 }

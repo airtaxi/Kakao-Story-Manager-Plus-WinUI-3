@@ -23,8 +23,7 @@ public partial class App : Application
     public static string BinaryDirectory = null;
     public static string RecordedFirstFeedId = null;
 
-    private static Window s_window;
-    private static RestartFlag s_restartFlag = null;
+    public static Window MainWindow;
 
     public App()
     {
@@ -34,38 +33,9 @@ public partial class App : Application
             Current.UnhandledException += OnApplicationUnhandledException;
             AppDomain.CurrentDomain.UnhandledException += OnAppDomainUnhandledException;
             TaskScheduler.UnobservedTaskException += OnTaskSchedulerUnobservedTaskException;
-            var restartFlagPath = Path.Combine(BinaryDirectory, "restart");
-            var checkProcess = File.Exists(restartFlagPath) == false;
-
-            if (!checkProcess)
-            {
-                var restartFlagString = File.ReadAllText(restartFlagPath);
-                var restartFlag = JsonConvert.DeserializeObject<RestartFlag>(restartFlagString);
-                RecordedFirstFeedId = restartFlag.LastFeedId;
-
-                var cookies = new List<Cookie>();
-                var cookieContainer = new CookieContainer();
-
-                foreach (var rawCookie in restartFlag.Cookies)
-                {
-                    var cookie = new Cookie()
-                    {
-                        Name = rawCookie.Name,
-                        Domain = rawCookie.Domain,
-                        Path = rawCookie.Path,
-                        Value = rawCookie.Value
-                    };
-                    cookieContainer.Add(cookie);
-                    cookies.Add(cookie);
-                }
-
-                ApiHandler.Init(cookieContainer, cookies, null);
-                s_restartFlag = restartFlag;
-                LoginPage.IsLoggedIn = true;
-            }
-            if (checkProcess && CheckForExistingProcess()) ExitProgramByExistingProcess();
+            
+            if (CheckForExistingProcess()) ExitProgramByExistingProcess();
             else InitializeComponent();
-            File.Delete(restartFlagPath);
         }
         catch (Exception exception) { _ = HandleException(exception); }
     }
@@ -119,7 +89,7 @@ public partial class App : Application
         {
             var message = exception.Message ?? string.Empty;
             if (message.Contains("E_FAIL")) return;
-            await MainPage.Instance.ShowMessageDialogAsync($"{exception.Message}/{exception.StackTrace}", "런타임 오류");
+            await Utility.ShowMessageDialogAsync($"{exception.Message}/{exception.StackTrace}", "런타임 오류");
         }
         catch (Exception) { } //Ignore
     }
@@ -127,7 +97,7 @@ public partial class App : Application
     private static bool _toastActivateFlag = true;
     private static void OnToastNotificationActivated(ToastNotificationActivatedEventArgsCompat toastArgs)
     {
-        var dispatcherQueue = s_window?.DispatcherQueue ?? DispatcherQueue;
+        var dispatcherQueue = MainWindow?.DispatcherQueue ?? DispatcherQueue;
         dispatcherQueue.TryEnqueue(async () =>
         {
             try
@@ -158,8 +128,9 @@ public partial class App : Application
                         var instance = MainPage.Instance;
 
                         var post = await ApiHandler.GetPost(activityId);
-                        if (post != null) MainPage.ShowOverlay(new TimelineControl(post, false, true));
-                        else await instance.ShowMessageDialogAsync("글을 볼 수 없거나 나만 보기로 설정된 글입니다.", "오류");
+
+                        if (post != null) (new TimelineWindow(post)).Activate();
+                        else await Utility.ShowMessageDialogAsync("글을 볼 수 없거나 나만 보기로 설정된 글입니다.", "오류");
                     }
                     else if (action == "Like") await ApiHandler.LikeComment(activityId, commentId, false);
                 }
@@ -187,12 +158,12 @@ public partial class App : Application
 
     private static void LaunchAndBringToForegroundIfNeeded()
     {
-        if (s_window == null)
+        if (MainWindow == null)
         {
-            s_window = new MainWindow(s_restartFlag);
-            s_window.Activate();
-            WindowHelper.ShowWindow(s_window);
+            MainWindow = new MainWindow();
+            MainWindow.Activate();
+            WindowHelper.ShowWindow(MainWindow);
         }
-        else WindowHelper.ShowWindow(s_window);
+        else WindowHelper.ShowWindow(MainWindow);
     }
 }

@@ -20,93 +20,78 @@ using System.Linq;
 using Microsoft.UI.Xaml.Controls.Primitives;
 using Windows.ApplicationModel.DataTransfer;
 using KSMP.Utils;
+using Newtonsoft.Json;
+using System.Net;
 
 namespace KSMP;
 
-public sealed partial class MainWindow : Microsoft.UI.Xaml.Window
+public sealed partial class MainWindow : Window
 {
     public static MainWindow Instance { get; private set; }
 
     public static bool IsWritePostFlyoutOpened = false;
 
-    private static Process _process;
-
-    private bool _shouldClose { get; set; } = false;
     private string _versionString = string.Empty;
-    private AppWindow appWindow;
+    private bool _isFirst = true;
 
-
-    public MainWindow(RestartFlag flag = null)
+    public MainWindow()
     {
-        Instance = this;
         InitializeComponent();
+        Instance = this;
+
         _versionString = Common.GetVersionString() ?? "VERSION ERROR";
         InitializeWritePostFlyout();
 
-        appWindow = this.GetAppWindow();
-        appWindow.Changed += AppWindowChanged;
-
-        (Content as FrameworkElement).ActualThemeChanged += OnThemeChanged;
-
-        SetupTitleBarMemoryWatcherTimer();
         SetupTheme();
         SetupAppWindow();
-        if (flag == null) FrMain.Navigate(typeof(LoginPage));
+
+		var restartFlagPath = Path.Combine(App.BinaryDirectory, "restart");
+		var checkProcess = File.Exists(restartFlagPath) == false;
+        RestartFlag flag = null;
+
+		if (!checkProcess)
+		{
+			var restartFlagString = File.ReadAllText(restartFlagPath);
+			flag = JsonConvert.DeserializeObject<RestartFlag>(restartFlagString);
+			App.RecordedFirstFeedId = flag.LastFeedId;
+
+			var cookies = new List<Cookie>();
+			var cookieContainer = new CookieContainer();
+
+			foreach (var rawCookie in flag.Cookies)
+			{
+				var cookie = new Cookie()
+				{
+					Name = rawCookie.Name,
+					Domain = rawCookie.Domain,
+					Path = rawCookie.Path,
+					Value = rawCookie.Value
+				};
+				cookieContainer.Add(cookie);
+				cookies.Add(cookie);
+			}
+
+			Init(cookieContainer, cookies, null);
+			LoginPage.IsLoggedIn = true;
+			File.Delete(restartFlagPath);
+		}
+
+		if (flag == null) FrMain.Navigate(typeof(LoginPage));
         else
         {
             var wasMaximized = flag.WasMaximized;
             if (wasMaximized) (this.GetAppWindow().Presenter as OverlappedPresenter).Maximize();
             FrMain.Navigate(typeof(MainPage), flag.LastArgs);
-
-            var postId = flag.PostId;
-            if (!string.IsNullOrEmpty(postId)) ShowPost(postId);
         }
 
-        OnReloginRequired += ReloginAsync;
-        Closed += (s, e) =>
+		AppWindow.Changed += AppWindowChanged;
+		(Content as FrameworkElement).ActualThemeChanged += OnThemeChanged;
+        if (_isFirst)
         {
-            LoginManager.SeleniumDriver?.Close();
-            LoginManager.SeleniumDriver?.Dispose();
-            LoginManager.SeleniumDriver = null;
-        };
-    }
-
-    private void SetupTitleBarMemoryWatcherTimer()
-    {
-        _process ??= Process.GetCurrentProcess();
-        DispatcherTimer memoryWatcherTimer = new()
-        {
-            Interval = TimeSpan.FromSeconds(1)
-        };
-        memoryWatcherTimer.Tick += OnMemoryWatcherTimerTick;
-        memoryWatcherTimer.Start();
-        UpdateMemoryUsageTextBlock();
-    }
-
-    private void OnMemoryWatcherTimerTick(object sender, object e) => UpdateMemoryUsageTextBlock();
-
-    private bool _isMemoryWarningDialogShown = false;
-    private int _warnCount = 0;
-    private async void UpdateMemoryUsageTextBlock()
-    {
-        _process.Refresh();
-        var memoryUsageInBytes = _process.PrivateMemorySize64;
-        var memoryUsageInMegabytes = memoryUsageInBytes / 1024 / 1024;
-        TitleTextBlock.Text = $"카카오스토리 매니저 PLUS {_versionString} ({memoryUsageInMegabytes:N0}MiB)";
-        if (memoryUsageInMegabytes < 1024 || _isMemoryWarningDialogShown)
-        {
-            _warnCount = 0;
-            return;
+            _isFirst = false;
+			OnReloginRequired += ReloginAsync;
         }
-        _warnCount++;
-        if (_warnCount <= 3) return;
-
-        bool willWarnOnHighMemoryUsage = (Configuration.GetValue("WarnOnHighMemoryUsage") as bool?) ?? true;
-        if (!willWarnOnHighMemoryUsage) return;
-        _isMemoryWarningDialogShown = true;
-        var result = await MainPage.Instance?.ShowMessageDialogAsync("WinUI 프레임워크 버그로 인하여 누수된 메모리가 다량(1GiB)으로 누적되었습니다.\n이 경우, 시스템 성능을 저해할 수 있습니다.\n프로그램을 재실행하여 메모리를 정리하시겠습니까?\n이 메시지 표시 설정은 프로필 우측 상단 옵션에서 변경할 수 있습니다.", "경고", true);
-        if (result == ContentDialogResult.Primary) Utility.SaveCurrentStateAndRestartProgram();
-    }
+	}
 
     private void OnThemeChanged(FrameworkElement sender, object args) => SetupTheme();
 
@@ -128,18 +113,10 @@ public sealed partial class MainWindow : Microsoft.UI.Xaml.Window
         }
         else white = Utility.IsSystemUsesLightTheme ? Colors.White : Windows.UI.Color.FromArgb(255, 52, 52, 52);
 
-        appWindow.TitleBar.ButtonBackgroundColor = white;
-        appWindow.TitleBar.ButtonInactiveBackgroundColor = white;
+        AppWindow.TitleBar.ButtonBackgroundColor = white;
+        AppWindow.TitleBar.ButtonInactiveBackgroundColor = white;
     }
 
-    private static async void ShowPost(string postId)
-    {
-        MainPage.Me ??= await GetProfileData();
-        var post = await GetPost(postId);
-        MainPage.ShowOverlay(new TimelineControl(post, false, true));
-    }
-
-    public void SetClosable(bool shouldClose = true) => _shouldClose = shouldClose;
 
     public static async Task<bool> ReloginAsync()
     {
@@ -161,19 +138,19 @@ public sealed partial class MainWindow : Microsoft.UI.Xaml.Window
     }
 
 	private static async Task<ContentDialogResult> ShowReloginErrorMessageAsync() =>
-        await Instance.FrMain.ShowMessageDialogAsync("재로그인 도중 문제가 발생하였습니다.", "오류");
+        await Utility.ShowMessageDialogAsync("재로그인 도중 문제가 발생하였습니다.", "오류");
 
 	public static void Navigate(Type type) => Instance.FrMain.Navigate(type);
-    public static void Navigate(Type type, object args) => Instance.FrMain.Navigate(type, args);
 
     private void SetupAppWindow()
     {
-        appWindow.Title = $"카카오스토리 매니저 PLUS";
-        appWindow.TitleBar.ExtendsContentIntoTitleBar = true;
+        TitleTextBlock.Text = $"카카오스토리 매니저 PLUS {_versionString}";
+		AppWindow.Title = "카카오스토리 매니저 PLUS";
+        AppWindow.TitleBar.ExtendsContentIntoTitleBar = true;
         AppTitleBar.Loaded += AppTitleBarLoaded;
         AppTitleBar.SizeChanged += AppTitleBarSizeChanged;
 
-        appWindow.SetIcon(Path.Combine(App.BinaryDirectory, "icon.ico"));
+        AppWindow.SetIcon(Path.Combine(App.BinaryDirectory, "icon.ico"));
     }
 
     private void AppWindowChanged(AppWindow sender, AppWindowChangedEventArgs args)
@@ -215,7 +192,7 @@ public sealed partial class MainWindow : Microsoft.UI.Xaml.Window
     private void AppTitleBarLoaded(object sender, RoutedEventArgs e)
     {
         if (AppWindowTitleBar.IsCustomizationSupported())
-            SetDragRegionForCustomTitleBar(appWindow);
+            SetDragRegionForCustomTitleBar(AppWindow);
     }
 
     public enum Monitor_DPI_Type : int
@@ -242,19 +219,19 @@ public sealed partial class MainWindow : Microsoft.UI.Xaml.Window
         return scaleFactorPercent / 100.0;
     }
 
-    private void SetDragRegionForCustomTitleBar(AppWindow appWindow)
+    private void SetDragRegionForCustomTitleBar(AppWindow AppWindow)
     {
         // Check to see if customization is supported.
         // Currently only supported on Windows 11.
         if (AppWindowTitleBar.IsCustomizationSupported()
-            && appWindow.TitleBar.ExtendsContentIntoTitleBar)
+            && AppWindow.TitleBar.ExtendsContentIntoTitleBar)
         {
             double scaleAdjustment = GetScaleAdjustment();
 
-            if (appWindow.TitleBar.RightInset < 0 || appWindow.TitleBar.LeftInset < 0) return;
+            if (AppWindow.TitleBar.RightInset < 0 || AppWindow.TitleBar.LeftInset < 0) return;
 
-            RightPaddingColumn.Width = new GridLength(appWindow.TitleBar.RightInset / scaleAdjustment);
-            LeftPaddingColumn.Width = new GridLength(appWindow.TitleBar.LeftInset / scaleAdjustment);
+            RightPaddingColumn.Width = new GridLength(AppWindow.TitleBar.RightInset / scaleAdjustment);
+            LeftPaddingColumn.Width = new GridLength(AppWindow.TitleBar.LeftInset / scaleAdjustment);
 
             List<Windows.Graphics.RectInt32> dragRectsList = new();
 
@@ -267,17 +244,17 @@ public sealed partial class MainWindow : Microsoft.UI.Xaml.Window
 
             Windows.Graphics.RectInt32[] dragRects = dragRectsList.ToArray();
 
-            appWindow.TitleBar.SetDragRectangles(dragRects);
+            AppWindow.TitleBar.SetDragRectangles(dragRects);
         }
     }
 
     private void AppTitleBarSizeChanged(object sender, SizeChangedEventArgs e)
     {
         if (AppWindowTitleBar.IsCustomizationSupported()
-            && appWindow.TitleBar.ExtendsContentIntoTitleBar)
+            && AppWindow.TitleBar.ExtendsContentIntoTitleBar)
         {
             // Update drag region if the size of the title bar changes.
-            SetDragRegionForCustomTitleBar(appWindow);
+            SetDragRegionForCustomTitleBar(AppWindow);
         }
     }
 
@@ -285,16 +262,24 @@ public sealed partial class MainWindow : Microsoft.UI.Xaml.Window
 
     private void WindowClosed(object sender, WindowEventArgs args)
     {
-        if (_shouldClose)
+        if (!LoginPage.IsLoggedIn)
         {
-            OnReloginRequired -= ReloginAsync;
+            args.Handled = true;
             return;
         }
 
-        args.Handled = true;
-        var appWindow = this.GetAppWindow();
-        appWindow.Hide();
-    }
+        App.MainWindow = null;
+        Utility.SaveCurrentState();
+        Instance = null;
+        MainPage.Instance = null;
+
+		AppWindow.Changed -= AppWindowChanged;
+		(Content as FrameworkElement).ActualThemeChanged -= OnThemeChanged;
+
+		AppTitleBar.Loaded -= AppTitleBarLoaded;
+		AppTitleBar.SizeChanged -= AppTitleBarSizeChanged;
+		UnsubscribeWritePostFlyourEvent();
+	}
 
     private async void OnPreviewKeyDown(object sender, KeyRoutedEventArgs e)
     {
@@ -349,8 +334,8 @@ public sealed partial class MainWindow : Microsoft.UI.Xaml.Window
 
     private async void OnExitButtonClicked(object sender, RoutedEventArgs e)
     {
-        var dialogResult = await MainPage.Instance.ShowMessageDialogAsync("정말로 프로그램을 종료하시겠습니까?", "경고", true);
-        if (dialogResult == ContentDialogResult.Primary) Environment.Exit(0);
+        var result = await Utility.ShowMessageDialogAsync("정말로 프로그램을 종료하시겠습니까?", "경고", true);
+        if (result == ContentDialogResult.Primary) Environment.Exit(0);
 	}
 
     private void OnMoreButtonClicked(object sender, RoutedEventArgs e)
@@ -397,7 +382,7 @@ public sealed partial class MainWindow : Microsoft.UI.Xaml.Window
         if (hasImage && willSuggestAddClipboardImage)
         {
             await Task.Delay(400);
-            var result = await MainPage.Instance.ShowMessageDialogAsync("클립보드에 이미지가 있습니다.\n이미지를 추가할까요?", "안내", true);
+            var result = await Utility.ShowMessageDialogAsync("클립보드에 이미지가 있습니다.\n이미지를 추가할까요?", "안내", true);
             if (result != ContentDialogResult.Primary) return;
 
             var filePath = await Utility.GenerateClipboardImagePathAsync(dataPackageView);
@@ -407,11 +392,11 @@ public sealed partial class MainWindow : Microsoft.UI.Xaml.Window
 
     private async void OnLogoutButtonClicked(object sender, RoutedEventArgs e)
     {
-        var dialogResult = await MainPage.Instance.ShowMessageDialogAsync("정말로 로그아웃 하시겠습니까?", "경고", true);
-        if (dialogResult == ContentDialogResult.Primary)
+        var result = await Utility.ShowMessageDialogAsync("정말로 로그아웃 하시겠습니까?", "경고", true);
+        if (result == ContentDialogResult.Primary)
         {
             Configuration.SetValue("willRememberCredentials", false);
-            await MainPage.Instance.ShowMessageDialogAsync("로그아웃되었습니다.\n프로그램을 재실행해주세요.", "안내");
+            await Utility.ShowMessageDialogAsync("로그아웃되었습니다.\n프로그램을 재실행해주세요.", "안내");
 			Environment.Exit(0);
 		}
     }
@@ -434,16 +419,9 @@ public sealed partial class MainWindow : Microsoft.UI.Xaml.Window
     private void InitializeWritePostFlyout()
     {
         IsWritePostFlyoutOpened = false;
-        var previousFlyout = BtWrite.Flyout as Flyout;
-        if (previousFlyout != null)
-        {
-            previousFlyout.Opened -= OnWritePostFlyoutOpened;
-            previousFlyout.Closed -= OnWritePostFlyoutClosed;
-            var previousControl = previousFlyout.Content as WritePostControl;
-            if (previousControl != null) previousControl.OnPostCompleted -= OnPostCompleted;
-        }
+		UnsubscribeWritePostFlyourEvent();
 
-        var flyout = new Flyout();
+		var flyout = new Flyout();
         flyout.Opened += OnWritePostFlyoutOpened;
         flyout.Closed += OnWritePostFlyoutClosed;
         BtWrite.Flyout = flyout;
@@ -451,8 +429,20 @@ public sealed partial class MainWindow : Microsoft.UI.Xaml.Window
         flyout.Content = control;
         control.OnPostCompleted += OnPostCompleted;
     }
-    
-    private void OnPointerEntered(object sender, PointerRoutedEventArgs e) => Utility.ChangeSystemMouseCursor(true);
+
+	private void UnsubscribeWritePostFlyourEvent()
+	{
+		var previousFlyout = BtWrite.Flyout as Flyout;
+		if (previousFlyout != null)
+		{
+		    previousFlyout.Opened -= OnWritePostFlyoutOpened;
+		    previousFlyout.Closed -= OnWritePostFlyoutClosed;
+		    var previousControl = previousFlyout.Content as WritePostControl;
+		    if (previousControl != null) previousControl.OnPostCompleted -= OnPostCompleted;
+		}
+	}
+
+	private void OnPointerEntered(object sender, PointerRoutedEventArgs e) => Utility.ChangeSystemMouseCursor(true);
     private void OnPointerExited(object sender, PointerRoutedEventArgs e) => Utility.ChangeSystemMouseCursor(false);
 
     private void OnWritePostFlyoutOpened(object sender, object e)
@@ -470,16 +460,19 @@ public sealed partial class MainWindow : Microsoft.UI.Xaml.Window
 
 	private void OnTrayIconDoubleClicked(XamlUICommand sender, ExecuteRequestedEventArgs args)
 	{
-		Activate();
-		this.Show();
+        App.DispatcherQueue.TryEnqueue(async() =>
+        {
+            var window = Instance ?? new MainWindow();
+			window.Activate();
+			this.Show();
 
-		var appWindow = this.GetAppWindow();
-		appWindow.Show();
+			window.AppWindow.Show();
 
-		var presenter = appWindow.Presenter as OverlappedPresenter;
-		if (presenter.State == OverlappedPresenterState.Minimized) presenter.Restore();
-		presenter.IsAlwaysOnTop = true;
-		presenter.IsAlwaysOnTop = false;
+			var presenter = window.AppWindow.Presenter as OverlappedPresenter;
+			if (presenter.State == OverlappedPresenterState.Minimized) presenter.Restore();
+			presenter.IsAlwaysOnTop = true;
+			presenter.IsAlwaysOnTop = false;
+		});
 	}
 
 	private void OnTrayIconShowMyProfileExecuteRequested(XamlUICommand sender, ExecuteRequestedEventArgs args) => MainPage.ShowMyProfile();

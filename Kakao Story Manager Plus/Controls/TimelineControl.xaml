@@ -11,7 +11,7 @@
 
     <Grid>
         <Rectangle x:Name="RtDummy" Fill="Transparent"/>
-        <Grid x:Name="GdMain" Margin="10" Background="{ThemeResource White}" CornerRadius="5">
+        <Grid x:Name="GdMain" Background="{ThemeResource White}" CornerRadius="5">
             <Grid.RowDefinitions>
                 <RowDefinition Height="auto"/>
                 <RowDefinition Height="*"/>
@@ -52,9 +52,6 @@
                     </Viewbox>
                     <Viewbox>
                         <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe712;" Foreground="{ThemeResource Gray6}" FontSize="20" Tapped="OnDotMenuTapped" Margin="5,0,0,0" PointerEntered="OnPointerEntered" PointerExited="OnPointerExited"/>
-                    </Viewbox>
-                    <Viewbox>
-                        <FontIcon x:Name="FaClose" FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe711;" Foreground="{ThemeResource Gray6}" FontSize="20" Tapped="CloseButtonClicked" Margin="15,0,0,0" Visibility="Collapsed" PointerEntered="OnPointerEntered" PointerExited="OnPointerExited"/>
                     </Viewbox>
                 </StackPanel>
             </Grid>

@@ -157,8 +157,7 @@ public sealed partial class UserProfileControl : UserControl
         bool shouldRefresh = false;
         if (profileRelationship.relationship == "F")
         {
-            var dialog = this.GenerateMessageDialog("친구를 삭제하시겠습니까?", "경고", true);
-            var result = await dialog.ShowAsync();
+			var result = await Utility.ShowMessageDialogAsync("친구를 삭제하시겠습니까?", "경고", true);
             if (result == ContentDialogResult.Primary)
             {
                 await ApiHandler.DeleteFriend(profileRelationship.id);
@@ -167,8 +166,7 @@ public sealed partial class UserProfileControl : UserControl
         }
         else if (profileRelationship.relationship.Equals("R"))
         {
-            var dialog = this.GenerateMessageDialog("친구 신청을 취소하시겠습니까?", "경고", true);
-            var result = await dialog.ShowAsync();
+			var result = await Utility.ShowMessageDialogAsync("친구 신청을 취소하시겠습니까?", "경고", true);
             if (result == ContentDialogResult.Primary)
             {
                 await ApiHandler.RequestFriend(profileRelationship.id, true);
@@ -177,11 +175,7 @@ public sealed partial class UserProfileControl : UserControl
         }
         else if (profileRelationship.relationship.Equals("C"))
         {
-            var dialog = this.GenerateMessageDialog("친구 신청을 수락하시겠습니까?", "안내", true);
-            dialog.PrimaryButtonText = "수락";
-            dialog.SecondaryButtonText = "거절";
-
-            var result = await dialog.ShowAsync();
+            var result = await Utility.ShowMessageDialogAsync("친구 신청을 수락하시겠습니까?", "안내", true, "수락", "거절");
             if (result == ContentDialogResult.Primary)
             {
                 await ApiHandler.AcceptFriendRequest(profileRelationship.id, false);
@@ -195,9 +189,8 @@ public sealed partial class UserProfileControl : UserControl
         }
         else if (profileRelationship.relationship.Equals("N"))
         {
-            var dialog = this.GenerateMessageDialog("친구 신청을 보내시겠습니까?", "안내", true);
-            var result = await dialog.ShowAsync();
-            if (result == ContentDialogResult.Primary)
+            var result = await Utility.ShowMessageDialogAsync("친구 신청을 보내시겠습니까?", "안내", true);
+			if (result == ContentDialogResult.Primary)
             {
                 await ApiHandler.RequestFriend(profileRelationship.id, false);
                 shouldRefresh = true;

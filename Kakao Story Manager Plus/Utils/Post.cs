@@ -5,6 +5,7 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Documents;
 using System;
 using System.Collections.Generic;
+using Windows.Foundation;
 using static KSMP.ApiHandler.DataType;
 
 namespace KSMP.Utils;
@@ -27,12 +28,24 @@ public static class Post
                     UnderlineStyle = UnderlineStyle.None
                 };
                 hyperlink.Inlines.Add(new Run { Text = decorator.text });
-                hyperlink.Click += (s, e) =>
-                {
-                    Pages.MainPage.HideOverlay();
-                    Pages.MainPage.ShowProfile(decorator.id);
-                };
-                paragraph.Inlines.Add(hyperlink);
+				TypedEventHandler<Hyperlink, HyperlinkClickEventArgs> hyperlinkClick = (s, e) =>
+				{
+					Pages.MainPage.HideOverlay();
+					Pages.MainPage.ShowProfile(decorator.id);
+				};
+				hyperlink.Click += hyperlinkClick;
+
+				{
+					RoutedEventHandler unloaded = null;
+					unloaded = (s, e) =>
+					{
+                        hyperlink.Click -= hyperlinkClick;
+						richTextBlock.Unloaded -= unloaded;
+					};
+					richTextBlock.Unloaded += unloaded;
+				}
+
+				paragraph.Inlines.Add(hyperlink);
                 wordCount += decorator.text.Length;
             }
             else if (decorator.type.Equals("emoticon"))
@@ -91,13 +104,24 @@ public static class Post
         var emoticonListControl = new EmoticonListControl();
         flyout.Content = emoticonListControl;
 
-        emoticonListControl.OnSelected += (item, index) =>
-        {
-            inputControl?.AddEmoticon(item, index);
-            flyout.Hide();
-        };
+		EmoticonListControl.Selected emoticonListControlOnSelected = (item, index) =>
+		{
+			inputControl?.AddEmoticon(item, index);
+			flyout.Hide();
+		};
+		emoticonListControl.OnSelected += emoticonListControlOnSelected;
 
-        flyout.ShowAt(button);
+		{
+			RoutedEventHandler unloaded = null;
+			unloaded = (s, e) =>
+			{
+				emoticonListControl.OnSelected -= emoticonListControlOnSelected;
+                inputControl.Unloaded -= unloaded;
+			};
+			inputControl.Unloaded += unloaded;
+		}
+
+		flyout.ShowAt(button);
         return emoticonListControl;
     }
 }

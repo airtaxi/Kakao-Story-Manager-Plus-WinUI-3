@@ -165,7 +165,7 @@ public sealed partial class SettingsControl : UserControl
 
     private async void RequestProgramRestart()
     {
-        var result = await this.ShowMessageDialogAsync("옵션을 완전히 적용하기 위해서는 프로그램 재시작이 필요합니다.", "안내", true, "지금 재시작", "나중에 재시작");
+        var result = await Utility.ShowMessageDialogAsync("옵션을 완전히 적용하기 위해서는 프로그램 재시작이 필요합니다.", "안내", true, "지금 재시작", "나중에 재시작");
         if (result == ContentDialogResult.Primary) Utility.SaveCurrentStateAndRestartProgram();
     }
 
@@ -182,7 +182,7 @@ public sealed partial class SettingsControl : UserControl
         var toggleSwitch = sender as ToggleSwitch;
         var isOn = toggleSwitch.IsOn;
         Utils.Configuration.SetValue("ClearTimelineOnRefresh", isOn);
-        if (!isOn) await this.ShowMessageDialogAsync("무한 스크롤 활성화 시 WinUI 프레임워크의 버그로 인하여 메모리가 더 누수되며, 프로세서 사용량이 늘어날 수 있습니다.", "경고", false);
+        if (!isOn) await Utility.ShowMessageDialogAsync("무한 스크롤 활성화 시 WinUI 프레임워크의 버그로 인하여 메모리가 더 누수되며, 프로세서 사용량이 늘어날 수 있습니다.", "경고", false);
     }
 
     private void OnUseGifInTimelineToggleSwitchToggled(object sender, RoutedEventArgs e)

@@ -25,6 +25,7 @@ using Windows.Storage.Streams;
 using System.Runtime.InteropServices.WindowsRuntime;
 using H.NotifyIcon;
 using Microsoft.UI.Xaml.Documents;
+using Windows.UI.WebUI;
 
 namespace KSMP.Controls;
 
@@ -43,17 +44,19 @@ public sealed partial class TimelineControl : UserControl
     private ApiHandler.DataType.UploadedImageProp _commentDcCon = null;
     private (EmoticonItem, int) _commentEmoticon = (null, 0);
 
+    private readonly Window _window;
+
     public string PostId => _post?.id;
 
-    public TimelineControl(PostData post, bool isShare = false, bool isOverlay = false)
+    public TimelineControl(Window window, PostData post, bool isShare = false, bool isOverlay = false)
     {
-        _post = post;
+        _window = window;
+		_post = post;
         _isOverlay = isOverlay;
         _isShare = isShare;
         InitializeComponent();
         if (isOverlay && !isShare)
         {
-            FaClose.Visibility = Visibility.Visible;
             BdCommentsHorizontal.Visibility = Visibility.Visible;
             RdComment.Height = new GridLength(1, GridUnitType.Star);
 
@@ -135,7 +138,7 @@ public sealed partial class TimelineControl : UserControl
             Task.Run(async () =>
             {
                 await Task.Delay(500);
-                await MainWindow.Instance.RunOnMainThreadAsync(() =>
+                await Utility.RunOnMainThreadAsync(() =>
                 {
                     var last = LvComments.Items.LastOrDefault();
                     if (last != null) LvComments.ScrollIntoView(last);
@@ -369,9 +372,6 @@ public sealed partial class TimelineControl : UserControl
 
     private void HideOverlay()
     {
-        var control = FrOverlay.Content as WritePostControl;
-        if (control != null) control.OnPostCompleted -= OnPostCompleted;
-
         GdOverlay.Visibility = Visibility.Collapsed;
         FrOverlay.Content = null;
     }
@@ -384,7 +384,7 @@ public sealed partial class TimelineControl : UserControl
         var dataPackage = new DataPackage();
         dataPackage.SetText(postUrl);
         Clipboard.SetContent(dataPackage);
-        await this.ShowMessageDialogAsync("포스트의 URL이 클립보드에 복사되었습니다", "안내");
+        await Utility.ShowMessageDialogAsync("포스트의 URL이 클립보드에 복사되었습니다", "안내");
     }
 
     public async Task RefreshContent(bool showLoading = true)
@@ -461,7 +461,7 @@ public sealed partial class TimelineControl : UserControl
 
         TbShareCount.Text = _post.share_count.ToString();
         if (_post.@object != null && _post.@object.id != null)
-            FrShare.Content = new TimelineControl(_post.@object, true, _isOverlay);
+            FrShare.Content = new TimelineControl(_window, _post.@object, true, _isOverlay);
         else
             FrShare.Visibility = Visibility.Collapsed;
         if (_post.scrap != null)
@@ -567,8 +567,8 @@ public sealed partial class TimelineControl : UserControl
             RoutedEventHandler clickEventHandler = async (o, e2) =>
 			{
 				await ApiHandler.HidePost(_post.id);
-				MainPage.HideOverlay();
 				MainPage.GetTimelinePage()?.RemovePost(_post.id);
+                _window.Close();
 			};
             menuHidePost.Click += clickEventHandler;
 			flyout.Items.Add(menuHidePost);
@@ -643,7 +643,7 @@ public sealed partial class TimelineControl : UserControl
         }
 	}
 
-    private static async Task SaveToBitmapImageAsync(string path, RenderTargetBitmap rtb)
+    private async Task SaveToBitmapImageAsync(string path, RenderTargetBitmap rtb)
     {
         using var fileStream = new FileStream(path, FileMode.Create);
         using var stream = fileStream.AsRandomAccessStream();
@@ -652,7 +652,7 @@ public sealed partial class TimelineControl : UserControl
         var encoder = await BitmapEncoder.CreateAsync(BitmapEncoder.JpegEncoderId, stream);
         var bytes = pixels.ToArray();
 
-        var hWnd = WindowNative.GetWindowHandle(MainWindow.Instance);
+        var hWnd = WindowNative.GetWindowHandle(_window);
         var dpi = PInvoke.User32.GetDpiForWindow(hWnd);
 
         encoder.SetPixelData(BitmapPixelFormat.Bgra8, BitmapAlphaMode.Ignore, (uint)rtb.PixelWidth, (uint)rtb.PixelHeight, dpi, dpi, bytes);
@@ -666,7 +666,7 @@ public sealed partial class TimelineControl : UserControl
         IsEnabled = false;
 
         var canvas = new Canvas();
-        var control = new TimelineControl(_post);
+        var control = new TimelineControl(_window, _post);
         canvas.Children.Add(control);
         var window = new Window();
         window.Activate();
@@ -700,7 +700,7 @@ public sealed partial class TimelineControl : UserControl
 
         IsEnabled = true;
         GdLoading.Visibility = Visibility.Collapsed;
-        await this.ShowMessageDialogAsync("내보내진 이미지가 클립보드에 저장되었습니다.", "안내");
+        await Utility.ShowMessageDialogAsync("내보내진 이미지가 클립보드에 저장되었습니다.", "안내");
     }
 
     private async void OnDeletePost(object sender, RoutedEventArgs e) => await DeletePost();
@@ -709,11 +709,12 @@ public sealed partial class TimelineControl : UserControl
     public async Task DeletePost()
     {
         if (_post.actor.id != MainPage.Me.id) return;
-        var result = await this.ShowMessageDialogAsync("정말로 글을 삭제하실건가요?", "경고", true);
+        var result = await Utility.ShowMessageDialogAsync("정말로 글을 삭제하실건가요?", "경고", true);
         if (result != ContentDialogResult.Primary) return;
         await ApiHandler.DeletePost(_post.id);
-        MainPage.HideOverlay();
+
         MainPage.GetTimelinePage()?.RemovePost(_post.id);
+        _window.Close();
     }
 
     public async Task EditPost()
@@ -788,8 +789,9 @@ public sealed partial class TimelineControl : UserControl
         var index = FvMedia.SelectedIndex;
         medias.RemoveAll(x => x.origin_url == null);
         medias.RemoveAll(x => x.origin_url.Contains(".mp4"));
-        var control = new ImageViewerControl(medias, index);
-        MainPage.ShowOverlay(control, true);
+
+        var window = new ImageViewerWindow(medias, index);
+        window.Activate();
     }
 
     private async void OnTimeTapped(object sender, TappedRoutedEventArgs e)
@@ -802,13 +804,15 @@ public sealed partial class TimelineControl : UserControl
             return;
         }
 
-        if (!_isOverlay) MainPage.ShowOverlay(new TimelineControl(_post, false, true));
+        if (!_isOverlay)
+        {
+            var window = new TimelineWindow(_post);
+            window.Activate();
+		}
     }
 
     private void OnPointerEntered(object sender, PointerRoutedEventArgs e) => Utility.ChangeSystemMouseCursor(true);
     private void OnPointerExited(object sender, PointerRoutedEventArgs e) => Utility.ChangeSystemMouseCursor(false);
-
-    private void CloseButtonClicked(object sender, TappedRoutedEventArgs e) => MainPage.HideOverlay();
 
     private void OnUserProfilePictureTapped(object sender, TappedRoutedEventArgs e)
     {
@@ -890,11 +894,10 @@ public sealed partial class TimelineControl : UserControl
         {
             if (post != null)
             {
-                MainPage.HideOverlay();
-                var overlay = new TimelineControl(post, false, true);
-                MainPage.ShowOverlay(overlay);
-            }
-            else await this.ShowMessageDialogAsync("글을 볼 수 없거나 나만 보기로 설정된 글입니다.", "오류");
+                var window = new TimelineWindow(post);
+                window.Activate();
+			}
+            else await Utility.ShowMessageDialogAsync("글을 볼 수 없거나 나만 보기로 설정된 글입니다.", "오류");
         }
     }
 
@@ -909,8 +912,8 @@ public sealed partial class TimelineControl : UserControl
         }
         e.Handled = true;
         var newPost = await ApiHandler.GetPost(_post.@object.id);
-        var control = new TimelineControl(newPost, false, true);
-        MainPage.ShowOverlay(control);
+        var window = new TimelineWindow(newPost);
+        window.Activate();
     }
 
     private async void OnSendCommentButtonClicked(object sender, RoutedEventArgs e)
@@ -943,7 +946,7 @@ public sealed partial class TimelineControl : UserControl
 
         if (string.IsNullOrWhiteSpace(text) && _commentMedia == null && _commentDcCon == null && _commentEmoticon.Item1== null)
         {
-            await this.ShowMessageDialogAsync("댓글 내용을 입력해주세요.", "오류");
+            await Utility.ShowMessageDialogAsync("댓글 내용을 입력해주세요.", "오류");
             return;
         }
 
@@ -1117,7 +1120,7 @@ public sealed partial class TimelineControl : UserControl
         if (_commentMedia == null)
         {
             var fileOpenPicker = new FileOpenPicker();
-            InitializeWithWindow.Initialize(fileOpenPicker, WindowNative.GetWindowHandle(MainWindow.Instance));
+            InitializeWithWindow.Initialize(fileOpenPicker, WindowNative.GetWindowHandle(_window));
             fileOpenPicker.FileTypeFilter.Add(".jpg");
             fileOpenPicker.FileTypeFilter.Add(".png");
             fileOpenPicker.FileTypeFilter.Add(".gif");
@@ -1141,7 +1144,7 @@ public sealed partial class TimelineControl : UserControl
             var list = Utility.GetCurrentDcConList();
             if(list.Count == 0)
             {
-                await this.ShowMessageDialogAsync("설정된 디시콘이 없습니다", "오류");
+                await Utility.ShowMessageDialogAsync("설정된 디시콘이 없습니다", "오류");
                 return;
             }
             var flyout = new Flyout();

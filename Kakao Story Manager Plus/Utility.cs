@@ -150,7 +150,7 @@ public static class Utility
 
             await new WebClient().DownloadFileTaskAsync(url, path);
         }
-        else await SetImageClipboardFromUrl(image, url);
+        else await SetImageClipboardFromUrl(url);
     }
 
     private static MediaPlayerElement GenerateVideoMediaPlayerElementFromUrl(string url)
@@ -187,7 +187,7 @@ public static class Utility
         dataPackage.SetText(url);
         dataPackage.RequestedOperation = DataPackageOperation.Copy;
         Clipboard.SetContent(dataPackage);
-        await element.ShowMessageDialogAsync("동영상 URL이 클립보드에 저장되었습니다,", "안내");
+        await ShowMessageDialogAsync("동영상 URL이 클립보드에 저장되었습니다,", "안내");
     }
 
     public static async Task SetEmoticonImageAsync(Image image, string url)
@@ -254,7 +254,7 @@ public static class Utility
 
         var file = await StorageFile.GetFileFromPathAsync(path);
         using var stream = await file.OpenAsync(FileAccessMode.Read);
-        await MainPage.Instance.RunOnMainThreadAsync(async () => image.Source = await GenerateImageLocalFileStream(stream));
+        await Utility.RunOnMainThreadAsync(async () => image.Source = await GenerateImageLocalFileStream(stream));
     }
 
     private static async Task LoadAnimatedEmoticonImage(Image image, string url, int retryCount = 0)
@@ -278,7 +278,7 @@ public static class Utility
 
         var file = await StorageFile.GetFileFromPathAsync(path);
         using var stream = await file.OpenAsync(FileAccessMode.Read);
-        await MainPage.Instance.RunOnMainThreadAsync(async () => image.Source = await GenerateImageLocalFileStream(stream));
+        await Utility.RunOnMainThreadAsync(async () => image.Source = await GenerateImageLocalFileStream(stream));
     }
 
     private static string GetStringHashFromUrl(string url, string header = "")
@@ -304,28 +304,28 @@ public static class Utility
         bitmap.CreateOptions = BitmapCreateOptions.IgnoreImageCache;
     }
 
-    public static async Task SetTextClipboard(UIElement element, string text, string message = "복사되었습니다.")
+    public static async Task SetTextClipboard(string text, string message = "복사되었습니다.")
     {
         var dataPackage = new DataPackage();
         dataPackage.SetText(text);
         Clipboard.SetContent(dataPackage);
         if (!string.IsNullOrEmpty(message))
-            await element.ShowMessageDialogAsync(message, "안내");
+            await ShowMessageDialogAsync(message, "안내");
     }
 
-    public static async Task SetImageClipboardFromUrl(UIElement element, string url, string message = "이미지가 클립보드에 저장되었습니다.")
+    public static async Task SetImageClipboardFromUrl(string url, string message = "이미지가 클립보드에 저장되었습니다.")
     {
         var dataPackage = new DataPackage();
         dataPackage.SetBitmap(RandomAccessStreamReference.CreateFromUri(new Uri(url)));
         Clipboard.SetContent(dataPackage);
         if (!string.IsNullOrEmpty(message))
-            await element.ShowMessageDialogAsync(message, "안내");
+            await ShowMessageDialogAsync(message, "안내");
     }
 
 
     public static void ChangeSystemMouseCursor(bool isHand)
     {
-        if (isHand)
+            if (isHand)
             MainPage.SetCursor(Microsoft.UI.Input.InputSystemCursorShape.Hand);
         else
             MainPage.SetCursor(Microsoft.UI.Input.InputSystemCursorShape.Arrow);
@@ -361,37 +361,66 @@ public static class Utility
     }
 
 
-    public static async void SaveCurrentStateAndRestartProgram()
-    {
-        var appWindow = Instance.GetAppWindow();
-        var presenter = appWindow.Presenter as OverlappedPresenter;
-        var isMaximized = presenter.State == OverlappedPresenterState.Maximized;
-        var overlay = MainPage.GetOverlayTimeLineControl();
-        var postId = overlay?.PostId;
+    public static void SaveCurrentStateAndRestartProgram()
+	{
+		SaveCurrentState();
+		RestartProgram();
+	}
 
-        var restartFlagPath = Path.Combine(App.BinaryDirectory, "restart");
-        var RestartFlag = new ClassManager.RestartFlag
-        {
-            Cookies = ApiHandler.Cookies,
-            LastArgs = MainPage.LastArgs,
-            WasMaximized = isMaximized,
-            PostId = postId,
-            LastFeedId = TimelinePage.LastFeedId,
-        };
-        var restartFlagString = JsonConvert.SerializeObject(RestartFlag);
-        File.WriteAllText(restartFlagPath, restartFlagString);
+	public static async Task RunOnMainThreadAsync(Func<Task> method)
+	{
+		var taskCompletionSource = new TaskCompletionSource();
+		App.DispatcherQueue.TryEnqueue(async () =>
+		{
+			await method();
+			taskCompletionSource.SetResult();
+		});
+		await taskCompletionSource.Task;
+	}
 
-        var binaryPath = System.Reflection.Assembly.GetExecutingAssembly().Location;
-        binaryPath = binaryPath[..^4];
-        binaryPath += ".exe";
-        Process.Start(binaryPath);
+	public static async Task RunOnMainThreadAsync(Action method)
+	{
+		var taskCompletionSource = new TaskCompletionSource();
+		App.DispatcherQueue.TryEnqueue(() =>
+		{
+			method();
+			taskCompletionSource.SetResult();
+		});
+		await taskCompletionSource.Task;
+	}
 
-        Instance.SetClosable();
-        await Task.Delay(100);
-        Environment.Exit(0);
-    }
+	public static void RestartProgram()
+	{
+		var binaryPath = System.Reflection.Assembly.GetExecutingAssembly().Location;
+		binaryPath = binaryPath[..^4];
+		binaryPath += ".exe";
+		Process.Start(binaryPath);
 
-    public static ScrollViewer GetScrollViewerFromBaseListView(ListViewBase listViewBase)
+		Environment.Exit(0);
+	}
+
+	public static void SaveCurrentState()
+	{
+		var appWindow = Instance.AppWindow;
+		var presenter = appWindow.Presenter as OverlappedPresenter;
+		var isMaximized = presenter.State == OverlappedPresenterState.Maximized;
+		var overlay = MainPage.GetOverlayTimeLineControl();
+		var postId = overlay?.PostId;
+
+		var restartFlagPath = Path.Combine(App.BinaryDirectory, "restart");
+		var RestartFlag = new ClassManager.RestartFlag
+		{
+			Cookies = ApiHandler.Cookies,
+			LastArgs = MainPage.LastArgs,
+			WasMaximized = isMaximized,
+			PostId = postId,
+			LastFeedId = TimelinePage.LastFeedId,
+		};
+		var restartFlagString = JsonConvert.SerializeObject(RestartFlag);
+		File.WriteAllText(restartFlagPath, restartFlagString);
+	}
+
+	public static ScrollViewer GetScrollViewerFromBaseListView(ListViewBase listViewBase)
     {
         var child = VisualTreeHelper.GetChild(listViewBase, 0);
         Border border = child as Border;
@@ -399,7 +428,38 @@ public static class Utility
         return VisualTreeHelper.GetChild(border, 0) as ScrollViewer;
     }
 
-    public static List<Api.DcCon.DataType.Package> GetCurrentDcConList()
+	public static async Task<ContentDialogResult> ShowMessageDialogAsync(string description, string title, bool showCancel = false, string primaryText = "확인", string secondaryText = "취소")
+	{
+		var window = new DialogWindow(title, description, showCancel, primaryText, secondaryText);
+		window.Activate();
+
+		var taskCompletionSource = new TaskCompletionSource<ContentDialogResult>();
+
+		DialogWindow.ButtonClicked primaryButtonClicked = null;
+		DialogWindow.ButtonClicked secondaryButtonClicked = null;
+
+		primaryButtonClicked = () =>
+		{
+			taskCompletionSource.SetResult(ContentDialogResult.Primary);
+			window.Close();
+			window.PrimaryButtonClicked -= primaryButtonClicked;
+			window.SecondaryButtonClicked -= secondaryButtonClicked;
+		};
+
+		secondaryButtonClicked = () =>
+		{
+			taskCompletionSource.SetResult(ContentDialogResult.Secondary);
+			window.Close();
+			window.PrimaryButtonClicked -= primaryButtonClicked;
+			window.SecondaryButtonClicked -= secondaryButtonClicked;
+		};
+
+		window.PrimaryButtonClicked += primaryButtonClicked;
+		window.SecondaryButtonClicked += secondaryButtonClicked;
+		return await taskCompletionSource.Task;
+	}
+
+	public static List<Api.DcCon.DataType.Package> GetCurrentDcConList()
     {
         var data = Configuration.GetValue("DcConList") as JArray ?? new();
         return data.ToObject<List<Api.DcCon.DataType.Package>>();
@@ -432,6 +492,8 @@ public static class Utility
 
     public static ElementTheme GetRequestedTheme()
     {
+        if (Instance == null) return ElementTheme.Light;
+
         var requestedTheme = (Instance.Content as FrameworkElement).RequestedTheme;
         ElementTheme theme;
         if (requestedTheme != ElementTheme.Default) theme = requestedTheme;

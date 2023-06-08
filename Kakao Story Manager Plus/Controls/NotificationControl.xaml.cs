@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
+using H.NotifyIcon;
 using KSMP.Extension;
 using KSMP.Pages;
 using Microsoft.UI.Xaml;
@@ -81,8 +82,9 @@ public sealed partial class NotificationControl : UserControl
             var objectStringStr = scheme.Split(new string[] { "?profile_id=" }, StringSplitOptions.None);
             var id = objectStringStr[0].Split(new string[] { "activities/" }, StringSplitOptions.None)[1];
             var post = await ApiHandler.GetPost(id);
-            MainPage.HideOverlay();
-            MainPage.ShowOverlay(new TimelineControl(post, false, true));
+
+            var window = new TimelineWindow(post);
+            window.Activate();
         }
         else if (scheme.Contains("kakaostory://profiles/"))
         {

@@ -50,14 +50,14 @@ namespace KSMP.Controls
             isValidUrl = isValidUrl && int.TryParse(idString, out id);
             if (!isValidUrl)
             {
-                await this.ShowMessageDialogAsync("입력된 디시콘 주소가 올바르지 않습니다", "오류");
+                await Utility.ShowMessageDialogAsync("입력된 디시콘 주소가 올바르지 않습니다", "오류");
                 return;
             }
 
             var detail = await Api.DcCon.ApiHandler.GetDcDonPackageDetailAsync(id);
             if(detail == null)
             {
-                await this.ShowMessageDialogAsync("디시콘 파싱 과정 중 오류가 발생하였습니다.", "오류");
+                await Utility.ShowMessageDialogAsync("디시콘 파싱 과정 중 오류가 발생하였습니다.", "오류");
                 return;
             }
 
@@ -65,7 +65,7 @@ namespace KSMP.Controls
             var collection = data.ToObject<ObservableCollection<DataType.Package>>();
             if (collection.Any(x => x.PackageInfo.PackageIndex == detail.PackageInfo.PackageIndex))
             {
-                await this.ShowMessageDialogAsync("이미 추가된 디시콘입니다.", "오류");
+                await Utility.ShowMessageDialogAsync("이미 추가된 디시콘입니다.", "오류");
                 return;
             }
             collection.Add(detail);

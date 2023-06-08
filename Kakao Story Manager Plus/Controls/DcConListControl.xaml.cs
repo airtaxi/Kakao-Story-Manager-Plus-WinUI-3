@@ -43,7 +43,7 @@ public sealed partial class DcConListControl : UserControl
                 Width = 30,
                 Height = 30
             };
-            _ = Task.Run(async () => await MainPage.Instance.RunOnMainThreadAsync(() => Utility.SetImageUrlSource(image, thumbnailUrl)));
+            _ = Task.Run(async () => await Utility.RunOnMainThreadAsync(() => Utility.SetImageUrlSource(image, thumbnailUrl)));
             Utility.LoadedImages.Add(image);
 
             container.Content = image;

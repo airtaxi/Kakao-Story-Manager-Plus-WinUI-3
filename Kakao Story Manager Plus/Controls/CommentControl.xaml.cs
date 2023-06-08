@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using KSMP.Utils;
 using System;
 using System.ComponentModel;
+using H.NotifyIcon;
 
 namespace KSMP.Controls;
 
@@ -93,9 +94,9 @@ public sealed partial class CommentControl : UserControl
 			    {
 				    origin_url = commentMedia?.media?.origin_url
 			    };
-			    var control = new ImageViewerControl(new List<Medium> { medium }, 0);
-			    MainPage.ShowOverlay(control, _isOverlay);
-		    };
+                var window = new ImageViewerWindow(new List<Medium> { medium }, 0);
+                window.Show();
+			};
 			image.Tapped += imageTapped;
 			{
 				RoutedEventHandler unloaded = null;
@@ -191,7 +192,7 @@ public sealed partial class CommentControl : UserControl
         var text = string.Join(' ', quotas.Select(x => x.text));
         if (string.IsNullOrWhiteSpace(text))
         {
-            await this.ShowMessageDialogAsync("내용을 입력해주세요.", "오류");
+            await Utility.ShowMessageDialogAsync("내용을 입력해주세요.", "오류");
             return;
         }
         var comment = await ApiHandler.EditComment(_comment, _postId, quotas, text);
@@ -229,7 +230,7 @@ public sealed partial class CommentControl : UserControl
 	}
     private async void OnDeleteCommentButtonClicked(object sender, RoutedEventArgs e)
     {
-        var result = await this.ShowMessageDialogAsync("정말로 댓글을 지우시겠습니까?", "경고", true);
+        var result = await Utility.ShowMessageDialogAsync("정말로 댓글을 지우시겠습니까?", "경고", true);
         if(result == ContentDialogResult.Primary)
         {
             await ApiHandler.DeleteComment(_comment.id, _postId);

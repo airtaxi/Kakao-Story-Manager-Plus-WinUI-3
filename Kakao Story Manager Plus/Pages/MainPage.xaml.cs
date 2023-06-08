@@ -49,7 +49,6 @@ public sealed partial class MainPage : Page
         if (!_isRefreshed)
         {
             await Refresh();
-            StartRefreshFriendListTimer();
             _isRefreshed = true;
         }
 
@@ -63,19 +62,6 @@ public sealed partial class MainPage : Page
         if (!string.IsNullOrEmpty(id)) NavigateTimeline(id);
         else NavigateTimeline();
         
-    }
-
-    private static void StartRefreshFriendListTimer()
-    {
-        Timer timer = new Timer();
-        timer.Interval = TimeSpan.FromHours(1).TotalMilliseconds;
-        timer.Elapsed += async (s, e) =>
-        {
-            timer.Stop();
-            await Instance.RunOnMainThreadAsync(async () => await RefreshFriendList());
-            timer.Start();
-        };
-        timer.Start();
     }
 
     public static void HideSettingsFlyout() => (Instance.BtSettings.Tag as Flyout)?.Hide();
@@ -129,7 +115,7 @@ public sealed partial class MainPage : Page
         string profileId = GetProfileIdFromNotification(notification);
         string activityId = GetActivityIdFromNotification(notification);
 
-        _ = Instance.RunOnMainThreadAsync(async () =>
+        _ = Utility.RunOnMainThreadAsync(async () =>
         {
             var timelineControl = Instance.FrOverlay.Content as TimelineControl;
             if (timelineControl == null) return;
@@ -191,13 +177,19 @@ public sealed partial class MainPage : Page
     public static void ShowWindow()
     {
         if (!LoginPage.IsLoggedIn) return;
-        WindowHelper.ShowWindow(MainWindow.Instance);
+
+        if (MainWindow.Instance == null)
+        {
+            var window = new MainWindow();
+            window.Activate();
+		}
+        else WindowHelper.ShowWindow(MainWindow.Instance);
     }
 
     public static void NavigateTimeline(string args = null)
     {
         LastArgs = args;
-        //Utility.ManuallyDisposeAllMedias();
+        if (MainWindow.Instance == null) return;
         if (args != null) Instance.FrContent.Navigate(typeof(TimelinePage), args);
         else Instance.FrContent.Navigate(typeof(TimelinePage));
     }
@@ -205,7 +197,8 @@ public sealed partial class MainPage : Page
     public static void ShowTimeline()
     {
         if (!LoginPage.IsLoggedIn) return;
-        ShowWindow();
+		if (MainWindow.Instance == null) return;
+		ShowWindow();
         HideOverlay();
         NavigateTimeline();
     }
@@ -307,7 +300,10 @@ public sealed partial class MainPage : Page
         NavigateTimeline(data.Id);
     }
 
-    public static void SetCursor(InputSystemCursorShape shape) => Instance.ProtectedCursor = InputSystemCursor.Create(shape);
+    public static void SetCursor(InputSystemCursorShape shape)
+    {
+
+    }
 
     private void ProfilePointerEntered(object sender, PointerRoutedEventArgs e) => Utility.ChangeSystemMouseCursor(true);
     private void ProfilePointerExited(object sender, PointerRoutedEventArgs e) => Utility.ChangeSystemMouseCursor(false);

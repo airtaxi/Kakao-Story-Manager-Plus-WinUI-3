@@ -5,13 +5,13 @@
     xmlns:local="using:KSMP.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:fa5="using:FontAwesome5"
     mc:Ignorable="d"
     d:DesignHeight="300"
-    d:DesignWidth="400">
+    d:DesignWidth="400"
+    Background="{ThemeResource White2}">
 
     <Grid>
-        <FlipView x:Name="FvImages" Height="auto" Width="auto" Margin="30" SelectionChanged="OnImageSelectionChanged">
+        <FlipView x:Name="FvImages" Height="auto" Width="auto" SelectionChanged="OnImageSelectionChanged">
             <FlipView.ItemTemplate>
                 <DataTemplate>
                     <ScrollViewer ZoomMode="Enabled" Tapped="OnScrollViewerTapped" RightTapped="OnScrollViewerRightTapped" Margin="0,40,0,0">
@@ -20,14 +20,19 @@
                 </DataTemplate>
             </FlipView.ItemTemplate>
         </FlipView>
-        <StackPanel Orientation="Horizontal" Margin="40" HorizontalAlignment="Right" VerticalAlignment="Top">
-            <Viewbox Opacity="0.25" PointerEntered="OnButtonPointerEntered" PointerExited="OnButtonPointerExited" Width="20" Height="20">
-                <FontIcon FontSize="25" FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe74e;" Tapped="DownloadButtonTapped"/>
-            </Viewbox>
-            <Viewbox Opacity="0.25" PointerEntered="OnButtonPointerEntered" PointerExited="OnButtonPointerExited" Width="20" Height="20" Margin="10,0,0,0">
-                <FontIcon FontSize="25" FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe711;" Tapped="CloseButtonTapped"/>
-            </Viewbox>
-        </StackPanel>
+        
+        <Viewbox
+            Opacity="0.25"
+            Width="20"
+            Height="20"
+            Margin="10"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top"
+            PointerEntered="OnButtonPointerEntered"
+            PointerExited="OnButtonPointerExited">
+            <FontIcon FontSize="25" FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe74e;" Tapped="DownloadButtonTapped"/>
+        </Viewbox>
+        
         <Grid x:Name="GdLoading" Visibility="Collapsed">
             <Rectangle Fill="{ThemeResource Black}" Opacity="0.85"/>
             <ProgressRing IsIndeterminate="True" IsActive="True" Width="150" Height="150" VerticalAlignment="Center" HorizontalAlignment="Center"/>

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net;
+using System.Threading.Tasks;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
@@ -13,8 +14,8 @@ public sealed partial class ImageViewerControl : UserControl
     private readonly List<Medium> _urlList;
     public ImageViewerControl(List<Medium> urlList, int index)
     {
-        InitializeComponent();
         _urlList = urlList;
+		InitializeComponent();
         LoadImage();
         FvImages.SelectedIndex = index;
     }
@@ -37,10 +38,11 @@ public sealed partial class ImageViewerControl : UserControl
         }
     }
 
-    private void ImageLoaded(object sender, RoutedEventArgs e)
+    private async void ImageLoaded(object sender, RoutedEventArgs e)
     {
         var image = sender as Image;
         var scrollViewer = image.Parent as ScrollViewer;
+        await Task.Delay(100);
         ResetImageSize(image, scrollViewer);
     }
 
@@ -49,15 +51,13 @@ public sealed partial class ImageViewerControl : UserControl
         var index = FvImages.SelectedIndex;
         var list = FvImages.ItemsSource as List<Medium>;
         var medium = list[index];
-        await Utility.SetImageClipboardFromUrl(this, medium.origin_url);
+        await Utility.SetImageClipboardFromUrl(medium.origin_url);
     }
 
     private void OnButtonPointerEntered(object sender, PointerRoutedEventArgs e) => Utility.ChangeSystemMouseCursor(true);
-
     private void OnButtonPointerExited(object sender, PointerRoutedEventArgs e) => Utility.ChangeSystemMouseCursor(false);
 
-    private void CloseButtonTapped(object sender, TappedRoutedEventArgs e) => Pages.MainPage.HideOverlay();
-    private async void DownloadButtonTapped(object sender, TappedRoutedEventArgs e)
+	private async void DownloadButtonTapped(object sender, TappedRoutedEventArgs e)
     {
         var medium = FvImages.SelectedItem as Medium;
         var url = medium.origin_url;

@@ -48,8 +48,10 @@ public sealed partial class TimelinePage : Page
         var first = _items.FirstOrDefault(x => x is TimelineControl) as TimelineControl;
         if (first.PostId != feed.id)
         {
-            var control = new TimelineControl(feed);
-            _items.Insert(_items.ToList().FindIndex(x => x is TimelineControl), control);;
+            var control = new TimelineControl(MainWindow.Instance, feed);
+            control.Margin = new Thickness(10);
+
+			_items.Insert(_items.ToList().FindIndex(x => x is TimelineControl), control);
             await control.RefreshContent();
             await Task.Delay(500);
             ValidateTimelineContent();
@@ -118,8 +120,9 @@ public sealed partial class TimelinePage : Page
             {
                 if (IsValidFeed(feed))
                 {
-                    var control = new TimelineControl(feed);
-                    _items.Add(control);
+                    var control = new TimelineControl(MainWindow.Instance, feed);
+					control.Margin = new Thickness(10);
+					_items.Add(control);
                 }
             }
             LastFeedId = _lastFeedId;
@@ -143,8 +146,9 @@ public sealed partial class TimelinePage : Page
             {
                 if (IsValidFeed(feed))
                 {
-                    var control = new TimelineControl(feed);
-                    _items.Add(control);
+                    var control = new TimelineControl(MainWindow.Instance, feed);
+					control.Margin = new Thickness(10);
+					_items.Add(control);
                 }
             }
             

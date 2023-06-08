@@ -53,7 +53,7 @@ public sealed partial class LoginPage : Page
         var segoeFluentIconsExist = fontsCollection.Families.Any(x => x.Name == "Segoe Fluent Icons");
         if(!segoeFluentIconsExist)
         {
-            await this.ShowMessageDialogAsync("프로그램 아이콘 표시에 필요한 폰트 파일이 설치되어있지 않습니다.\n확인을 누르면 폰트 파일을 다운로드 받습니다.\n이후 폰트를 설치하고 프로그램을 다시 실행해주세요.", "오류");
+            await Utility.ShowMessageDialogAsync("프로그램 아이콘 표시에 필요한 폰트 파일이 설치되어있지 않습니다.\n확인을 누르면 폰트 파일을 다운로드 받습니다.\n이후 폰트를 설치하고 프로그램을 다시 실행해주세요.", "오류");
             
             var client = new WebClient();
             SetLoading(true, "폰트 다운로드 초기화중");
@@ -98,7 +98,7 @@ public sealed partial class LoginPage : Page
         var localVersionString = Utils.Common.GetVersionString();
         if (localVersionString == null)
         {
-            await this.ShowMessageDialogAsync("프로그램의 버전을 확인할 수 없습니다", "오류");
+            await Utility.ShowMessageDialogAsync("프로그램의 버전을 확인할 수 없습니다", "오류");
             return;
         }
 
@@ -108,7 +108,7 @@ public sealed partial class LoginPage : Page
 
         if(result > 0)
         {
-            await this.ShowMessageDialogAsync($"프로그램 업데이트가 필요합니다.\n확인을 누르시면 업데이트를 진행합니다.\n\n클라이언트 버전: {localVersionString}\n최신 버전: {remoteVersionString}", "안내");
+            await Utility.ShowMessageDialogAsync($"프로그램 업데이트가 필요합니다.\n확인을 누르시면 업데이트를 진행합니다.\n\n클라이언트 버전: {localVersionString}\n최신 버전: {remoteVersionString}", "안내");
             SetLoading(true, "업데이터 다운로드 초기화중");
 
             var tempFile = Path.Combine(Path.GetTempPath(), $"KSMP_{remoteVersionString}.msi");
@@ -139,7 +139,7 @@ public sealed partial class LoginPage : Page
         catch (Exception) { } // Ignore
         if (!isAvailable)
         {
-            await this.ShowMessageDialogAsync("본 프로그램을 이용하기 위해서는 Edge 브라우저가 설치되어있어야 합니다.", "오류");
+            await Utility.ShowMessageDialogAsync("본 프로그램을 이용하기 위해서는 Edge 브라우저가 설치되어있어야 합니다.", "오류");
             Environment.Exit(0);
         }
     }
@@ -177,7 +177,7 @@ public sealed partial class LoginPage : Page
         PbLogin.Visibility = Visibility.Collapsed;
         IsEnabled = true;
 
-        if (!loginSuccess) await this.ShowMessageDialogAsync("로그인에 실패하였습니다.", "오류");
+        if (!loginSuccess) await Utility.ShowMessageDialogAsync("로그인에 실패하였습니다.", "오류");
         else
         {
             IsLoggedIn = true;

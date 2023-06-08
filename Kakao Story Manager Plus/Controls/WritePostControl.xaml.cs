@@ -167,13 +167,13 @@ public sealed partial class WritePostControl : UserControl
             var hasWebP = _medias.Any(x => x.Key == null && x.Path.ToLower().EndsWith(".webp"));
             if (hasWebP)
             {
-                var result = await this.ShowMessageDialogAsync("webp 파일을 gif로 변환하여 업로드하시겠습니까?", "안내", true);
+                var result = await Utility.ShowMessageDialogAsync("webp 파일을 gif로 변환하여 업로드하시겠습니까?", "안내", true);
                 if (result == ContentDialogResult.Primary)
                 {
                     var success = await ConvertWebPToGifAsync();
                     if (!success)
                     {
-                        await this.ShowMessageDialogAsync("변환된 gif 파일의 크기가 20mb를 초과하여 업로드를 중단합니다.", "오류");
+                        await Utility.ShowMessageDialogAsync("변환된 gif 파일의 크기가 20mb를 초과하여 업로드를 중단합니다.", "오류");
                         return;
                     }
                 }
@@ -427,7 +427,7 @@ public sealed partial class WritePostControl : UserControl
                 if (scrap == null)
                 {
                     FiLink.Glyph = "\uf6fa";
-                    await this.ShowMessageDialogAsync("오류가 발생했습니다.\n다시 시도해보세요.", "오류");
+                    await Utility.ShowMessageDialogAsync("오류가 발생했습니다.\n다시 시도해보세요.", "오류");
                     _button?.Flyout?.ShowAt(_button);
                     return;
                 }
