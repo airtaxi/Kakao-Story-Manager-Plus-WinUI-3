@@ -254,7 +254,7 @@ public static class Utility
 
         var file = await StorageFile.GetFileFromPathAsync(path);
         using var stream = await file.OpenAsync(FileAccessMode.Read);
-        await Utility.RunOnMainThreadAsync(async () => image.Source = await GenerateImageLocalFileStream(stream));
+        await RunOnMainThreadAsync(async () => image.Source = await GenerateImageLocalFileStream(stream));
     }
 
     private static async Task LoadAnimatedEmoticonImage(Image image, string url, int retryCount = 0)
@@ -278,7 +278,7 @@ public static class Utility
 
         var file = await StorageFile.GetFileFromPathAsync(path);
         using var stream = await file.OpenAsync(FileAccessMode.Read);
-        await Utility.RunOnMainThreadAsync(async () => image.Source = await GenerateImageLocalFileStream(stream));
+        await RunOnMainThreadAsync(async () => image.Source = await GenerateImageLocalFileStream(stream));
     }
 
     private static string GetStringHashFromUrl(string url, string header = "")
@@ -397,6 +397,41 @@ public static class Utility
 		Process.Start(binaryPath);
 
 		Environment.Exit(0);
+	}
+
+	public static async Task CheckVersion(Action<bool, string, int> progressFuncion)
+	{
+		var client = new WebClient();
+		var remoteVersionString = await client.DownloadStringTaskAsync(new Uri("https://kagamine-rin.com/KSMP/version"));
+		var localVersionString = Utils.Common.GetVersionString();
+		if (localVersionString == null)
+		{
+			await ShowMessageDialogAsync("프로그램의 버전을 확인할 수 없습니다", "오류");
+			return;
+		}
+
+		var remoteVersion = new Version(remoteVersionString);
+		var localVersion = new Version(localVersionString);
+		var result = remoteVersion.CompareTo(localVersion);
+
+		if (result > 0)
+		{
+			await ShowMessageDialogAsync($"프로그램 업데이트가 필요합니다.\n확인을 누르시면 업데이트를 진행합니다.\n\n클라이언트 버전: {localVersionString}\n최신 버전: {remoteVersionString}", "안내");
+			progressFuncion(true, "업데이터 다운로드 초기화중", -1);
+
+			var tempFile = Path.Combine(Path.GetTempPath(), $"KSMP_{remoteVersionString}.msi");
+
+			client.DownloadFileCompleted += (_, _) =>
+			{
+				Process.Start(new ProcessStartInfo(tempFile) { UseShellExecute = true });
+				Environment.Exit(0);
+			};
+
+			client.DownloadProgressChanged += (_, e) =>
+				progressFuncion(true, $"업데이터 다운로드중 ({e.ProgressPercentage}%)", e.ProgressPercentage);
+
+			await client.DownloadFileTaskAsync(new Uri("https://kagamine-rin.com/KSMP/Installer.msi"), tempFile);
+		}
 	}
 
 	public static void SaveCurrentState()

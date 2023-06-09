@@ -93,6 +93,11 @@ public sealed partial class MainWindow : Window
 			var wasMaximized = flag.WasMaximized;
 			if (wasMaximized) (this.GetAppWindow().Presenter as OverlappedPresenter).Maximize();
 			FrMain.Navigate(typeof(MainPage), flag.LastArgs);
+
+			await Task.Delay(1000);
+			MainPage.Instance.SetLoading(true, "버전 확인중");
+            await Utility.CheckVersion(MainPage.Instance.SetLoading);
+			MainPage.Instance.SetLoading(false);
 		}
 	}
 

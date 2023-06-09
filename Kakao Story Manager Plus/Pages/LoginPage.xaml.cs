@@ -32,7 +32,7 @@ public sealed partial class LoginPage : Page
         SetLoading(true, "의존성 검사중");
         await CheckEdgeBrowserInstalled();
         SetLoading(true, "버전 확인중");
-        await CheckVersion();
+        await Utility.CheckVersion(SetLoading);
         SetLoading(true, "폰트 확인중");
         await CheckFont();
         SetLoading(false);
@@ -89,42 +89,6 @@ public sealed partial class LoginPage : Page
         }
         else
             IsEnabled = true;
-    }
-
-    private async Task CheckVersion()
-    {
-        var client = new WebClient();
-        var remoteVersionString = await client.DownloadStringTaskAsync(new Uri("https://kagamine-rin.com/KSMP/version"));
-        var localVersionString = Utils.Common.GetVersionString();
-        if (localVersionString == null)
-        {
-            await Utility.ShowMessageDialogAsync("프로그램의 버전을 확인할 수 없습니다", "오류");
-            return;
-        }
-
-        var remoteVersion = new Version(remoteVersionString);
-        var localVersion = new Version(localVersionString);
-        var result = remoteVersion.CompareTo(localVersion);
-
-        if(result > 0)
-        {
-            await Utility.ShowMessageDialogAsync($"프로그램 업데이트가 필요합니다.\n확인을 누르시면 업데이트를 진행합니다.\n\n클라이언트 버전: {localVersionString}\n최신 버전: {remoteVersionString}", "안내");
-            SetLoading(true, "업데이터 다운로드 초기화중");
-
-            var tempFile = Path.Combine(Path.GetTempPath(), $"KSMP_{remoteVersionString}.msi");
-
-            client.DownloadFileCompleted += (_, _) =>
-            {
-                Process.Start(new ProcessStartInfo(tempFile) { UseShellExecute = true });
-                Environment.Exit(0);
-            };
-
-            client.DownloadProgressChanged += (_, e) =>
-                SetLoading(true, $"업데이터 다운로드중 ({e.ProgressPercentage}%)", e.ProgressPercentage);
-
-            await client.DownloadFileTaskAsync(new Uri("https://kagamine-rin.com/KSMP/Installer.msi"), tempFile);
-        }
-
     }
 
     private async Task CheckEdgeBrowserInstalled()
