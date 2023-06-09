@@ -129,8 +129,14 @@ public partial class App : Application
 
                         var post = await ApiHandler.GetPost(activityId);
 
-                        if (post != null) (TimelineWindow.GetTimelineWindow(post)).Activate();
-                        else await Utility.ShowMessageDialogAsync("글을 볼 수 없거나 나만 보기로 설정된 글입니다.", "오류");
+                        if (post != null)
+						{
+                            var wasExisted = TimelineWindow.HasInstanceContainsId(post.id);
+                            var window = TimelineWindow.GetTimelineWindow(post);
+							window.Activate();
+                            if (wasExisted) await window.Control.RefreshContent();
+						}
+						else await Utility.ShowMessageDialogAsync("글을 볼 수 없거나 나만 보기로 설정된 글입니다.", "오류");
                     }
                     else if (action == "Like") await ApiHandler.LikeComment(activityId, commentId, false);
                 }
