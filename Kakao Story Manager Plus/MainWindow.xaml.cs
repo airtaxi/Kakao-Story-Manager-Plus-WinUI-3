@@ -52,10 +52,10 @@ public sealed partial class MainWindow : Window
 		}
 
 		_restartFlagPath = Path.Combine(App.BinaryDirectory, "restart");
-		var checkProcess = File.Exists(_restartFlagPath) == false;
+        var restartFlagExists = File.Exists(_restartFlagPath);
 		RestartFlag flag = null;
 
-		if (!checkProcess)
+		if (restartFlagExists)
 		{
 			var restartFlagString = File.ReadAllText(_restartFlagPath);
 			flag = JsonConvert.DeserializeObject<RestartFlag>(restartFlagString);
@@ -86,10 +86,10 @@ public sealed partial class MainWindow : Window
 
 	private async void ApplyFlag(RestartFlag flag)
 	{
-        await GetFriends();
 		if (flag == null) FrMain.Navigate(typeof(LoginPage));
 		else
 		{
+            await GetFriends();
 			var wasMaximized = flag.WasMaximized;
 			if (wasMaximized) (this.GetAppWindow().Presenter as OverlappedPresenter).Maximize();
 			FrMain.Navigate(typeof(MainPage), flag.LastArgs);
