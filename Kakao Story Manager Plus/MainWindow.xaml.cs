@@ -77,7 +77,7 @@ public sealed partial class MainWindow : Window
 				cookies.Add(cookie);
 			}
 
-			Init(cookieContainer, cookies, null);
+			//Init(cookieContainer, cookies, null);
 			LoginPage.IsLoggedIn = true;
 		}
 

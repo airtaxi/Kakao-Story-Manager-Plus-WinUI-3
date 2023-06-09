@@ -133,7 +133,8 @@ public partial class ApiHandler
         string requestURI = "https://story.kakao.com/a/friends/";
 
         HttpWebRequest webRequest = GenerateDefaultProfile(requestURI);
-        return JsonConvert.DeserializeObject<FriendData.Friends>(await GetResponseFromRequest(webRequest));
+        var content = await GetResponseFromRequest(webRequest);
+		return JsonConvert.DeserializeObject<FriendData.Friends>(content);
     }
     public static async Task<BookmarkData.Bookmarks> GetBookmarks(string id, string from)
     {
@@ -635,7 +636,7 @@ public partial class ApiHandler
     {
         try
         {
-            var readStream = await webRequest?.GetResponseAsync();
+			var readStream = await webRequest?.GetResponseAsync();
             var respReader = readStream?.GetResponseStream();
             if (respReader == null)
                 throw new Exception("Network Error!");
@@ -659,18 +660,25 @@ public partial class ApiHandler
             {
                 var success = await OnReloginRequired?.Invoke();
                 if (!success) return null;
-                return await GetResponseFromRequest(webRequest, ++count);
+				webRequest = GenerateDefaultProfile(webRequest.RequestUri.ToString(), webRequest.Method);
+				return await GetResponseFromRequest(webRequest, ++count);
             }
             else
             {
                 if (count < MaxRetryCount)
-                    return await GetResponseFromRequest(webRequest, ++count);
+                {
+					webRequest = GenerateDefaultProfile(webRequest.RequestUri.ToString(), webRequest.Method);
+					return await GetResponseFromRequest(webRequest, ++count);
+                }
             }
         }
-        catch (Exception)
+        catch (Exception exception)
         {
             if (count < MaxRetryCount)
-                return await GetResponseFromRequest(webRequest, ++count);
+			{
+				webRequest = GenerateDefaultProfile(webRequest.RequestUri.ToString(), webRequest.Method);
+				return await GetResponseFromRequest(webRequest, ++count);
+            }
         }
         return null;
     }
