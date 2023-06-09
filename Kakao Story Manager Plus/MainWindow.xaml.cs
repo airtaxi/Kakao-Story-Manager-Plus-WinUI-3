@@ -22,6 +22,7 @@ using Windows.ApplicationModel.DataTransfer;
 using KSMP.Utils;
 using Newtonsoft.Json;
 using System.Net;
+using System.Runtime.CompilerServices;
 
 namespace KSMP;
 
@@ -33,7 +34,7 @@ public sealed partial class MainWindow : Window
     private bool _isFirst = true;
 	private string _restartFlagPath;
 
-	public MainWindow()
+	public MainWindow(bool showTimeline = false, string id = null)
 	{
 		InitializeComponent();
 		Instance = this;
@@ -60,6 +61,8 @@ public sealed partial class MainWindow : Window
 			var restartFlagString = File.ReadAllText(_restartFlagPath);
 			flag = JsonConvert.DeserializeObject<RestartFlag>(restartFlagString);
 			App.RecordedFirstFeedId = flag.LastFeedId;
+            if (showTimeline) flag.LastArgs = null;
+            else if (string.IsNullOrEmpty(id)) flag.LastArgs = id;
 
 			var cookies = new List<Cookie>();
 			var cookieContainer = new CookieContainer();
@@ -421,7 +424,11 @@ public sealed partial class MainWindow : Window
 	private void OnTrayIconShowMyProfileExecuteRequested(XamlUICommand sender, ExecuteRequestedEventArgs args) => MainPage.ShowMyProfile();
 	private void OnTrayIconShowTimelineExecuteRequested(XamlUICommand sender, ExecuteRequestedEventArgs args) => MainPage.ShowTimeline();
 
-	private void OnTrayIconExitProgramExecuteRequested(XamlUICommand sender, ExecuteRequestedEventArgs args) => Environment.Exit(0);
+	private void OnTrayIconExitProgramExecuteRequested(XamlUICommand sender, ExecuteRequestedEventArgs args)
+	{
+		Utility.SaveCurrentState();
+		Environment.Exit(0);
+	}
 
 	public static void EnableLoginRequiredMenuFlyoutItems()
 	{

@@ -41,7 +41,7 @@ public sealed partial class MainPage : Page
     }
 
     private bool _isRefreshed = false;
-    private bool _isStarup = true;
+    private static bool s_isStarup = true;
     protected override async void OnNavigatedTo(NavigationEventArgs e)
     {
         base.OnNavigatedTo(e);
@@ -52,11 +52,11 @@ public sealed partial class MainPage : Page
             _isRefreshed = true;
         }
 
-        if (_isStarup)
+        if (s_isStarup)
         {
             bool willShowMyProfileOnStartup = (Configuration.GetValue("ShowMyProfileOnStartup") as bool?) ?? false;
             if (willShowMyProfileOnStartup && string.IsNullOrEmpty(id)) id = Me.id;
-            _isStarup = false;
+            s_isStarup = false;
         }
 
         if (!string.IsNullOrEmpty(id)) NavigateTimeline(id);
@@ -213,18 +213,33 @@ public sealed partial class MainPage : Page
     public static void ShowTimeline()
     {
         if (!LoginPage.IsLoggedIn) return;
-		if (MainWindow.Instance == null) return;
-		ShowWindow();
-        HideOverlay();
-        NavigateTimeline();
+        if (MainWindow.Instance == null)
+        {
+            var window = new MainWindow(true);
+            window.Activate();
+		}
+        else
+        {
+            ShowWindow();
+            HideOverlay();
+            NavigateTimeline();
+        }
     }
 
     public static void ShowMyProfile()
-    {
-        if (Instance == null) return;
-        ShowWindow();
-        HideOverlay();
-        NavigateTimeline(Me.id);
+	{
+		if (!LoginPage.IsLoggedIn) return;
+		if (MainWindow.Instance == null)
+		{
+            var window = new MainWindow(id: Me.id);
+			window.Activate();
+		}
+        else
+        {
+		    ShowWindow();
+            HideOverlay();
+            NavigateTimeline(Me.id);
+        }
     }
 
     public static bool IsFriendListViewLoaded => (Instance.LvFriends.ItemsSource as List<FriendProfile>) != null;
