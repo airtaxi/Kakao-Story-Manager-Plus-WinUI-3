@@ -31,6 +31,7 @@ public sealed partial class TimelineWindow : Window
 		PostId = postData.id;
 
 		InitializeComponent();
+
 		AppWindow.SetIcon(Path.Combine(App.BinaryDirectory, "icon.ico"));
 		Control = new TimelineControl(this, postData, false, true);
 		FrMain.Content = Control;
