@@ -713,6 +713,7 @@ public sealed partial class TimelineControl : UserControl
 
         var window = new WritePostWindow();
         window.Activate();
+        window.Title = "글 수정";
         var control = window.Control;
 		await control.SetEditMedia(_post);
 

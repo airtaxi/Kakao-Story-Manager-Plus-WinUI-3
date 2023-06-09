@@ -40,7 +40,12 @@ namespace KSMP
 			AppWindow.SetIcon(Path.Combine(App.BinaryDirectory, "icon.ico"));
 
 			if(post == null) Control = new WritePostControl();
-			else Control = new WritePostControl(post);
+			else
+			{
+				Title = "글 공유";
+				Control = new WritePostControl(post);
+			}
+
 			Control.OnPostCompleted += OnPostCompleted;
 
 			FrMain.Content = Control;
