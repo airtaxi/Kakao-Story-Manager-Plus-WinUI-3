@@ -23,6 +23,7 @@ using KSMP.Utils;
 using Newtonsoft.Json;
 using System.Net;
 using System.Runtime.CompilerServices;
+using OpenQA.Selenium.DevTools.V112.DOM;
 
 namespace KSMP;
 
@@ -34,7 +35,7 @@ public sealed partial class MainWindow : Window
     private bool _isFirst = true;
 	private string _restartFlagPath;
 
-	public MainWindow(bool showTimeline = false, string id = null)
+	public MainWindow()
 	{
 		InitializeComponent();
 		Instance = this;
@@ -61,8 +62,11 @@ public sealed partial class MainWindow : Window
 			var restartFlagString = File.ReadAllText(_restartFlagPath);
 			flag = JsonConvert.DeserializeObject<RestartFlag>(restartFlagString);
 			App.RecordedFirstFeedId = flag.LastFeedId;
-            if (showTimeline) flag.LastArgs = null;
-            else if (string.IsNullOrEmpty(id)) flag.LastArgs = id;
+            if (flag.ShowTimeline)
+            {
+                MainPage.IsStarup = false;
+                flag.LastArgs = null;
+            }
 
 			var cookies = new List<Cookie>();
 			var cookieContainer = new CookieContainer();
@@ -426,7 +430,7 @@ public sealed partial class MainWindow : Window
 
 	private void OnTrayIconExitProgramExecuteRequested(XamlUICommand sender, ExecuteRequestedEventArgs args)
 	{
-		Utility.SaveCurrentState();
+        Utility.SaveCurrentState();
 		Environment.Exit(0);
 	}
 

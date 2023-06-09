@@ -41,7 +41,7 @@ public sealed partial class MainPage : Page
     }
 
     private bool _isRefreshed = false;
-    private static bool s_isStarup = true;
+    public static bool IsStarup = true;
     protected override async void OnNavigatedTo(NavigationEventArgs e)
     {
         base.OnNavigatedTo(e);
@@ -52,11 +52,11 @@ public sealed partial class MainPage : Page
             _isRefreshed = true;
         }
 
-        if (s_isStarup)
+        if (IsStarup)
         {
             bool willShowMyProfileOnStartup = (Configuration.GetValue("ShowMyProfileOnStartup") as bool?) ?? false;
             if (willShowMyProfileOnStartup && string.IsNullOrEmpty(id)) id = Me.id;
-            s_isStarup = false;
+            IsStarup = false;
         }
 
         if (!string.IsNullOrEmpty(id)) NavigateTimeline(id);
@@ -215,7 +215,7 @@ public sealed partial class MainPage : Page
         if (!LoginPage.IsLoggedIn) return;
         if (MainWindow.Instance == null)
 		{
-            Utility.SaveCurrentState(true);
+			Utility.SaveCurrentState(true);
 			Utility.RestartProgram();
 		}
         else

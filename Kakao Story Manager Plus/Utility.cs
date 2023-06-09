@@ -436,9 +436,9 @@ public static class Utility
 
 	public static void SaveCurrentState(bool showTimeline = false, string id = null)
 	{
-		var appWindow = Instance.AppWindow;
-		var presenter = appWindow.Presenter as OverlappedPresenter;
-		var isMaximized = presenter.State == OverlappedPresenterState.Maximized;
+        var appWindow = Instance?.AppWindow;
+        var presenter = appWindow?.Presenter as OverlappedPresenter;
+		var isMaximized = presenter?.State == OverlappedPresenterState.Maximized;
 
 		var restartFlagPath = Path.Combine(App.BinaryDirectory, "restart");
 		var restartFlag = new ClassManager.RestartFlag
