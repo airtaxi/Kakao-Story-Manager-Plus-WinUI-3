@@ -31,24 +31,33 @@ public sealed partial class MainWindow : Window
 
     private string _versionString = string.Empty;
     private bool _isFirst = true;
+	private string _restartFlagPath;
 
-    public MainWindow()
-    {
-        InitializeComponent();
-        Instance = this;
+	public MainWindow()
+	{
+		InitializeComponent();
+		Instance = this;
 
-        _versionString = Common.GetVersionString() ?? "VERSION ERROR";
+		_versionString = Common.GetVersionString() ?? "VERSION ERROR";
 
-        SetupTheme();
-        SetupAppWindow();
+		SetupTheme();
+		SetupAppWindow();
 
-		var restartFlagPath = Path.Combine(App.BinaryDirectory, "restart");
-		var checkProcess = File.Exists(restartFlagPath) == false;
-        RestartFlag flag = null;
+		AppWindow.Changed += AppWindowChanged;
+		(Content as FrameworkElement).ActualThemeChanged += OnThemeChanged;
+		if (_isFirst)
+		{
+			_isFirst = false;
+			OnReloginRequired += ReloginAsync;
+		}
+
+		_restartFlagPath = Path.Combine(App.BinaryDirectory, "restart");
+		var checkProcess = File.Exists(_restartFlagPath) == false;
+		RestartFlag flag = null;
 
 		if (!checkProcess)
 		{
-			var restartFlagString = File.ReadAllText(restartFlagPath);
+			var restartFlagString = File.ReadAllText(_restartFlagPath);
 			flag = JsonConvert.DeserializeObject<RestartFlag>(restartFlagString);
 			App.RecordedFirstFeedId = flag.LastFeedId;
 
@@ -70,27 +79,24 @@ public sealed partial class MainWindow : Window
 
 			Init(cookieContainer, cookies, null);
 			LoginPage.IsLoggedIn = true;
-			File.Delete(restartFlagPath);
 		}
 
-		if (flag == null) FrMain.Navigate(typeof(LoginPage));
-        else
-        {
-            var wasMaximized = flag.WasMaximized;
-            if (wasMaximized) (this.GetAppWindow().Presenter as OverlappedPresenter).Maximize();
-            FrMain.Navigate(typeof(MainPage), flag.LastArgs);
-        }
-
-		AppWindow.Changed += AppWindowChanged;
-		(Content as FrameworkElement).ActualThemeChanged += OnThemeChanged;
-        if (_isFirst)
-        {
-            _isFirst = false;
-			OnReloginRequired += ReloginAsync;
-        }
+		ApplyFlag(flag);
 	}
 
-    private void OnThemeChanged(FrameworkElement sender, object args) => SetupTheme();
+	private async void ApplyFlag(RestartFlag flag)
+	{
+        await GetFriends();
+		if (flag == null) FrMain.Navigate(typeof(LoginPage));
+		else
+		{
+			var wasMaximized = flag.WasMaximized;
+			if (wasMaximized) (this.GetAppWindow().Presenter as OverlappedPresenter).Maximize();
+			FrMain.Navigate(typeof(MainPage), flag.LastArgs);
+		}
+	}
+
+	private void OnThemeChanged(FrameworkElement sender, object args) => SetupTheme();
 
     private void SetupTheme()
     {
@@ -331,7 +337,11 @@ public sealed partial class MainWindow : Window
     private async void OnExitButtonClicked(object sender, RoutedEventArgs e)
     {
         var result = await Utility.ShowMessageDialogAsync("정말로 프로그램을 종료하시겠습니까?", "경고", true);
-        if (result == ContentDialogResult.Primary) Environment.Exit(0);
+        if (result == ContentDialogResult.Primary)
+        {
+			Utility.SaveCurrentState();
+			Environment.Exit(0);
+        }
 	}
 
     private void OnMoreButtonClicked(object sender, RoutedEventArgs e)
@@ -369,6 +379,7 @@ public sealed partial class MainWindow : Window
         if (result == ContentDialogResult.Primary)
         {
             Configuration.SetValue("willRememberCredentials", false);
+            if (File.Exists(_restartFlagPath)) File.Delete(_restartFlagPath);
             await Utility.ShowMessageDialogAsync("로그아웃되었습니다.\n프로그램을 재실행해주세요.", "안내");
 			Environment.Exit(0);
 		}
