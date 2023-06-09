@@ -24,12 +24,10 @@ namespace KSMP.Controls;
 public sealed partial class WritePostControl : UserControl
 {
     private InputControl _inputControl;
-    private readonly Button _button;
-    public delegate void PostCompleted();
-    public PostCompleted OnPostCompleted;
+    public delegate void ControlDelegate();
+    public ControlDelegate OnCloseRequested;
     public CommentData.PostData _postToShare = null;
     public CommentData.PostData _postToEdit = null;
-    public bool PreventClose = false;
 
     private class Media
     {
@@ -44,29 +42,12 @@ public sealed partial class WritePostControl : UserControl
     public WritePostControl(Button button = null)
     {
         InitializeComponent();
-        _button = button;
         InitializeInputControl();
         LvMedias.ItemsSource = _medias;
         AdjustDefaultPostWritingPermission();
         BtWriteClose.Visibility = Visibility.Visible;
-        if (_button?.Flyout != null)
-        {
-            PreventClose = true;
-            _button.Flyout.Closing += OnFlyoutClosing;
-
-			{
-				RoutedEventHandler unloaded = null;
-				unloaded = (s, e) =>
-				{
-					_button.Flyout.Closing -= OnFlyoutClosing;
-                    Unloaded -= unloaded;
-				};
-				Unloaded += unloaded;
-			}
-		}
     }
 
-    private void OnFlyoutClosing(FlyoutBase sender, FlyoutBaseClosingEventArgs args) => args.Cancel = PreventClose;
 
     public void AdjustDefaultPostWritingPermission()
     {
@@ -242,9 +223,7 @@ public sealed partial class WritePostControl : UserControl
                 await ApiHandler.WritePost(quoteDatas, mediaData, _permissons[CbxPermission.SelectedIndex], true, true, null, null, url, _postToEdit != null, oldPaths, _postToEdit?.id);
             }
 
-            PreventClose = false;
-            _button?.Flyout.Hide();
-            OnPostCompleted.Invoke();
+            OnCloseRequested.Invoke();
 
             var timelinePage = MainPage.GetTimelinePage();
             if (timelinePage == null) return;
@@ -387,7 +366,6 @@ public sealed partial class WritePostControl : UserControl
         fileOpenPicker.FileTypeFilter.Add(".mp4");
         var files = (await fileOpenPicker.PickMultipleFilesAsync()).ToList();
         foreach (var file in files) await AddMediaFromFile(file);
-        _button?.Flyout?.ShowAt(_button);
     }
 
     private void OnAddLinkButtonClicked(object sender, RoutedEventArgs e)
@@ -428,7 +406,6 @@ public sealed partial class WritePostControl : UserControl
                 {
                     FiLink.Glyph = "\uf6fa";
                     await Utility.ShowMessageDialogAsync("오류가 발생했습니다.\n다시 시도해보세요.", "오류");
-                    _button?.Flyout?.ShowAt(_button);
                     return;
                 }
                 FiLink.Glyph = "\ue74d";
@@ -448,13 +425,9 @@ public sealed partial class WritePostControl : UserControl
         if (e.Key == Windows.System.VirtualKey.Enter) await PrepareScrap();
     }
 
-    private void OnCloseButtonClicked(object sender, RoutedEventArgs e)
-    {
-        PreventClose = false;
-        _button.Flyout.Hide();
-    }
+	private void OnCloseButtonClicked(object sender, RoutedEventArgs e) => OnCloseRequested?.Invoke();
 
-    private void OnEmoticonButtonClicked(object sender, RoutedEventArgs e)
+	private void OnEmoticonButtonClicked(object sender, RoutedEventArgs e)
     {
         var button = sender as Button;
         Utils.Post.ShowEmoticonListToButton(button, _inputControl);

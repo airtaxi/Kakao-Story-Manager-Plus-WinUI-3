@@ -46,7 +46,7 @@ namespace KSMP
 				Control = new WritePostControl(post);
 			}
 
-			Control.OnPostCompleted += OnPostCompleted;
+			Control.OnCloseRequested += OnCloseRequested;
 
 			FrMain.Content = Control;
 			FrMain.UpdateLayout();
@@ -63,6 +63,7 @@ namespace KSMP
 
 			ResizeToContent();
 		}
+
 
 		private void OnTimerTick(object sender, object e) => ResizeToContent();
 
@@ -102,12 +103,13 @@ namespace KSMP
 			return scaleFactorPercent / 100.0;
 		}
 
-		private void OnPostCompleted() => Close();
+		private void OnCloseRequested() => Close();
+
 		private void OnWindowClosed(object sender, WindowEventArgs args)
 		{
 			Timer.Stop();
 			Timer.Tick -= OnTimerTick;
-			Control.OnPostCompleted -= OnPostCompleted;
+			Control.OnCloseRequested -= OnCloseRequested;
 			Control = null;
 		}
 	}

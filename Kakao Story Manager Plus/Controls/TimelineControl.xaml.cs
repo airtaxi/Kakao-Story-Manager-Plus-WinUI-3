@@ -349,7 +349,7 @@ public sealed partial class TimelineControl : UserControl
         window.Activate();
 
         var control = window.Control;
-        control.OnPostCompleted += OnPostCompleted;
+        control.OnCloseRequested += OnCloseRequested;
         await Task.Delay(10); // Bugfix
         control.FocusTextbox();
 
@@ -357,14 +357,14 @@ public sealed partial class TimelineControl : UserControl
 		    RoutedEventHandler unloaded = null;
 		    unloaded = (s, e) =>
 		    {
-			    control.OnPostCompleted -= OnPostCompleted;
+			    control.OnCloseRequested -= OnCloseRequested;
 			    Unloaded -= unloaded;
 		    };
 		    Unloaded += unloaded;
         }
 	}
 
-	private async void OnPostCompleted() => await RefreshContent();
+	private async void OnCloseRequested() => await RefreshContent();
 
 	private async void CopyPostUrl(XamlUICommand sender, ExecuteRequestedEventArgs args)
     {
@@ -717,7 +717,7 @@ public sealed partial class TimelineControl : UserControl
         var control = window.Control;
 		await control.SetEditMedia(_post);
 
-        control.OnPostCompleted += OnPostCompleted;
+        control.OnCloseRequested += OnCloseRequested;
         await Task.Delay(10);
         control.FocusTextbox();
         GdLoading.Visibility = Visibility.Collapsed;
@@ -726,7 +726,7 @@ public sealed partial class TimelineControl : UserControl
 			RoutedEventHandler unloaded = null;
 			unloaded = (s, e) =>
 			{
-				control.OnPostCompleted -= OnPostCompleted;
+				control.OnCloseRequested -= OnCloseRequested;
                 Unloaded -= unloaded;
 			};
 			Unloaded += unloaded;
