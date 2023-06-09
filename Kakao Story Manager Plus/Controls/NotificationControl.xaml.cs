@@ -83,7 +83,7 @@ public sealed partial class NotificationControl : UserControl
             var id = objectStringStr[0].Split(new string[] { "activities/" }, StringSplitOptions.None)[1];
             var post = await ApiHandler.GetPost(id);
 
-            var window = new TimelineWindow(post);
+            var window = TimelineWindow.GetTimelineWindow(post);
             window.Activate();
         }
         else if (scheme.Contains("kakaostory://profiles/"))

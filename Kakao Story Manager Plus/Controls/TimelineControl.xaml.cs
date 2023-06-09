@@ -798,7 +798,7 @@ public sealed partial class TimelineControl : UserControl
 
         if (!_isOverlay)
         {
-            var window = new TimelineWindow(_post);
+            var window = TimelineWindow.GetTimelineWindow(_post);
             window.Activate();
 		}
     }
@@ -886,7 +886,7 @@ public sealed partial class TimelineControl : UserControl
         {
             if (post != null)
             {
-                var window = new TimelineWindow(post);
+                var window = TimelineWindow.GetTimelineWindow(post);
                 window.Activate();
 			}
             else await Utility.ShowMessageDialogAsync("글을 볼 수 없거나 나만 보기로 설정된 글입니다.", "오류");
@@ -904,7 +904,7 @@ public sealed partial class TimelineControl : UserControl
         }
         e.Handled = true;
         var newPost = await ApiHandler.GetPost(_post.@object.id);
-        var window = new TimelineWindow(newPost);
+        var window = TimelineWindow.GetTimelineWindow(newPost);
         window.Activate();
     }
 
