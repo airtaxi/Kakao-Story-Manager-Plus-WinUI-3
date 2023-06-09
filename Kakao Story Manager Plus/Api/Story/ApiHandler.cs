@@ -672,12 +672,12 @@ public partial class ApiHandler
                 }
             }
         }
-        catch (Exception exception)
+        catch (Exception)
         {
             if (count < MaxRetryCount)
-			{
-				webRequest = GenerateDefaultProfile(webRequest.RequestUri.ToString(), webRequest.Method);
-				return await GetResponseFromRequest(webRequest, ++count);
+            {
+                webRequest = GenerateDefaultProfile(webRequest.RequestUri.ToString(), webRequest.Method);
+                return await GetResponseFromRequest(webRequest, ++count);
             }
         }
         return null;
