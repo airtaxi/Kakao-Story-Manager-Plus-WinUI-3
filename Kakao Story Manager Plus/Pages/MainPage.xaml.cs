@@ -214,9 +214,9 @@ public sealed partial class MainPage : Page
     {
         if (!LoginPage.IsLoggedIn) return;
         if (MainWindow.Instance == null)
-        {
-            var window = new MainWindow(true);
-            window.Activate();
+		{
+            Utility.SaveCurrentState(true);
+			Utility.RestartProgram();
 		}
         else
         {
@@ -231,8 +231,8 @@ public sealed partial class MainPage : Page
 		if (!LoginPage.IsLoggedIn) return;
 		if (MainWindow.Instance == null)
 		{
-            var window = new MainWindow(id: Me.id);
-			window.Activate();
+            Utility.SaveCurrentState(id: Me.id);
+			Utility.RestartProgram();
 		}
         else
         {

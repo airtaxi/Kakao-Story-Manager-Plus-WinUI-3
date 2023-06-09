@@ -434,24 +434,32 @@ public static class Utility
 		}
 	}
 
-	public static void SaveCurrentState()
+	public static void SaveCurrentState(bool showTimeline = false, string id = null)
 	{
 		var appWindow = Instance.AppWindow;
 		var presenter = appWindow.Presenter as OverlappedPresenter;
 		var isMaximized = presenter.State == OverlappedPresenterState.Maximized;
-		var overlay = MainPage.GetOverlayTimeLineControl();
-		var postId = overlay?.PostId;
 
 		var restartFlagPath = Path.Combine(App.BinaryDirectory, "restart");
-		var RestartFlag = new ClassManager.RestartFlag
+		var restartFlag = new ClassManager.RestartFlag
 		{
 			Cookies = ApiHandler.Cookies,
 			LastArgs = MainPage.LastArgs,
 			WasMaximized = isMaximized,
-			PostId = postId,
-			LastFeedId = TimelinePage.LastFeedId,
+			LastFeedId = TimelinePage.LastFeedId
 		};
-		var restartFlagString = JsonConvert.SerializeObject(RestartFlag);
+
+        if (showTimeline)
+        {
+            restartFlag.ShowTimeline = true;
+            restartFlag.LastFeedId = null;
+        }
+		else if (!string.IsNullOrEmpty(id))
+		{
+            restartFlag.LastArgs = id;
+            restartFlag.LastFeedId = null;
+        }
+		var restartFlagString = JsonConvert.SerializeObject(restartFlag);
 		File.WriteAllText(restartFlagPath, restartFlagString);
 	}
 
