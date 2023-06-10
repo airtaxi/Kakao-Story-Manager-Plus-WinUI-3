@@ -40,7 +40,8 @@
         <Grid
             Grid.Row="2"
             Background="{ThemeResource White2}"
-            Padding="10">
+            Padding="10"
+            CornerRadius="0,0,10,10">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
