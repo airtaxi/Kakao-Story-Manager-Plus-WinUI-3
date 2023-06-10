@@ -1,6 +1,7 @@
 ﻿using Microsoft.UI;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -44,6 +45,11 @@ namespace KSMP
 			presenter.IsMaximizable = false;
 			presenter.IsMinimizable = false;
 			if (!showCancel) BtSecondary.Visibility = Visibility.Collapsed;
+			else
+			{
+				Grid.SetColumn(BtPrimary, 0);
+				Grid.SetColumn(BtSecondary, 1);
+			}
 
 			GdMain.UpdateLayout();
 
