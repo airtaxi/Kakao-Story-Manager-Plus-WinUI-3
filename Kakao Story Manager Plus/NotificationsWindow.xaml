@@ -9,7 +9,48 @@
     mc:Ignorable="d"
     Title="알림 조회">
 
-    <Grid>
-        <Frame x:Name="FrMain"/>
+    <Grid
+        Background="{ThemeResource White2}"
+        SizeChanged="OnSizeChanged">
+        <StackPanel 
+            Orientation="Horizontal"
+            Height="50"
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Top"
+            Background="{ThemeResource White}">
+            
+            <Image
+                x:Name="TitleBarIcon"
+                Source="/icon.ico" 
+                Width="25" Height="25"
+                Margin="7.5"/>
+
+            <TextBlock
+                Text="알림 조회"
+                Style="{StaticResource CaptionTextBlockStyle}"
+                Grid.Column="2"
+                FontSize="14"
+                FontWeight="Bold"
+                VerticalAlignment="Center"/>
+        </StackPanel>
+
+        <Button
+            Width="35"
+            Height="35"
+            Padding="10"
+            CornerRadius="10"
+            HorizontalAlignment="Right"
+            VerticalAlignment="Top"
+            Margin="0,7.5,50,0"
+            Click="OnRefreshButtonClicked">
+            <Viewbox>
+                <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe72c;" FontSize="17" Foreground="{ThemeResource Gray4}"/>
+            </Viewbox>
+        </Button>
+        
+        <Frame
+            x:Name="FrMain"
+            Margin="0,50,0,0"
+            SizeChanged="OnSizeChanged"/>
     </Grid>
 </Window>

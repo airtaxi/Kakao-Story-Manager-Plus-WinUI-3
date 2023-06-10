@@ -10,27 +10,46 @@ using System.Runtime.InteropServices;
 using Windows.Graphics;
 using WinRT.Interop;
 using static KSMP.ApiHandler.DataType.CommentData;
+using Microsoft.UI.Composition.Interactions;
+using Microsoft.UI.Xaml.Controls;
+using System.Threading.Tasks;
 
 namespace KSMP
 {
 	public sealed partial class NotificationsWindow : Window
 	{
-		public NotificationsWindow(List<Medium> urlList, int index)
+		public NotificationsWindow()
 		{
 			InitializeComponent();
 			AppWindow.SetIcon(Path.Combine(App.BinaryDirectory, "icon.ico"));
 			AppWindow.TitleBar.ExtendsContentIntoTitleBar = true;
 
-			var white = Application.Current.Resources["White2"] as SolidColorBrush;
+			var white = Application.Current.Resources["White"] as SolidColorBrush;
 			AppWindow.TitleBar.ButtonBackgroundColor = white.Color;
 			AppWindow.TitleBar.ButtonHoverBackgroundColor = white.Color;
 			AppWindow.TitleBar.ButtonInactiveBackgroundColor = white.Color;
 			AppWindow.TitleBar.ButtonPressedBackgroundColor = white.Color;
 
-			FrMain.Content = new ImageViewerControl(urlList, index);
+			var presenter = AppWindow.Presenter as OverlappedPresenter;
+			presenter.IsResizable = false;
+			presenter.IsMaximizable = false;
+			presenter.IsMinimizable = false;
+
+			var scale = GetScaleAdjustment();
+			AppWindow.ResizeClient(new((int)(350 * scale), (int)(600 * scale)));
+
+			FrMain.Content = new NotificationControl();
 			FrMain.UpdateLayout();
 			AdjustDragRectangle();
+
+			Initialize();
 		}
+
+		private async Task Refresh() => await (FrMain.Content as NotificationControl).Refresh();
+
+		private async void Initialize() => await Refresh();
+
+		private async void OnRefreshButtonClicked(object sender, RoutedEventArgs e) => await Refresh();
 
 		private enum Monitor_DPI_Type : int
 		{
@@ -67,10 +86,10 @@ namespace KSMP
 
 			var dragRects = new List<RectInt32>();
 			RectInt32 dragRect;
-			dragRect.X = (int)(30 * scale);
+			dragRect.X = 0;
 			dragRect.Y = 0;
-			dragRect.Width = (int)((FrMain.ActualWidth - 30) * scale);
-			dragRect.Height = (int)(35 * scale);
+			dragRect.Width = (int)((FrMain.ActualWidth - 85) * scale);
+			dragRect.Height = (int)(50 * scale);
 			dragRects.Add(dragRect);
 
 			AppWindow.TitleBar.SetDragRectangles(dragRects.ToArray());

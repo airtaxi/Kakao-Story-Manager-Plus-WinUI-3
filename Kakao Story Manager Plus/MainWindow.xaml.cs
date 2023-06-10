@@ -434,6 +434,7 @@ public sealed partial class MainWindow : Window
 		Instance.MfiShowTimeline.IsEnabled = true;
 		Instance.MfiShowMyProfile.IsEnabled = true;
 		Instance.MfiWritePost.IsEnabled = true;
+		Instance.MfiShowNotifications.IsEnabled = true;
 	}
 
 	public static void DisableLoginRequiredMenuFlyoutItems()
@@ -441,11 +442,18 @@ public sealed partial class MainWindow : Window
         Instance.MfiShowTimeline.IsEnabled = false;
         Instance.MfiShowMyProfile.IsEnabled = false;
         Instance.MfiWritePost.IsEnabled = false;
+        Instance.MfiShowNotifications.IsEnabled = false;
 	}
 
 	private void OnTrayIconWritePostExecuteRequested(XamlUICommand sender, ExecuteRequestedEventArgs args)
 	{
         var window = new WritePostWindow();
+        window.Activate();
+	}
+
+	private void OnTrayIconShowNotificationsRequested(XamlUICommand sender, ExecuteRequestedEventArgs args)
+	{
+        var window = new NotificationsWindow();
         window.Activate();
 	}
 }

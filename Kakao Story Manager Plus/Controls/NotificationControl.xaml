@@ -9,23 +9,33 @@
     d:DesignHeight="300"
     d:DesignWidth="400">
 
-    <ListView Width="350" SelectionChanged="NotificationSelected">
-        <ListView.ItemTemplate>
-            <DataTemplate>
-                <Grid Tag="{Binding Scheme}">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="50"/>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
-                    <PersonPicture x:Name="PpProfileImage" Width="50" ProfilePicture="{Binding ProfilePictureUrl}" Tag="{Binding ActorId}"/>
-                    <StackPanel Margin="10" Grid.Column="1" VerticalAlignment="Center">
-                        <TextBlock x:Name="TbTitle" Text="{Binding Title}" FontWeight="Bold" TextTrimming="CharacterEllipsis" MaxLines="1"/>
-                        <TextBlock x:Name="TbDescription" Text="{Binding Description}" TextTrimming="WordEllipsis" MaxLines="1"/>
-                        <TextBlock x:Name="TbTime" FontSize="10" Text="{Binding Time}" Foreground="{ThemeResource FixedGray6}" TextTrimming="WordEllipsis" MaxLines="1"/>
-                    </StackPanel>
-                    <Rectangle x:Name="RtUnread" Grid.Column="1" Width="5" Height="auto" Margin="0,5,0,5" VerticalAlignment="Stretch" HorizontalAlignment="Right" Fill="LightBlue" Visibility="{Binding UnreadBarVisiblity}"/>
-                </Grid>
-            </DataTemplate>
-        </ListView.ItemTemplate>
-    </ListView>
+    <Grid>
+        <ListView
+            x:Name="LvMain"
+            Width="350"
+            SelectionChanged="NotificationSelected">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <Grid Tag="{Binding Scheme}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="50"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <PersonPicture x:Name="PpProfileImage" Width="50" ProfilePicture="{Binding ProfilePictureUrl}" Tag="{Binding ActorId}"/>
+                        <StackPanel Margin="10" Grid.Column="1" VerticalAlignment="Center">
+                            <TextBlock x:Name="TbTitle" Text="{Binding Title}" FontWeight="Bold" TextTrimming="CharacterEllipsis" MaxLines="1"/>
+                            <TextBlock x:Name="TbDescription" Text="{Binding Description}" TextTrimming="WordEllipsis" MaxLines="1"/>
+                            <TextBlock x:Name="TbTime" FontSize="10" Text="{Binding Time}" Foreground="{ThemeResource FixedGray6}" TextTrimming="WordEllipsis" MaxLines="1"/>
+                        </StackPanel>
+                        <Rectangle x:Name="RtUnread" Grid.Column="1" Width="5" Height="auto" Margin="0,5,0,5" VerticalAlignment="Stretch" HorizontalAlignment="Right" Fill="LightBlue" Visibility="{Binding UnreadBarVisiblity}"/>
+                    </Grid>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+        
+        <Grid x:Name="GdLoading" Margin="10" CornerRadius="5" Visibility="Collapsed">
+            <Rectangle Fill="{ThemeResource White}" Opacity="0.85"/>
+            <ProgressRing IsIndeterminate="True" IsActive="True" Width="150" Height="150"/>
+        </Grid>
+    </Grid>
 </UserControl>

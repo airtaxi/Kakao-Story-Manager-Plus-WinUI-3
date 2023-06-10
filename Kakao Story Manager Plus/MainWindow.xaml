@@ -134,6 +134,14 @@
                         </MenuFlyoutItem.Command>
                     </MenuFlyoutItem>
                     <MenuFlyoutSeparator/>
+                    <MenuFlyoutItem
+                        x:Name="MfiShowNotifications"
+                        Text="알림 조회">
+                        <MenuFlyoutItem.Command>
+                            <XamlUICommand ExecuteRequested="OnTrayIconShowNotificationsRequested"/>
+                        </MenuFlyoutItem.Command>
+                    </MenuFlyoutItem>
+                    <MenuFlyoutSeparator/>
                     <MenuFlyoutItem Text="프로그램 종료">
                         <MenuFlyoutItem.Command>
                             <XamlUICommand ExecuteRequested="OnTrayIconExitProgramExecuteRequested"/>

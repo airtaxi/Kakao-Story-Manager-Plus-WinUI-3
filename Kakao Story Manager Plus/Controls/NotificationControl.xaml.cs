@@ -31,40 +31,49 @@ public sealed partial class NotificationControl : UserControl
     public NotificationControl()
     {
         InitializeComponent();
-        (Content as ListView).ItemsSource = s_notificationDatas;
+        LvMain.ItemsSource = s_notificationDatas;
     }
 
     private bool _isRefreshing = false;
     public async Task Refresh()
     {
         if (_isRefreshing) return;
-        _isRefreshing = true;
-        var notificationDatas = new List<NotificationData>();
-        var notifications = await ApiHandler.GetNotifications();
-        MainPage.LatestNotificationId = notifications.FirstOrDefault()?.id;
-
-        foreach (var notification in notifications)
+        try
         {
-            string contentMessage = notification.content;
-            if (string.IsNullOrEmpty(contentMessage)) contentMessage = "내용 없음";
-            if (contentMessage.Contains('\n'))
-                contentMessage = contentMessage.Split(new string[] { "\n" }, StringSplitOptions.None)[0];
-            var notificationData = new NotificationData
+            _isRefreshing = true;
+		    GdLoading.Visibility = Visibility.Visible;
+
+		    var notificationDatas = new List<NotificationData>();
+            var notifications = await ApiHandler.GetNotifications();
+            MainPage.LatestNotificationId = notifications.FirstOrDefault()?.id;
+
+            foreach (var notification in notifications)
             {
-                Title = notification.message,
-                Description = contentMessage,
-                ProfilePictureUrl = notification.actor?.GetValidUserProfileUrl(),
-                Time = Api.Story.Utils.GetTimeString(notification.created_at),
-                UnreadBarVisiblity = notification.is_new ? Visibility.Visible : Visibility.Collapsed,
-                Scheme = notification.scheme,
-                ActorId = notification.actor.id,
-                NotificationId = notification.id
-            };
-            notificationDatas.Add(notificationData);
+                string contentMessage = notification.content;
+                if (string.IsNullOrEmpty(contentMessage)) contentMessage = "내용 없음";
+                if (contentMessage.Contains('\n'))
+                    contentMessage = contentMessage.Split(new string[] { "\n" }, StringSplitOptions.None)[0];
+                var notificationData = new NotificationData
+                {
+                    Title = notification.message,
+                    Description = contentMessage,
+                    ProfilePictureUrl = notification.actor?.GetValidUserProfileUrl(),
+                    Time = Api.Story.Utils.GetTimeString(notification.created_at),
+                    UnreadBarVisiblity = notification.is_new ? Visibility.Visible : Visibility.Collapsed,
+                    Scheme = notification.scheme,
+                    ActorId = notification.actor.id,
+                    NotificationId = notification.id
+                };
+                notificationDatas.Add(notificationData);
+            }
+            s_notificationDatas = notificationDatas;
+			LvMain.ItemsSource = s_notificationDatas;
         }
-        s_notificationDatas = notificationDatas;
-        (Content as ListView).ItemsSource = s_notificationDatas;
-        _isRefreshing = false;
+        finally
+        {
+            GdLoading.Visibility = Visibility.Collapsed;
+            _isRefreshing = false;
+        }
     }
 
     public static string LatestNotificationId => s_notificationDatas?.FirstOrDefault()?.NotificationId;
@@ -74,7 +83,9 @@ public sealed partial class NotificationControl : UserControl
         var listView = sender as ListView;
         var notificationData = listView.SelectedItem as NotificationData;
         if (notificationData == null) return;
-        notificationData.UnreadBarVisiblity = Visibility.Collapsed;
+        listView.SelectedItem = null;
+
+		notificationData.UnreadBarVisiblity = Visibility.Collapsed;
         var scheme = notificationData.Scheme;
         if (scheme.Contains("?profile_id="))
         {
