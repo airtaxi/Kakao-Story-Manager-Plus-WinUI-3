@@ -26,6 +26,7 @@ public sealed partial class WritePostWindow : Window
 			Control = new WritePostControl(post);
 		}
 
+		Control.SetParentWindow(this);
 		Control.OnCloseRequested += OnCloseRequested;
 
 		FrMain.Content = Control;

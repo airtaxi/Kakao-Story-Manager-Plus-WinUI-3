@@ -23,8 +23,9 @@ public sealed partial class WritePostControl : UserControl
     private InputControl _inputControl;
     public delegate void ControlDelegate();
     public ControlDelegate OnCloseRequested;
-    public CommentData.PostData _postToShare = null;
-    public CommentData.PostData _postToEdit = null;
+    public CommentData.PostData PostToShare = null;
+    public CommentData.PostData PostToEdit = null;
+    private Window _parentWindow = MainWindow.Instance;
 
     private class Media
     {
@@ -55,7 +56,7 @@ public sealed partial class WritePostControl : UserControl
     public WritePostControl(CommentData.PostData postToShare)
     {
         InitializeComponent();
-        _postToShare = postToShare;
+        PostToShare = postToShare;
         InitializeInputControl(false);
         TbWritePost.Text = "공유";
         BdMedia.Visibility = Visibility.Collapsed;
@@ -114,6 +115,8 @@ public sealed partial class WritePostControl : UserControl
 		}
 	}
 
+    public void SetParentWindow(Window window) => _parentWindow = window;
+
     private async void OnSubmitShortcutActivated() => await WritePostAsync();
 
     public async Task AddImageFromPath(string filePath)
@@ -158,8 +161,8 @@ public sealed partial class WritePostControl : UserControl
             }
 
             var quoteDatas = Api.Story.Utils.GetQuoteDataFromString(_inputControl.GetTextBox().Text);
-            if (_postToShare != null)
-                await ApiHandler.SharePost(_postToShare.id, quoteDatas, _permissons[CbxPermission.SelectedIndex], true, null, null);
+            if (PostToShare != null)
+                await ApiHandler.SharePost(PostToShare.id, quoteDatas, _permissons[CbxPermission.SelectedIndex], true, null, null);
             else
             {
                 var mediaData = new MediaData();
@@ -215,9 +218,9 @@ public sealed partial class WritePostControl : UserControl
                     mediaData.media_type = mediaType;
                 }
                 else mediaData = null;
-                var oldPaths = _postToEdit?.media?.Select(x => x.media_path).ToList();
+                var oldPaths = PostToEdit?.media?.Select(x => x.media_path).ToList();
                 var url = FiLink.Tag as string;
-                await ApiHandler.WritePost(quoteDatas, mediaData, _permissons[CbxPermission.SelectedIndex], true, true, null, null, url, _postToEdit != null, oldPaths, _postToEdit?.id);
+                await ApiHandler.WritePost(quoteDatas, mediaData, _permissons[CbxPermission.SelectedIndex], true, true, null, null, url, PostToEdit != null, oldPaths, PostToEdit?.id);
             }
 
             OnCloseRequested.Invoke();
@@ -268,7 +271,7 @@ public sealed partial class WritePostControl : UserControl
             permissionIndex = 2;
 
         CbxPermission.SelectedIndex = permissionIndex;
-        _postToEdit = postToEdit;
+        PostToEdit = postToEdit;
         TbWritePost.Text = "글 수정";
         var text = Api.Story.Utils.GetStringFromQuoteData(postToEdit.content_decorators, true);
         _inputControl.GetTextBox().Text = text;
@@ -355,7 +358,7 @@ public sealed partial class WritePostControl : UserControl
         GdLink.Visibility = Visibility.Collapsed;
 
         var fileOpenPicker = new FileOpenPicker();
-        InitializeWithWindow.Initialize(fileOpenPicker, WindowNative.GetWindowHandle(MainWindow.Instance));
+        InitializeWithWindow.Initialize(fileOpenPicker, WindowNative.GetWindowHandle(_parentWindow));
         fileOpenPicker.FileTypeFilter.Add(".jpg");
         fileOpenPicker.FileTypeFilter.Add(".png");
         fileOpenPicker.FileTypeFilter.Add(".webp");
