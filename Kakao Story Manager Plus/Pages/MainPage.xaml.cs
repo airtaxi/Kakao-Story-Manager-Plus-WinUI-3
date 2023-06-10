@@ -333,13 +333,20 @@ public sealed partial class MainPage : Page
     private void ProfilePointerExited(object sender, PointerRoutedEventArgs e) => Utility.ChangeSystemMouseCursor(false);
 
     public static void ShowProfile(string id)
-    {
-        var itemsSource = Instance.LvFriends.ItemsSource as List<FriendProfile>;
-        var item = itemsSource.Where(x => x.Id == id);
-        Instance.LvFriends.SelectedItem = item;
+	{
+        if(MainWindow.Instance == null)
+        {
+		    _ = Utility.ShowMessageDialogAsync("메인 창이 열려있어야만 작동하는 기능입니다.", "오류");
+        }
+        else
+        {
+		    var itemsSource = Instance.LvFriends.ItemsSource as List<FriendProfile>;
+            var item = itemsSource.Where(x => x.Id == id);
+            Instance.LvFriends.SelectedItem = item;
 
-        HideOverlay();
-        NavigateTimeline(id);
+            HideOverlay();
+            NavigateTimeline(id);
+        }
     }
 
     public static TimelinePage GetTimelinePage() => Instance?.FrContent?.Content as TimelinePage;
