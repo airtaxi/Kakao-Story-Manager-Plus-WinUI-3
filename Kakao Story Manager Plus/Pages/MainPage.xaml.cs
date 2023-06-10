@@ -13,6 +13,7 @@ using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Navigation;
 using static KSMP.ApiHandler.DataType.FriendData;
 using Microsoft.UI.Input;
+using CommunityToolkit.WinUI.UI;
 
 namespace KSMP.Pages;
 
@@ -131,12 +132,12 @@ public sealed partial class MainPage : Page
         string profileId = GetProfileIdFromNotification(notification);
         string activityId = GetActivityIdFromNotification(notification);
 
-        //_ = Utility.RunOnMainThreadAsync(async () =>
-        //{
-        //    var timelineControl = Instance.FrOverlay.Content as TimelineControl;
-        //    if (timelineControl == null) return;
-        //    else if (timelineControl.PostId == activityId) await timelineControl.RefreshContent();
-        //});
+        _ = Utility.RunOnMainThreadAsync(async () =>
+        {
+            var timelineWindow = TimelineWindow.FindTimelineWindowByPostId(activityId);
+			if (timelineWindow== null) return;
+            await timelineWindow.Control.RefreshContent();
+		});
 
         var builder = new ToastContentBuilder()
         .AddText(notification.message)

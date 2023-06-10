@@ -27,6 +27,7 @@ public sealed partial class TimelineWindow : Window
 	}
 
 	public static bool HasInstanceContainsId(string id) => s_instances.Any(x => x.PostId == id);
+	public static TimelineWindow FindTimelineWindowByPostId(string id) => s_instances.FirstOrDefault(x => x.PostId == id);
 	public static TimelineWindow GetTimelineWindow(PostData postData) => s_instances.FirstOrDefault(x => x.PostId == postData.id) ?? new TimelineWindow(postData);
 
 	private void OnWindowClosed(object sender, WindowEventArgs args) => s_instances.Remove(this);
