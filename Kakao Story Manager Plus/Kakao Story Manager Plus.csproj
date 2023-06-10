@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<OutputType>WinExe</OutputType>
 		<TargetFramework>net7.0-windows10.0.19041.0</TargetFramework>
@@ -43,6 +43,7 @@
 		<None Remove="Controls\SettingsControl.xaml" />
 		<None Remove="DialogWindow.xaml" />
 		<None Remove="ImageViewerWindow.xaml" />
+		<None Remove="NotificationsWindow.xaml" />
 		<None Remove="TimelineWindow.xaml" />
 		<None Remove="WritePostWindow.xaml" />
 	</ItemGroup>
@@ -99,6 +100,10 @@
 		</None>
 		<Page Update="DialogWindow.xaml">
 		  <Generator>MSBuild:Compile</Generator>
+		</Page>
+		<Page Update="NotificationsWindow.xaml">
+		  <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+		  <SubType>Designer</SubType>
 		</Page>
 		<Page Update="WritePostWindow.xaml">
 		  <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>

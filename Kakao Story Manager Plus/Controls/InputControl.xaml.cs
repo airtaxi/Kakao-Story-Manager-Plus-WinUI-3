@@ -6,7 +6,6 @@ using Windows.ApplicationModel.DataTransfer;
 using static KSMP.ApiHandler.DataType;
 using static KSMP.ApiHandler.DataType.EmoticonItems;
 using Microsoft.UI.Xaml.Controls.Primitives;
-using System.ComponentModel;
 
 namespace KSMP.Controls;
 

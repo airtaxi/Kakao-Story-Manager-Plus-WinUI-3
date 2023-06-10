@@ -3,13 +3,10 @@ using System.Linq;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
-
-using KSMP.Extension;
 using System.Threading.Tasks;
 using System.Net;
 using System.Diagnostics;
 using System.IO;
-using Version = System.Version;
 using System.Drawing.Text;
 using Microsoft.Win32;
 

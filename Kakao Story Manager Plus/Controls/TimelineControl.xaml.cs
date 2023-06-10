@@ -25,7 +25,6 @@ using Windows.Storage.Streams;
 using System.Runtime.InteropServices.WindowsRuntime;
 using H.NotifyIcon;
 using Microsoft.UI.Xaml.Documents;
-using Windows.UI.WebUI;
 
 namespace KSMP.Controls;
 

@@ -8,22 +8,17 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.IO;
 using System.Threading.Tasks;
 using static KSMP.ClassManager;
 using static KSMP.ApiHandler;
 using Microsoft.UI;
 using WinRT.Interop;
-using System.Diagnostics;
 using System.Linq;
 using Microsoft.UI.Xaml.Controls.Primitives;
-using Windows.ApplicationModel.DataTransfer;
 using KSMP.Utils;
 using Newtonsoft.Json;
 using System.Net;
-using System.Runtime.CompilerServices;
-using OpenQA.Selenium.DevTools.V112.DOM;
 
 namespace KSMP;
 

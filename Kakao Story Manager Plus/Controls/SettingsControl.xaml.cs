@@ -1,10 +1,8 @@
-﻿using KSMP.Extension;
-using KSMP.Pages;
+﻿using KSMP.Pages;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.Win32;
 using System;
-using System.ComponentModel;
 using static KSMP.ClassManager;
 
 // To learn more about WinUI, the WinUI project structure,

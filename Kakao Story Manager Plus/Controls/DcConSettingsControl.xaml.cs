@@ -1,5 +1,4 @@
 ﻿using KSMP.Api.DcCon;
-using KSMP.Extension;
 using KSMP.Pages;
 using KSMP.Utils;
 using Microsoft.UI.Xaml;
@@ -10,14 +9,13 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Linq;
-using static KSMP.Controls.InputControl;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 
 namespace KSMP.Controls
 {
-    public sealed partial class DcConSettingsControl : UserControl
+	public sealed partial class DcConSettingsControl : UserControl
     {
         private const string DcConUrl = "https://dccon.dcinside.com/";
 

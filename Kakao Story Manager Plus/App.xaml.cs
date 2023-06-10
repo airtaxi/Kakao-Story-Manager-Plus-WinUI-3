@@ -1,19 +1,13 @@
-﻿using KSMP.Controls;
-using KSMP.Extension;
-using KSMP.Pages;
+﻿using KSMP.Pages;
 using KSMP.Utils;
 using Microsoft.Toolkit.Uwp.Notifications;
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
-using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Net;
 using System.Threading.Tasks;
-using static KSMP.ClassManager;
 
 namespace KSMP;
 

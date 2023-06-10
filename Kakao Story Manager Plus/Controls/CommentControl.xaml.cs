@@ -9,7 +9,6 @@ using KSMP.Pages;
 using System.Threading.Tasks;
 using KSMP.Utils;
 using System;
-using System.ComponentModel;
 using H.NotifyIcon;
 
 namespace KSMP.Controls;

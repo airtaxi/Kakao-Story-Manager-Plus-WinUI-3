@@ -1,5 +1,4 @@
 ﻿using H.NotifyIcon;
-using KSMP.Extension;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using System;
