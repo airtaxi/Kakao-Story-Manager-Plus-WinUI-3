@@ -131,9 +131,9 @@ public sealed partial class MainWindow : Window
     public static async Task<bool> ReloginAsync()
     {
         bool success = false;
-        await Instance.RunOnMainThreadAsync(async () =>
+        await Utility.RunOnMainThreadAsync(async () =>
         {
-			Instance.FrMain.IsEnabled = false;
+            if (Instance != null) Instance.FrMain.IsEnabled = false;
             try
 			{
 				var email = Configuration.GetValue("email") as string;
@@ -142,7 +142,7 @@ public sealed partial class MainWindow : Window
 				if (!success) await ShowReloginErrorMessageAsync();
 			}
 			catch (Exception) { await ShowReloginErrorMessageAsync(); }
-			finally { Instance.FrMain.IsEnabled = true; }
+			finally { if (Instance != null) Instance.FrMain.IsEnabled = true; }
 		});
         return success;
     }
@@ -267,8 +267,6 @@ public sealed partial class MainWindow : Window
             SetDragRegionForCustomTitleBar(AppWindow);
         }
     }
-
-    public static TaskbarIcon TaskbarIcon() => Instance.TiMain;
 
     private void WindowClosed(object sender, WindowEventArgs args)
     {
