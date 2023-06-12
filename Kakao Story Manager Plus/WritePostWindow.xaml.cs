@@ -52,6 +52,7 @@ public sealed partial class WritePostWindow : Window
 
 	private void ResizeToContent()
 	{
+		if (Control.IsComboBoxDropDownOpened) return;
 		var scale = GetScaleAdjustment();
 		var height = Control.GetHeight() + 35;
 		AppWindow.ResizeClient(new((int)(400 * scale), (int)(height * scale)));

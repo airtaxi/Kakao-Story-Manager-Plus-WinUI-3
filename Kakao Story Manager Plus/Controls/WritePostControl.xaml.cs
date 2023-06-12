@@ -11,6 +11,7 @@ using KSMP.Pages;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Imaging;
+using OpenQA.Selenium.DevTools.V112.Audits;
 using Windows.Storage;
 using Windows.Storage.Pickers;
 using WinRT.Interop;
@@ -26,6 +27,8 @@ public sealed partial class WritePostControl : UserControl
     public CommentData.PostData PostToShare = null;
     public CommentData.PostData PostToEdit = null;
     private Window _parentWindow = MainWindow.Instance;
+
+    public bool IsComboBoxDropDownOpened { get; set; }
 
     private class Media
     {
@@ -434,4 +437,7 @@ public sealed partial class WritePostControl : UserControl
     }
 
     public double GetHeight() => FrInputControl.ActualHeight + BdMedia.ActualHeight + GdMedia.ActualHeight + GdMenu.ActualHeight;
+
+	private void OnPremissionComboBoxDropDownOpened(object sender, object e) => IsComboBoxDropDownOpened = true;
+	private void OnPremissionComboBoxDropDownClosed(object sender, object e) => IsComboBoxDropDownOpened = false;
 }

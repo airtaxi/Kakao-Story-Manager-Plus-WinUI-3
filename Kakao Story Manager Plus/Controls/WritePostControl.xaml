@@ -86,7 +86,12 @@
                 <Button x:Name="BtEmoticon" VerticalAlignment="Stretch" Click="OnEmoticonButtonClicked">
                     <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe899;"/>
                 </Button>
-                <ComboBox x:Name="CbxPermission" SelectedIndex="1" Margin="5,0,0,0">
+                <ComboBox
+                    x:Name="CbxPermission"
+                    SelectedIndex="1"
+                    Margin="5,0,0,0" 
+                    DropDownOpened="OnPremissionComboBoxDropDownOpened"
+                    DropDownClosed="OnPremissionComboBoxDropDownClosed">
                     <ComboBoxItem x:Name="CbiShareAll" Tag="A">
                         <StackPanel Orientation="Horizontal">
                             <Viewbox>
