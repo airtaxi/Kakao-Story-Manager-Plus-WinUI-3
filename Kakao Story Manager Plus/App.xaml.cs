@@ -148,8 +148,7 @@ public partial class App : Application
             DispatcherQueue = DispatcherQueue.GetForCurrentThread();
 
             ToastNotificationManagerCompat.OnActivated += OnToastNotificationActivated;
-            if (!ToastNotificationManagerCompat.WasCurrentProcessToastActivated())
-                LaunchAndBringToForegroundIfNeeded();
+            LaunchAndBringToForegroundIfNeeded();
         }
         catch (Exception exception) { await HandleException(exception); }
     }
