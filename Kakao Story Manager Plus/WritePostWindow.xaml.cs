@@ -7,6 +7,7 @@ using System.IO;
 using System.Runtime.InteropServices;
 using WinRT.Interop;
 using static KSMP.ApiHandler.DataType.CommentData;
+using KSMP.Utils;
 
 namespace KSMP;
 
@@ -93,5 +94,14 @@ public sealed partial class WritePostWindow : Window
 		Timer.Tick -= OnTimerTick;
 		Control.OnCloseRequested -= OnCloseRequested;
 		Control = null;
+	}
+	private async void OnPreviewKeyDown(object sender, Microsoft.UI.Xaml.Input.KeyRoutedEventArgs e)
+	{
+		var isControlDown = Common.IsModifierDown();
+
+		if (e.Key == Windows.System.VirtualKey.Escape)
+			Close();
+		else if (isControlDown && e.Key == Windows.System.VirtualKey.W)
+			Close();
 	}
 }

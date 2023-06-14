@@ -57,19 +57,21 @@ public sealed partial class ImageViewerControl : UserControl
     private void OnButtonPointerEntered(object sender, PointerRoutedEventArgs e) => Utility.ChangeSystemMouseCursor(true);
     private void OnButtonPointerExited(object sender, PointerRoutedEventArgs e) => Utility.ChangeSystemMouseCursor(false);
 
-	private async void DownloadButtonTapped(object sender, TappedRoutedEventArgs e)
-    {
-        var medium = FvImages.SelectedItem as Medium;
-        var url = medium.origin_url;
-        var file = await Utility.ShowImageFileSaveDialogAsync(url);
-        if (file == null) return;
-        GdLoading.Visibility = Visibility.Visible;
-        var path = file.Path;
-        await new WebClient().DownloadFileTaskAsync(url, path);
-        GdLoading.Visibility = Visibility.Collapsed;
-    }
+	private async void DownloadButtonTapped(object sender, TappedRoutedEventArgs e) => await DownloadImage();
 
-    private void OnImageSelectionChanged(object sender, SelectionChangedEventArgs e)
+	public async Task DownloadImage()
+	{
+		var medium = FvImages.SelectedItem as Medium;
+		var url = medium.origin_url;
+		var file = await Utility.ShowImageFileSaveDialogAsync(url);
+		if (file == null) return;
+		GdLoading.Visibility = Visibility.Visible;
+		var path = file.Path;
+		await new WebClient().DownloadFileTaskAsync(url, path);
+		GdLoading.Visibility = Visibility.Collapsed;
+	}
+
+	private void OnImageSelectionChanged(object sender, SelectionChangedEventArgs e)
     {
         var flipView = (FlipView)sender;
         var item = flipView.ContainerFromItem(flipView.SelectedItem) as FlipViewItem;

@@ -13,6 +13,7 @@ using static KSMP.ApiHandler.DataType.CommentData;
 using Microsoft.UI.Composition.Interactions;
 using Microsoft.UI.Xaml.Controls;
 using System.Threading.Tasks;
+using KSMP.Utils;
 
 namespace KSMP
 {
@@ -93,6 +94,18 @@ namespace KSMP
 			dragRects.Add(dragRect);
 
 			AppWindow.TitleBar.SetDragRectangles(dragRects.ToArray());
+		}
+
+		private async void OnPreviewKeyDown(object sender, Microsoft.UI.Xaml.Input.KeyRoutedEventArgs e)
+		{
+			var isControlDown = Common.IsModifierDown();
+
+			if (e.Key == Windows.System.VirtualKey.Escape)
+				Close();
+			if ((isControlDown && e.Key == Windows.System.VirtualKey.R) || e.Key == Windows.System.VirtualKey.F5)
+				await (FrMain.Content as NotificationControl).Refresh();
+			else if (isControlDown && e.Key == Windows.System.VirtualKey.W)
+				Close();
 		}
 	}
 }

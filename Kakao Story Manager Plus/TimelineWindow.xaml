@@ -10,7 +10,7 @@
     Title="포스트"
     Closed="OnWindowClosed">
 
-    <Grid>
+    <Grid PreviewKeyDown="OnPreviewKeyDown">
         <Frame
             x:Name="FrMain"
             Padding="-1"/>

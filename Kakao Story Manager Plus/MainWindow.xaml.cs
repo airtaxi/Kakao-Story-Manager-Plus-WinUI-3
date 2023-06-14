@@ -292,19 +292,19 @@ public sealed partial class MainWindow : Window
     {
         var isControlDown = Common.IsModifierDown();
 
-        if (e.Key == Windows.System.VirtualKey.Escape)
-            MainPage.HideOverlay();
-        else if ((isControlDown && e.Key == Windows.System.VirtualKey.R) || e.Key == Windows.System.VirtualKey.F5)
-            await (MainPage.GetOverlayTimeLineControl()?.RefreshContent(true) ?? Task.CompletedTask);
-        else if (isControlDown && e.Key == Windows.System.VirtualKey.S)
-            await (MainPage.GetOverlayTimeLineControl()?.SharePost() ?? Task.CompletedTask);
-        else if (isControlDown && e.Key == Windows.System.VirtualKey.E)
-            await (MainPage.GetOverlayTimeLineControl()?.EditPost() ?? Task.CompletedTask);
-        else if (isControlDown && e.Key == Windows.System.VirtualKey.D)
-            await (MainPage.GetOverlayTimeLineControl()?.DeletePost() ?? Task.CompletedTask);
-        else if (isControlDown && e.Key == Windows.System.VirtualKey.W)
-            Utility.ManuallyDisposeAllMedias();
-        else if (isControlDown && e.Key == Windows.System.VirtualKey.Q) Utility.SaveCurrentStateAndRestartProgram();
+        //if (e.Key == Windows.System.VirtualKey.Escape)
+        //    MainPage.HideOverlay();
+        //else if ((isControlDown && e.Key == Windows.System.VirtualKey.R) || e.Key == Windows.System.VirtualKey.F5)
+        //    await (MainPage.GetOverlayTimeLineControl()?.RefreshContent(true) ?? Task.CompletedTask);
+        //else if (isControlDown && e.Key == Windows.System.VirtualKey.S)
+        //    await (MainPage.GetOverlayTimeLineControl()?.SharePost() ?? Task.CompletedTask);
+        //else if (isControlDown && e.Key == Windows.System.VirtualKey.E)
+        //    await (MainPage.GetOverlayTimeLineControl()?.EditPost() ?? Task.CompletedTask);
+        //else if (isControlDown && e.Key == Windows.System.VirtualKey.D)
+        //    await (MainPage.GetOverlayTimeLineControl()?.DeletePost() ?? Task.CompletedTask);
+        //else if (isControlDown && e.Key == Windows.System.VirtualKey.W)
+        //    Utility.ManuallyDisposeAllMedias();
+        if (isControlDown && e.Key == Windows.System.VirtualKey.Q) Utility.SaveCurrentStateAndRestartProgram();
     }
 
     public static async void ShowMenus()

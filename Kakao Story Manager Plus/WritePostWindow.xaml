@@ -10,5 +10,7 @@
     Title="글 작성"
     Closed="OnWindowClosed">
 
-    <Frame x:Name="FrMain"/>
+    <Frame
+        x:Name="FrMain"
+        PreviewKeyDown="OnPreviewKeyDown"/>
 </Window>

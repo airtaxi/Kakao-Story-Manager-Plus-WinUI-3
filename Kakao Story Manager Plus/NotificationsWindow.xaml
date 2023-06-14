@@ -11,7 +11,8 @@
 
     <Grid
         Background="{ThemeResource White2}"
-        SizeChanged="OnSizeChanged">
+        SizeChanged="OnSizeChanged"
+        PreviewKeyDown="OnPreviewKeyDown">
         <StackPanel 
             Orientation="Horizontal"
             Height="50"

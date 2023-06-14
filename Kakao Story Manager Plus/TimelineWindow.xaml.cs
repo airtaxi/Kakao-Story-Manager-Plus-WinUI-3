@@ -1,4 +1,5 @@
 using KSMP.Controls;
+using KSMP.Utils;
 using Microsoft.UI.Xaml;
 using System.Collections.Generic;
 using System.IO;
@@ -31,4 +32,22 @@ public sealed partial class TimelineWindow : Window
 	public static TimelineWindow GetTimelineWindow(PostData postData) => s_instances.FirstOrDefault(x => x.PostId == postData.id) ?? new TimelineWindow(postData);
 
 	private void OnWindowClosed(object sender, WindowEventArgs args) => s_instances.Remove(this);
+
+	private async void OnPreviewKeyDown(object sender, Microsoft.UI.Xaml.Input.KeyRoutedEventArgs e)
+	{
+		var isControlDown = Common.IsModifierDown();
+
+		if (e.Key == Windows.System.VirtualKey.Escape)
+			Close();
+		if ((isControlDown && e.Key == Windows.System.VirtualKey.R) || e.Key == Windows.System.VirtualKey.F5)
+			await Control.RefreshContent(true);
+		else if (isControlDown && e.Key == Windows.System.VirtualKey.S)
+			await Control.SharePost();
+		else if (isControlDown && e.Key == Windows.System.VirtualKey.E)
+			await Control.EditPost();
+		else if (isControlDown && e.Key == Windows.System.VirtualKey.D)
+			await Control.DeletePost();
+		else if (isControlDown && e.Key == Windows.System.VirtualKey.W)
+			Close();
+	}
 }

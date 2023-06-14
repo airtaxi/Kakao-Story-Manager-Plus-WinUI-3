@@ -10,6 +10,7 @@ using System.Runtime.InteropServices;
 using Windows.Graphics;
 using WinRT.Interop;
 using static KSMP.ApiHandler.DataType.CommentData;
+using KSMP.Utils;
 
 namespace KSMP;
 
@@ -74,5 +75,17 @@ public sealed partial class ImageViewerWindow : Window
 		dragRects.Add(dragRect);
 
 		AppWindow.TitleBar.SetDragRectangles(dragRects.ToArray());
+	}
+
+	private async void OnPreviewKeyDown(object sender, Microsoft.UI.Xaml.Input.KeyRoutedEventArgs e)
+	{
+		var isControlDown = Common.IsModifierDown();
+
+		if (e.Key == Windows.System.VirtualKey.Escape)
+			Close();
+		if ((isControlDown && e.Key == Windows.System.VirtualKey.R) || e.Key == Windows.System.VirtualKey.F5)
+			await (FrMain.Content as ImageViewerControl).DownloadImage();
+		else if (isControlDown && e.Key == Windows.System.VirtualKey.W)
+			Close();
 	}
 }
