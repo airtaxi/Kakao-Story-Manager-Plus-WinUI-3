@@ -19,6 +19,8 @@ public sealed partial class ImageViewerWindow : Window
 	public ImageViewerWindow(List<Medium> urlList, int index)
 	{
 		InitializeComponent();
+		WindowHelper.SetupWindowTheme(this);
+
 		AppWindow.SetIcon(Path.Combine(App.BinaryDirectory, "icon.ico"));
 		AppWindow.TitleBar.ExtendsContentIntoTitleBar = true;
 

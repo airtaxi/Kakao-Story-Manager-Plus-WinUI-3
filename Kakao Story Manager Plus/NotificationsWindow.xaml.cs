@@ -22,9 +22,12 @@ namespace KSMP
 		public NotificationsWindow()
 		{
 			InitializeComponent();
+			WindowHelper.SetupWindowTheme(this);
+
 			AppWindow.SetIcon(Path.Combine(App.BinaryDirectory, "icon.ico"));
 			AppWindow.TitleBar.ExtendsContentIntoTitleBar = true;
 
+			 
 			var white = Application.Current.Resources["White"] as SolidColorBrush;
 			AppWindow.TitleBar.ButtonBackgroundColor = white.Color;
 			AppWindow.TitleBar.ButtonHoverBackgroundColor = white.Color;

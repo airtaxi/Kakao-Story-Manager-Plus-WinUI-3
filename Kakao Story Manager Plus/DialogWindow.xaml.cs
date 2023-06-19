@@ -1,4 +1,5 @@
-﻿using Microsoft.UI;
+﻿using KSMP.Utils;
+using Microsoft.UI;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -27,6 +28,8 @@ namespace KSMP
 		public DialogWindow(string title, string description, bool showCancel = false, string primaryText = "확인", string secondaryText = "취소")
 		{
 			this.InitializeComponent();
+			WindowHelper.SetupWindowTheme(this);
+
 			SizeChanged += OnSizeChanged;
 
 			Title = title;

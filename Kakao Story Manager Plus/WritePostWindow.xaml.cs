@@ -18,6 +18,8 @@ public sealed partial class WritePostWindow : Window
 	public WritePostWindow(PostData post = null)
 	{
 		InitializeComponent();
+		WindowHelper.SetupWindowTheme(this);
+
 		AppWindow.SetIcon(Path.Combine(App.BinaryDirectory, "icon.ico"));
 
 		if(post == null) Control = new WritePostControl();

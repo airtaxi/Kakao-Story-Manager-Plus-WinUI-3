@@ -37,11 +37,10 @@ public sealed partial class MainWindow : Window
 
 		_versionString = Common.GetVersionString() ?? "VERSION ERROR";
 
-		SetupTheme();
+		WindowHelper.SetupWindowTheme(this);
 		SetupAppWindow();
 
 		AppWindow.Changed += AppWindowChanged;
-		(Content as FrameworkElement).ActualThemeChanged += OnThemeChanged;
 		if (_isFirst)
 		{
 			_isFirst = false;
@@ -103,32 +102,7 @@ public sealed partial class MainWindow : Window
 		}
 	}
 
-	private void OnThemeChanged(FrameworkElement sender, object args) => SetupTheme();
-
-    private void SetupTheme()
-    {
-        FrameworkElement root = Content as FrameworkElement;
-        var themeSetting = Configuration.GetValue("ThemeSetting") as string ?? "Default";
-
-        Windows.UI.Color white;
-        if (themeSetting == "Light")
-        {
-            root.RequestedTheme = ElementTheme.Light;
-            white = Colors.White;
-        }
-        else if (themeSetting == "Dark")
-        {
-            root.RequestedTheme = ElementTheme.Dark;
-            white = Windows.UI.Color.FromArgb(255, 52, 52, 52);
-        }
-        else white = Utility.IsSystemUsesLightTheme ? Colors.White : Windows.UI.Color.FromArgb(255, 52, 52, 52);
-
-        AppWindow.TitleBar.ButtonBackgroundColor = white;
-        AppWindow.TitleBar.ButtonInactiveBackgroundColor = white;
-    }
-
-
-    public static async Task<bool> ReloginAsync()
+	public static async Task<bool> ReloginAsync()
     {
         bool success = false;
         await Utility.RunOnMainThreadAsync(async () =>
@@ -282,7 +256,6 @@ public sealed partial class MainWindow : Window
         MainPage.Instance = null;
 
 		AppWindow.Changed -= AppWindowChanged;
-		(Content as FrameworkElement).ActualThemeChanged -= OnThemeChanged;
 
 		AppTitleBar.Loaded -= AppTitleBarLoaded;
 		AppTitleBar.SizeChanged -= AppTitleBarSizeChanged;

@@ -1,8 +1,11 @@
 ﻿using H.NotifyIcon;
+using KSMP.Controls;
+using Microsoft.UI;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using System;
 using System.Runtime.InteropServices;
+using Windows.Foundation;
 
 namespace KSMP.Utils;
 
@@ -34,4 +37,39 @@ public class WindowHelper
         if (previousState == OverlappedPresenterState.Maximized) presenter.Maximize();
     }
 
+	public static void SetupWindowTheme(Window window)
+	{
+		FrameworkElement root = window.Content as FrameworkElement;
+		var themeSetting = Configuration.GetValue("ThemeSetting") as string ?? "Default";
+
+		Windows.UI.Color white;
+		if (themeSetting == "Light")
+		{
+			root.RequestedTheme = ElementTheme.Light;
+			white = Colors.White;
+		}
+		else if (themeSetting == "Dark")
+		{
+			root.RequestedTheme = ElementTheme.Dark;
+			white = Windows.UI.Color.FromArgb(255, 52, 52, 52);
+		}
+		else white = Utility.IsSystemUsesLightTheme ? Colors.White : Windows.UI.Color.FromArgb(255, 52, 52, 52);
+
+		window.AppWindow.TitleBar.ButtonBackgroundColor = white;
+		window.AppWindow.TitleBar.ButtonInactiveBackgroundColor = white;
+		window.AppWindow.TitleBar.BackgroundColor = white;
+
+		TypedEventHandler<FrameworkElement, object> themeChanged = null;
+		themeChanged = (s,e) => SetupWindowTheme(window);
+
+		RoutedEventHandler unloaded = null;
+		unloaded = (s, e) =>
+		{
+			root.ActualThemeChanged -= themeChanged;
+			root.Unloaded -= unloaded;
+		};
+
+		root.ActualThemeChanged += themeChanged;
+		root.Unloaded += unloaded;
+	}
 }
