@@ -117,8 +117,8 @@ public static class Post
 			{
 				emoticonListControl.OnSelected -= emoticonListControlOnSelected;
                 inputControl.Unloaded -= unloaded;
-			};
-			inputControl.Unloaded += unloaded;
+			}
+            if (inputControl != null) inputControl.Unloaded += unloaded;
 		}
 
 		flyout.ShowAt(button);
