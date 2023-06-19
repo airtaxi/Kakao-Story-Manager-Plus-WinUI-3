@@ -86,27 +86,28 @@ public sealed partial class CommentControl : UserControl
             var url = willUseGifInTimeline ? commentMedia.media.origin_url : commentMedia.media.thumbnail_url;
             Utility.SetImageUrlSource(image, url);
 
-			void imageTapped(object s, TappedRoutedEventArgs e)
-			{
-				e.Handled = true;
-				var medium = new Medium
-				{
-					origin_url = commentMedia?.media?.origin_url
-				};
-				var window = new ImageViewerWindow(new List<Medium> { medium }, 0);
-				window.Show();
-			}
-			image.Tapped += imageTapped;
-			{
-				void unloaded(object s, RoutedEventArgs e)
-				{
-					image.Tapped -= imageTapped;
-					Unloaded -= unloaded;
-				}
+            void imageTapped(object s, TappedRoutedEventArgs e)
+            {
+                e.Handled = true;
+                var medium = new Medium
+                {
+                    origin_url = commentMedia?.media?.origin_url
+                };
+                var window = new ImageViewerWindow(new List<Medium> { medium }, 0);
+                window.Show();
+            }
+            image.Tapped += imageTapped;
+            {
+                void unloaded(object s, RoutedEventArgs e)
+                {
+                    image.Tapped -= imageTapped;
+                    Unloaded -= unloaded;
+                }
 
-				Unloaded += unloaded;
-			}
-		}
+                Unloaded += unloaded;
+            }
+        }
+        else FrImage.Visibility = Visibility.Collapsed;
 
         LoadCommentCompletionSource.TrySetResult();
     }
