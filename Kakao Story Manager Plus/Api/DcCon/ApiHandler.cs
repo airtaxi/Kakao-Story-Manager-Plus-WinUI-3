@@ -11,7 +11,10 @@ namespace KSMP.Api.DcCon
         {
             var url = "https://dcimg5.dcinside.com/dccon.php?no=" + path;
             var client = new RestClient(url);
-            var data = await client.DownloadDataAsync(new RestRequest());
+            var request = new RestRequest();
+            request.AddHeader("Referer", "https://dccon.dcinside.com/");
+
+			var data = await client.DownloadDataAsync(request);
             if (data == null && retryCount < 5)
                 return await GetDcDonImage(path, ++retryCount);
             return data;

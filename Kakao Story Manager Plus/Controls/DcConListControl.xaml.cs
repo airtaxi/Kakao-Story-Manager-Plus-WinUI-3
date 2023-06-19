@@ -41,7 +41,7 @@ public sealed partial class DcConListControl : UserControl
                 Width = 30,
                 Height = 30
             };
-            _ = Task.Run(async () => await Utility.RunOnMainThreadAsync(() => Utility.SetImageUrlSource(image, thumbnailUrl)));
+            _ = Task.Run(async () => await Utility.RunOnMainThreadAsync(() => Utility.SetDcConImageAsync(image, thumbnailUrl)));
             Utility.LoadedImages.Add(image);
 
             container.Content = image;
@@ -84,7 +84,7 @@ public sealed partial class DcConListControl : UserControl
             };
             GvMain.Items.Add(image);
 
-            Utility.SetEmoticonImageAsync(image, url);
+            Utility.SetDcConImageAsync(image, url);
             image.Tag = detail;
         }
         IsEnabled = true;

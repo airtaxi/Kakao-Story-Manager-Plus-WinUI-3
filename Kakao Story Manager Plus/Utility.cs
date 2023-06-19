@@ -195,6 +195,12 @@ public static class Utility
         await LoadEmoticonImage(image, url);
     }
 
+    public static async Task SetDcConImageAsync(Image image, string url)
+    {
+        LoadedImages.Add(image);
+        await LoadDcConImage(image, url);
+    }
+
     public static async Task SetAnimatedEmoticonImage(Image image, string url)
     {
         LoadedImages.Add(image);
@@ -245,6 +251,30 @@ public static class Utility
             var request = new RestRequest();
             request.Method = Method.Get;
             request.AddHeader("Referer", "https://story.kakao.com/");
+            var bytes = await client.DownloadDataAsync(request);
+            if (bytes == null && retryCount < MaxImageLoadRetryCount) await LoadEmoticonImage(image, url, ++retryCount);
+            else if (bytes == null) return;
+            File.WriteAllBytes(path, bytes);
+        }
+
+        var file = await StorageFile.GetFileFromPathAsync(path);
+        using var stream = await file.OpenAsync(FileAccessMode.Read);
+        await RunOnMainThreadAsync(async () => image.Source = await GenerateImageLocalFileStream(stream));
+    }
+
+    private static async Task LoadDcConImage(Image image, string url, int retryCount = 0)
+    {
+        if (url == null) return;
+        var hash = GetStringHashFromUrl(url, "KSMP_EMT_");
+        var path = Path.Combine(Path.GetTempPath(), hash);
+        var cachedImageExist = File.Exists(path);
+
+        if (!cachedImageExist)
+        {
+            var client = new RestClient(url);
+            var request = new RestRequest();
+            request.Method = Method.Get;
+            request.AddHeader("Referer", "https://dccon.dcinside.com/");
             var bytes = await client.DownloadDataAsync(request);
             if (bytes == null && retryCount < MaxImageLoadRetryCount) await LoadEmoticonImage(image, url, ++retryCount);
             else if (bytes == null) return;
