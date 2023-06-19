@@ -25,6 +25,7 @@ using Windows.Storage.Streams;
 using System.Runtime.InteropServices.WindowsRuntime;
 using H.NotifyIcon;
 using Microsoft.UI.Xaml.Documents;
+using static KSMP.ApiHandler.DataType.ShareData;
 
 namespace KSMP.Controls;
 
@@ -131,19 +132,6 @@ public sealed partial class TimelineControl : UserControl
 			};
 			Unloaded += unloaded;
 		}
-
-        if(!isShare)
-        {
-            Task.Run(async () =>
-            {
-                await Task.Delay(500);
-                await Utility.RunOnMainThreadAsync(() =>
-                {
-                    var last = LvComments.Items.LastOrDefault();
-                    if (last != null) LvComments.ScrollIntoView(last);
-                });
-            });
-        }
     }
 
 	private void OnThemeChanged(FrameworkElement sender, object args) => SetButtonColorByTheme();
@@ -533,7 +521,14 @@ public sealed partial class TimelineControl : UserControl
                 LvComments.Items.Insert(0, control);
 		}
 		LvComments.UpdateLayout();
-    }
+
+		if (!_isShare)
+		{
+			await Task.Delay(500);
+			var last = LvComments.Items.LastOrDefault();
+			if (last != null) LvComments.ScrollIntoView(last);
+		}
+	}
 
     private void OnCommentReplyClicked(Comment sender)
     {
