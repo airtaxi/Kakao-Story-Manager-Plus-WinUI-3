@@ -113,11 +113,11 @@ public static class Post
 
 		{
 			RoutedEventHandler unloaded = null;
-			unloaded = (s, e) =>
-			{
-				emoticonListControl.OnSelected -= emoticonListControlOnSelected;
+            unloaded = (s, e) =>
+            {
+                emoticonListControl.OnSelected -= emoticonListControlOnSelected;
                 inputControl.Unloaded -= unloaded;
-			}
+            };
             if (inputControl != null) inputControl.Unloaded += unloaded;
 		}
 
