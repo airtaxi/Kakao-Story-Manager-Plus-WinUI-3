@@ -29,8 +29,8 @@ public sealed partial class TimelineWindow : Window
 		if(windowState != null)
 		{
 			var wasMaximized = windowState.WasMaxmized;
+			AppWindow.ResizeClient(new(windowState.Width, windowState.Height));
 			if (wasMaximized) (AppWindow.Presenter as OverlappedPresenter).Maximize();
-			else AppWindow.ResizeClient(new(windowState.Width, windowState.Height));
 		}
 
 		AppWindow.SetIcon(Path.Combine(App.BinaryDirectory, "icon.ico"));
