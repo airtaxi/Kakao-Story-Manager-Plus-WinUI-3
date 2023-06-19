@@ -43,7 +43,7 @@
                             <ColumnDefinition Width="0.6*"/>
                             <ColumnDefinition Width="0.4*"/>
                         </Grid.ColumnDefinitions>
-                        <Frame x:Name="FrImage" Visibility="Collapsed" Margin="10" MaxWidth="100" MaxHeight="100" HorizontalAlignment="Left"/>
+                        <Frame x:Name="FrImage" Margin="10" MaxWidth="100" MaxHeight="100" HorizontalAlignment="Left"/>
                     </Grid>
                 </StackPanel>
                 <Button x:Name="BtCommentMenu" Grid.Column="1" BorderThickness="0" Padding="5" Margin="5,0,0,0" Tapped="OnCommentMenuTapped" Background="Transparent">
