@@ -69,8 +69,7 @@ public sealed partial class SettingsControl : UserControl
 
 
 		{
-			RoutedEventHandler unloaded = null;
-            unloaded = (s, e) =>
+			void unloaded(object s, RoutedEventArgs e)
 			{
 				TsFavoriteFriendNotification.Toggled -= OnReceiveFavoriteFriendNotificationToggleSwitchToggled;
 				TsEmotionalNotification.Toggled -= OnReceiveEmotionalNotificationToggleSwitchToggled;
@@ -85,11 +84,12 @@ public sealed partial class SettingsControl : UserControl
 				TsUseDynamicTimelineLoading.Toggled -= OnUseDynamicTimelineLoadingToggleSwitchToggled;
 				TsShowMyProfileOnStartup.Toggled -= OnShowMyProfileOnStartupToggleSwitchToggled;
 				TsSuggestAddClipboardImage.Toggled -= OnSuggestAddClipboardImageToggleSwitchToggled;
-				
-                CbxDefaultPostWritingPermission.SelectionChanged -= OnDefaultPostWritingPermissionComboBoxSelectionChanged;
-                CbxThemeSetting.SelectionChanged -= OnThemeSettingComboBoxSelectionChanged;
-                Unloaded -= unloaded;
-			};
+
+				CbxDefaultPostWritingPermission.SelectionChanged -= OnDefaultPostWritingPermissionComboBoxSelectionChanged;
+				CbxThemeSetting.SelectionChanged -= OnThemeSettingComboBoxSelectionChanged;
+				Unloaded -= unloaded;
+			}
+
 			Unloaded += unloaded;
 		}
 	}

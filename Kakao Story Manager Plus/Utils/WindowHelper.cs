@@ -59,15 +59,12 @@ public class WindowHelper
 		window.AppWindow.TitleBar.ButtonInactiveBackgroundColor = white;
 		window.AppWindow.TitleBar.BackgroundColor = white;
 
-		TypedEventHandler<FrameworkElement, object> themeChanged = null;
-		themeChanged = (s,e) => SetupWindowTheme(window);
-
-		RoutedEventHandler unloaded = null;
-		unloaded = (s, e) =>
+		void themeChanged(FrameworkElement s, object e) => SetupWindowTheme(window);
+		void unloaded(object s, RoutedEventArgs e)
 		{
 			root.ActualThemeChanged -= themeChanged;
 			root.Unloaded -= unloaded;
-		};
+		}
 
 		root.ActualThemeChanged += themeChanged;
 		root.Unloaded += unloaded;

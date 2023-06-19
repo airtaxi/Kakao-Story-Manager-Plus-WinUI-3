@@ -46,17 +46,17 @@ public sealed partial class CommentControl : UserControl
 
         var timer = new DispatcherTimer();
         timer.Interval = TimeSpan.FromMinutes(1);
-		EventHandler<object> onTimerTick = (s, e) => RefreshTimestamp();
+		void onTimerTick(object s, object e) => RefreshTimestamp();
 		timer.Tick += onTimerTick;
         timer.Start();
 
 		{
-			RoutedEventHandler unloaded = null;
-            unloaded = (s, e) =>
-            {
-                timer.Tick -= onTimerTick;
-                Unloaded -= unloaded;
-            };
+			void unloaded(object s, RoutedEventArgs e)
+			{
+				timer.Tick -= onTimerTick;
+				Unloaded -= unloaded;
+			}
+
 			Unloaded += unloaded;
 		}
 
@@ -86,24 +86,24 @@ public sealed partial class CommentControl : UserControl
             var url = willUseGifInTimeline ? commentMedia.media.origin_url : commentMedia.media.thumbnail_url;
             Utility.SetImageUrlSource(image, url);
 
-			TappedEventHandler imageTapped = (s, e) =>
-		    {
-			    e.Handled = true;
-			    var medium = new Medium
-			    {
-				    origin_url = commentMedia?.media?.origin_url
-			    };
-                var window = new ImageViewerWindow(new List<Medium> { medium }, 0);
-                window.Show();
-			};
+			void imageTapped(object s, TappedRoutedEventArgs e)
+			{
+				e.Handled = true;
+				var medium = new Medium
+				{
+					origin_url = commentMedia?.media?.origin_url
+				};
+				var window = new ImageViewerWindow(new List<Medium> { medium }, 0);
+				window.Show();
+			}
 			image.Tapped += imageTapped;
 			{
-				RoutedEventHandler unloaded = null;
-				unloaded = (s, e) =>
+				void unloaded(object s, RoutedEventArgs e)
 				{
 					image.Tapped -= imageTapped;
-                    Unloaded -= unloaded;
-				};
+					Unloaded -= unloaded;
+				}
+
 				Unloaded += unloaded;
 			}
 		}
@@ -156,15 +156,15 @@ public sealed partial class CommentControl : UserControl
 
         likeList.SetSource(friendProfiles);
 
-		FriendListControl.OnSelected likeListOnFriendSelected = (profile) => MainPage.ShowProfile(profile.Id);
+		void likeListOnFriendSelected(FriendProfile profile) => MainPage.ShowProfile(profile.Id);
 		likeList.OnFriendSelected += likeListOnFriendSelected;
 		{
-			RoutedEventHandler unloaded = null;
-			unloaded = (s, e) =>
+			void unloaded(object s, RoutedEventArgs e)
 			{
 				likeList.OnFriendSelected -= likeListOnFriendSelected;
-                Unloaded -= unloaded;
-			};
+				Unloaded -= unloaded;
+			}
+
 			Unloaded += unloaded;
 		}
 
@@ -215,15 +215,15 @@ public sealed partial class CommentControl : UserControl
         inputControl.GetTextBox().Text = text;
         await Task.Delay(10);
         inputControl.FocusTextBox();
-		InputControl.SubmitShortcutActivated inputControlOnSubmitShortcutActivated = async () => await PublishEditedComment();
+		async void inputControlOnSubmitShortcutActivated() => await PublishEditedComment();
 		inputControl.OnSubmitShortcutActivated += inputControlOnSubmitShortcutActivated;
 		{
-			RoutedEventHandler unloaded = null;
-			unloaded = (s, e) =>
+			void unloaded(object s, RoutedEventArgs e)
 			{
 				inputControl.OnSubmitShortcutActivated -= inputControlOnSubmitShortcutActivated;
-                Unloaded -= unloaded;
-			};
+				Unloaded -= unloaded;
+			}
+
 			Unloaded += unloaded;
 		}
 	}

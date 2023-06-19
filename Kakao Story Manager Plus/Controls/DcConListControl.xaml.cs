@@ -50,12 +50,12 @@ public sealed partial class DcConListControl : UserControl
             SpList.Children.Add(container);
             container.Click += OnButtonClicked;
 			{
-				RoutedEventHandler unloaded = null;
-				unloaded = (s, e) =>
+				void unloaded(object s, RoutedEventArgs e)
 				{
 					container.Click += OnButtonClicked;
-                    Unloaded -= unloaded;
-				};
+					Unloaded -= unloaded;
+				}
+
 				Unloaded += unloaded;
 			}
 			_containers.Add(container);

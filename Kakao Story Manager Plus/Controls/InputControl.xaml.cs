@@ -32,12 +32,12 @@ public sealed partial class InputControl : UserControl
         control.OnFriendSelected += OnFriendSelected;
 
 		{
-			RoutedEventHandler unloaded = null;
-			unloaded = (s, e) =>
+			void unloaded(object s, RoutedEventArgs e)
 			{
 				control.OnFriendSelected -= OnFriendSelected;
-                Unloaded -= unloaded;
-			};
+				Unloaded -= unloaded;
+			}
+
 			Unloaded += unloaded;
 		}
 

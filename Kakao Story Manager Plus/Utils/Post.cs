@@ -28,20 +28,20 @@ public static class Post
                     UnderlineStyle = UnderlineStyle.None
                 };
                 hyperlink.Inlines.Add(new Run { Text = decorator.text });
-				TypedEventHandler<Hyperlink, HyperlinkClickEventArgs> hyperlinkClick = (s, e) =>
+				void hyperlinkClick(Hyperlink s, HyperlinkClickEventArgs e)
 				{
 					Pages.MainPage.HideOverlay();
 					Pages.MainPage.ShowProfile(decorator.id);
-				};
+				}
 				hyperlink.Click += hyperlinkClick;
 
 				{
-					RoutedEventHandler unloaded = null;
-					unloaded = (s, e) =>
+					void unloaded(object s, RoutedEventArgs e)
 					{
-                        hyperlink.Click -= hyperlinkClick;
+						hyperlink.Click -= hyperlinkClick;
 						richTextBlock.Unloaded -= unloaded;
-					};
+					}
+
 					richTextBlock.Unloaded += unloaded;
 				}
 
@@ -104,21 +104,21 @@ public static class Post
         var emoticonListControl = new EmoticonListControl();
         flyout.Content = emoticonListControl;
 
-		EmoticonListControl.Selected emoticonListControlOnSelected = (item, index) =>
+		void emoticonListControlOnSelected(EmoticonItems.EmoticonItem item, int index)
 		{
 			inputControl?.AddEmoticon(item, index);
 			flyout.Hide();
-		};
+		}
 		emoticonListControl.OnSelected += emoticonListControlOnSelected;
 
 		{
-			RoutedEventHandler unloaded = null;
-            unloaded = (s, e) =>
-            {
-                emoticonListControl.OnSelected -= emoticonListControlOnSelected;
-                inputControl.Unloaded -= unloaded;
-            };
-            if (inputControl != null) inputControl.Unloaded += unloaded;
+			void unloaded(object s, RoutedEventArgs e)
+			{
+				emoticonListControl.OnSelected -= emoticonListControlOnSelected;
+				inputControl.Unloaded -= unloaded;
+			}
+
+			if (inputControl != null) inputControl.Unloaded += unloaded;
 		}
 
 		flyout.ShowAt(button);

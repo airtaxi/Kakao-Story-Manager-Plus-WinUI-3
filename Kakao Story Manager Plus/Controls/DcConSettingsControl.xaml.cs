@@ -26,12 +26,12 @@ namespace KSMP.Controls
             var collection = new ObservableCollection<DataType.Package>(list);
             collection.CollectionChanged += OnDcConListCollectionChanged;
 			{
-				RoutedEventHandler unloaded = null;
-				unloaded = (s, e) =>
+				void unloaded(object s, RoutedEventArgs e)
 				{
 					collection.CollectionChanged -= OnDcConListCollectionChanged;
-                    Unloaded -= unloaded;
-				};
+					Unloaded -= unloaded;
+				}
+
 				Unloaded += unloaded;
 			}
 			LvMain.ItemsSource = collection;
@@ -69,12 +69,12 @@ namespace KSMP.Controls
             collection.Add(detail);
             collection.CollectionChanged += OnDcConListCollectionChanged;
 			{
-				RoutedEventHandler unloaded = null;
-				unloaded = (s, e) =>
+				void unloaded(object s, RoutedEventArgs e)
 				{
 					collection.CollectionChanged -= OnDcConListCollectionChanged;
-                    Unloaded -= unloaded;
-				};
+					Unloaded -= unloaded;
+				}
+
 				Unloaded += unloaded;
 			}
 			LvMain.ItemsSource = collection;
@@ -103,12 +103,12 @@ namespace KSMP.Controls
             var collection = new ObservableCollection<DataType.Package>(list);
             collection.CollectionChanged += OnDcConListCollectionChanged;
 			{
-				RoutedEventHandler unloaded = null;
-				unloaded = (s, e) =>
+				void unloaded(object s, RoutedEventArgs e)
 				{
 					collection.CollectionChanged -= OnDcConListCollectionChanged;
-                    Unloaded -= unloaded;
-				};
+					Unloaded -= unloaded;
+				}
+
 				Unloaded += unloaded;
 			}
 			LvMain.ItemsSource = collection;

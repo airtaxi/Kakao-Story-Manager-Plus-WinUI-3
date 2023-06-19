@@ -96,24 +96,24 @@ public sealed partial class WritePostControl : UserControl
             _inputControl.OnImagePasted += OnPasteImage;
 
 			{
-				RoutedEventHandler unloaded = null;
-				unloaded = (s, e) =>
+				void unloaded(object s, RoutedEventArgs e)
 				{
 					_inputControl.OnImagePasted -= OnPasteImage;
-                    Unloaded -= unloaded;
-				};
+					Unloaded -= unloaded;
+				}
+
 				Unloaded += unloaded;
 			}
 		}
         _inputControl.OnSubmitShortcutActivated += OnSubmitShortcutActivated;
 
 		{
-			RoutedEventHandler unloaded = null;
-			unloaded = (s, e) =>
+			void unloaded(object s, RoutedEventArgs e)
 			{
 				_inputControl.OnSubmitShortcutActivated -= OnSubmitShortcutActivated;
-                Unloaded -= unloaded;
-			};
+				Unloaded -= unloaded;
+			}
+
 			Unloaded += unloaded;
 		}
 	}

@@ -52,8 +52,7 @@ public sealed partial class EmoticonListControl : UserControl
             _containers.Add(container);
 
 			{
-				RoutedEventHandler unloaded = null;
-                unloaded = (s, e) => container.Click -= OnButtonClicked;
+				void unloaded(object s, RoutedEventArgs e) => container.Click -= OnButtonClicked;
 				Unloaded += unloaded;
 			}
 		}
