@@ -84,7 +84,7 @@ public sealed partial class DcConListControl : UserControl
             };
             GvMain.Items.Add(image);
 
-            Utility.SetDcConImageAsync(image, url);
+            _ = Utility.SetDcConImageAsync(image, url);
             image.Tag = detail;
         }
         IsEnabled = true;
