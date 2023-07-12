@@ -55,7 +55,7 @@
 
 	<ItemGroup>
 		<PackageReference Include="ByteSize" Version="2.1.1" />
-		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.0" />
+		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.1" />
 		<PackageReference Include="CommunityToolkit.WinUI" Version="7.1.2" />
 		<PackageReference Include="CommunityToolkit.WinUI.UI" Version="7.1.2" />
 		<PackageReference Include="CommunityToolkit.WinUI.UI.Animations" Version="7.1.2" />
@@ -76,7 +76,7 @@
 		<PackageReference Include="Selenium.Support" Version="4.10.0" />
 		<PackageReference Include="Selenium.WebDriver" Version="4.10.0" />
 		<PackageReference Include="SeleniumExtras.WaitHelpers" Version="1.0.2" />
-		<PackageReference Include="WebDriverManager" Version="2.16.2" />
+		<PackageReference Include="WebDriverManager" Version="2.16.3" />
 		<Manifest Include="$(ApplicationManifest)" />
 	</ItemGroup>
 
