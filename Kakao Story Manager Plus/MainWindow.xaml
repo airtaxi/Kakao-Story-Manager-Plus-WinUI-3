@@ -154,5 +154,13 @@
             </notifyicon:TaskbarIcon.DoubleClickCommand>
         </notifyicon:TaskbarIcon>
         <Frame Grid.Row="1" x:Name="FrMain"/>
+
+        <Grid x:Name="GdLoading" Grid.Row="1" Visibility="Collapsed">
+            <Rectangle Fill="{ThemeResource FixedBlack}" Opacity="0.85"/>
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                <ProgressRing x:Name="PrLoading" IsActive="True" Width="100" Height="100" Maximum="100" Minimum="0" Foreground="{ThemeResource Orange}"/>
+                <TextBlock x:Name="TbLoading" Margin="0,10,0,0" FontWeight="Bold" Foreground="{ThemeResource FixedWhite}"/>
+            </StackPanel>
+        </Grid>
     </Grid>
 </Window>

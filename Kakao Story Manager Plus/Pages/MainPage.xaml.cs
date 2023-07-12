@@ -70,22 +70,6 @@ public sealed partial class MainPage : Page
 
     private DateTime? _lastNotificationTimestamp = null;
 
-	public void SetLoading(bool isLoading, string message = null, int progress = -1)
-	{
-		if (GdLoading == null) return;
-		GdLoading.Visibility = isLoading ? Visibility.Visible : Visibility.Collapsed;
-		if (isLoading && message != null)
-		{
-			IsEnabled = false;
-			TbLoading.Text = message;
-			var showProgress = progress > 0;
-			PrLoading.IsIndeterminate = !showProgress;
-			if (showProgress) PrLoading.Value = progress;
-		}
-		else
-			IsEnabled = true;
-	}
-
 	private async void OnNotificationTimerElapsed(object sender, ElapsedEventArgs e)
     {
         s_notificationTimer.Stop();

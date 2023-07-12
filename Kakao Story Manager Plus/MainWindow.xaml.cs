@@ -85,8 +85,29 @@ public sealed partial class MainWindow : Window
 		ApplyFlag(flag);
 	}
 
+	public void SetLoading(bool isLoading, string message = null, int progress = -1)
+	{
+		if (GdLoading == null) return;
+		GdLoading.Visibility = isLoading ? Visibility.Visible : Visibility.Collapsed;
+		if (isLoading && message != null)
+		{
+			FrMain.IsEnabled = false;
+			TbLoading.Text = message;
+			var showProgress = progress > 0;
+			PrLoading.IsIndeterminate = !showProgress;
+			if (showProgress) PrLoading.Value = progress;
+		}
+		else
+			FrMain.IsEnabled = true;
+	}
+
 	private async void ApplyFlag(RestartFlag flag)
 	{
+		await Task.Delay(100);
+		SetLoading(true, "버전 확인중");
+		await Utility.CheckVersion(SetLoading);
+		SetLoading(false);
+
 		if (flag == null) FrMain.Navigate(typeof(LoginPage));
 		else
 		{
@@ -94,11 +115,6 @@ public sealed partial class MainWindow : Window
 			var wasMaximized = flag.WasMaximized;
 			if (wasMaximized) (this.GetAppWindow().Presenter as OverlappedPresenter).Maximize();
 			FrMain.Navigate(typeof(MainPage), flag.LastArgs);
-
-			await Task.Delay(1000);
-			MainPage.Instance.SetLoading(true, "버전 확인중");
-            await Utility.CheckVersion(MainPage.Instance.SetLoading);
-			MainPage.Instance.SetLoading(false);
 		}
 	}
 
