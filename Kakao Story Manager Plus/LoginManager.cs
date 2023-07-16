@@ -61,7 +61,7 @@ public static class LoginManager
                 var passwordBox = SeleniumDriver.FindElement(By.XPath("//*[@id=\"password--2\"]"));
                 passwordBox.SendKeys(password);
 
-                var checkBox = SeleniumDriver.FindElement(By.XPath("//*[@id=\"label-staySignedIn\"]/span"));
+                var checkBox = SeleniumDriver.FindElement(By.XPath("//*[@id=\"label-saveSignedIn\"]/span"));
                 checkBox.Click();
 
                 var loginButton = SeleniumDriver.FindElement(By.XPath("//*[@id=\"mainContent\"]/div/div/form/div[4]/button[1]"));
