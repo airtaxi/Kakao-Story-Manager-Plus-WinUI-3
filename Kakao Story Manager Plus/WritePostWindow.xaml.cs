@@ -8,6 +8,7 @@ using System.Runtime.InteropServices;
 using WinRT.Interop;
 using static KSMP.ApiHandler.DataType.CommentData;
 using KSMP.Utils;
+using Microsoft.UI.Xaml.Media;
 
 namespace KSMP;
 
@@ -18,14 +19,16 @@ public sealed partial class WritePostWindow : Window
 	public WritePostWindow(PostData post = null)
 	{
 		InitializeComponent();
-		WindowHelper.SetupWindowTheme(this);
 
+		AppWindow.TitleBar.ExtendsContentIntoTitleBar = true;
+		AppWindow.TitleBar.ButtonBackgroundColor = Colors.Transparent;
+		AppWindow.TitleBar.ButtonInactiveBackgroundColor = Colors.Transparent;
 		AppWindow.SetIcon(Path.Combine(App.BinaryDirectory, "icon.ico"));
 
 		if(post == null) Control = new WritePostControl();
 		else
 		{
-			Title = "글 공유";
+			SetTitle("글 공유");
 			Control = new WritePostControl(post);
 		}
 
@@ -48,6 +51,12 @@ public sealed partial class WritePostWindow : Window
 		ResizeToContent();
 	}
 
+	public void SetTitle(string title)
+	{
+		Title = title;
+		TbTitle.Text = title;
+	}
+
 
 	private void OnTimerTick(object sender, object e) => ResizeToContent();
 
@@ -57,7 +66,7 @@ public sealed partial class WritePostWindow : Window
 	{
 		if (Control.IsComboBoxDropDownOpened) return;
 		var scale = GetScaleAdjustment();
-		var height = Control.GetHeight() + 35;
+		var height = Control.GetHeight() + 55;
 		AppWindow.ResizeClient(new((int)(400 * scale), (int)(height * scale)));
 	}
 

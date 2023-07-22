@@ -10,7 +10,40 @@
     Title="글 작성"
     Closed="OnWindowClosed">
 
-    <Frame
-        x:Name="FrMain"
-        PreviewKeyDown="OnPreviewKeyDown"/>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="48"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid
+            x:Name="GdTitleBar"
+            Background="{ThemeResource White}"
+            Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition x:Name="CdTitleBarIcon" Width="Auto"/>
+                <ColumnDefinition x:Name="CdTitleBarMain" Width="*"/>
+                <ColumnDefinition x:Name="CdTitleBarButtons" Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <Image 
+                Grid.Column="0"
+                Source="/icon.ico" 
+                Width="25"
+                Height="25"
+                VerticalAlignment="Center"
+                Margin="16.5,0,0,0"/>
+            <TextBlock
+                x:Name="TbTitle"
+                Grid.Column="1"
+                FontSize="14"
+                FontWeight="Bold"
+                Text="글 작성"
+                VerticalAlignment="Center"
+                Margin="10,0,0,0"
+                Style="{ThemeResource CaptionTextBlockStyle}"/>
+        </Grid>
+        <Frame
+            Grid.Row="1"
+            x:Name="FrMain"
+            PreviewKeyDown="OnPreviewKeyDown"/>
+    </Grid>
 </Window>

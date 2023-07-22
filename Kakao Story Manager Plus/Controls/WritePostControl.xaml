@@ -81,7 +81,7 @@
             </ListView>
         </Grid>
         <Grid x:Name="GdMenu" Grid.Row="3" Margin="5">
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Bottom">
                 <Button x:Name="BtWritePost" Background="{ThemeResource Orange}" Click="OnWriteButtonClicked">
                     <TextBlock x:Name="TbWritePost" Text="글 작성하기" FontSize="15" FontWeight="Bold" Foreground="{ThemeResource FixedWhite}"/>
                 </Button>

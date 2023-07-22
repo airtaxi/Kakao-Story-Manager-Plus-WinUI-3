@@ -37,6 +37,8 @@
             <TextBlock
                 Grid.Column="1"
                 Text="이미지 뷰어"
+                FontSize="14"
+                FontWeight="Bold"
                 VerticalAlignment="Center"
                 Margin="10,0,0,0"
                 Style="{ThemeResource CaptionTextBlockStyle}"/>
