@@ -234,7 +234,7 @@ public sealed partial class TimelineWindowControl : UserControl
     {
         IsContentLoaded = true;
         if (showLoading) GdLoading.Visibility = Visibility.Visible;
-        SpPostInformation.Visibility = Visibility.Collapsed;
+        GdPostInformation.Visibility = Visibility.Collapsed;
         if (!_isShare) _post = await ApiHandler.GetPost(_post.id);
 
         TbName.Text = _post.actor.display_name;
@@ -281,11 +281,11 @@ public sealed partial class TimelineWindowControl : UserControl
 
         if (_isShare || (RtbComments.Visibility == Visibility.Collapsed && RtbEmotions.Visibility == Visibility.Collapsed
             && RtbShares.Visibility == Visibility.Collapsed && RtbUps.Visibility == Visibility.Collapsed))
-            SpPostInformation.Visibility = Visibility.Collapsed;
-        else SpPostInformation.Visibility = Visibility.Visible;
+            GdPostInformation.Visibility = Visibility.Collapsed;
+        else GdPostInformation.Visibility = Visibility.Visible;
 
         if (_isOverlay)
-            SpPostInformation.Padding = new Thickness(0, 5, 0, 5);
+            GdPostInformation.Padding = new Thickness(0, 5, 0, 5);
 
         if ((_post.media?.Count ?? 0) > 0) GvMedia.Visibility = Visibility.Visible;
         else GvMedia.Visibility = Visibility.Collapsed;
