@@ -44,6 +44,7 @@
         <Frame
             Grid.Row="1"
             x:Name="FrMain"
+            Background="{ThemeResource White2}"
             PreviewKeyDown="OnPreviewKeyDown"/>
     </Grid>
 </Window>
