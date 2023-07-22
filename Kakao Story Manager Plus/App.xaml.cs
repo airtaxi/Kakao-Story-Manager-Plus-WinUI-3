@@ -131,6 +131,7 @@ public partial class App : Application
                             var window = TimelineWindow.GetTimelineWindow(post);
 							window.Activate();
                             if (wasExisted) await window.Control.RefreshContent();
+                            window.BringToFront();
 						}
 						else await Utility.ShowMessageDialogAsync("글을 볼 수 없거나 나만 보기로 설정된 글입니다.", "오류");
                     }
