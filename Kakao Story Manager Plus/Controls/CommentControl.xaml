@@ -9,8 +9,8 @@
     d:DesignHeight="300"
     d:DesignWidth="400">
 
-    <Grid Background="{ThemeResource White}">
-        <Grid Margin="5">
+    <Grid>
+        <Grid Margin="5,0,5,10">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="45"/>
                 <ColumnDefinition Width="*"/>
@@ -18,7 +18,14 @@
             <Viewbox VerticalAlignment="Top" Width="45" Height="45">
                 <PersonPicture x:Name="PpUser" Tapped="UserProfilePictureTapped" PointerEntered="OnPointerEntered" PointerExited="OnPointerExited"/>
             </Viewbox>
-            <Grid Grid.Column="1" Margin="5,5,0,5" VerticalAlignment="Top">
+            <Border
+                BorderBrush="{ThemeResource FixedGray6}"
+                BorderThickness="0.5"
+                Width="45"
+                Height="45"
+                VerticalAlignment="Top"
+                CornerRadius="22.5"/>
+            <Grid Grid.Column="1" Margin="10,0,0,5" VerticalAlignment="Top">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="auto"/>
@@ -43,7 +50,7 @@
                             <ColumnDefinition Width="0.6*"/>
                             <ColumnDefinition Width="0.4*"/>
                         </Grid.ColumnDefinitions>
-                        <Frame x:Name="FrImage" Margin="10" MaxWidth="100" MaxHeight="100" HorizontalAlignment="Left"/>
+                        <Frame x:Name="FrImage" Margin="0,5,0,0" MaxWidth="100" MaxHeight="100" HorizontalAlignment="Left"/>
                     </Grid>
                 </StackPanel>
                 <Button x:Name="BtCommentMenu" Grid.Column="1" BorderThickness="0" Padding="5" Margin="5,0,0,0" Tapped="OnCommentMenuTapped" Background="Transparent">
@@ -52,10 +59,26 @@
                     </Viewbox>
                     <Button.Flyout>
                         <MenuFlyout>
-                            <MenuFlyoutItem x:Name="MfiLike" Text="좋아요" Click="OnLikeButtonClick"/>
-                            <MenuFlyoutItem x:Name="MfiEdit" Text="수정" Click="OnEditCommentButtonClicked"/>
-                            <MenuFlyoutItem x:Name="MfiDelete" Text="삭제" Click="OnDeleteCommentButtonClicked"/>
-                            <MenuFlyoutItem Text="답장" Click="OnReplyUserCommentButtonClicked"/>
+                            <MenuFlyoutItem x:Name="MfiLike" Text="좋아요" Click="OnLikeButtonClick">
+                                <MenuFlyoutItem.Icon>
+                                    <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xeb51;"/>
+                                </MenuFlyoutItem.Icon>
+                            </MenuFlyoutItem>
+                            <MenuFlyoutItem x:Name="MfiEdit" Text="수정" Click="OnEditCommentButtonClicked">
+                                <MenuFlyoutItem.Icon>
+                                    <SymbolIcon Symbol="Edit"/>
+                                </MenuFlyoutItem.Icon>
+                            </MenuFlyoutItem>
+                            <MenuFlyoutItem x:Name="MfiDelete" Text="삭제" Click="OnDeleteCommentButtonClicked">
+                                <MenuFlyoutItem.Icon>
+                                    <SymbolIcon Symbol="Delete"/>
+                                </MenuFlyoutItem.Icon>
+                            </MenuFlyoutItem>
+                            <MenuFlyoutItem Text="답장" Click="OnReplyUserCommentButtonClicked">
+                                <MenuFlyoutItem.Icon>
+                                    <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xe97a;"/>
+                                </MenuFlyoutItem.Icon>
+                            </MenuFlyoutItem>
                         </MenuFlyout>
                     </Button.Flyout>
                 </Button>

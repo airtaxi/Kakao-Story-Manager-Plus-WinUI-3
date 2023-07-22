@@ -33,6 +33,7 @@
 		<None Remove="Controls\DcConSettingsControl.xaml" />
 		<None Remove="Controls\EmoticonListControl.xaml" />
 		<None Remove="Controls\EmotionsListControl.xaml" />
+		<None Remove="Controls\EmotionsWindowControl.xaml" />
 		<None Remove="Controls\Emotions\CheerUpControl.xaml" />
 		<None Remove="Controls\Emotions\CoolControl.xaml" />
 		<None Remove="Controls\Emotions\LikeControl.xaml" />
@@ -41,6 +42,7 @@
 		<None Remove="Controls\ExtrasControl.xaml" />
 		<None Remove="Controls\Extras\BatchDeleteFriendsControl.xaml" />
 		<None Remove="Controls\SettingsControl.xaml" />
+		<None Remove="Controls\TimelineWindowControl.xaml" />
 		<None Remove="DialogWindow.xaml" />
 		<None Remove="ImageViewerWindow.xaml" />
 		<None Remove="NotificationsWindow.xaml" />
@@ -77,6 +79,7 @@
 		<PackageReference Include="Selenium.WebDriver" Version="4.10.0" />
 		<PackageReference Include="SeleniumExtras.WaitHelpers" Version="1.0.2" />
 		<PackageReference Include="WebDriverManager" Version="2.16.3" />
+		<PackageReference Include="WinUIEx" Version="2.2.0" />
 		<Manifest Include="$(ApplicationManifest)" />
 	</ItemGroup>
 
@@ -98,6 +101,12 @@
 		<None Update="Assets\VideoThumbnail.png">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
+		<Page Update="Controls\EmotionsWindowControl.xaml">
+		  <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+		</Page>
+		<Page Update="Controls\TimelineWindowControl.xaml">
+		  <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+		</Page>
 		<Page Update="DialogWindow.xaml">
 		  <Generator>MSBuild:Compile</Generator>
 		</Page>

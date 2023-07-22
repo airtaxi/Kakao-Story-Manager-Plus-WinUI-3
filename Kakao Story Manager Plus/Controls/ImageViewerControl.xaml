@@ -11,27 +11,23 @@
     Background="{ThemeResource White2}">
 
     <Grid>
-        <FlipView x:Name="FvImages" Height="auto" Width="auto" SelectionChanged="OnImageSelectionChanged">
+        <FlipView
+            x:Name="FvImages"
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Stretch"
+            SelectionChanged="OnImageSelectionChanged">
             <FlipView.ItemTemplate>
                 <DataTemplate>
-                    <ScrollViewer ZoomMode="Enabled" Tapped="OnScrollViewerTapped" RightTapped="OnScrollViewerRightTapped" Margin="0,40,0,0">
+                    <ScrollViewer
+                        ZoomMode="Enabled"
+                        HorizontalScrollBarVisibility="Auto"
+                        Tapped="OnScrollViewerTapped"
+                        RightTapped="OnScrollViewerRightTapped">
                         <Image Source="{Binding origin_url}" Stretch="Uniform" Loaded="ImageLoaded"/>
                     </ScrollViewer>
                 </DataTemplate>
             </FlipView.ItemTemplate>
         </FlipView>
-        
-        <Viewbox
-            Opacity="0.25"
-            Width="20"
-            Height="20"
-            Margin="10"
-            HorizontalAlignment="Left"
-            VerticalAlignment="Top"
-            PointerEntered="OnButtonPointerEntered"
-            PointerExited="OnButtonPointerExited">
-            <FontIcon FontSize="25" FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe74e;" Tapped="DownloadButtonTapped"/>
-        </Viewbox>
         
         <Grid x:Name="GdLoading" Visibility="Collapsed">
             <Rectangle Fill="{ThemeResource Black}" Opacity="0.85"/>

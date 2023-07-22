@@ -4,22 +4,22 @@ using static KSMP.ApiHandler.DataType.CommentData;
 
 namespace KSMP.Controls;
 
-public sealed partial class EmotionsControl : UserControl
+public sealed partial class EmotionsWindowControl : UserControl
 {
     private readonly PostData _post;
-    private readonly TimelineControl _timeline;
-    public EmotionsControl(PostData post, TimelineControl timeline)
+    private readonly TimelineWindow _window;
+    public EmotionsWindowControl(PostData post, TimelineWindow window)
     {
         InitializeComponent();
         _post = post;
-        _timeline = timeline;
+        _window = window;
     }
 
-    private async void OnEmotionButtonClick(object sender, RoutedEventArgs e)
+    private async void OnButtonClick(object sender, RoutedEventArgs e)
     {
         var emotion = (sender as Button).Tag as string;
         await ApiHandler.LikePost(_post.id, emotion);
-        await _timeline.RefreshContent();
-        _timeline.HideEmotionsButtonFlyout();
+        await _window.RefreshContent();
+        _window.HideEmotionsButtonFlyout();
     }
 }

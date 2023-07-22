@@ -29,7 +29,7 @@ using static KSMP.ApiHandler.DataType.ShareData;
 
 namespace KSMP.Controls;
 
-public sealed partial class TimelineControl : UserControl
+public sealed partial class TimelineWindowControl : UserControl
 {
     private PostData _post;
     private readonly bool _isOverlay;
@@ -48,7 +48,7 @@ public sealed partial class TimelineControl : UserControl
 
     public string PostId => _post?.id;
 
-    public TimelineControl(Window window, PostData post, bool isShare = false, bool isOverlay = false)
+    public TimelineWindowControl(Window window, PostData post, bool isShare = false, bool isOverlay = false)
     {
         _window = window;
 		_post = post;
@@ -57,7 +57,6 @@ public sealed partial class TimelineControl : UserControl
         InitializeComponent();
         if (isOverlay && !isShare)
         {
-            BdCommentsHorizontal.Visibility = Visibility.Visible;
             RdComment.Height = new GridLength(1, GridUnitType.Star);
 
             Grid.SetRow(GdComment, 0);
@@ -81,18 +80,13 @@ public sealed partial class TimelineControl : UserControl
         if (isShare)
         {
             GdComment.Visibility = Visibility.Collapsed;
-            SpEmotions.Visibility = Visibility.Collapsed;
             SpMenu.Visibility = Visibility.Collapsed;
             SpShare.Visibility = Visibility.Visible;
             RtShare.Visibility = Visibility.Visible;
             FrShareMargin.Visibility = Visibility.Visible;
-            BdShare.Visibility = Visibility.Visible;
-            LvContent.Padding = new Thickness(0, 0, 0, 20);
-            GdMain.Margin = new Thickness(0);
-			GdMain.Background = Application.Current.Resources["White2"] as SolidColorBrush;
-		}
-
-        InitializeFlyout();
+            LvContent.Padding = new Thickness(10, 20, 10, 0);
+            GdMain.Margin = new Thickness(0, 0, 0, -15);
+        }
 
         if (!isShare)
         {
@@ -122,60 +116,51 @@ public sealed partial class TimelineControl : UserControl
         if (isOverlay || !willUseDynamicTimelineLoading) _ = RefreshContent();
 
         if (!isOverlay && !isShare) GdMain.MaxWidth = 600;
-
-        ActualThemeChanged += OnThemeChanged;
-		{
-			void unloaded(object s, RoutedEventArgs e)
-			{
-				ActualThemeChanged -= OnThemeChanged;
-				Unloaded -= unloaded;
-			}
-
-			Unloaded += unloaded;
-		}
     }
 
-    public void AdjustControlForCaptureWindow()
+	private void OnAddEmoticonButtonClicked(object sender, RoutedEventArgs e)
 	{
-		LvContent.MaxHeight = double.MaxValue;
-		GdMain.CornerRadius = new CornerRadius(0);
-		GdComment.Visibility = Visibility.Collapsed;
-		SpEmotions.Visibility = Visibility.Collapsed;
-		GdPostInformation.Visibility = Visibility.Collapsed;
-		LvContent.Margin = new Thickness(5, 5, 5, 15);
+		var button = sender as Button;
+		if (_commentEmoticon.Item1 == null)
+		{
+			var emoticonListControl = Post.ShowEmoticonListToButton(button);
+			void emoticonListControlSelected(EmoticonItem item, int index)
+			{
+				_commentEmoticon.Item1 = item;
+				_commentEmoticon.Item2 = index;
+
+				FiAddEmoticon.Glyph = "\ue74d";
+				BtAddMedia.IsEnabled = false;
+				BtAddDcCon.IsEnabled = false;
+			}
+			emoticonListControl.OnSelected += emoticonListControlSelected;
+
+			{
+				void unloaded(object s, RoutedEventArgs e)
+				{
+					emoticonListControl.OnSelected -= emoticonListControlSelected;
+					Unloaded -= unloaded;
+				}
+
+				Unloaded += unloaded;
+			}
+		}
+		else
+		{
+			button.Flyout = null;
+			_commentEmoticon = (null, 0);
+			FiAddEmoticon.Glyph = "\ue899";
+			BtAddMedia.IsEnabled = true;
+			BtAddDcCon.IsEnabled = true;
+		}
 	}
 
-	private void OnThemeChanged(FrameworkElement sender, object args) => SetButtonColorByTheme();
-
-    private void SetButtonColorByTheme()
-    {
-        var requestedTheme = Utility.GetRequestedTheme();
-
-        if (requestedTheme == ElementTheme.Light)
-        {
-            if (!_post.sympathized)
-                BtUp.Background = Application.Current.Resources["FixedWhite"] as SolidColorBrush;
-            if (!_post.liked)
-                BtEmotions.Background = Application.Current.Resources["FixedWhite"] as SolidColorBrush;
-        }
-        else
-        {
-            if (!_post.sympathized)
-                BtUp.Background = Utility.GetSolidColorBrushFromHexString("#FF343434");
-            if (!_post.liked)
-                BtEmotions.Background = Utility.GetSolidColorBrushFromHexString("#FF343434");
-        }
-    }
-
-    
-    public void UnloadMedia(bool unloadContents = false)
+	public void UnloadMedia(bool unloadContents = false)
     {
         IsContentLoaded = false;
-        RtDummy.Visibility = Visibility.Visible;
-        RtDummy.Height = GdMain.ActualHeight;
         GdLoading.Visibility = Visibility.Collapsed;
 
-        (FrShare.Content as TimelineControl)?.UnloadMedia();
+        (FrShare.Content as TimelineWindowControl)?.UnloadMedia();
         FrShare.Content = null;
 
         var paragraph = RTbContent.Blocks.Where(x => x is Paragraph).FirstOrDefault() as Paragraph;
@@ -206,136 +191,6 @@ public sealed partial class TimelineControl : UserControl
     private void OnSubmitShortcutActivated() => OnSendCommentButtonClicked(BtSendComment, null);
 
     private void RefreshBookmarkButton() => FiFavorite.Glyph = _post.bookmarked ? "\ue735" : "\ue734";
-    public void HideEmotionsButtonFlyout() => BtEmotions.Flyout.Hide();
-    private void RefreshEmotionsButton()
-    {
-        var white = Utility.GetSolidColorBrushFromHexString("#FFFFFFFF");
-        if (_post.liked)
-        {
-            var emotion = _post.liked_emotion;
-            if (emotion == "like")
-            {
-                BtEmotions.Background = Common.GetColorFromHexa("#FFE25434");
-                FiEmotions.Foreground = white;
-                FiEmotions.Glyph = "\xeb52";
-            }
-            else if (emotion == "good")
-            {
-                BtEmotions.Background = Common.GetColorFromHexa("#FFBCCB3C");
-                FiEmotions.Foreground = white;
-                FiEmotions.Glyph = "\ue735";
-            }
-            else if (emotion == "pleasure")
-            {
-                BtEmotions.Background = Common.GetColorFromHexa("#FFEFBD30");
-                FiEmotions.Foreground = white;
-                FiEmotions.Glyph = "\ued54";
-            }
-            else if (emotion == "sad")
-            {
-                BtEmotions.Background = Common.GetColorFromHexa("#FF359FB0");
-                FiEmotions.Foreground = white;
-                FiEmotions.Glyph = "\ueb42";
-            }
-            else if (emotion == "cheerup")
-            {
-                BtEmotions.Background = Common.GetColorFromHexa("#FF9C62AE");
-                FiEmotions.Foreground = white;
-                FiEmotions.Glyph = "\ue945";
-            }
-        }
-        else
-        {
-            var requestedTheme = Utility.GetRequestedTheme();
-            SolidColorBrush gray3;
-            if (requestedTheme == ElementTheme.Light) gray3 = Utility.GetSolidColorBrushFromHexString("#FF888D94");
-            else gray3 = Utility.GetSolidColorBrushFromHexString("#FF77726B");
-
-            FiEmotions.Foreground = gray3;
-            FiEmotions.Glyph = "\ueb52";
-        }
-        SetButtonColorByTheme();
-    }
-    private void RefreshUpButton()
-    {
-        SolidColorBrush white;
-        SolidColorBrush gray3;
-        SolidColorBrush gray6;
-        var requestedTheme = Utility.GetRequestedTheme();
-        if(requestedTheme == ElementTheme.Light)
-        {
-            white = Utility.GetSolidColorBrushFromHexString("#FFFFFFFF");
-            gray3 = Utility.GetSolidColorBrushFromHexString("#FF888D94");
-            gray6 = Utility.GetSolidColorBrushFromHexString("#FFAAAAAA");
-        }
-        else
-        {
-            white = Utility.GetSolidColorBrushFromHexString("#FF343434");
-            gray3 = Utility.GetSolidColorBrushFromHexString("#FF77726B");
-            gray6 = Utility.GetSolidColorBrushFromHexString("#FF949494");
-
-        }
-        if (_post.sympathized)
-        {
-            BtUp.Background = gray6;
-            FaUp.Foreground = white;
-        }
-        else
-        {
-            BtUp.Background = white;
-            FaUp.Foreground = gray3;
-        }
-        SetButtonColorByTheme();
-    }
-    private void InitializeFlyout()
-    {
-        var emotionsFlyout = new Flyout
-        {
-            Content = new EmotionsControl(_post, this)
-        };
-        BtEmotions.Flyout = emotionsFlyout;
-
-		async void emotionsFlyoutOpeningEventHandler(object s, object e)
-		{
-			if (_post.liked)
-			{
-				await ApiHandler.LikePost(_post.id, null);
-				await RefreshContent();
-				HideEmotionsButtonFlyout();
-			}
-		}
-		BtEmotions.Flyout.Opening += emotionsFlyoutOpeningEventHandler;
-        BtEmotions.Flyout.Placement = FlyoutPlacementMode.TopEdgeAlignedLeft;
-
-        var shareFlyout = new MenuFlyout();
-        var sharePostMenuFlyoutItem = new MenuFlyoutItem() { Text = "스토리로 공유" };
-        var sharePostCommand = new XamlUICommand();
-        sharePostCommand.ExecuteRequested += OnSharePost;
-        sharePostMenuFlyoutItem.Command = sharePostCommand;
-        shareFlyout.Items.Add(sharePostMenuFlyoutItem);
-
-        if (!_post.sharable || _post.@object != null)
-            sharePostMenuFlyoutItem.Visibility = Visibility.Collapsed;
-
-        var copyUrlPostMenuFlyoutItem = new MenuFlyoutItem() { Text = $"URL 복사하기" };
-        var copyUrlCommand = new XamlUICommand();
-        copyUrlCommand.ExecuteRequested += CopyPostUrl;
-        copyUrlPostMenuFlyoutItem.Command = copyUrlCommand;
-        shareFlyout.Items.Add(copyUrlPostMenuFlyoutItem);
-        BtShare.Flyout = shareFlyout;
-
-        {
-			void unloaded(object s, RoutedEventArgs e)
-			{
-				BtEmotions.Flyout.Opening -= emotionsFlyoutOpeningEventHandler;
-				copyUrlCommand.ExecuteRequested -= CopyPostUrl;
-				sharePostCommand.ExecuteRequested -= OnSharePost;
-				Unloaded -= unloaded;
-			}
-
-			Unloaded += unloaded;
-        }
-	}
 
     private async void OnSharePost(XamlUICommand sender, ExecuteRequestedEventArgs args) => await SharePost();
 
@@ -404,17 +259,14 @@ public sealed partial class TimelineControl : UserControl
             
             await LoadComments();
 
-            BdComments.Visibility = Visibility.Visible;
             RnComments.Text = _post.comment_count.ToString();
 
             LvComments.Visibility = Visibility.Visible;
-            BdComments.Visibility = Visibility.Visible;
         }
         else
         {
             RtbComments.Visibility = Visibility.Collapsed;
             LvComments.Visibility = Visibility.Collapsed;
-            BdComments.Visibility = Visibility.Collapsed;
         }
 
         if (_post.like_count > 0) RnEmotions.Text = _post.like_count.ToString();
@@ -440,26 +292,25 @@ public sealed partial class TimelineControl : UserControl
 
         Post.SetTextContent(_post.content_decorators, RTbContent, _isOverlay);
 
-        RefreshUpButton();
         RefreshBookmarkButton();
-        RefreshEmotionsButton();
 
         Utility.SetPersonPictureUrlSource(PpUser, _post.actor?.GetValidUserProfileUrl());
         FvMedia.ItemsSource = Utility.GenerateMedias(_post?.media, _isOverlay);
 
         TbShareCount.Text = _post.share_count.ToString();
         if (_post.@object != null && _post.@object.id != null)
-            FrShare.Content = new TimelineControl(_window, _post.@object, true, _isOverlay);
+        {
+            var shareContent = new TimelineWindowControl(_window, _post.@object, true, _isOverlay);
+			FrShare.Content = shareContent;
+            await shareContent.RefreshContent();
+		}
         else
-            FrShare.Visibility = Visibility.Collapsed;
+            GdShare.Visibility = Visibility.Collapsed;
         if (_post.scrap != null)
             FrLink.Content = new LinkControl(_post.scrap);
         else
             FrLink.Visibility = Visibility.Collapsed;
 
-        (FrShare.Content as TimelineControl)?.RefreshContent();
-
-        RtDummy.Visibility = Visibility.Collapsed;
         this.UpdateLayout();
 
         if (showLoading) GdLoading.Visibility = Visibility.Collapsed;
@@ -669,12 +520,7 @@ public sealed partial class TimelineControl : UserControl
         window.Content = canvas;
         control.Width = 600;
         control.Height = double.NaN;
-        control.LvContent.MaxHeight = double.MaxValue;
-        control.GdMain.CornerRadius = new CornerRadius(0);
-        control.GdComment.Visibility = Visibility.Collapsed;
-        control.SpEmotions.Visibility = Visibility.Collapsed;
-        control.GdPostInformation.Visibility = Visibility.Collapsed;
-        control.LvContent.Margin = new Thickness(5, 5, 5, 15);
+        control.AdjustControlForCaptureWindow();
         control.UpdateLayout();
         await control.RefreshContent(false);
         await Task.Delay(1000);
@@ -738,12 +584,6 @@ public sealed partial class TimelineControl : UserControl
 		}
 	}
 
-    private async void OnRefreshTapped(object sender, TappedRoutedEventArgs e)
-    {
-        e.Handled = true;
-        await RefreshContent();
-    }
-
     private async void OnAddBookmarkTapped(object sender, TappedRoutedEventArgs e)
     {
         e.Handled = true;
@@ -757,15 +597,6 @@ public sealed partial class TimelineControl : UserControl
             await RefreshContent();
             RefreshBookmarkButton();
         }
-    }
-
-    private async void OnUpButtonClicked(object sender, RoutedEventArgs e)
-    {
-        var isUp = _post.sympathized;
-        BtUp.IsEnabled = false;
-        await ApiHandler.UpPost(_post.id, isUp);
-        BtUp.IsEnabled = true;
-        await RefreshContent();
     }
 
     private void OnMediaTapped(object sender, TappedRoutedEventArgs e)
@@ -794,18 +625,11 @@ public sealed partial class TimelineControl : UserControl
     private async void OnTimeTapped(object sender, TappedRoutedEventArgs e)
     {
         e.Handled = true;
-
         if (!(_post.actor.relationship == "F" || _post.actor.relationship == "S" || _post.permission == "A"))
         {
             await Dialog.ShowPermissionRequiredMessageDialog(this, _post.actor.id);
             return;
         }
-
-        if (!_isOverlay)
-        {
-            var window = TimelineWindow.GetTimelineWindow(_post);
-            window.Activate();
-		}
     }
 
     private void OnPointerEntered(object sender, PointerRoutedEventArgs e) => Utility.ChangeSystemMouseCursor(true);
@@ -828,6 +652,7 @@ public sealed partial class TimelineControl : UserControl
         };
         flyout.ShowAt(RtbShares);
     }
+
     private async void OnShareCountTextBlockTapped(object sender, TappedRoutedEventArgs e)
     {
         e.Handled = true;
@@ -840,7 +665,8 @@ public sealed partial class TimelineControl : UserControl
             IsActive = true
         };
         flyout.Content = progressRing;
-        flyout.ShowAt(RtbShares);
+        flyout.Placement = FlyoutPlacementMode.Bottom;
+		flyout.ShowAt(RtbShares);
 
         var shares = await ApiHandler.GetShares(isUp, _post, null);
         var control = new FriendListControl();
@@ -1072,43 +898,6 @@ public sealed partial class TimelineControl : UserControl
 
     private List<CommentControl> GetCurrentCommentControls() => LvComments.Items.Select(x => x as CommentControl).ToList();
     private List<Comment> GetCurrentComments() => GetCurrentCommentControls().Select(x => x.Tag as Comment).ToList();
-
-    private void OnAddEmoticonButtonClicked(object sender, RoutedEventArgs e)
-    {
-        var button = sender as Button;
-        if (_commentEmoticon.Item1 == null)
-        {
-            var emoticonListControl = Post.ShowEmoticonListToButton(button);
-			void emoticonListControlSelected(EmoticonItem item, int index)
-			{
-				_commentEmoticon.Item1 = item;
-				_commentEmoticon.Item2 = index;
-
-				FiAddEmoticon.Glyph = "\ue74d";
-				BtAddMedia.IsEnabled = false;
-				BtAddDcCon.IsEnabled = false;
-			}
-			emoticonListControl.OnSelected += emoticonListControlSelected;
-
-			{
-				void unloaded(object s, RoutedEventArgs e)
-				{
-					emoticonListControl.OnSelected -= emoticonListControlSelected;
-					Unloaded -= unloaded;
-				}
-
-				Unloaded += unloaded;
-			}
-		}
-        else
-        {
-            button.Flyout = null;
-            _commentEmoticon = (null, 0);
-            FiAddEmoticon.Glyph = "\ue899";
-            BtAddMedia.IsEnabled = true;
-            BtAddDcCon.IsEnabled = true;
-        }
-    }
 
     private async void OnAddMediaButtonClicked(object sender, RoutedEventArgs e)
     {

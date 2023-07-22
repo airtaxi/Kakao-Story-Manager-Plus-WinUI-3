@@ -1,0 +1,61 @@
+﻿<UserControl
+    x:Class="KSMP.Controls.EmotionsWindowControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:KSMP.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    d:DesignHeight="300"
+    d:DesignWidth="400">
+    <UserControl.Resources>
+        <SolidColorBrush x:Key="ButtonBackgroundPointerOver">#000000</SolidColorBrush>
+    </UserControl.Resources>
+    <StackPanel>
+        <StackPanel>
+            <TextBlock Style="{ThemeResource BaseTextBlockStyle}" Text="느낌 달기" FontSize="15" Margin="0,0,0,12" />
+            <StackPanel Orientation="Horizontal">
+                <Button Background="#E25434" Width="50" Height="50" CornerRadius="15" Margin="0,0,5,0" Click="OnButtonClick" Tag="like">
+                    <StackPanel>
+                        <Viewbox Width="auto" Height="auto" Margin="5">
+                            <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xeb52;" Foreground="{ThemeResource FixedWhite}"/>
+                        </Viewbox>
+                        <TextBlock Text="좋아요" FontSize="8" FontWeight="Bold" Foreground="{ThemeResource FixedWhite}" HorizontalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
+                <Button Background="#BCCB3C" Width="50" Height="50" CornerRadius="15" Margin="0,0,5,0" Click="OnButtonClick" Tag="good">
+                    <StackPanel>
+                        <Viewbox Width="auto" Height="auto" Margin="5">
+                            <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe735;" Foreground="{ThemeResource FixedWhite}"/>
+                        </Viewbox>
+                        <TextBlock Text="멋져요" FontSize="8" FontWeight="Bold" Foreground="{ThemeResource FixedWhite}" HorizontalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
+                <Button Background="#EFBD30" Width="50" Height="50" CornerRadius="15" Margin="0,0,5,0" Click="OnButtonClick" Tag="pleasure">
+                    <StackPanel>
+                        <Viewbox Width="auto" Height="auto" Margin="5">
+                            <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xed54;" Foreground="{ThemeResource FixedWhite}"/>
+                        </Viewbox>
+                        <TextBlock Text="기뻐요" FontSize="8" FontWeight="Bold" Foreground="{ThemeResource FixedWhite}" HorizontalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
+                <Button Background="#359FB0" Width="50" Height="50" CornerRadius="15" Margin="0,0,5,0" Click="OnButtonClick" Tag="sad">
+                    <StackPanel>
+                        <Viewbox Width="auto" Height="auto" Margin="5">
+                            <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xeb42;" Foreground="{ThemeResource FixedWhite}"/>
+                        </Viewbox>
+                        <TextBlock Text="슬퍼요" FontSize="8" FontWeight="Bold" Foreground="{ThemeResource FixedWhite}" HorizontalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
+                <Button Background="#9C62AE" Width="50" Height="50" CornerRadius="15" Margin="0,0,0,0" Click="OnButtonClick" Tag="cheerup">
+                    <StackPanel>
+                        <Viewbox Width="auto" Height="auto" Margin="5">
+                            <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe945;" Foreground="{ThemeResource FixedWhite}"/>
+                        </Viewbox>
+                        <TextBlock Text="힘내요" FontSize="8" FontWeight="Bold" Foreground="{ThemeResource FixedWhite}" HorizontalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
+            </StackPanel>
+        </StackPanel>
+    </StackPanel>
+</UserControl>

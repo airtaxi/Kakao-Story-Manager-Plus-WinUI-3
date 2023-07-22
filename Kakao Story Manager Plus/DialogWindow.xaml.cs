@@ -3,123 +3,153 @@ using Microsoft.UI;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Input;
+using Microsoft.UI.Xaml.Media;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices;
+using Windows.Foundation;
 using Windows.Graphics;
 using Windows.UI.WindowManagement;
 using WinRT.Interop;
+using WinUIEx;
 
-// To learn more about WinUI, the WinUI project structure,
-// and more about our project templates, see: http://aka.ms/winui-project-info.
+namespace KSMP;
 
-namespace KSMP
+public sealed partial class DialogWindow : WindowEx
 {
-	/// <summary>
-	/// An empty window that can be used on its own or navigated to within a Frame.
-	/// </summary>
-	public sealed partial class DialogWindow : Window
+	public delegate void ButtonClicked();
+	public ButtonClicked PrimaryButtonClicked;
+	public ButtonClicked SecondaryButtonClicked;
+	public DispatcherTimer Timer;
+
+	public DialogWindow(string title, string description, bool showCancel = false, string primaryText = "확인", string secondaryText = "취소")
 	{
-		public delegate void ButtonClicked();
-		public ButtonClicked PrimaryButtonClicked;
-		public ButtonClicked SecondaryButtonClicked;
+		this.InitializeComponent();
+		WindowHelper.SetupWindowTheme(this);
 
-		public DialogWindow(string title, string description, bool showCancel = false, string primaryText = "확인", string secondaryText = "취소")
+		SizeChanged += OnSizeChanged;
+
+		Title = title;
+		AppWindow.SetIcon(Path.Combine(App.BinaryDirectory, "icon.ico"));
+
+		TbTitle.Text = title;
+		TbDescription.Text = description;
+		BtPrimary.Content = primaryText;
+		BtSecondary.Content = secondaryText;
+
+		PresenterKind = AppWindowPresenterKind.CompactOverlay;
+
+
+		this.CenterOnScreen();
+		SystemBackdrop = new MicaBackdrop() { Kind = Microsoft.UI.Composition.SystemBackdrops.MicaKind.Base };
+		AppWindow.TitleBar.ExtendsContentIntoTitleBar = true;
+		AppWindow.TitleBar.ButtonBackgroundColor = Colors.Transparent;
+		AppWindow.TitleBar.ButtonInactiveBackgroundColor = Colors.Transparent;
+		IsAlwaysOnTop = true;
+		IsResizable = false;
+		IsMaximizable = false;
+		IsMaximizable = false;
+
+		Content.LosingFocus += OnLosingFocus;
+
+
+		if (!showCancel) BtSecondary.Visibility = Visibility.Collapsed;
+		else
 		{
-			this.InitializeComponent();
-			WindowHelper.SetupWindowTheme(this);
-
-			SizeChanged += OnSizeChanged;
-
-			Title = title;
-			AppWindow.SetIcon(Path.Combine(App.BinaryDirectory, "icon.ico"));
-
-			TbTitle.Text = title;
-			TbDescription.Text = description;
-			BtPrimary.Content = primaryText;
-			BtSecondary.Content = secondaryText;
-
-			AppWindow.TitleBar.ExtendsContentIntoTitleBar = true;
-
-			var presenter = AppWindow.Presenter as OverlappedPresenter;
-			presenter.SetBorderAndTitleBar(true, false);
-			presenter.IsResizable = false;
-			presenter.IsMaximizable = false;
-			presenter.IsMinimizable = false;
-			if (!showCancel) BtSecondary.Visibility = Visibility.Collapsed;
-			else
-			{
-				Grid.SetColumn(BtPrimary, 0);
-				Grid.SetColumn(BtSecondary, 1);
-			}
-
-			GdMain.UpdateLayout();
-
-			var scale = GetScaleAdjustment();
-			AppWindow.ResizeClient(new((int)(500 * scale), (int)(GdMain.ActualHeight * scale)));
+			Grid.SetColumn(BtPrimary, 0);
+			Grid.SetColumn(BtSecondary, 1);
 		}
 
-		private enum Monitor_DPI_Type : int
+		GdMain.UpdateLayout();
+		Content.UpdateLayout();
+
+		Timer = new DispatcherTimer();
+		Timer.Interval = TimeSpan.FromMilliseconds(100);
+		Timer.Tick += OnTimerTick;
+		Timer.Start();
+		Width = 415;
+		Height = 130;
+
+		ResizeToContent();
+	}
+	private void OnTimerTick(object sender, object e) => ResizeToContent();
+
+	private void ResizeToContent()
+	{
+		if(RdDescription.Height == GridLength.Auto)
 		{
-			MDT_Effective_DPI = 0,
-			MDT_Angular_DPI = 1,
-			MDT_Raw_DPI = 2,
-			MDT_Default = MDT_Effective_DPI
+			Timer.Stop();
+			Timer.Tick -= OnTimerTick;
+			Timer = null;
+			var height = GdMain.ActualHeight + 10;
+			Height = height;
 		}
+		RdDescription.Height = GridLength.Auto;
+	}
 
-		[LibraryImport("Shcore.dll", SetLastError = true)]
-		private static partial int GetDpiForMonitor(IntPtr hmonitor, Monitor_DPI_Type dpiType, out uint dpiX, out uint dpiY);
+	private void OnLosingFocus(UIElement sender, LosingFocusEventArgs args) => BringToFront();
 
-		private double GetScaleAdjustment()
-		{
-			IntPtr hWnd = WindowNative.GetWindowHandle(this);
-			WindowId wndId = Win32Interop.GetWindowIdFromWindow(hWnd);
-			DisplayArea displayArea = DisplayArea.GetFromWindowId(wndId, DisplayAreaFallback.Primary);
-			IntPtr hMonitor = Win32Interop.GetMonitorFromDisplayId(displayArea.DisplayId);
+	private enum Monitor_DPI_Type : int
+	{
+		MDT_Effective_DPI = 0,
+		MDT_Angular_DPI = 1,
+		MDT_Raw_DPI = 2,
+		MDT_Default = MDT_Effective_DPI
+	}
 
-			// Get DPI.
-			int result = GetDpiForMonitor(hMonitor, Monitor_DPI_Type.MDT_Default, out uint dpiX, out uint _);
-			if (result != 0)
-				throw new Exception("Could not get DPI for monitor.");
+	[LibraryImport("Shcore.dll", SetLastError = true)]
+	private static partial int GetDpiForMonitor(IntPtr hmonitor, Monitor_DPI_Type dpiType, out uint dpiX, out uint dpiY);
 
-			uint scaleFactorPercent = (uint)(((long)dpiX * 100 + (96 >> 1)) / 96);
-			return scaleFactorPercent / 100.0;
-		}
+	private double GetScaleAdjustment()
+	{
+		IntPtr hWnd = WindowNative.GetWindowHandle(this);
+		WindowId wndId = Win32Interop.GetWindowIdFromWindow(hWnd);
+		DisplayArea displayArea = DisplayArea.GetFromWindowId(wndId, DisplayAreaFallback.Primary);
+		IntPtr hMonitor = Win32Interop.GetMonitorFromDisplayId(displayArea.DisplayId);
 
-		private bool _selected = false;
+		// Get DPI.
+		int result = GetDpiForMonitor(hMonitor, Monitor_DPI_Type.MDT_Default, out uint dpiX, out uint _);
+		if (result != 0)
+			throw new Exception("Could not get DPI for monitor.");
 
-		private void OnPrimaryButtonClicked(object sender, RoutedEventArgs e)
-		{
-			_selected = true;
-			PrimaryButtonClicked?.Invoke();
-			Close();
-		}
+		uint scaleFactorPercent = (uint)(((long)dpiX * 100 + (96 >> 1)) / 96);
+		return scaleFactorPercent / 100.0;
+	}
 
-		private void OnSecondaryButtonClicked(object sender, RoutedEventArgs e)
-		{
-			_selected = true;
-			SecondaryButtonClicked?.Invoke();
-			Close();
-		}
+	private bool _selected = false;
 
-		private void OnWindowClosed(object sender, WindowEventArgs args) => args.Handled = !_selected;
+	private void OnPrimaryButtonClicked(object sender, RoutedEventArgs e)
+	{
+		_selected = true;
+		PrimaryButtonClicked?.Invoke();
+		Close();
+	}
 
-		private void OnUnloaded(object sender, RoutedEventArgs e) => SizeChanged -= OnSizeChanged;
+	private void OnSecondaryButtonClicked(object sender, RoutedEventArgs e)
+	{
+		_selected = true;
+		SecondaryButtonClicked?.Invoke();
+		Close();
+	}
 
-		private void OnSizeChanged(object sender, WindowSizeChangedEventArgs args)
-		{
-			var scale = GetScaleAdjustment();
+	private void OnWindowClosed(object sender, WindowEventArgs args) => args.Handled = !_selected;
 
-			var dragRects = new List<RectInt32>();
-			RectInt32 dragRect;
-			dragRect.X = 0;
-			dragRect.Y = 0;
-			dragRect.Width = (int)(GdMain.ActualWidth * scale);
-			dragRect.Height = (int)(30 * scale);
-			dragRects.Add(dragRect);
+	private void OnUnloaded(object sender, RoutedEventArgs e) => SizeChanged -= OnSizeChanged;
 
-			AppWindow.TitleBar.SetDragRectangles(dragRects.ToArray());
-		}
+	private void OnSizeChanged(object sender, WindowSizeChangedEventArgs args)
+	{
+		var scale = GetScaleAdjustment();
+
+		var dragRects = new List<RectInt32>();
+		RectInt32 dragRect;
+		dragRect.X = 0;
+		dragRect.Y = 0;
+		dragRect.Width = (int)(GdMain.ActualWidth * scale);
+		dragRect.Height = (int)(30 * scale);
+		dragRects.Add(dragRect);
+
+		AppWindow.TitleBar.SetDragRectangles(dragRects.ToArray());
 	}
 }

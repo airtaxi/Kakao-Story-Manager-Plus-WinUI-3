@@ -1,0 +1,208 @@
+﻿<UserControl
+    x:Class="KSMP.Controls.TimelineWindowControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:KSMP"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    d:DesignHeight="300"
+    d:DesignWidth="400">
+
+    <Grid x:Name="GdMain" Background="{ThemeResource White}">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition x:Name="Rd1" Height="auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="auto"/>
+            </Grid.RowDefinitions>
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition x:Name="CdComment" Width="350" />
+            </Grid.ColumnDefinitions>
+            <ListView
+                x:Name="LvContent"
+                ScrollViewer.VerticalScrollBarVisibility="Hidden"
+                Grid.Row="1"
+                Background="{ThemeResource White2}"
+                CornerRadius="0,10,0,0"
+                MaxHeight="600"
+                Padding="10,20,10,10"
+                SelectionMode="None">
+                <Grid
+                    Grid.Row="0"
+                    Padding="0,0,10,10">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <PersonPicture x:Name="PpUser" Width="50" Tapped="OnUserProfilePictureTapped" PointerEntered="OnPointerEntered" PointerExited="OnPointerExited"/>
+                    <Border
+                        BorderBrush="{ThemeResource FixedGray6}"
+                        BorderThickness="0.5"
+                        Width="50"
+                        Height="50"
+                        CornerRadius="25"/>
+                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="10">
+                        <TextBlock x:Name="TbName" Text="" FontWeight="Bold"/>
+                        <TextBlock x:Name="TbTime" Text="" Foreground="{ThemeResource Gray6}" Tapped="OnTimeTapped" PointerEntered="OnPointerEntered" PointerExited="OnPointerExited" HorizontalAlignment="Left"/>
+                    </StackPanel>
+                    <Grid Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Top">
+                        <StackPanel x:Name="SpShare" Orientation="Horizontal" Visibility="Collapsed">
+                            <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe8eb;" Foreground="{ThemeResource Gray6}" FontSize="15"/>
+                            <TextBlock x:Name="TbShareCount" Foreground="{ThemeResource Gray6}" Margin="5,0,0,0" FontSize="15"/>
+                        </StackPanel>
+                    </Grid>
+                    <Rectangle x:Name="RtShare" Visibility="Collapsed" Fill="Transparent" Grid.Column="1" IsHitTestVisible="True" HorizontalAlignment="Right" VerticalAlignment="Top" Tapped="OnSharedPostShareCountTapped" Width="50" Height="50" Margin="-10" PointerEntered="OnPointerEntered" PointerExited="OnPointerExited"/>
+                    <StackPanel x:Name="SpMenu" Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Top" Orientation="Horizontal">
+                        <Viewbox>
+                            <FontIcon x:Name="FiFavorite" FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe735;" Foreground="{ThemeResource Gray6}" FontSize="20" Tapped="OnAddBookmarkTapped" Margin="5,0,10,0" PointerEntered="OnPointerEntered" PointerExited="OnPointerExited"/>
+                        </Viewbox>
+                        <Viewbox>
+                            <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe712;" Foreground="{ThemeResource Gray6}" FontSize="20" Tapped="OnDotMenuTapped" Margin="5,0,0,0" PointerEntered="OnPointerEntered" PointerExited="OnPointerExited"/>
+                        </Viewbox>
+                    </StackPanel>
+                </Grid>
+                
+                <RichTextBlock x:Name="RTbContent" TextWrapping="Wrap" Margin="0,0,0,10" IsTextSelectionEnabled="True">
+                    <Paragraph>
+                        <InlineUIContainer/>
+                    </Paragraph>
+                </RichTextBlock>
+                
+                <Grid x:Name="GvMedia" Margin="0,0,0,0" HorizontalAlignment="Stretch">
+                    <Rectangle Stroke="{ThemeResource Gray6}"/>
+                    <FlipView x:Name="FvMedia" HorizontalAlignment="Stretch" VerticalAlignment="Center" MaxHeight="400" Margin="1" Tapped="OnMediaTapped" SelectionChanged="OnMediaFlipViewSelectionChanged">
+                        <FlipView.ItemTemplate>
+                            <DataTemplate>
+                                <Frame Content="{Binding}"/>
+                            </DataTemplate>
+                        </FlipView.ItemTemplate>
+                    </FlipView>
+                </Grid>
+                <Grid x:Name="GdShare">
+                    <Frame x:Name="FrShare" Tapped="OnSharePostTapped"/>
+                    <Border
+                        BorderBrush="{ThemeResource Gray6}"
+                        BorderThickness="1"
+                        CornerRadius="10"/>
+                </Grid>
+                <Frame x:Name="FrLink"/>
+            </ListView>
+            <Grid
+                x:Name="GdPostInformation"
+                Grid.Row="3"
+                Height="40"
+                Background="{ThemeResource White2}"
+                Padding="0,0,0,0">
+                <StackPanel
+                    x:Name="SpPostInformation"
+                    Orientation="Horizontal"
+                    Margin="13.5,0,0,0"
+                    VerticalAlignment="Center"
+                    Visibility="Visible">
+                    <RichTextBlock x:Name="RtbComments" IsTextSelectionEnabled="False">
+                        <Paragraph>
+                            <Run Text="댓글"/>
+                            <Run x:Name="RnComments" Text="0" FontWeight="Bold"/>
+                        </Paragraph>
+                    </RichTextBlock>
+
+                    <RichTextBlock x:Name="RtbEmotions" Margin="10,0,0,0" Tapped="OnEmotionsTextBlockTapped" IsTextSelectionEnabled="False" PointerEntered="OnPointerEntered" PointerExited="OnPointerExited">
+                        <Paragraph>
+                            <Run Text="느낌"/>
+                            <Run x:Name="RnEmotions" Text="0" FontWeight="Bold"/>
+                        </Paragraph>
+                    </RichTextBlock>
+
+                    <RichTextBlock x:Name="RtbShares" Margin="10,0,0,0" Tag="Share" Tapped="OnShareCountTextBlockTapped" IsTextSelectionEnabled="False" PointerEntered="OnPointerEntered" PointerExited="OnPointerExited">
+                        <Paragraph>
+                            <Run Text="공유"/>
+                            <Run x:Name="RnShares" Text="0" FontWeight="Bold"/>
+                        </Paragraph>
+                    </RichTextBlock>
+
+                    <RichTextBlock x:Name="RtbUps" Margin="10,0,0,0" Tag="Up" Tapped="OnShareCountTextBlockTapped" IsTextSelectionEnabled="False" PointerEntered="OnPointerEntered" PointerExited="OnPointerExited">
+                        <Paragraph>
+                            <Run Text="UP"/>
+                            <Run x:Name="RnUps" Text="0" FontWeight="Bold"/>
+                        </Paragraph>
+                    </RichTextBlock>
+                </StackPanel>
+            </Grid>
+            <Frame x:Name="FrShareMargin" Grid.Row="4" Visibility="Collapsed" PointerEntered="OnPointerEntered" PointerExited="OnPointerExited"/>
+            <Grid
+                x:Name="GdComment"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Stretch">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition x:Name="RdComment" Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                </Grid.RowDefinitions>
+
+                <ListView
+                    x:Name="LvComments"
+                    Grid.Row="1"
+                    SelectionMode="None"
+                    MaxHeight="200"
+                    Margin="-10,0,-5,0"
+                    Visibility="Collapsed"/>
+
+                <Grid
+                    Grid.Row="2"
+                    Visibility="Visible">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="50"/>
+                            <ColumnDefinition Width="auto"/>
+                        </Grid.ColumnDefinitions>
+                        <Frame x:Name="FrComment" Grid.Column="0" VerticalAlignment="Bottom" HorizontalAlignment="Stretch" Margin="30,10,5,10"/>
+                        <Button x:Name="BtCommentMore" Grid.Column="1" Height="30" VerticalAlignment="Bottom" HorizontalAlignment="Stretch" Margin="5,0,5,10">
+                            <Viewbox>
+                                <FontIcon x:Name="FiCommentMore"  FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe712;" FontSize="17" Foreground="{ThemeResource Gray4}"/>
+                            </Viewbox>
+                            <Button.Flyout>
+                                <Flyout>
+                                    <StackPanel Orientation="Horizontal">
+                                        <Button x:Name="BtAddMedia" Click="OnAddMediaButtonClicked">
+                                            <Viewbox>
+                                                <FontIcon x:Name="FiAddMedia" FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe7c5;"/>
+                                            </Viewbox>
+                                        </Button>
+                                        <Button x:Name="BtAddDcCon" Click="OnAddDcConButtonClicked" Margin="5,0,0,0">
+                                            <Grid>
+                                                <Viewbox x:Name="VbMandu">
+                                                    <Image Source="ms-appx:///Assets/mandu.png" Width="20" Height="20"/>
+                                                </Viewbox>
+                                                <Viewbox x:Name="VbDelete" Visibility="Collapsed">
+                                                    <FontIcon FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe74d;"/>
+                                                </Viewbox>
+                                            </Grid>
+                                        </Button>
+                                        <Button x:Name="BtAddEmoticon" Click="OnAddEmoticonButtonClicked" Margin="5,0,0,0">
+                                            <Viewbox>
+                                                <FontIcon x:Name="FiAddEmoticon" FontFamily="{StaticResource Fluent Icons}" Glyph="&#xe899;"/>
+                                            </Viewbox>
+                                        </Button>
+                                    </StackPanel>
+                                </Flyout>
+                            </Button.Flyout>
+                        </Button>
+                        <Button x:Name="BtSendComment" Height="30" Grid.Column="2" Margin="5,0,30,10" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Background="{ThemeResource Orange}" Click="OnSendCommentButtonClicked">
+                            <TextBlock Text="전송" Foreground="{ThemeResource FixedWhite}"/>
+                        </Button>
+                    </Grid>
+                </Grid>
+            </Grid>
+        </Grid>
+        
+        <Grid x:Name="GdLoading" Visibility="Collapsed">
+            <Rectangle Fill="{ThemeResource White}" Opacity="0.85"/>
+            <ProgressRing IsIndeterminate="True" IsActive="True" Width="150" Height="150"/>
+        </Grid>
+    </Grid>
+</UserControl>
+    

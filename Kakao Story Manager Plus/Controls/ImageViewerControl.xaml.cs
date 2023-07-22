@@ -6,6 +6,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using static KSMP.ApiHandler.DataType.CommentData;
+using static KSMP.ApiHandler.DataType.MailData;
 
 namespace KSMP.Controls;
 
@@ -24,7 +25,7 @@ public sealed partial class ImageViewerControl : UserControl
 
     private void OnScrollViewerTapped(object sender, TappedRoutedEventArgs e) => ResetImageSize((sender as ScrollViewer).Content as Image, sender as ScrollViewer);
 
-    private static void ResetImageSize(Image image, ScrollViewer scrollViewer)
+    public static void ResetImageSize(Image image, ScrollViewer scrollViewer)
     {
         float heightFactor = (float)scrollViewer.ViewportHeight / (float)image.ActualHeight;
         float widthFactor = (float)scrollViewer.ViewportWidth / (float)image.ActualWidth;
@@ -39,8 +40,8 @@ public sealed partial class ImageViewerControl : UserControl
     }
 
     private async void ImageLoaded(object sender, RoutedEventArgs e)
-    {
-        var image = sender as Image;
+	{
+		var image = sender as Image;
         var scrollViewer = image.Parent as ScrollViewer;
         await Task.Delay(100);
         ResetImageSize(image, scrollViewer);
@@ -69,6 +70,31 @@ public sealed partial class ImageViewerControl : UserControl
 		var path = file.Path;
 		await new WebClient().DownloadFileTaskAsync(url, path);
 		GdLoading.Visibility = Visibility.Collapsed;
+	}
+
+	public void ZoomIn()
+	{
+		var item = FvImages.ContainerFromItem(FvImages.SelectedItem) as FlipViewItem;
+		if (item != null)
+		{
+			var scrollViewer = item.ContentTemplateRoot as ScrollViewer;
+			if (scrollViewer != null)
+				scrollViewer.ChangeView(scrollViewer.ScrollableWidth / 2, scrollViewer.ScrollableHeight / 2, scrollViewer.ZoomFactor + 0.1f);
+		}
+	}
+
+    public void ZoomOut()
+	{
+		var item = FvImages.ContainerFromItem(FvImages.SelectedItem) as FlipViewItem;
+		if (item != null)
+		{
+			var scrollViewer = item.ContentTemplateRoot as ScrollViewer;
+			if (scrollViewer != null)
+            {
+                var image = scrollViewer.Content as Image;
+                ResetImageSize(image, scrollViewer);
+            }
+		}
 	}
 
 	private void OnImageSelectionChanged(object sender, SelectionChangedEventArgs e)

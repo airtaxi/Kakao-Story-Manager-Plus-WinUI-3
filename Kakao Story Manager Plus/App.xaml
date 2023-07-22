@@ -23,6 +23,7 @@
                     <SolidColorBrush x:Key="White4" Color="#E0E0E0"/>
                     <SolidColorBrush x:Key="White5" Color="#F8F8F8"/>
                     <SolidColorBrush x:Key="White6" Color="#D3D3D3"/>
+                    <SolidColorBrush x:Key="White7" Color="#F5F5F5"/>
 
                     <SolidColorBrush x:Key="Orange" Color="#E96A49"/>
 
@@ -49,6 +50,7 @@
                     <SolidColorBrush x:Key="White4" Color="#949494"/>
                     <SolidColorBrush x:Key="White5" Color="#272727"/>
                     <SolidColorBrush x:Key="White6" Color="#888888"/>
+                    <SolidColorBrush x:Key="White7" Color="#282828"/>
                     
                     <SolidColorBrush x:Key="Orange" Color="#E96A49"/>
                     

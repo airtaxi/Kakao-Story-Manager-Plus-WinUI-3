@@ -11,29 +11,43 @@ using Windows.Graphics;
 using WinRT.Interop;
 using static KSMP.ApiHandler.DataType.CommentData;
 using KSMP.Utils;
+using WinUIEx;
+using System.Threading.Tasks;
 
 namespace KSMP;
 
-public sealed partial class ImageViewerWindow : Window
+public sealed partial class ImageViewerWindow : WindowEx
 {
 	public ImageViewerWindow(List<Medium> urlList, int index)
 	{
 		InitializeComponent();
 		WindowHelper.SetupWindowTheme(this);
 
-		AppWindow.SetIcon(Path.Combine(App.BinaryDirectory, "icon.ico"));
-		AppWindow.TitleBar.ExtendsContentIntoTitleBar = true;
 
-		var white = Application.Current.Resources["White2"] as SolidColorBrush;
-		AppWindow.TitleBar.ButtonBackgroundColor = white.Color;
-		AppWindow.TitleBar.ButtonHoverBackgroundColor = white.Color;
-		AppWindow.TitleBar.ButtonInactiveBackgroundColor = white.Color;
-		AppWindow.TitleBar.ButtonPressedBackgroundColor = white.Color;
+		this.CenterOnScreen();
+		SystemBackdrop = new MicaBackdrop() { Kind = Microsoft.UI.Composition.SystemBackdrops.MicaKind.Base };
+		AppWindow.TitleBar.ExtendsContentIntoTitleBar = true;
+		AppWindow.TitleBar.ButtonBackgroundColor = Colors.Transparent;
+		AppWindow.TitleBar.ButtonInactiveBackgroundColor = Colors.Transparent;
+		GdTitleBar.Loaded += TitleBarGridLoaded;
+		GdTitleBar.SizeChanged += TitleBarGridSizeChanged;
+
+		var windowState = Configuration.GetValue("imageViewerWindowState") as WindowState;
+		if (windowState != null)
+		{
+			var wasMaximized = windowState.WasMaxmized;
+			AppWindow.ResizeClient(new(windowState.Width, windowState.Height));
+			if (wasMaximized) (AppWindow.Presenter as OverlappedPresenter).Maximize();
+		}
+
+		AppWindow.SetIcon(Path.Combine(App.BinaryDirectory, "icon.ico"));
 
 		FrMain.Content = new ImageViewerControl(urlList, index);
 		FrMain.UpdateLayout();
-		AdjustDragRectangle();
 	}
+
+	private void TitleBarGridLoaded(object sender, RoutedEventArgs e) => SetDragRegionForTitleBarGrid();
+	private void TitleBarGridSizeChanged(object sender, SizeChangedEventArgs e) => SetDragRegionForTitleBarGrid();
 
 	private enum Monitor_DPI_Type : int
 	{
@@ -62,21 +76,23 @@ public sealed partial class ImageViewerWindow : Window
 		return scaleFactorPercent / 100.0;
 	}
 
-	private void OnSizeChanged(object sender, SizeChangedEventArgs args) => AdjustDragRectangle();
-
-	private void AdjustDragRectangle()
+	private void SetDragRegionForTitleBarGrid()
 	{
-		var scale = GetScaleAdjustment();
+		var scaleAdjustment = GetScaleAdjustment();
 
-		var dragRects = new List<RectInt32>();
-		RectInt32 dragRect;
-		dragRect.X = (int)(30 * scale);
+		if (AppWindow.TitleBar.RightInset < 0 || AppWindow.TitleBar.LeftInset < 0) return;
+
+		List<Windows.Graphics.RectInt32> dragRectsList = new();
+		Windows.Graphics.RectInt32 dragRect;
+
+		dragRect.X = 0;
 		dragRect.Y = 0;
-		dragRect.Width = (int)((FrMain.ActualWidth - 30) * scale);
-		dragRect.Height = (int)(35 * scale);
-		dragRects.Add(dragRect);
+		dragRect.Height = (int)(GdTitleBar.ActualHeight * scaleAdjustment);
+		dragRect.Width = (int)((CdTitleBarIcon.ActualWidth + CdTitleBarMain.ActualWidth) * scaleAdjustment);
+		dragRectsList.Add(dragRect);
 
-		AppWindow.TitleBar.SetDragRectangles(dragRects.ToArray());
+		Windows.Graphics.RectInt32[] dragRects = dragRectsList.ToArray();
+		AppWindow.TitleBar.SetDragRectangles(dragRects);
 	}
 
 	private async void OnPreviewKeyDown(object sender, Microsoft.UI.Xaml.Input.KeyRoutedEventArgs e)
@@ -89,5 +105,34 @@ public sealed partial class ImageViewerWindow : Window
 			await (FrMain.Content as ImageViewerControl).DownloadImage();
 		else if (isControlDown && e.Key == Windows.System.VirtualKey.W)
 			Close();
+	}
+
+	private void OnWindowClosed(object sender, WindowEventArgs args)
+	{
+		var appWindow = AppWindow;
+		var presenter = appWindow?.Presenter as OverlappedPresenter;
+		var isMaximized = presenter?.State == OverlappedPresenterState.Maximized;
+
+		var windowState = Configuration.GetValue("imageViewerWindowState") as WindowState ?? new();
+
+		windowState.WasMaxmized = isMaximized;
+		if (!isMaximized)
+		{
+			var width = AppWindow.ClientSize.Width;
+			var height = AppWindow.ClientSize.Height;
+			windowState.Width = width;
+			windowState.Height = height;
+		}
+		Configuration.SetValue("imageViewerWindowState", windowState);
+	}
+
+	private void OnZoomInButtonClicked(object sender, RoutedEventArgs e) => (FrMain.Content as ImageViewerControl).ZoomIn();
+	private void OnZoomOutButtonClicked(object sender, RoutedEventArgs e) => (FrMain.Content as ImageViewerControl).ZoomOut();
+	private async void OnSaveButtonClicked(object sender, RoutedEventArgs e) => await (FrMain.Content as ImageViewerControl).DownloadImage();
+
+	private async void OnGridSizeChanged(object sender, SizeChangedEventArgs e)
+	{
+		await Task.Delay(100);
+		(FrMain.Content as ImageViewerControl)?.ZoomOut();
 	}
 }

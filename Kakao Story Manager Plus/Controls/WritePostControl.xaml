@@ -70,7 +70,12 @@
                 </ListView.ItemsPanel>
                 <ListView.ItemTemplate>
                     <DataTemplate>
-                        <Image Source="{Binding Thumbnail}" Tag="{Binding}" Margin="10"/>
+                        <Grid Background="{ThemeResource White2}" CornerRadius="10" Margin="-10,0,-10,0">
+                            <Image
+                                Source="{Binding Thumbnail}"
+                                Tag="{Binding}"
+                                Margin="10"/>
+                        </Grid>
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>

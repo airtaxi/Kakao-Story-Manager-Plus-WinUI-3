@@ -12,7 +12,7 @@
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="300"/>
         </Grid.ColumnDefinitions>
-        <Frame x:Name="FrContent" CornerRadius="10"/>
+        <Frame x:Name="FrContent" CornerRadius="0,10,0,0"/>
         <Grid Background="{ThemeResource White}" Grid.Column="1">
             <Grid.RowDefinitions>
                 <RowDefinition Height="auto"/>
