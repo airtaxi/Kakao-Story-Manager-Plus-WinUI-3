@@ -17,9 +17,9 @@
 		<ApplicationIcon>icon.ico</ApplicationIcon>
 		<Nullable>disable</Nullable>
 		<PlatformTarget>AnyCPU</PlatformTarget>
-		<FileVersion>0.1.0.281</FileVersion>
-		<AssemblyVersion>0.1.0.281</AssemblyVersion>
-		<Version>0.1.0.281</Version>
+		<FileVersion>0.1.0.282</FileVersion>
+		<AssemblyVersion>0.1.0.282</AssemblyVersion>
+		<Version>0.1.0.282</Version>
 	</PropertyGroup>
 	<ItemGroup>
 		<Content Remove="Assets\Error.png" />
