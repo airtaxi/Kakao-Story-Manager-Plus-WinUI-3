@@ -86,7 +86,8 @@ public sealed partial class TimelineWindowControl : UserControl
             FrShareMargin.Visibility = Visibility.Visible;
             LvContent.Padding = new Thickness(10, 20, 10, 0);
             GdMain.Margin = new Thickness(0, 0, 0, -15);
-        }
+			GdMain.Background = Application.Current.Resources["White2"] as SolidColorBrush;
+		}
 
         if (!isShare)
         {

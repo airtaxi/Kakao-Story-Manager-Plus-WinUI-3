@@ -89,7 +89,6 @@ public sealed partial class TimelineControl : UserControl
             BdShare.Visibility = Visibility.Visible;
             LvContent.Padding = new Thickness(0, 0, 0, 20);
             GdMain.Margin = new Thickness(0);
-			GdMain.Background = Application.Current.Resources["White2"] as SolidColorBrush;
 		}
 
         InitializeFlyout();
