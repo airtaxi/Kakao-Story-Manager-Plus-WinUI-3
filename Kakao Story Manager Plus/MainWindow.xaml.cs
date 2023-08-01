@@ -277,15 +277,15 @@ public sealed partial class MainWindow : Window
 		AppTitleBar.SizeChanged -= AppTitleBarSizeChanged;
 	}
 
-    private async void OnPreviewKeyDown(object sender, KeyRoutedEventArgs e)
+    private void OnPreviewKeyDown(object sender, KeyRoutedEventArgs e)
     {
         var isControlDown = Common.IsModifierDown();
 
-        if (e.Key == Windows.System.VirtualKey.Escape)
-            Close();
-        else if (isControlDown && e.Key == Windows.System.VirtualKey.W)
-            Close();
-        else if (isControlDown && e.Key == Windows.System.VirtualKey.Q) Utility.SaveCurrentStateAndRestartProgram();
+        //if (e.Key == Windows.System.VirtualKey.Escape)
+        //    Close();
+        //else if (isControlDown && e.Key == Windows.System.VirtualKey.W)
+        //    Close();
+        if (isControlDown && e.Key == Windows.System.VirtualKey.Q) Utility.SaveCurrentStateAndRestartProgram();
     }
 
     public static async void ShowMenus()

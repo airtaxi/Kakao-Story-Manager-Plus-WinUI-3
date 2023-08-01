@@ -102,9 +102,13 @@ public sealed partial class ImageViewerWindow : WindowEx
 		if (e.Key == Windows.System.VirtualKey.Escape)
 			Close();
 		if ((isControlDown && e.Key == Windows.System.VirtualKey.R) || e.Key == Windows.System.VirtualKey.F5)
-			await (FrMain.Content as ImageViewerControl).DownloadImage();
+			await (FrMain.Content as ImageViewerControl).DownloadImageAsync();
 		else if (isControlDown && e.Key == Windows.System.VirtualKey.W)
 			Close();
+		else if (isControlDown && e.Key == Windows.System.VirtualKey.S)
+			await (FrMain.Content as ImageViewerControl).DownloadImageAsync();
+		else if (isControlDown && e.Key == Windows.System.VirtualKey.C)
+			await (FrMain.Content as ImageViewerControl).CopyImageAsync();
 	}
 
 	private void OnWindowClosed(object sender, WindowEventArgs args)
@@ -128,7 +132,7 @@ public sealed partial class ImageViewerWindow : WindowEx
 
 	private void OnZoomInButtonClicked(object sender, RoutedEventArgs e) => (FrMain.Content as ImageViewerControl).ZoomIn();
 	private void OnZoomOutButtonClicked(object sender, RoutedEventArgs e) => (FrMain.Content as ImageViewerControl).ZoomOut();
-	private async void OnSaveButtonClicked(object sender, RoutedEventArgs e) => await (FrMain.Content as ImageViewerControl).DownloadImage();
+	private async void OnSaveButtonClicked(object sender, RoutedEventArgs e) => await (FrMain.Content as ImageViewerControl).DownloadImageAsync();
 
 	private async void OnGridSizeChanged(object sender, SizeChangedEventArgs e)
 	{

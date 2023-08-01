@@ -103,12 +103,12 @@ namespace KSMP
 		{
 			var isControlDown = Common.IsModifierDown();
 
-			if (e.Key == Windows.System.VirtualKey.Escape)
-				Close();
+			//if (e.Key == Windows.System.VirtualKey.Escape)
+			//	Close();
 			if ((isControlDown && e.Key == Windows.System.VirtualKey.R) || e.Key == Windows.System.VirtualKey.F5)
 				await (FrMain.Content as NotificationControl).Refresh();
-			else if (isControlDown && e.Key == Windows.System.VirtualKey.W)
-				Close();
+			//else if (isControlDown && e.Key == Windows.System.VirtualKey.W)
+			//	Close();
 		}
 	}
 }

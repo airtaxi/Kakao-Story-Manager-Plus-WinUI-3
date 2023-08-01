@@ -47,20 +47,14 @@ public sealed partial class ImageViewerControl : UserControl
         ResetImageSize(image, scrollViewer);
     }
 
-    private async void OnScrollViewerRightTapped(object sender, RightTappedRoutedEventArgs e)
-    {
-        var index = FvImages.SelectedIndex;
-        var list = FvImages.ItemsSource as List<Medium>;
-        var medium = list[index];
-        await Utility.SetImageClipboardFromUrl(medium.origin_url);
-    }
 
-    private void OnButtonPointerEntered(object sender, PointerRoutedEventArgs e) => Utility.ChangeSystemMouseCursor(true);
+	private void OnButtonPointerEntered(object sender, PointerRoutedEventArgs e) => Utility.ChangeSystemMouseCursor(true);
     private void OnButtonPointerExited(object sender, PointerRoutedEventArgs e) => Utility.ChangeSystemMouseCursor(false);
 
-	private async void DownloadButtonTapped(object sender, TappedRoutedEventArgs e) => await DownloadImage();
+	private async void DownloadButtonTapped(object sender, TappedRoutedEventArgs e) => await DownloadImageAsync();
+	private async void OnScrollViewerRightTapped(object sender, RightTappedRoutedEventArgs e) => await CopyImageAsync();
 
-	public async Task DownloadImage()
+	public async Task DownloadImageAsync()
 	{
 		var medium = FvImages.SelectedItem as Medium;
 		var url = medium.origin_url;
@@ -70,6 +64,14 @@ public sealed partial class ImageViewerControl : UserControl
 		var path = file.Path;
 		await new WebClient().DownloadFileTaskAsync(url, path);
 		GdLoading.Visibility = Visibility.Collapsed;
+	}
+
+	public async Task CopyImageAsync()
+	{
+		var index = FvImages.SelectedIndex;
+		var list = FvImages.ItemsSource as List<Medium>;
+		var medium = list[index];
+		await Utility.SetImageClipboardFromUrl(medium.origin_url);
 	}
 
 	public void ZoomIn()

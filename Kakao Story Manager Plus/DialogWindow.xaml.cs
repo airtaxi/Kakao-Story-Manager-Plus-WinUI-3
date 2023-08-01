@@ -42,7 +42,6 @@ public sealed partial class DialogWindow : WindowEx
 		PresenterKind = AppWindowPresenterKind.CompactOverlay;
 
 
-		this.CenterOnScreen();
 		SystemBackdrop = new MicaBackdrop() { Kind = Microsoft.UI.Composition.SystemBackdrops.MicaKind.Base };
 		AppWindow.TitleBar.ExtendsContentIntoTitleBar = true;
 		AppWindow.TitleBar.ButtonBackgroundColor = Colors.Transparent;
@@ -85,6 +84,7 @@ public sealed partial class DialogWindow : WindowEx
 			Timer = null;
 			var height = GdMain.ActualHeight + 10;
 			Height = height;
+			this.CenterOnScreen();
 		}
 		RdDescription.Height = GridLength.Auto;
 	}

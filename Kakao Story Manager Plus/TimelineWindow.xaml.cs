@@ -298,8 +298,8 @@ public sealed partial class TimelineWindow : WindowEx
 			await Control.EditPost();
 		else if (isControlDown && e.Key == Windows.System.VirtualKey.D)
 			await Control.DeletePost();
-		else if (isControlDown && e.Key == Windows.System.VirtualKey.W)
-			Close();
+		//else if (isControlDown && e.Key == Windows.System.VirtualKey.W)
+		//	Close();
 	}
 
 	private async void OnRefreshButtonClicked(object sender, RoutedEventArgs e) => await RefreshContent();
