@@ -47,11 +47,12 @@ public sealed partial class TimelineWindow : WindowEx
 		if(windowState != null)
 		{
 			var wasMaximized = windowState.WasMaxmized;
-			if (wasMaximized) (AppWindow.Presenter as OverlappedPresenter).Maximize();
+			if (wasMaximized) this.Maximize();
 			else
 			{
 				Width = windowState.Width;
 				Height = windowState.Height;
+				this.CenterOnScreen();
 			}
 		}
 
@@ -59,7 +60,6 @@ public sealed partial class TimelineWindow : WindowEx
 		Initialize();
 		Control = new TimelineWindowControl(this, postData, false, true);
 		FrMain.Content = Control;
-		this.CenterOnScreen();
 	}
 
 	private async void Initialize()

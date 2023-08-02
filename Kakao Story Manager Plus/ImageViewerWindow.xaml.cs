@@ -35,11 +35,12 @@ public sealed partial class ImageViewerWindow : WindowEx
 		if (windowState != null)
 		{
 			var wasMaximized = windowState.WasMaxmized;
-			if (wasMaximized) (AppWindow.Presenter as OverlappedPresenter).Maximize();
+			if (wasMaximized) this.Maximize();
 			else
 			{
 				Width = windowState.Width;
 				Height = windowState.Height;
+				this.CenterOnScreen();
 			}
 		}
 
@@ -47,7 +48,6 @@ public sealed partial class ImageViewerWindow : WindowEx
 
 		FrMain.Content = new ImageViewerControl(urlList, index);
 		FrMain.UpdateLayout();
-		this.CenterOnScreen();
 	}
 
 	private void TitleBarGridLoaded(object sender, RoutedEventArgs e) => SetDragRegionForTitleBarGrid();
