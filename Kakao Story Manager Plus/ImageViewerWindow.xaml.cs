@@ -122,10 +122,10 @@ public sealed partial class ImageViewerWindow : WindowEx
 		windowState.WasMaxmized = isMaximized;
 		if (!isMaximized)
 		{
-			var width = AppWindow.ClientSize.Width;
-			var height = AppWindow.ClientSize.Height;
-			windowState.Width = width;
-			windowState.Height = height;
+			var width = Width;
+			var height = Height;
+			windowState.Width = (int)width;
+			windowState.Height = (int)height;
 		}
 		Configuration.SetValue("imageViewerWindowState", windowState);
 	}
