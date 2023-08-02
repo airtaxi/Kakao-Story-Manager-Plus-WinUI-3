@@ -36,7 +36,6 @@ public sealed partial class TimelineWindow : WindowEx
 
 		InitializeComponent();
 
-		this.CenterOnScreen();
 		SystemBackdrop = new MicaBackdrop() { Kind = Microsoft.UI.Composition.SystemBackdrops.MicaKind.Base };
 		AppWindow.TitleBar.ExtendsContentIntoTitleBar = true;
 		AppWindow.TitleBar.ButtonBackgroundColor = Colors.Transparent;
@@ -48,7 +47,8 @@ public sealed partial class TimelineWindow : WindowEx
 		if(windowState != null)
 		{
 			var wasMaximized = windowState.WasMaxmized;
-			AppWindow.ResizeClient(new(windowState.Width, windowState.Height));
+			Width = windowState.Width;
+			Height = windowState.Height;
 			if (wasMaximized) (AppWindow.Presenter as OverlappedPresenter).Maximize();
 		}
 
@@ -56,6 +56,7 @@ public sealed partial class TimelineWindow : WindowEx
 		Initialize();
 		Control = new TimelineWindowControl(this, postData, false, true);
 		FrMain.Content = Control;
+		this.CenterOnScreen();
 	}
 
 	private async void Initialize()

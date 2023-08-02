@@ -13,6 +13,7 @@ using static KSMP.ApiHandler.DataType.CommentData;
 using KSMP.Utils;
 using WinUIEx;
 using System.Threading.Tasks;
+using Windows.Devices.WiFiDirect;
 
 namespace KSMP;
 
@@ -23,8 +24,6 @@ public sealed partial class ImageViewerWindow : WindowEx
 		InitializeComponent();
 		WindowHelper.SetupWindowTheme(this);
 
-
-		this.CenterOnScreen();
 		SystemBackdrop = new MicaBackdrop() { Kind = Microsoft.UI.Composition.SystemBackdrops.MicaKind.Base };
 		AppWindow.TitleBar.ExtendsContentIntoTitleBar = true;
 		AppWindow.TitleBar.ButtonBackgroundColor = Colors.Transparent;
@@ -36,7 +35,8 @@ public sealed partial class ImageViewerWindow : WindowEx
 		if (windowState != null)
 		{
 			var wasMaximized = windowState.WasMaxmized;
-			AppWindow.ResizeClient(new(windowState.Width, windowState.Height));
+			Width = windowState.Width;
+			Height= windowState.Height;
 			if (wasMaximized) (AppWindow.Presenter as OverlappedPresenter).Maximize();
 		}
 
@@ -44,6 +44,7 @@ public sealed partial class ImageViewerWindow : WindowEx
 
 		FrMain.Content = new ImageViewerControl(urlList, index);
 		FrMain.UpdateLayout();
+		this.CenterOnScreen();
 	}
 
 	private void TitleBarGridLoaded(object sender, RoutedEventArgs e) => SetDragRegionForTitleBarGrid();
