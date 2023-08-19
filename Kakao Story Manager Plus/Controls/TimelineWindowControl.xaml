@@ -27,7 +27,7 @@
                 Grid.Row="1"
                 Background="{ThemeResource White2}"
                 CornerRadius="0,10,0,0"
-                Padding="10,20,10,10"
+                Padding="10,20,10,20"
                 SelectionMode="None">
                 <Grid
                     Grid.Row="0"
