@@ -62,12 +62,12 @@
 		<PackageReference Include="CommunityToolkit.WinUI.UI" Version="7.1.2" />
 		<PackageReference Include="CommunityToolkit.WinUI.UI.Animations" Version="7.1.2" />
 		<PackageReference Include="CommunityToolkit.WinUI.UI.Controls" Version="7.1.2" />
-		<PackageReference Include="H.NotifyIcon.WinUI" Version="2.0.115" />
-		<PackageReference Include="Magick.NET-Q16-AnyCPU" Version="13.2.0" />
-		<PackageReference Include="Magick.NET.Core" Version="13.2.0" />
+		<PackageReference Include="H.NotifyIcon.WinUI" Version="2.0.118" />
+		<PackageReference Include="Magick.NET-Q16-AnyCPU" Version="13.3.0" />
+		<PackageReference Include="Magick.NET.Core" Version="13.3.0" />
 		<PackageReference Include="Microsoft.Toolkit.Uwp.Notifications" Version="7.1.3" />
 		<PackageReference Include="Microsoft.Windows.CsWinRT" Version="2.0.3" />
-		<PackageReference Include="Microsoft.WindowsAppSDK" Version="1.4.230811000-preview2" />
+		<PackageReference Include="Microsoft.WindowsAppSDK" Version="1.4.230913002" />
 		<PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.756" />
 		<PackageReference Include="MimeTypes" Version="2.4.1">
 			<PrivateAssets>all</PrivateAssets>
@@ -75,11 +75,11 @@
 		</PackageReference>
 		<PackageReference Include="PInvoke.Win32" Version="0.7.124" />
 		<PackageReference Include="RestSharp" Version="110.2.0" />
-		<PackageReference Include="Selenium.Support" Version="4.11.0" />
-		<PackageReference Include="Selenium.WebDriver" Version="4.11.0" />
+		<PackageReference Include="Selenium.Support" Version="4.12.4" />
+		<PackageReference Include="Selenium.WebDriver" Version="4.12.4" />
 		<PackageReference Include="SeleniumExtras.WaitHelpers" Version="1.0.2" />
 		<PackageReference Include="WebDriverManager" Version="2.17.1" />
-		<PackageReference Include="WinUIEx" Version="2.2.0" />
+		<PackageReference Include="WinUIEx" Version="2.3.0" />
 		<Manifest Include="$(ApplicationManifest)" />
 	</ItemGroup>
 
