@@ -17,9 +17,9 @@
 		<ApplicationIcon>icon.ico</ApplicationIcon>
 		<Nullable>disable</Nullable>
 		<PlatformTarget>AnyCPU</PlatformTarget>
-		<FileVersion>0.1.0.294</FileVersion>
-		<AssemblyVersion>0.1.0.294</AssemblyVersion>
-		<Version>0.1.0.294</Version>
+		<FileVersion>0.1.0.295</FileVersion>
+		<AssemblyVersion>0.1.0.295</AssemblyVersion>
+		<Version>0.1.0.295</Version>
 	</PropertyGroup>
 	<ItemGroup>
 		<Content Remove="Assets\Error.png" />
@@ -79,7 +79,7 @@
 		<PackageReference Include="Selenium.WebDriver" Version="4.12.4" />
 		<PackageReference Include="SeleniumExtras.WaitHelpers" Version="1.0.2" />
 		<PackageReference Include="WebDriverManager" Version="2.17.1" />
-		<PackageReference Include="WinUIEx" Version="2.3.0" />
+		<PackageReference Include="WinUIEx" Version="2.3.2" />
 		<Manifest Include="$(ApplicationManifest)" />
 	</ItemGroup>
 
