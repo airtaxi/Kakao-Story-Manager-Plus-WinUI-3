@@ -201,15 +201,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Kakao Story Manager Plus"
-        "ProductCode" = "8:{2E38812F-F735-4926-A4E5-77AEAF90B1D2}"
-        "PackageCode" = "8:{C81DBBA0-AB49-461C-957D-9E288F4E85B4}"
+        "ProductCode" = "8:{A63EE024-CEE8-4940-953C-EDCB5E77C3C9}"
+        "PackageCode" = "8:{433652EB-F7D3-40C9-B058-5169D97DB010}"
         "UpgradeCode" = "8:{CF6B712E-4C0E-43F0-9685-5B70D93AC822}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:FALSE"
-        "ProductVersion" = "8:1.0.295"
+        "ProductVersion" = "8:1.0.296"
         "Manufacturer" = "8:Howon Lee"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:https://kagamine-rin.com"
@@ -751,7 +751,7 @@
         {
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_0226358607B14614B6E2A2DBB2C36DBD"
             {
-            "SourcePath" = "8:..\\Kakao Story Manager Plus\\obj\\x64\\Debug\\net7.0-windows10.0.19041.0\\win10-x64\\apphost.exe"
+            "SourcePath" = "8:"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_D2F08FF79DE641A8804581F1BFAC78DF"
