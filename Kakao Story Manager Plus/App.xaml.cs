@@ -28,28 +28,11 @@ public partial class App : Application
             AppDomain.CurrentDomain.UnhandledException += OnAppDomainUnhandledException;
             TaskScheduler.UnobservedTaskException += OnTaskSchedulerUnobservedTaskException;
 
-            if (CheckForExistingProcess()) ExitProgramByExistingProcess();
-            else InitializeComponent();
+            //if (CheckForExistingProcess()) ExitProgramByExistingProcess();
+            InitializeComponent();
         }
         catch (Exception exception) { _ = HandleException(exception); }
     }
-
-    private void ExitProgramByExistingProcess()
-    {
-        var builder = new ToastContentBuilder()
-        .AddText("안내")
-        .AddText("프로그램이 이미 실행중입니다.");
-        builder.Show();
-        Environment.Exit(0);
-    }
-
-    private static bool CheckForExistingProcess()
-    {
-        var process = Process.GetCurrentProcess();
-        var processes = Process.GetProcesses();
-        return processes.Any(x => x.ProcessName == process.ProcessName && x.Id != process.Id);
-    }
-
 
     private async Task HandleException(Exception exception)
     {

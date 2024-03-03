@@ -988,7 +988,7 @@ public partial class ApiHandler
     {
         using var fileStream = new StreamReader(asset.Path);
 
-        string requestURI = "https://up-api-kage-4story.kakao.com/web/webstory-img/";
+        string requestURI = await GetUploadUrl(true);
 
         string boundary = "----" + DateTime.Now.Ticks.ToString("x");
 
