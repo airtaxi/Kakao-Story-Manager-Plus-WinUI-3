@@ -448,7 +448,7 @@ public static class Utility
 			await ShowMessageDialogAsync($"프로그램 업데이트가 필요합니다.\n확인을 누르시면 업데이트를 진행합니다.\n\n클라이언트 버전: {localVersionString}\n최신 버전: {remoteVersionString}", "안내");
 			progressFuncion(true, "업데이터 다운로드 초기화중", -1);
 
-			var tempFile = Path.Combine(Path.GetTempPath(), $"KSMP_{remoteVersionString}.msi");
+			var tempFile = Path.Combine(Path.GetTempPath(), $"KSMP_{remoteVersionString}.exe");
 
 			client.DownloadFileCompleted += (_, _) =>
 			{
@@ -459,7 +459,7 @@ public static class Utility
 			client.DownloadProgressChanged += (_, e) =>
 				progressFuncion(true, $"업데이터 다운로드중 ({e.ProgressPercentage}%)", e.ProgressPercentage);
 
-			await client.DownloadFileTaskAsync(new Uri("https://kagamine-rin.com/KSMP/Installer.msi"), tempFile);
+			await client.DownloadFileTaskAsync(new Uri("https://kagamine-rin.com/KSMP/Installer.exe"), tempFile);
 		}
 	}
 
