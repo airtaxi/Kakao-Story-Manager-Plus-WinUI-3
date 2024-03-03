@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using RestSharp;
 using System;
 using System.Collections.Generic;
@@ -748,12 +749,54 @@ public partial class ApiHandler
     {
         s.Write(bytes, 0, bytes.Length);
     }
-    public static async Task<UploadedImageProp> UploadImage(string filepath, int retryCount = 0)
+
+    private static async Task<string> GetUploadUrl(bool isImage)
+    {
+        using var client = new RestClient("https://story.kakao.com/a/web/media/upload-url");
+        var request = new RestRequest();
+        request.Method = Method.Post;
+        request.CookieContainer = s_cookieContainer;
+        request.AddHeader("Accept", "application/json");
+        request.AddHeader("Accept-Encoding", "gzip, deflate, br");
+        request.AddHeader("Accept-Language", "ko");
+        request.AddHeader("Origin", "https://story.kakao.com");
+        request.AddHeader("Referer", "https://story.kakao.com/");
+        request.AddHeader("Sec-Ch-Ua", "\"Chromium\";v=\"122\", \"Not(A:Brand\";v=\"24\", \"Microsoft Edge\";v=\"122\"");
+        request.AddHeader("Sec-Ch-Ua-Mobile", "?0");
+        request.AddHeader("Sec-Ch-Ua-Platform", "\"Windows\"");
+        request.AddHeader("Sec-Fetch-Dest", "empty");
+        request.AddHeader("Sec-Fetch-Mode", "cors");
+        request.AddHeader("Sec-Fetch-Site", "same-origin");
+        request.AddHeader("X-Kakao-Apilevel", "49");
+        request.AddHeader("X-Kakao-Deviceinfo", "web:d;-;-");
+        request.AddHeader("X-Kakao-Vc", "185412afe1da9580e67f");
+        request.AddHeader("X-Requested-With", "XMLHttpRequest");
+
+        request.AddHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+        if (isImage)
+        {
+            request.AddParameter("config", "/web/webstory-img");
+            request.AddParameter("upload_url", "https://up-api-kage-4story.kakao.com");
+        }
+        else
+        {
+            request.AddParameter("config", "/web/webstory-video");
+            request.AddParameter("upload_url", "https://up-api-kage-4story-video.kakao.com");
+        }
+
+        var response = await client.ExecuteAsync(request);
+        var content = response.Content;
+        var jsonObject = JObject.Parse(content);
+        var uploadUrl = jsonObject["url"].ToString();
+        return uploadUrl;
+    }
+
+    public static async Task<UploadedImageProp> UploadImage(string filepath)
     {
         string filename = Path.GetFileName(filepath);
-        using StreamReader fileStream = new StreamReader(filepath);
+        StreamReader fileStream = new StreamReader(filepath);
 
-        string requestURI = "https://up-api-kage-4story.kakao.com/web/webstory-img/";
+        string requestURI = await GetUploadUrl(true);
 
         HttpWebRequest request = WebRequest.CreateHttp(requestURI);
         request.Method = "POST";
@@ -762,7 +805,7 @@ public partial class ApiHandler
         request.CookieContainer = s_cookieContainer;
 
         request.Headers["X-Kakao-DeviceInfo"] = "web:d;-;-";
-        request.Headers["X-Kakao-ApiLevel"] = "49";
+        request.Headers["X-Kakao-ApiLevel"] = "45";
         request.Headers["X-Requested-With"] = "XMLHttpRequest";
         request.Headers["X-Kakao-VC"] = "1b242cf8fa50f1f96765";
         request.Headers["Cache-Control"] = "max-age=0";
@@ -784,45 +827,20 @@ public partial class ApiHandler
 
         WriteMultipartForm(writeStream, boundary, null, filename, MimeTypes.GetMimeType(filename), fileStream.BaseStream);
 
-        try
-        {
-            var readStream = await request.GetResponseAsync();
-            var respReader = readStream.GetResponseStream();
+        var readStream = await request.GetResponseAsync();
+        var respReader = readStream.GetResponseStream();
 
-            using var reader = new StreamReader(respReader, Encoding.UTF8);
-            string respResult = await reader.ReadToEndAsync();
-            respReader.Close();
+        string respResult = await (new StreamReader(respReader, Encoding.UTF8)).ReadToEndAsync();
+        respReader.Close();
 
-            UploadedImageProp result = JsonConvert.DeserializeObject<UploadedImageProp>(respResult);
-            return result;
-        }
-        catch (WebException e)
-        {
-            int statusCode = -1;
-            var statusCodeObject = e.Response as HttpWebResponse;
-            if (statusCodeObject?.StatusCode != null) statusCode = (int)statusCodeObject.StatusCode;
-
-            if (statusCode == 403) return null;
-            else if (statusCode == 404) return null;
-            else if (statusCode == 401)
-            {
-                var success = await OnReloginRequired?.Invoke();
-                if (!success) return null;
-                return await UploadImage(filepath, ++retryCount);
-            }
-            else
-            {
-                if (retryCount < MaxRetryCount)
-                    return await UploadImage(filepath, ++retryCount);
-            }
-        }
-        return null;
+        UploadedImageProp result = JsonConvert.DeserializeObject<UploadedImageProp>(respResult);
+        return result;
     }
     public static async Task<string> UploadVideo(AssetData asset)
     {
-        using var fileStream = new StreamReader(asset.Path);
+        StreamReader fileStream = new StreamReader(asset.Path);
 
-        string requestURI = "https://up-api-kage-4story-video.kakao.com/web/webstory-video/";
+        string requestURI = await GetUploadUrl(false);
 
         string boundary = "----" + DateTime.Now.Ticks.ToString("x");
 
@@ -832,7 +850,7 @@ public partial class ApiHandler
         request.CookieContainer = s_cookieContainer;
 
         request.Headers["X-Kakao-DeviceInfo"] = "web:d;-;-";
-        request.Headers["X-Kakao-ApiLevel"] = "49";
+        request.Headers["X-Kakao-ApiLevel"] = "46";
         request.Headers["X-Requested-With"] = "XMLHttpRequest";
         request.Headers["X-Kakao-VC"] = "185412afe1da9580e67f";
         request.Headers["Cache-Control"] = "max-age=0";
@@ -852,14 +870,13 @@ public partial class ApiHandler
 
         Stream writeStream = await request.GetRequestStreamAsync();
 
-        WriteMultipartForm(writeStream, boundary, null, Path.GetFileName(asset.Path), MimeTypes.GetMimeType(asset.Path), fileStream.BaseStream);
+        WriteMultipartForm(writeStream, boundary, null, System.IO.Path.GetFileName(asset.Path), MimeTypes.GetMimeType(asset.Path), fileStream.BaseStream);
         fileStream.Close();
 
         var readStream = await request.GetResponseAsync();
         var respReader = readStream.GetResponseStream();
 
-        using var reader = new StreamReader(respReader, Encoding.UTF8);
-        string respResult = await reader.ReadToEndAsync();
+        string respResult = await (new StreamReader(respReader, Encoding.UTF8)).ReadToEndAsync();
         respReader.Close();
 
         var videoData = JsonConvert.DeserializeObject<VideoData.Video>(respResult);
