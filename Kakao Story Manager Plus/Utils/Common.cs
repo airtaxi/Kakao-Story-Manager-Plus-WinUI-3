@@ -2,6 +2,7 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Reflection;
 using Windows.UI;
 using Windows.UI.Core;
 
@@ -21,18 +22,7 @@ public static class Common
         );
     }
 
-    public static string GetVersionString()
-    {
-        try
-        {
-            var baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
-            var executableName = AppDomain.CurrentDomain.FriendlyName + ".exe";
-            var path = Path.Combine(baseDirectory, executableName);
-            FileVersionInfo fileVersionInfo = FileVersionInfo.GetVersionInfo(path);
-            return fileVersionInfo.ProductVersion;
-        }
-        catch (Exception) { return null; }
-    }
+    public static string GetVersionString() => Assembly.GetExecutingAssembly().GetName().Version.ToString();
 
     public static bool IsModifierDown(Windows.System.VirtualKey virtualKey = Windows.System.VirtualKey.Control)
     {
