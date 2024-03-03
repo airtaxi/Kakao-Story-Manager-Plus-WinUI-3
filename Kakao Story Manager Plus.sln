@@ -5,8 +5,6 @@ VisualStudioVersion = 17.2.32630.192
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kakao Story Manager Plus", "Kakao Story Manager Plus\Kakao Story Manager Plus.csproj", "{C4C99F05-1D64-4AFC-9171-F1A47CD47B55}"
 EndProject
-Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "Kakao Story Manager Plus Installer", "Installer\Installer.vdproj", "{474EDB34-65DF-4761-B475-9E82CB0E0518}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -43,14 +41,6 @@ Global
 		{C4C99F05-1D64-4AFC-9171-F1A47CD47B55}.Release|x86.ActiveCfg = Release|x86
 		{C4C99F05-1D64-4AFC-9171-F1A47CD47B55}.Release|x86.Build.0 = Release|x86
 		{C4C99F05-1D64-4AFC-9171-F1A47CD47B55}.Release|x86.Deploy.0 = Release|x86
-		{474EDB34-65DF-4761-B475-9E82CB0E0518}.Debug|Any CPU.ActiveCfg = Debug
-		{474EDB34-65DF-4761-B475-9E82CB0E0518}.Debug|arm64.ActiveCfg = Debug
-		{474EDB34-65DF-4761-B475-9E82CB0E0518}.Debug|x64.ActiveCfg = Debug
-		{474EDB34-65DF-4761-B475-9E82CB0E0518}.Debug|x86.ActiveCfg = Debug
-		{474EDB34-65DF-4761-B475-9E82CB0E0518}.Release|Any CPU.ActiveCfg = Release
-		{474EDB34-65DF-4761-B475-9E82CB0E0518}.Release|arm64.ActiveCfg = Release
-		{474EDB34-65DF-4761-B475-9E82CB0E0518}.Release|x64.ActiveCfg = Release
-		{474EDB34-65DF-4761-B475-9E82CB0E0518}.Release|x86.ActiveCfg = Release
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
