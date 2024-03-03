@@ -28,7 +28,7 @@ public partial class App : Application
             AppDomain.CurrentDomain.UnhandledException += OnAppDomainUnhandledException;
             TaskScheduler.UnobservedTaskException += OnTaskSchedulerUnobservedTaskException;
             
-            if (CheckForExistingProcess()) ExitProgramByExistingProcess();
+            if(CheckForExistingProcess()) ExitProgramByExistingProcess();
             else InitializeComponent();
         }
         catch (Exception exception) { _ = HandleException(exception); }
