@@ -65,6 +65,11 @@ public sealed partial class MainWindow : Window
 			var cookies = new List<Cookie>();
 			var cookieContainer = new CookieContainer();
 
+            if(flag.Cookies == null)
+            {
+                ApplyFlag(null);
+                return;
+            }
 			foreach (var rawCookie in flag.Cookies)
 			{
 				var cookie = new Cookie()
