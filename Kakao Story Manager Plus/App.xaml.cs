@@ -21,6 +21,7 @@ public partial class App : Application
 
     public App()
     {
+        Environment.CurrentDirectory = AppContext.BaseDirectory;
         try
         {
             BinaryDirectory = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
