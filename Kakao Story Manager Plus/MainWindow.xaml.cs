@@ -44,7 +44,7 @@ public sealed partial class MainWindow : Window
 		if (_isFirst)
 		{
 			_isFirst = false;
-			OnReloginRequired += ReloginAsync;
+			OnReloginRequired += ReLoginAsync;
 		}
 
 		_restartFlagPath = Path.Combine(App.BinaryDirectory, "restart");
@@ -123,7 +123,7 @@ public sealed partial class MainWindow : Window
 		}
 	}
 
-	public static async Task<bool> ReloginAsync()
+	public static async Task<bool> ReLoginAsync()
     {
         bool success = false;
         await Utility.RunOnMainThreadAsync(async () =>
