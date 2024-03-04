@@ -30,6 +30,7 @@ using Windows.Storage.Pickers;
 using WinRT.Interop;
 using System.Security.Cryptography;
 using System.Text;
+using System.Linq;
 
 namespace KSMP;
 
@@ -451,10 +452,11 @@ public static class Utility
 			var tempFile = Path.Combine(Path.GetTempPath(), $"KSMP_{remoteVersionString}.exe");
 
 			client.DownloadFileCompleted += (_, _) =>
-			{
-				Process.Start(new ProcessStartInfo(tempFile) { UseShellExecute = true });
-				Environment.Exit(0);
-			};
+            {
+                KillSeleniumRelatedProcesses();
+                Process.Start(new ProcessStartInfo(tempFile) { UseShellExecute = true });
+                Environment.Exit(0);
+            };
 
 			client.DownloadProgressChanged += (_, e) =>
 				progressFuncion(true, $"업데이터 다운로드중 ({e.ProgressPercentage}%)", e.ProgressPercentage);
@@ -463,7 +465,17 @@ public static class Utility
 		}
 	}
 
-	public static void SaveCurrentState(bool showTimeline = false, string id = null)
+    private static void KillSeleniumRelatedProcesses()
+    {
+        var chromeDriverProcesses = Process.GetProcesses().Where(process => process.ProcessName == "selenium-manager" || process.ProcessName == "msedgedriver" || process.ProcessName == "chromedriver");
+        foreach (var process in chromeDriverProcesses)
+        {
+            try { process.Kill(); }
+            catch(Exception) { } // Ignore
+        }
+    }
+
+    public static void SaveCurrentState(bool showTimeline = false, string id = null)
 	{
         var appWindow = Instance?.AppWindow;
         var presenter = appWindow?.Presenter as OverlappedPresenter;
