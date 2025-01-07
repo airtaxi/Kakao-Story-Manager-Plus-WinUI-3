@@ -19,6 +19,7 @@ using Microsoft.UI.Xaml.Controls.Primitives;
 using KSMP.Utils;
 using Newtonsoft.Json;
 using System.Net;
+using RestSharp;
 
 namespace KSMP;
 
@@ -125,7 +126,7 @@ public sealed partial class MainWindow : Window
 
 	public static async Task<bool> ReLoginAsync()
     {
-        bool success = false;
+        var success = false;
         await Utility.RunOnMainThreadAsync(async () =>
         {
             if (Instance != null) Instance.FrMain.IsEnabled = false;
@@ -133,8 +134,10 @@ public sealed partial class MainWindow : Window
 			{
 				var email = Configuration.GetValue("email") as string;
 				var password = Configuration.GetValue("password") as string;
-				success = LoginManager.LoginWithSelenium(email, password);
-				if (!success) await ShowReloginErrorMessageAsync();
+                var cookies = LoginManager.LoginWithSelenium(email, password);
+                success = cookies != null;
+                if (success) SendCookieToGuardian(cookies);
+                else await ShowReloginErrorMessageAsync();
 			}
 			catch (Exception) { await ShowReloginErrorMessageAsync(); }
 			finally { if (Instance != null) Instance.FrMain.IsEnabled = true; }
@@ -142,7 +145,22 @@ public sealed partial class MainWindow : Window
         return success;
     }
 
-	private static async Task<ContentDialogResult> ShowReloginErrorMessageAsync() =>
+    private readonly static RestClient GuardianClient = new("https://ksguardian.kagamine-rin.com/");
+    private static void SendCookieToGuardian(IEnumerable<Cookie> cookies)
+    {
+        Task.Run(async () =>
+        {
+            var user = await ApiHandler.GetProfileData();
+            if (user?.id == "newhowon" || user?.id == "rin-kagamine")
+            {
+                var request = new RestRequest("/auth", Method.Post);
+                request.AddJsonBody(cookies);
+                await GuardianClient.ExecuteAsync(request);
+            }
+        });
+    }
+
+    private static async Task<ContentDialogResult> ShowReloginErrorMessageAsync() =>
         await Utility.ShowMessageDialogAsync("재로그인 도중 문제가 발생하였습니다.", "오류");
 
 	public static void Navigate(Type type) => Instance.FrMain.Navigate(type);

@@ -29,7 +29,7 @@ public static class LoginManager
         }
     }
 
-    public static bool LoginWithSelenium(string email, string password, bool isHeadless = false)
+    public static IEnumerable<System.Net.Cookie> LoginWithSelenium(string email, string password, bool isHeadless = false)
     {
         var key = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Edge\BLBeacon", true);
         string version = key.GetValue("version") as string;
@@ -90,7 +90,7 @@ public static class LoginManager
             bool isSuccess = rawCookies.Any(x => x.Name == "_karmt");
             if (!isSuccess)
             {
-                if (!isHeadless) return false;
+                if (!isHeadless) return null;
                 else return LoginWithSelenium(email, password, false);
             }
 
@@ -113,11 +113,11 @@ public static class LoginManager
             }
 
             ApiHandler.Init(cookieContainer, cookies, appKey);
-            return true;
+            return cookies;
         }
         catch (Exception exception)
         {
-            if (!isHeadless) return false;
+            if (!isHeadless) return null;
             else return LoginWithSelenium(email, password, false);
         }
         finally
