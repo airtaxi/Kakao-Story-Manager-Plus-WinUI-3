@@ -38,7 +38,6 @@ public static class LoginManager
 
         var service = EdgeDriverService.CreateDefaultService(driverPath);
         service.HideCommandPromptWindow = true;
-        service.UseVerboseLogging = true;
 
         var options = new EdgeOptions();
         if(isHeadless) options.AddArgument("headless");
