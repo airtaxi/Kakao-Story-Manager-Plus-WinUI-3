@@ -134,7 +134,7 @@ public sealed partial class LoginPage : Page
         var email = TbxLogin.Text;
         var password = PbxLogin.Password;
         bool loginSuccess = false;
-        await Task.Run(() => loginSuccess = LoginManager.LoginWithSelenium(email, password));
+        await Task.Run(() => loginSuccess = LoginManager.LoginWithSelenium(email, password) == null);
         PbLogin.Visibility = Visibility.Collapsed;
         IsEnabled = true;
 
